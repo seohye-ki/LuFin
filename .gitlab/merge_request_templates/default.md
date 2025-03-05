@@ -1,13 +1,13 @@
 <!-- MR 제목은 다음을 참고해서 작성해주세요.
 [#issue] type: Short (50 chars or less) summary of changes
-ex. [S12P11A108-1] feat: Summarize changes in around 50 characters or less
+ex. [S12P11A402-1] feat: Summarize changes in around 50 characters or less
 -->
 
 ## ➕ 연관된 이슈
 
 <!-- GitLab Issues나 Jira 등 관련된 이슈를 작성해주세요.-->
 <!-- GitLab Issues: Fixes #issue -->
-<!-- Jira: S12P11A108-number -->
+<!-- Jira: S12P11A402-number -->
 
 ## 🔎 변경 사항
 

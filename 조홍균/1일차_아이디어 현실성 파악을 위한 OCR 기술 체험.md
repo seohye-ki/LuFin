@@ -32,7 +32,7 @@ Google Cloud에서 데모로 간단하게 성능을 체험해볼 수 있었기�
 
 그 코드는 바로 아래와 같습니다.
 
-### 🔹 코드 예제 (필요 시)
+### 🔹 코드 예제
 
 > 하기 코드는 Claude 3.7 Sonnet Extended 모델을 통해 생성한, Google Document AI API를 호출하고 그 값을 가공하는 예시 코드입니다. 아직 오류가 수정되지 않았기 때문에, 이 코드를 통한 결과값 도출은 보류 단계입니다.
 
@@ -228,7 +228,7 @@ public class ReceiptProcessorService {
 
 생성형 AI의 발전 덕분에 핀테크라는 도메인 안에서도 다양하게 접근할 수 있는 아이디어의 영역이 넓어진 느낌이 듭니다. 그것이 기술의 가장 멋진 점이 아닐까 생각합니다.
 
-## 🔗 참고자료 (필요 시)
+## 🔗 참고자료
 
 - [블로그1](https://velog.io/@sionshin/OCR-%EC%B0%BE%EC%95%84-%EC%82%BC%EB%A7%8C%EB%A6%AC)
 - [블로그2](https://devocean.sk.com/blog/techBoardDetail.do?ID=165524)

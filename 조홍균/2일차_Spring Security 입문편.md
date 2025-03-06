@@ -60,7 +60,7 @@ public class SecurityConfig {
 > [!note] Spring Security는 Spring Framework 내에서 강력하고 유연한 인증/권한 관련 기능들을 구현하는 데 유용한 프레임워크입니다. 필요시, 다형성을 통해서 다양한 방식으로 확장도 가능할 것 같습니다.
 > 기존의 코드를 변경하지 않고도, FilterChain을 통해서 추가적인 보안로직을 세팅할 수 있다는 점이 가장 매력적인 것 같습니다.
 
-## 🔗 참고자료 (필요 시)
+## 🔗 참고자료
 
 - [Spring Security Filter Chain](https://memodayoungee.tistory.com/134)
 - [Cladue Sonnet 3.7 Extended의 Spring Security 입문편](https://claude.site/artifacts/5d03bb76-5499-4156-8dc0-068a97e0ee1b)

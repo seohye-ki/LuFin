@@ -31,7 +31,7 @@ LuFin 백엔드는 금융 교육을 위한 **Spring Boot 기반의 REST API 서�
     - `controller/` - 회원 관련 API 컨트롤러
     - `service/` - 회원 관련 비즈니스 로직 처리
     - `repository/` - 데이터베이스 접근을 담당하는 JPA Repository
-    - `entity/` - 회원 관련 엔티티 클래스
+    - `domain/` - 회원 관련 엔티티 클래스
 
 ---
 

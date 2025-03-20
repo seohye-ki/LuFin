@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-    E400001("E400001", "필수 입력 값이 누락되었습니다."),
+    MISSING_REQUIRED_VALUE("E400001", "필수 입력 값이 누락되었습니다."),
     INVALID_PASSWORD_FORMAT("E400002", "비밀번호는 최소 8자리 이상이어야 하며, 특수문자를 포함해야 합니다."),
     INVALID_EMAIL_FORMAT("E400003", "잘못된 이메일 형식입니다."),
     INVALID_ROLE_SELECTION("E400004", "정확한 역할을 선택해주세요."),

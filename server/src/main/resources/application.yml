@@ -4,9 +4,9 @@ spring:
 ---
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/mydatabase
-    username: root
-    password: 1234
+    url: jdbc:mysql://localhost:3306/lufin
+    username: lufinAdm
+    password: P@ssWord!@#
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

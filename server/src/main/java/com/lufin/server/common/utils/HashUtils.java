@@ -5,10 +5,9 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 /**
- * 비밀번호 해시 유틸
- * @author : YES
- * @fileName : HashUtils
- * @since : 25. 3. 20.
+ * 해시 관련 유틸리티 클래스
+ * <p>
+ * SHA-256 해시 변환, 솔트 생성 기능을 제공
  */
 public class HashUtils {
 

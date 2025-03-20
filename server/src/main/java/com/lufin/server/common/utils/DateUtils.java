@@ -7,8 +7,8 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 
 /**
- * 날짜 및 시간 관련 틸리티 클래스
- *
+ * 날짜 및 시간 관련 유틸리티 클래스
+ * <p>
  * 날짜 포맷 변환, 현재 날짜/시간 가져오기, 날짜 간 차이 계산 등의 기능을 제공
  */
 public class DateUtils {

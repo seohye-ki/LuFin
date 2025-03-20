@@ -5,10 +5,9 @@ import org.springframework.util.StringUtils;
 import java.util.regex.Pattern;
 
 /**
- * 검증 관련 유틸
- * @author : YES
- * @fileName : ValidationUtils
- * @since : 25. 3. 20.
+ * 검증 관련 유틸리티 클래스
+ * <p>
+ * 이메일, 비밀번호, 2차 비밀번호 유효성 검증 기능을 제공
  */
 public class ValidationUtils {
 

@@ -1,10 +1,14 @@
 package com.lufin.server.common.utils;
 
+import static com.lufin.server.common.constants.ErrorCode.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
+
+import com.lufin.server.common.exception.BusinessException;
 
 /**
  * 날짜 및 시간 관련 유틸리티 클래스
@@ -31,7 +35,7 @@ public class DateUtils {
         try {
             return LocalDate.parse(date, DATE_FORMAT);
         } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("올바르지 않은 날짜 형식입니다.");
+            throw new BusinessException(INVALID_INPUT_VALUE);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.lufin.server.common.filter;
 
+import static com.lufin.server.common.constants.ErrorCode.*;
 import static com.lufin.server.common.utils.ValidationUtils.*;
 
 import java.io.IOException;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.lufin.server.common.constants.TokenClaimName;
 import com.lufin.server.common.constants.TokenType;
+import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.common.utils.TokenUtils;
 
 import io.jsonwebtoken.Claims;
@@ -55,9 +57,9 @@ public class JwtFilter implements Filter {
 			validateToken(httpRequest);
 			filterChain.doFilter(request, response);
 
-		} catch (RuntimeException e) {
+		} catch (BusinessException e) {
 			// 검증 실패 시 401 반환
-			httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+			httpResponse.sendError(401, "인증이 필요합니다.");
 		}
 	}
 
@@ -65,8 +67,7 @@ public class JwtFilter implements Filter {
 	private void validateToken(HttpServletRequest request) {
 		String authorizationHeader = request.getHeader("Authorization");
 		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-			// TODO: ERRORCODE 추가
-			throw new RuntimeException("Authorization header missing or invalid");
+			throw new BusinessException(INVALID_AUTH_HEADER);
 		}
 
 		// JWT에서 Claims 추출
@@ -78,9 +79,7 @@ public class JwtFilter implements Filter {
 		// tokenType: ACCESS 또는 REFRESH
 		String tokenType = (String)claims.get(TokenClaimName.TYPE);
 		if (!TokenType.ACCESS.equals(tokenType) && !TokenType.REFRESH.equals(tokenType)) {
-			// TODO: ERRORCODE 추가
-			throw new RuntimeException("Invalid tokenType in JWT");
+			throw new BusinessException(INVALID_TOKEN_TYPE);
 		}
 	}
-
 }

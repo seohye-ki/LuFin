@@ -196,13 +196,15 @@ public class Mission {
 	}
 
 	/* 기본 메서드 */
-	
+
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if (o == null || getClass() != o.getClass()) {
 			return false;
+		}
 		Mission mission = (Mission)o;
 		return Objects.equals(id, mission.id);
 	}
@@ -214,12 +216,18 @@ public class Mission {
 
 	@Override
 	public String toString() {
-		return "Mission{" +
-			"id=" + id +
-			", title='" + title + '\'' +
-			", status=" + status +
-			", currentParticipants=" + currentParticipants +
-			", maxParticipants=" + maxParticipants +
+		return "Mission{"
+			+
+			"id=" + id
+			+
+			", title='" + title + '\''
+			+
+			", status=" + status
+			+
+			", currentParticipants=" + currentParticipants
+			+
+			", maxParticipants=" + maxParticipants
+			+
 			'}';
 	}
 

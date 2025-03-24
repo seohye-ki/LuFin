@@ -1,0 +1,43 @@
+package com.lufin.server.account.domain;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import lombok.Getter;
+
+@Getter
+@Entity
+public class AutoTransfer {
+
+	@Id
+	@GeneratedValue
+	private Integer id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Account from;
+
+	private String toAccountNumber;
+
+	private Integer amount;
+
+	private LocalDate startDate;
+
+	private LocalDate endDate;
+
+	private boolean active;
+
+	@Enumerated(EnumType.STRING)
+	private DayOfWeek dayOfWeek; // 납입 요일 (예: 월요일마다)
+
+	private LocalDateTime createdAt;
+
+	private LocalDateTime updatedAt;
+}

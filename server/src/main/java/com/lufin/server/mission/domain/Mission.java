@@ -3,7 +3,6 @@ package com.lufin.server.mission.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -195,40 +194,5 @@ public class Mission {
 		return this.currentParticipants == this.participations.size();
 	}
 
-	/* 기본 메서드 */
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		Mission mission = (Mission)o;
-		return Objects.equals(id, mission.id);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
-
-	@Override
-	public String toString() {
-		return "Mission{"
-			+
-			"id=" + id
-			+
-			", title='" + title + '\''
-			+
-			", status=" + status
-			+
-			", currentParticipants=" + currentParticipants
-			+
-			", maxParticipants=" + maxParticipants
-			+
-			'}';
-	}
-
+	// 기본 메서드는 DTO에서
 }

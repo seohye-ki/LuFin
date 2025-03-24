@@ -1,7 +1,6 @@
 package com.lufin.server.mission.domain;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -155,40 +154,5 @@ public class MissionParticipation {
 		return this.status == MissionParticipationStatus.SUCCESS;
 	}
 
-	/* 기본 메서드 */
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		MissionParticipation that = (MissionParticipation)o;
-		return Objects.equals(id, that.id);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
-
-	@Override
-	public String toString() {
-		return "MissionParticipation{"
-			+
-			"id=" + id
-			+
-			", memberId=" + memberId
-			+
-
-			", status=" + status
-			+
-			", wageStatus=" + wageStatus
-			+
-			", rejectCount=" + rejectCount
-			+
-			'}';
-	}
+	// 기본 메서드는 DTO에서
 }

@@ -5,7 +5,7 @@ import com.lufin.server.common.exception.BusinessException;
 
 public class ForbiddenException extends BusinessException {
 
-    public ForbiddenException(ErrorCode errorCode) {
-        super(errorCode);
-    }
+	public ForbiddenException(ErrorCode errorCode) {
+		super(errorCode);
+	}
 }

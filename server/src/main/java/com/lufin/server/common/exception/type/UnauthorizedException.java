@@ -5,7 +5,7 @@ import com.lufin.server.common.exception.BusinessException;
 
 public class UnauthorizedException extends BusinessException {
 
-    public UnauthorizedException(ErrorCode errorCode) {
-        super(errorCode);
-    }
+	public UnauthorizedException(ErrorCode errorCode) {
+		super(errorCode);
+	}
 }

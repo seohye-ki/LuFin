@@ -1,8 +1,11 @@
 package com.lufin.server.common.interceptor;
 
+import static com.lufin.server.common.constants.ErrorCode.*;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.common.utils.TokenUtils;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.repository.MemberRepository;
@@ -28,16 +31,14 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 		String token = request.getHeader("Authorization");
 		if (token == null || !token.startsWith("Bearer ")) {
-			// TODO: ERRORCODE 추가
-			throw new RuntimeException("UNAUTHORIZED");
+			throw new BusinessException(INVALID_AUTH_HEADER);
 		}
 
 		Claims claims = tokenUtils.extractClaims(token);
 		int userId = Integer.parseInt(claims.getSubject());
 
 		Member member = memberRepository.findById(userId)
-			// TODO: ERRORCODE 추가
-			.orElseThrow(() -> new RuntimeException("MEMBER_NOT_FOUND"));
+			.orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
 
 		// TODO: 회원 상태 체크 추가 (탈퇴여부)
 

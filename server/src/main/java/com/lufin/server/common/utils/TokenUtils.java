@@ -1,5 +1,6 @@
 package com.lufin.server.common.utils;
 
+import static com.lufin.server.common.constants.ErrorCode.*;
 import static com.lufin.server.common.constants.TokenType.*;
 
 import java.util.Base64;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.lufin.server.common.constants.TokenClaimName;
 import com.lufin.server.common.constants.TokenType;
+import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.MemberRole;
 
 import io.jsonwebtoken.Claims;
@@ -86,7 +88,7 @@ public class TokenUtils {
 		Claims claims = extractClaims(refreshToken);
 
 		if (!REFRESH.equals(claims.get(TokenClaimName.TYPE))) {
-			throw new RuntimeException("Invalid Token Type");
+			throw new BusinessException(INVALID_TOKEN);
 		}
 
 		int userId = Integer.parseInt(claims.getSubject());
@@ -94,8 +96,7 @@ public class TokenUtils {
 		String storedToken = redisTemplate.opsForValue().get(key);
 
 		if (storedToken == null || !storedToken.equals(refreshToken)) {
-			// TODO: ERRORCODE 추가
-			throw new RuntimeException("Invalid Refresh Token");
+			throw new BusinessException(INVALID_TOKEN);
 		}
 
 		MemberRole role = MemberRole.valueOf((String)claims.get(TokenClaimName.ROLE));
@@ -111,8 +112,7 @@ public class TokenUtils {
 	public void deleteRefreshToken(String refreshToken) {
 		Claims claims = extractClaims(refreshToken);
 		if (!REFRESH.equals(claims.get(TokenClaimName.TYPE))) {
-			// TODO: ERRORCODE 추가
-			throw new RuntimeException("Invalid Token Type");
+			throw new BusinessException(INVALID_TOKEN_TYPE);
 		}
 		int userId = Integer.parseInt(claims.getSubject());
 		redisTemplate.delete("refresh_token:" + userId);

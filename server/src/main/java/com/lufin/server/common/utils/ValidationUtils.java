@@ -1,10 +1,11 @@
 package com.lufin.server.common.utils;
 
+import static com.lufin.server.common.constants.ErrorCode.*;
+
 import java.util.regex.Pattern;
 
 import org.springframework.util.StringUtils;
 
-import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.exception.BusinessException;
 
 /**
@@ -56,12 +57,12 @@ public class ValidationUtils {
 	// JWT: 문자열 ID가 Integer로 변환 가능한지 확인 (null, 공백, 숫자 아닌 경우 예외)
 	public static void validateIntegerId(String idValue) {
 		if (!StringUtils.hasText(idValue)) {
-			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
+			throw new BusinessException(INVALID_INPUT_VALUE);
 		}
 		try {
 			Integer.parseInt(idValue);
 		} catch (NumberFormatException e) {
-			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
+			throw new BusinessException(INVALID_INPUT_VALUE);
 		}
 	}
 }

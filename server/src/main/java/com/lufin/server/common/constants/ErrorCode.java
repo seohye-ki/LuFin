@@ -18,12 +18,17 @@ public enum ErrorCode {
     INVALID_CREDENTIALS("E401001", "이메일 또는 패스워드를 확인해주세요."),
     UNAUTHORIZED_ACCESS("E401002", "인증이 필요합니다."),
     TOKEN_EXPIRED("E401003", "인증이 만료되었습니다. 다시 로그인해 주세요."),
+    INVALID_AUTH_HEADER("E401004", "Authorization 헤더가 없거나 형식이 잘못되었습니다."),
+    INVALID_TOKEN("E401005","유효하지 않은 토큰입니다."),
+    INVALID_TOKEN_TYPE("E401006","토큰 타입이 잘못되었습니다."),
+
     FORBIDDEN_REQUEST("E403001","요청을 처리할 수 없습니다."),
     REQUEST_DENIED("E403002", "요청이 거부되었습니다."),
+    MEMBER_ALREADY_DELETED("E403003", "탈퇴된 사용자입니다."),
 
     CLASS_NOT_FOUND("E404001", "해당 클래스가 존재하지 않습니다."),
     PURCHASE_RECORD_NOT_FOUND("E404002", "해당 구매 내역을 찾을 수 없습니다."),
-    STUDENT_NOT_FOUND("E404003", "해당하는 학생이 없습니다."),
+    MEMBER_NOT_FOUND("E404003", "사용자를 찾을 수 없습니다."),
     INVESTMENT_PRODUCT_NOT_FOUND("E404004", "해당 투자 상품을 찾을 수 없습니다."),
     MISSION_NOT_FOUND("E404005", "해당 미션을 찾을 수 없습니다."),
     LOAN_APPLICATION_NOT_FOUND("E404006", "해당 대출 신청 정보를 찾을 수 없습니다."),

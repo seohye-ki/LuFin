@@ -29,7 +29,10 @@ export default {
         'h2-bold': ['xl', {
           fontWeight: '700',
         }],
-        
+        // lg
+
+
+        // base, sm         
         // Paragraph styles
         'p1': ['lg', { // 18px
           fontWeight: '400',
@@ -97,7 +100,6 @@ export default {
         white: '#FFFFFF',
         'broken-white': '#F7F8FA',
         'new-grey': '#EEEEEE',
-        'grey-25': '#A7A9AA',
         'grey-30': '#D9D9D94d',
         'light-grey': '#A7A9AA',
         grey: '#8A8D8E',
@@ -105,7 +107,7 @@ export default {
         black: '#242424',
         
         // Main colors
-        'light-cyan': {
+        'cyan': {
           DEFAULT: '#C3EBFA',
           30: '#C3EBFAAd',
         },

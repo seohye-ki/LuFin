@@ -1,0 +1,75 @@
+package com.lufin.server.item.domain;
+
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Entity
+@Table(name = "item")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Item {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "item_id")
+	private Integer id;
+
+	@Column(name = "name", nullable = false, length = 50)
+	private String name;
+
+	@Column(name = "type", nullable = false)
+	private Integer type; // 0: 즉시 사용 가능, 1: 사용 요청 필요
+
+	@Column(name = "price", nullable = false)
+	private Integer price;
+
+	@Column(name = "quantity_available", nullable = false)
+	private Integer quantityAvailable;
+
+	@Column(name = "quantity_sold", nullable = false)
+	private Integer quantitySold;
+
+	@Column(name = "status", nullable = false)
+	private Boolean status; // 판매 상태 (true: 판매 중)
+
+	@Column(name = "expiration_date", nullable = false)
+	private LocalDateTime expirationDate;
+
+	@Column(name = "created_at", nullable = false, updatable = false)
+	private LocalDateTime createdAt;
+
+	@Column(name = "updated_at", nullable = false)
+	private LocalDateTime updatedAt;
+
+	@PrePersist
+	protected void setCreatedAt() {
+		this.createdAt = LocalDateTime.now();
+		this.updatedAt = LocalDateTime.now();
+	}
+
+	@PreUpdate
+	protected void setUpdatedAt() {
+		this.updatedAt = LocalDateTime.now();
+	}
+
+	public void modifyInfo(String name, Integer price, Integer quantityAvailable, LocalDateTime expirationDate) {
+		this.name = name;
+		this.price = price;
+		this.quantityAvailable = quantityAvailable;
+		this.expirationDate = expirationDate;
+	}
+
+	public void disable() {
+		this.status = false;
+	}
+
+	public void enable() {
+		this.status = true;
+	}
+
+
+}

@@ -2,9 +2,10 @@ spring:
   application:
     name: server
 ---
+
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/lufin
+    url: jdbc:mysql://j12a402.p.ssafy.io:3306/lufin
     username: lufinAdm
     password: P@ssWord!@#
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -13,3 +14,16 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
+
+  data:
+    redis:
+      host: j12a402.p.ssafy.io
+      port: 6379
+
+---
+
+JWT:
+  SECRET_KEY: "Q29tcGxleFN1cGVyU2VjcmV0S2V5Rm9ySlNXVEF1dGhlbnRpY2F0aW9u"
+  EXPIRATION_TIME:
+    ACCESS: 28800000 # 8시간
+    REFRESH: 15768000000 # 6개월

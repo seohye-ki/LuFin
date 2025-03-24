@@ -1,143 +1,63 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'sans-serif'],
+      colors: {
+        // Regular Colors
+        'white': 'var(--color-white)',
+        'broken-white': 'var(--color-broken-white)',
+        'new-grey': 'var(--color-new-grey)',
+        'grey-25': 'var(--color-grey-25)',
+        'grey-30': 'var(--color-grey-30)',
+        'light-grey': 'var(--color-light-grey)',
+        'grey': 'var(--color-grey)',
+        'dark-grey': 'var(--color-dark-grey)',
+        'black': 'var(--color-black)',
+
+        // Main Colors
+        'light-cyan': 'var(--color-light-cyan)',
+        'light-cyan-30': 'var(--color-light-cyan-30)',
+        'purple': 'var(--color-purple)',
+        'purple-30': 'var(--color-purple-30)',
+        'yellow': 'var(--color-yellow)',
+        'yellow-30': 'var(--color-yellow-30)',
+
+        // Semantic Colors
+        'success': 'var(--color-success)',
+        'danger': 'var(--color-danger)',
+        'info': 'var(--color-info)',
+        'warning': 'var(--color-warning)',
+
+        // Secondary Colors
+        'dark-purple': 'var(--color-dark-purple)',
+        'dark-pink': 'var(--color-dark-pink)',
+        'pink': 'var(--color-pink)',
+        'pink-30': 'var(--color-pink-30)',
+
+        // Function Colors
+        'placeholder': 'var(--color-placeholder)',
       },
       fontSize: {
-        // Heading styles
-        'h1': ['2xl', { // 32px
-          fontWeight: '400',
-        }],
-        'h1-semibold': ['2xl', {
-          fontWeight: '600',
-        }],
-        'h1-bold': ['2xl', {
-          fontWeight: '700',
-        }],
-        'h2': ['xl', { // 24px
-          fontWeight: '400',
-        }],
-        'h2-semibold': ['xl', {
-          fontWeight: '600',
-        }],
-        'h2-bold': ['xl', {
-          fontWeight: '700',
-        }],
-        // lg
-
-
-        // base, sm         
-        // Paragraph styles
-        'p1': ['lg', { // 18px
-          fontWeight: '400',
-        }],
-        'p1-medium': ['lg', {
-          fontWeight: '500',
-        }],
-        'p1-semibold': ['lg', {
-          fontWeight: '600',
-        }],
-        'p2': ['base', { // 16px
-          fontWeight: '400',
-        }],
-        'p2-medium': ['base', {
-          fontWeight: '500',
-        }],
-        'p2-semibold': ['base', {
-          fontWeight: '600',
-        }],
-        'p3': ['sm', { // 14px
-          fontWeight: '400',
-        }],
-        'p3-medium': ['sm', {
-          fontWeight: '500',
-        }],
-        'p3-semibold': ['sm', {
-          fontWeight: '600',
-        }],
-        'p3-bold': ['sm', {
-          fontWeight: '700',
-        }],
-        
-        // Caption styles
-        'c1': ['xs', { // 12px
-          fontWeight: '400',
-        }],
-        'c1-medium': ['xs', {
-          fontWeight: '500',
-        }],
-        'c1-semibold': ['xs', {
-          fontWeight: '600',
-        }],
-        'c1-bold': ['xs', {
-          fontWeight: '700',
-        }],
-        'c2': ['10px', { // 10px
-          lineHeight: '0.75rem', // 12px
-          fontWeight: '300',
-        }],
-        'c2-regular': ['10px', {
-          lineHeight: '0.75rem',
-          fontWeight: '400',
-        }],
-        'c2-medium': ['10px', {
-          lineHeight: '0.75rem',
-          fontWeight: '500',
-        }],
-        'c2-semibold': ['10px', {
-          lineHeight: '0.75rem',
-          fontWeight: '600',
-        }],
+        'h1': ['var(--text-h1)', { lineHeight: 'var(--leading-h1)' }],
+        'h2': ['var(--text-h2)', { lineHeight: 'var(--leading-h2)' }],
+        'p1': ['var(--text-p1)', { lineHeight: 'var(--leading-p1)' }],
+        'p2': ['var(--text-p2)', { lineHeight: 'var(--leading-p2)' }],
+        'p3': ['var(--text-p3)', { lineHeight: 'var(--leading-p3)' }],
+        'c1': ['var(--text-c1)', { lineHeight: 'var(--leading-c1)' }],
+        'c2': ['var(--text-c2)', { lineHeight: 'var(--leading-c2)' }],
       },
-      colors: {
-        // Regular colors
-        white: '#FFFFFF',
-        'broken-white': '#F7F8FA',
-        'new-grey': '#EEEEEE',
-        'grey-30': '#D9D9D94d',
-        'light-grey': '#A7A9AA',
-        grey: '#8A8D8E',
-        'dark-grey': '#8A8D8E',
-        black: '#242424',
-        
-        // Main colors
-        'cyan': {
-          DEFAULT: '#C3EBFA',
-          30: '#C3EBFAAd',
-        },
-        purple: {
-          DEFAULT: '#CFCEFF',
-          30: '#CFCEFFAd',
-        },
-        yellow: {
-          DEFAULT: '#FAE27C',
-          30: '#FAE27C4d',
-        },
-        
-        // Semantic colors
-        success: '#00997E',
-        danger: '#FF414B',
-        info: '#4A8DE8',
-        warning: '#FFAE41',
-        
-        // Secondary colors
-        'dark-purple': '#8785FF',
-        'dark-pink': '#FF88E5',
-        pink: {
-          DEFAULT: '#FFDBF7',
-          30: '#FFEAFAAd',
-        },
-        
-        // Function colors
-        placeholder: '#D9D9D9',
+      fontWeight: {
+        light: 'var(--font-weight-light)',
+        regular: 'var(--font-weight-regular)',
+        medium: 'var(--font-weight-medium)',
+        semibold: 'var(--font-weight-semibold)',
+        bold: 'var(--font-weight-bold)',
+      },
+      fontFamily: {
+        pretendard: 'var(--font-pretendard)',
       },
     },
   },
   plugins: [],
-} 
+}; 

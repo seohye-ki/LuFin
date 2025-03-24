@@ -1,206 +1,72 @@
-@import 'tailwindcss';
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@import 'pretendard/dist/web/static/pretendard.css';
+@theme {
+  /* Font Families */
+  --font-pretendard: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 
-@layer base {
-  :root {
-    /* Color Variables */
-    --color-white: #FFFFFF;
-    --color-broken-white: #F7F8FA;
-    --color-new-grey: #EEEEEE;
-    --color-grey-30: #D9D9D94d;
-    --color-light-grey: #A7A9AA;
-    --color-grey: #8A8D8E;
-    --color-dark-grey: #8A8D8E;
-    --color-black: #242424;
-    
-    /* Main colors */
-    --color-cyan: #C3EBFA;
-    --color-cyan-30: #C3EBFAAd;
-    --color-purple: #CFCEFF;
-    --color-purple-30: #CFCEFFAd;
-    --color-yellow: #FAE27C;
-    --color-yellow-30: #FAE27C4d;
-    
-    /* Semantic colors */
-    --color-success: #00997E;
-    --color-danger: #FF414B;
-    --color-info: #4A8DE8;
-    --color-warning: #FFAE41;
-    
-    /* Secondary colors */
-    --color-dark-purple: #8785FF;
-    --color-dark-pink: #FF88E5;
-    --color-pink: #FFDBF7;
-    --color-pink-30: #FFEAFAAd;
-    
-    /* Function colors */
-    --color-placeholder: #D9D9D9;
+  /* Regular Colors */
+  --color-white: #FFFFFF;
+  --color-broken-white: #F7F8FA;
+  --color-new-grey: #EEEEEE;
+  --color-grey-25: #A7A9AA;
+  --color-grey-30: #D9D9D94d;
+  --color-light-grey: #A7A9AA;
+  --color-grey: #8A8D8E;
+  --color-dark-grey: #8A8D8E;
+  --color-black: #242424;
 
-    /* Font size variables */
-    /* Heading styles */
-    --font-h1: 2rem; /* 32px */
-    --font-h2: 1.5rem; /* 24px */
-    --font-p1: 1.125rem; /* 18px */
-    --font-p2: 1rem; /* 16px */
-    --font-p3: 0.875rem; /* 14px */
-    --font-c1: 0.75rem; /* 12px */
-    --font-c2: 0.625rem; /* 10px */
-    
-    /* Font weight variables */
-    --font-weight-light: 300;
-    --font-weight-regular: 400;
-    --font-weight-medium: 500;
-    --font-weight-semibold: 600;
-    --font-weight-bold: 700;
+  /* Main Colors */
+  --color-light-cyan: #C3EBFA;
+  --color-light-cyan-30: #C3EBFA4d;
+  --color-purple: #CFCEFF;
+  --color-purple-30: #CFCEFF4d;
+  --color-yellow: #FAE27C;
+  --color-yellow-30: #FAE27C4d;
 
-    /* Line height for caption */
-    --line-height-c2: 0.75rem; /* 12px */
-  }
+  /* Semantic Colors */
+  --color-success: #00997E;
+  --color-danger: #FF414B;
+  --color-info: #4A8DE8;
+  --color-warning: #FFAE41;
 
-  html {
-    font-family:
-      'Pretendard',
-      -apple-system,
-      BlinkMacSystemFont,
-      system-ui,
-      Roboto,
-      'Helvetica Neue',
-      'Segoe UI',
-      'Apple SD Gothic Neo',
-      'Noto Sans KR',
-      'Malgun Gothic',
-      'Apple Color Emoji',
-      'Segoe UI Emoji',
-      'Segoe UI Symbol',
-      sans-serif;
-  }
+  /* Secondary Colors */
+  --color-dark-purple: #8785FF;
+  --color-dark-pink: #FF88E5;
+  --color-pink: #FFDBF7;
+  --color-pink-30: #FFEAFA4d;
 
-  /* Typography utility classes that use the variables */
-  .text-style-h1 {
-    font-size: var(--font-h1);
-    font-weight: var(--font-weight-regular);
-  }
+  /* Function Colors */
+  --color-placeholder: #D9D9D9;
+
+  /* Font Sizes */
+  --text-h1: 2.25rem;
+  --text-h2: 1.5rem;
+  --text-p1: 1.125rem;
+  --text-p2: 1rem;
+  --text-p3: 0.875rem;
+  --text-c1: 0.75rem;
+  --text-c2: 0.625rem;
   
-  .text-style-h1-semibold {
-    font-size: var(--font-h1);
-    font-weight: var(--font-weight-semibold);
-  }
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
   
-  .text-style-h1-bold {
-    font-size: var(--font-h1);
-    font-weight: var(--font-weight-bold);
-  }
-  
-  .text-style-h2 {
-    font-size: var(--font-h2);
-    font-weight: var(--font-weight-regular);
-  }
-  
-  .text-style-h2-semibold {
-    font-size: var(--font-h2);
-    font-weight: var(--font-weight-semibold);
-  }
-  
-  .text-style-h2-bold {
-    font-size: var(--font-h2);
-    font-weight: var(--font-weight-bold);
-  }
-  
-  .text-style-p1 {
-    font-size: var(--font-p1);
-    font-weight: var(--font-weight-regular);
-  }
-  
-  .text-style-p1-medium {
-    font-size: var(--font-p1);
-    font-weight: var(--font-weight-medium);
-  }
-  
-  .text-style-p1-semibold {
-    font-size: var(--font-p1);
-    font-weight: var(--font-weight-semibold);
-  }
-  
-  .text-style-p2 {
-    font-size: var(--font-p2);
-    font-weight: var(--font-weight-regular);
-  }
-  
-  .text-style-p2-medium {
-    font-size: var(--font-p2);
-    font-weight: var(--font-weight-medium);
-  }
-  
-  .text-style-p2-semibold {
-    font-size: var(--font-p2);
-    font-weight: var(--font-weight-semibold);
-  }
-  
-  .text-style-p3 {
-    font-size: var(--font-p3);
-    font-weight: var(--font-weight-regular);
-  }
-  
-  .text-style-p3-medium {
-    font-size: var(--font-p3);
-    font-weight: var(--font-weight-medium);
-  }
-  
-  .text-style-p3-semibold {
-    font-size: var(--font-p3);
-    font-weight: var(--font-weight-semibold);
-  }
-  
-  .text-style-p3-bold {
-    font-size: var(--font-p3);
-    font-weight: var(--font-weight-bold);
-  }
-  
-  .text-style-c1 {
-    font-size: var(--font-c1);
-    font-weight: var(--font-weight-regular);
-  }
-  
-  .text-style-c1-medium {
-    font-size: var(--font-c1);
-    font-weight: var(--font-weight-medium);
-  }
-  
-  .text-style-c1-semibold {
-    font-size: var(--font-c1);
-    font-weight: var(--font-weight-semibold);
-  }
-  
-  .text-style-c1-bold {
-    font-size: var(--font-c1);
-    font-weight: var(--font-weight-bold);
-  }
-  
-  .text-style-c2 {
-    font-size: var(--font-c2);
-    line-height: var(--line-height-c2);
-    font-weight: var(--font-weight-light);
-  }
-  
-  .text-style-c2-regular {
-    font-size: var(--font-c2);
-    line-height: var(--line-height-c2);
-    font-weight: var(--font-weight-regular);
-  }
-  
-  .text-style-c2-medium {
-    font-size: var(--font-c2);
-    line-height: var(--line-height-c2);
-    font-weight: var(--font-weight-medium);
-  }
-  
-  .text-style-c2-semibold {
-    font-size: var(--font-c2);
-    line-height: var(--line-height-c2);
-    font-weight: var(--font-weight-semibold);
-  }
+  /* Line Heights */
+  --leading-h1: 1.3;
+  --leading-h2: 1.4;
+  --leading-p1: 1.5;
+  --leading-p2: 1.5;
+  --leading-p3: 1.5;
+  --leading-c1: 1.4;
+  --leading-c2: 1.3;
 }
+
+/* Base Styles */
+@layer base {
+  html {
+    font-family: var(--font-pretendard);
+  }
+} 

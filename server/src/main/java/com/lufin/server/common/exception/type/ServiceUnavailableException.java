@@ -5,8 +5,7 @@ import com.lufin.server.common.exception.BusinessException;
 
 public class ServiceUnavailableException extends BusinessException {
 
-    public ServiceUnavailableException(ErrorCode errorCode) {
-        super(errorCode);
-    }
+	public ServiceUnavailableException(ErrorCode errorCode) {
+		super(errorCode);
+	}
 }
-

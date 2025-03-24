@@ -44,10 +44,10 @@ public class JwtFilter implements Filter {
 
 		HttpServletRequest httpRequest = (HttpServletRequest)request;
 		HttpServletResponse httpResponse = (HttpServletResponse)response;
-		String requestURI = httpRequest.getRequestURI();
+		String requestUri = httpRequest.getRequestURI();
 
 		// 필터 예외 경로는 바로 통과
-		if (excludedPaths.contains(requestURI)) {
+		if (excludedPaths.contains(requestUri)) {
 			filterChain.doFilter(request, response);
 			return;
 		}

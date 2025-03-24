@@ -5,8 +5,7 @@ import com.lufin.server.common.exception.BusinessException;
 
 public class InternalServerErrorException extends BusinessException {
 
-    public InternalServerErrorException(ErrorCode errorCode) {
-        super(errorCode);
-    }
+	public InternalServerErrorException(ErrorCode errorCode) {
+		super(errorCode);
+	}
 }
-

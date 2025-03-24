@@ -5,7 +5,7 @@ import com.lufin.server.common.exception.BusinessException;
 
 public class UnprocessableEntityException extends BusinessException {
 
-    public UnprocessableEntityException(ErrorCode errorCode) {
-        super(errorCode);
-    }
+	public UnprocessableEntityException(ErrorCode errorCode) {
+		super(errorCode);
+	}
 }

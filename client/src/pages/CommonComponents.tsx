@@ -320,7 +320,7 @@ const CommonComponents = () => {
               <h3 className='text-p1 font-medium text-black mb-2'>모달 카드</h3>
               <DashBoardCard
                 titleLeft='제목'
-                titleRight={<Badge status='fail'>실패</Badge>}
+                titleRight={<Icon name='Close' size={24} color='#8A8D8E' />}
                 titleSize='l'
                 content={
                   <div className='flex flex-col gap-2'>

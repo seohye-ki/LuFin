@@ -2,15 +2,27 @@ package com.lufin.server.item.domain;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import com.lufin.server.classroom.domain.Classroom;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @Entity
-@Table(name = "item")
+@Table(name = "items")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Item {
 
 	@Id
@@ -18,23 +30,27 @@ public class Item {
 	@Column(name = "item_id")
 	private Integer id;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "class_id", nullable = false)
+	private Classroom classroom;
+
 	@Column(name = "name", nullable = false, length = 50)
 	private String name;
 
 	@Column(name = "type", nullable = false)
-	private Integer type; // 0: 즉시 사용 가능, 1: 사용 요청 필요
+	private Integer type = 1; // 0: 즉시 사용 가능, 1: 사용 요청 필요
 
 	@Column(name = "price", nullable = false)
-	private Integer price;
+	private Integer price = 0;
 
 	@Column(name = "quantity_available", nullable = false)
-	private Integer quantityAvailable;
+	private Integer quantityAvailable = 0;
 
 	@Column(name = "quantity_sold", nullable = false)
-	private Integer quantitySold;
+	private Integer quantitySold = 0;
 
 	@Column(name = "status", nullable = false)
-	private Boolean status; // 판매 상태 (true: 판매 중)
+	private Boolean status = true; // 판매 상태 (true: 판매 중)
 
 	@Column(name = "expiration_date", nullable = false)
 	private LocalDateTime expirationDate;

@@ -56,6 +56,7 @@ public class Mission {
 	@NotBlank
 	private String content;
 
+	//TODO: image 테이블 분리에 따라 엔티티 분리 필요
 	@Column(name = "image", length = 255)
 	private String image;
 

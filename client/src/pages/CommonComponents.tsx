@@ -3,6 +3,8 @@ import Lufin from '../components/Lufin/Lufin';
 import Button from '../components/Button/Button';
 import Badge from '../components/Badge/Badge';
 import Sidebar from '../components/Sidebar/Sidebar';
+import SidebarLayout from '../components/Layout/SidebarLayout';
+import DefaultLayout from '../components/Layout/DefaultLayout';
 
 const CommonComponents = () => {
   return (
@@ -152,6 +154,21 @@ const CommonComponents = () => {
           <div className='flex flex-col gap-4'>
             <h2 className='text-h2 font-medium text-black mb-4'>선생님 사이드바</h2>
             <Sidebar userRole='teacher' />
+          </div>
+        </section>
+        {/* Layout Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Layout</h2>
+          <div className='flex gap-8'>
+            <SidebarLayout>
+              <h2 className='text-h2 font-medium text-black mb-4'>Sidebar Layout</h2>
+              <p className='text-body'>사이드바가 포함된 레이아웃입니다.</p>
+            </SidebarLayout>
+
+            <DefaultLayout>
+              <h2 className='text-h2 font-medium text-black mb-4'>Default Layout</h2>
+              <p className='text-body'>사이드바가 없는 기본 레이아웃입니다.</p>
+            </DefaultLayout>
           </div>
         </section>
       </div>

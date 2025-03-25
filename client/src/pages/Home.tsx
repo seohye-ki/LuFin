@@ -1,14 +1,7 @@
-import Profile from '../components/Profile/Profile';
-
 const Home = () => {
   return (
     <div className='p-8 bg-broken-white min-h-screen'>
       <h1 className='text-h1 font-regular text-black mb-4'>Home Page</h1>
-      <Profile
-        name='이재현 선생님'
-        profileImage='https://picsum.photos/200/300?random=1'
-        certificationNumber='5학년 1반'
-      />
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-8'>
         <div className='bg-white p-6 rounded-lg shadow-md'>

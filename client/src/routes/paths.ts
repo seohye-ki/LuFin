@@ -1,4 +1,5 @@
 export const paths = {
   HOME: '/',
   LOGIN: '/login',
-} as const; 
+  COMMON_COMPONENTS: '/common-components',
+} as const;

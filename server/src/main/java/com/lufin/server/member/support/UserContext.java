@@ -4,17 +4,17 @@ import com.lufin.server.member.domain.Member;
 
 public class UserContext {
 
-	private static final ThreadLocal<Member> currentMember = new ThreadLocal<>();
+	private static final ThreadLocal<Member> CURRENT_MEMBER = new ThreadLocal<>();
 
 	public static void set(Member member) {
-		currentMember.set(member);
+		CURRENT_MEMBER.set(member);
 	}
 
 	public static Member get() {
-		return currentMember.get();
+		return CURRENT_MEMBER.get();
 	}
 
 	public static void clear() {
-		currentMember.remove();
+		CURRENT_MEMBER.remove();
 	}
 }

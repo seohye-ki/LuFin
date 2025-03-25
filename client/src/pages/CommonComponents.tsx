@@ -25,7 +25,6 @@ const CommonComponents = () => {
             <Lufin count={15200} size={52} />
           </div>
         </div>
-
         {/* Button Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Button</h2>
@@ -120,8 +119,14 @@ const CommonComponents = () => {
             </div>
           </div>
         </section>
-        <Sidebar userRole='student' />
-        <Sidebar userRole='teacher' />
+        <div className='flex flex-col gap-4'>
+          <h2 className='text-h2 font-medium text-black mb-4'>학생 사이드바</h2>
+          <Sidebar userRole='student' />
+        </div>
+        <div className='flex flex-col gap-4'>
+          <h2 className='text-h2 font-medium text-black mb-4'>선생님 사이드바</h2>
+          <Sidebar userRole='teacher' />
+        </div>
       </div>
     </div>
   );

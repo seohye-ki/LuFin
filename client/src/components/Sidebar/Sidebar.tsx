@@ -9,7 +9,7 @@ interface SidebarProps {
 
 const Sidebar = ({ userRole }: SidebarProps) => {
   return (
-    <div className='w-[200px] h-full p-4 flex flex-col justify-between bg-white'>
+    <div className='w-[200px] h-full p-4 flex flex-col bg-white'>
       <div className='flex flex-col gap-4'>
         <div className='flex flex-col items-center gap-2'>
           <div className='flex flex-col h-146 gap-3'>
@@ -20,21 +20,23 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             <p className='text-c2 font-regular text-dark-grey'>메뉴</p>
             <SidebarMenu />
           </div>
-
-          {userRole == 'student' && (
-            <div className='flex w-full h-21 flex-col bg-yellow rounded-lg p-4 gap-1'>
-              <p className='text-c1 text-dark-grey'>총 자산</p>
-              <Lufin count={15200} size={28} />
-            </div>
-          )}
-
-          <Profile
-            name='이재현'
-            variant='certification'
-            certificationNumber='5학년 1반 12번'
-            profileImage='https://picsum.photos/200/300?random=1'
-          />
         </div>
+      </div>
+
+      <div className='mt-auto flex flex-col gap-4'>
+        {userRole === 'student' && (
+          <div className='flex w-full h-21 flex-col bg-yellow rounded-lg p-4 gap-1'>
+            <p className='text-c1 text-dark-grey'>총 자산</p>
+            <Lufin count={15200} size={28} />
+          </div>
+        )}
+
+        <Profile
+          name='이재현'
+          variant='certification'
+          certificationNumber='5학년 1반 12번'
+          profileImage='https://picsum.photos/200/300?random=1'
+        />
       </div>
     </div>
   );

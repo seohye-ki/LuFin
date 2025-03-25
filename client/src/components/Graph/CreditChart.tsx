@@ -34,15 +34,8 @@ const ratingInfo: { [key: string]: { value: number; text: string } } = {
   'A+': { value: 14, text: '최고에요.' },
 };
 
-const HalfDoughnutChart: React.FC<{ creditRating: string }> = ({ creditRating }) => {
-  const chartRef = useRef<void>(null);
+const CreditChart: React.FC<{ creditRating: string }> = ({ creditRating }) => {
   const { value, text } = ratingInfo[creditRating] || { value: 0, text: '알 수 없음' };
-
-  useEffect(() => {
-    if (chartRef.current) {
-      chartRef.current.update();
-    }
-  }, [creditRating]);
 
   const data: ChartData = {
     datasets: [
@@ -116,4 +109,4 @@ const HalfDoughnutChart: React.FC<{ creditRating: string }> = ({ creditRating })
   );
 };
 
-export default HalfDoughnutChart;
+export default CreditChart;

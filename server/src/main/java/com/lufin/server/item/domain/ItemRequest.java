@@ -54,19 +54,14 @@ public class ItemRequest {
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
 
-	@PrePersist
-	protected void setCreatedAt() {
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
-
-		if (this.status == null) {
-			this.status = ItemRequestStatus.PENDING;
-		}
-	}
-
-	@PreUpdate
-	protected void setUpdatedAt() {
-		this.updatedAt = LocalDateTime.now();
+	public static ItemRequest create(Item item, Member requester) {
+		ItemRequest request = new ItemRequest();
+		request.item = item;
+		request.requester = requester;
+		request.status = ItemRequestStatus.PENDING;
+		request.createdAt = LocalDateTime.now();
+		request.updatedAt = LocalDateTime.now();
+		return request;
 	}
 
 	public void approve(Member approver) {
@@ -77,5 +72,10 @@ public class ItemRequest {
 	public void reject(Member approver) {
 		this.status = ItemRequestStatus.REJECTED;
 		this.approvedBy = approver;
+	}
+
+	@PreUpdate
+	protected void setUpdatedAt() {
+		this.updatedAt = LocalDateTime.now();
 	}
 }

@@ -23,4 +23,14 @@ public class ItemTemplate {
 
 	@Column(name = "name", nullable = false, length = 50)
 	private String name;
+
+	public static ItemTemplate create(String name) {
+		ItemTemplate template = new ItemTemplate();
+		template.name = name;
+		return template;
+	}
+
+	public void changeName(String name) {
+		this.name = name;
+	}
 }

@@ -61,22 +61,43 @@ public class Item {
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
 
-	@PrePersist
-	protected void setCreatedAt() {
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
+	public static Item create(Classroom classroom, String name, Integer type, Integer price, int quantity, LocalDateTime expirationDate) {
+		Item item = new Item();
+		item.classroom = classroom;
+		item.name = name;
+		item.type = type;
+		item.price = price;
+		item.quantityAvailable = quantity;
+		item.quantitySold = 0;
+		item.status = true;
+		item.expirationDate = expirationDate;
+		item.createdAt = LocalDateTime.now();
+		item.updatedAt = LocalDateTime.now();
+		return item;
 	}
 
-	@PreUpdate
-	protected void setUpdatedAt() {
-		this.updatedAt = LocalDateTime.now();
-	}
-
-	public void modifyInfo(String name, Integer price, Integer quantityAvailable, LocalDateTime expirationDate) {
+	public void changeName(String name) {
 		this.name = name;
+	}
+
+	public void changePrice(Integer price) {
 		this.price = price;
+	}
+
+	public void changeQuantityAvailable(Integer quantityAvailable) {
 		this.quantityAvailable = quantityAvailable;
+	}
+
+	public void changeExpirationDate(LocalDateTime expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+	public void increaseQuantitySold() {
+		this.quantitySold++;
+	}
+
+	public void decreaseQuantitySold() {
+		this.quantitySold--;
 	}
 
 	public void disable() {
@@ -87,5 +108,8 @@ public class Item {
 		this.status = true;
 	}
 
-
+	@PreUpdate
+	protected void setUpdatedAt() {
+		this.updatedAt = LocalDateTime.now();
+	}
 }

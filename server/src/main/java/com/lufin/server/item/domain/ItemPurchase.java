@@ -53,23 +53,15 @@ public class ItemPurchase {
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
 
-	@PrePersist
-	protected void setCreatedAt() {
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
-
-		if (this.itemCount == null) {
-			this.itemCount = 1;
-		}
-
-		if (this.status == null) {
-			this.status = ItemPurchaseStatus.BUY;
-		}
-	}
-
-	@PreUpdate
-	protected void setUpdatedAt() {
-		this.updatedAt = LocalDateTime.now();
+	public static ItemPurchase create(Item item, Member member, int itemCount) {
+		ItemPurchase purchase = new ItemPurchase();
+		purchase.item = item;
+		purchase.member = member;
+		purchase.itemCount = itemCount;
+		purchase.status = ItemPurchaseStatus.BUY;
+		purchase.createdAt = LocalDateTime.now();
+		purchase.updatedAt = LocalDateTime.now();
+		return purchase;
 	}
 
 	public void used() {
@@ -86,5 +78,10 @@ public class ItemPurchase {
 
 	public boolean isPurchasedBy(Member member) {
 		return this.member.equals(member);
+	}
+
+	@PreUpdate
+	protected void setUpdatedAt() {
+		this.updatedAt = LocalDateTime.now();
 	}
 }

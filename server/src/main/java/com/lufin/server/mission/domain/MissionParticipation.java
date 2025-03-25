@@ -37,7 +37,7 @@ public class MissionParticipation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "participation_id")
-	private Integer id;
+	private Integer participationId;
 
 	@Column(name = "member_id", nullable = false)
 	private Integer memberId;

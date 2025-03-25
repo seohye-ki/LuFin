@@ -56,7 +56,7 @@ dependencies {
 }
 
 // QueryDSL 설정 추가 (수정된 버전)
-def querydslDir = layout.buildDirectory.dir('generated/querydsl' as Provider<? extends CharSequence>).get().asFile
+def querydslDir = layout.buildDirectory.dir('generated/querydsl').get().asFile
 
 // java source set 에 querydsl QClass 위치 추가
 sourceSets {
@@ -79,7 +79,3 @@ tasks.named('clean') {
 tasks.named('test') {
     useJUnitPlatform()
 }
-
-def void id(String s) {}
-
-def void exclude(LinkedHashMap<String, String> stringStringLinkedHashMap) {}

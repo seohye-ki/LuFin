@@ -43,7 +43,7 @@ public class Mission {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
 	@Column(name = "mission_id")
-	private Integer id;
+	private Integer missionId;
 
 	@Column(name = "class_id", nullable = false)
 	private Integer classId;

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.lufin.server.mission.domain.Mission;
 import com.lufin.server.mission.domain.MissionStatus;
+import com.querydsl.core.annotations.QueryProjection;
 
 public class MissionResponseDto {
 	// TODO: record를 활용해 dto 작성
@@ -12,7 +13,7 @@ public class MissionResponseDto {
 	 * 미션 상세 응답 DTO
 	 */
 	public record MissionDetailResponseDto(
-		Integer id,
+		Integer missionId,
 		Integer classId,
 		String title,
 		String content,
@@ -26,12 +27,16 @@ public class MissionResponseDto {
 		LocalDateTime createdAt,
 		LocalDateTime updatedAt
 	) {
+		@QueryProjection
+		public MissionDetailResponseDto {
+		}
+
 		/**
 		 * Mission 엔티티를 응답 DTO로 변환
 		 */
 		public static MissionDetailResponseDto missionEntityToMissionDetailResponseDto(Mission mission) {
 			return new MissionDetailResponseDto(
-				mission.getId(),
+				mission.getMissionId(),
 				mission.getClassId(),
 				mission.getTitle(),
 				mission.getContent(),
@@ -52,7 +57,7 @@ public class MissionResponseDto {
 	 * 미션 목록 응답 DTO (요약본)
 	 */
 	public record MissionSummaryResponseDto(
-		Integer id,
+		Integer missionId,
 		String title,
 		Integer difficulty,
 		Integer maxParticipants,
@@ -61,12 +66,18 @@ public class MissionResponseDto {
 		LocalDateTime missionDate,
 		MissionStatus status
 	) {
+
+		// querydsl 객체 생성을 위한 생성자
+		@QueryProjection
+		public MissionSummaryResponseDto {
+		}
+
 		/**
 		 * Mission 엔티티를 요약 DTO로 변환
 		 */
-		public static MissionSummaryResponseDto fromEntity(Mission mission) {
+		public static MissionSummaryResponseDto missionEntityToMissionDetailResponseDto(Mission mission) {
 			return new MissionSummaryResponseDto(
-				mission.getId(),
+				mission.getMissionId(),
 				mission.getTitle(),
 				mission.getDifficulty(),
 				mission.getMaxParticipants(),

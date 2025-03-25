@@ -17,13 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 public class MissionServiceImpl implements MissionService {
 
 	@Override
-	public List<Mission> getAllMissions() {
+	public List<Mission> getAllMissions(Integer classId) {
 
 		return List.of();
 	}
 
 	@Override
-	public Mission getMissionById(Integer id) {
+	public Mission getMissionById(Integer classId, Integer missionId) {
 		return null;
 	}
 }

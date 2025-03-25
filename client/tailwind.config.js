@@ -55,7 +55,7 @@ export default {
         bold: 'var(--font-weight-bold)',
       },
       fontFamily: {
-        pretendard: 'var(--font-pretendard)',
+        pretendard: ['var(--font-pretendard)', 'system-ui', 'sans-serif'],
       },
     },
   },

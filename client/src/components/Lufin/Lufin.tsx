@@ -1,12 +1,13 @@
 import { twMerge } from 'tailwind-merge';
 import lufinCoin16 from '../../assets/svgs/lufin-coin-16.svg';
 import lufinCoin24 from '../../assets/svgs/lufin-coin-24.svg';
+import lufinCoin28 from '../../assets/svgs/lufin-coin-28.svg';
 import lufinCoin32 from '../../assets/svgs/lufin-coin-32.svg';
 import lufinCoin40 from '../../assets/svgs/lufin-coin-40.svg';
 import lufinCoin52 from '../../assets/svgs/lufin-coin-52.svg';
 
 interface LufinProps {
-  size?: 16 | 24 | 32 | 40 | 52;
+  size?: 16 | 24 | 28 | 32 | 40 | 52;
   count?: number;
   className?: string;
 }
@@ -14,6 +15,7 @@ interface LufinProps {
 const lufinCoinMap = {
   16: lufinCoin16,
   24: lufinCoin24,
+  28: lufinCoin28,
   32: lufinCoin32,
   40: lufinCoin40,
   52: lufinCoin52,
@@ -22,17 +24,19 @@ const lufinCoinMap = {
 const sizeMap = {
   16: 'w-4 h-4',
   24: 'w-6 h-6',
+  28: 'w-7 h-7',
   32: 'w-8 h-8',
   40: 'w-10 h-10',
   52: 'w-12 h-12',
 };
 
 const fontSizeMap = {
-  16: 'text-p3 semibold',
-  24: 'text-p2 semibold',
-  32: 'text-p1 semibold',
-  40: 'text-h2 semibold',
-  52: 'text-h1 semibold',
+  16: 'text-p2 font-semibold',
+  24: 'text-h3 font-semibold',
+  28: 'text-h2 font-semibold',
+  32: 'text-h2 font-semibold',
+  40: 'text-h1 font-semibold',
+  52: 'text-h1 font-semibold',
 };
 
 const Lufin = ({ size = 40, count, className }: LufinProps) => {

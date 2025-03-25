@@ -14,6 +14,8 @@ public enum ErrorCode {
 	INSUFFICIENT_STOCK("E400005", "아이템 재고가 부족합니다."),
 	INVALID_PURCHASE_QUANTITY("E400006", "유효하지 않은 구매 수량입니다."),
 	INVALID_INPUT_VALUE("E400007", "잘못된 입력 값입니다."),
+	INVALID_DEPOSIT_AMOUNT("E400008", "입금 금액은 0보다 커야 합니다."),
+	INVALID_WITHDRAWAL_AMOUNT("E400009", "출금 금액은 0보다 커야 합니다."),
 
 	INVALID_CREDENTIALS("E401001", "이메일 또는 패스워드를 확인해주세요."),
 	UNAUTHORIZED_ACCESS("E401002", "인증이 필요합니다."),
@@ -34,6 +36,7 @@ public enum ErrorCode {
 	LOAN_APPLICATION_NOT_FOUND("E404006", "해당 대출 신청 정보를 찾을 수 없습니다."),
 	ITEM_NOT_FOUND("E404007", "해당 아이템을 찾을 수 없습니다."),
 	LOAN_PRODUCT_NOT_FOUND("E404008", "해당 대출 상품을 찾을 수 없습니다."),
+	ACCOUNT_NOT_FOUND("E404009", "계좌를 찾을 수 없습니다."),
 
 	EMAIL_ALREADY_REGISTERED("E409001", "이미 가입된 이메일입니다."),
 	DUPLICATE_COUPON_USAGE("E409002", "이미 등록된 교번/학번 입니다."),

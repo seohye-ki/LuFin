@@ -5,9 +5,10 @@ import SidebarMenu from './SidebarMenu';
 
 interface SidebarProps {
   userRole: 'student' | 'teacher';
+  className?: string;
 }
 
-const Sidebar = ({ userRole }: SidebarProps) => {
+const Sidebar = ({ userRole, className = '친구들의 금융 모임' }: SidebarProps) => {
   return (
     <div className='w-[200px] h-full p-4 flex flex-col bg-white'>
       <div className='flex flex-col gap-4'>
@@ -15,7 +16,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
           <div className='flex flex-col h-146 gap-3'>
             <img src={logo} alt='루핀' className='h-[48px] py-2 justify-center' />
             <p className='text-c2 font-regular text-dark-grey'>클래스</p>
-            <p className='text-c1 font-medium'>친구들의 금융 모임</p>
+            <p className='text-c1 font-medium'>{className}</p>
             <hr className='w-full border-t border-new-grey' />
             <p className='text-c2 font-regular text-dark-grey'>메뉴</p>
             <SidebarMenu />

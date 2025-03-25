@@ -48,7 +48,7 @@ const Menu = ({ isActive = false, type, onClick }: MenuProps) => {
       )}
       onClick={onClick}
     >
-      <Icon name={icon} size={24} color={isActive ? '#292D32' : '#8A8D8E'} />
+      <Icon name={icon} size={24} color={isActive ? 'black' : 'grey'} />
       <span className={twMerge(isActive ? 'text-black' : 'text-grey')}>{text}</span>
     </button>
   );

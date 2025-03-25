@@ -3,6 +3,9 @@ import Lufin from '../components/Lufin/Lufin';
 import Button from '../components/Button/Button';
 import Badge from '../components/Badge/Badge';
 import { Icon, IconProps, IconsaxIconName } from '../components/Icon/Icon';
+import Sidebar from '../components/Sidebar/Sidebar';
+import SidebarLayout from '../components/Layout/SidebarLayout';
+import DefaultLayout from '../components/Layout/DefaultLayout';
 
 const CommonComponents = () => {
   const navigationIcons: IconsaxIconName[] = [
@@ -37,7 +40,7 @@ const CommonComponents = () => {
   const variants: IconProps['variant'][] = ['Linear', 'Outline', 'Broken', 'Bold', 'Bulk', 'TwoTone'];
 
   return (
-    <div className='p-8 min-h-screen'>
+    <div className='p-8 min-h-screen bg-broken-white'>
       <h1 className='text-h1 font-regular text-black mb-4'>Common Components</h1>
       <div className='flex flex-col gap-8'>
         {/* Icon Section */}
@@ -187,6 +190,7 @@ const CommonComponents = () => {
           <div className='flex flex-col gap-12'>
             <Lufin count={15200} size={16} />
             <Lufin count={15200} size={24} />
+            <Lufin count={15200} size={28} />
             <Lufin count={15200} size={32} />
             <Lufin count={15200} size={40} />
             <Lufin count={15200} size={52} />
@@ -285,6 +289,32 @@ const CommonComponents = () => {
                 </Button>
               </div>
             </div>
+          </div>
+        </section>
+        {/* Sidebar Section */}
+        <section className='flex gap-8'>
+          <div className='flex flex-col gap-4'>
+            <h2 className='text-h2 font-medium text-black mb-4'>학생 사이드바</h2>
+            <Sidebar userRole='student' />
+          </div>
+          <div className='flex flex-col gap-4'>
+            <h2 className='text-h2 font-medium text-black mb-4'>선생님 사이드바</h2>
+            <Sidebar userRole='teacher' />
+          </div>
+        </section>
+        {/* Layout Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Layout</h2>
+          <div className='flex gap-8'>
+            <SidebarLayout>
+              <h2 className='text-h2 font-medium text-black mb-4'>Sidebar Layout</h2>
+              <p className='text-body'>사이드바가 포함된 레이아웃입니다.</p>
+            </SidebarLayout>
+
+            <DefaultLayout>
+              <h2 className='text-h2 font-medium text-black mb-4'>Default Layout</h2>
+              <p className='text-body'>사이드바가 없는 기본 레이아웃입니다.</p>
+            </DefaultLayout>
           </div>
         </section>
       </div>

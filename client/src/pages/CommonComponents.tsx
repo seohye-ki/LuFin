@@ -2,15 +2,161 @@ import Profile from '../components/Profile/Profile';
 import Lufin from '../components/Lufin/Lufin';
 import Button from '../components/Button/Button';
 import Badge from '../components/Badge/Badge';
+import { Icon, IconProps, IconsaxIconName } from '../components/Icon/Icon';
 import Sidebar from '../components/Sidebar/Sidebar';
 import SidebarLayout from '../components/Layout/SidebarLayout';
 import DefaultLayout from '../components/Layout/DefaultLayout';
 
 const CommonComponents = () => {
+  const navigationIcons: IconsaxIconName[] = [
+    'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+    'ArrowLeft2', 'ArrowRight2', 'ArrowUp2', 'ArrowDown2',
+    'ArrowCircleLeft', 'ArrowCircleRight', 'ArrowCircleUp', 'ArrowCircleDown',
+    'ArrowCircleLeft2', 'ArrowCircleRight2', 'ArrowCircleUp2', 'ArrowCircleDown2',
+    'ArrowSquareLeft', 'ArrowSquareRight', 'ArrowSquareUp', 'ArrowSquareDown',
+  ];
+
+  const statusIcons: IconsaxIconName[] = [
+    'InfoCircle', 'Notification', 'CloseCircle', 'TickCircle',
+    'Alarm', 'MinusSquare', 'MinusCirlce', 'AddCircle',
+  ];
+
+  const actionIcons: IconsaxIconName[] = [
+    'Edit', 'Edit2', 'Trash', 'Filter', 'Setting4',
+    'SearchNormal1', 'HambergerMenu', 'MoreCircle',
+    'Add', 'More', 'Close', 'CircleEdit', 'CircleTrash', 'CircleAdd',
+  ];
+
+  const businessIcons: IconsaxIconName[] = [
+    'Shop', 'ShoppingCart', 'DollarSquare', 'ChartSquare',
+    'Wallet', 'Briefcase', 'TaskSquare', 'GalleryAdd',
+  ];
+
+  const userIcons: IconsaxIconName[] = [
+    'ProfileCircle', 'Profile2User', 'Personalcard', 'Home2',
+    'Star',
+  ];
+
+  const variants: IconProps['variant'][] = ['Linear', 'Outline', 'Broken', 'Bold', 'Bulk', 'TwoTone'];
+
   return (
     <div className='p-8 min-h-screen bg-broken-white'>
       <h1 className='text-h1 font-regular text-black mb-4'>Common Components</h1>
       <div className='flex flex-col gap-8'>
+        {/* Icon Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Icons</h2>
+          <div className='flex flex-col gap-8 bg-broken-white p-4 rounded-2xl'>
+            {/* Navigation Icons */}
+            <div>
+              <h3 className='text-p1 font-medium text-black mb-4'>Navigation Icons</h3>
+              <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
+                {navigationIcons.map((name) => (
+                  <div key={name} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                    <Icon name={name} size={24} />
+                    <span className='text-xs text-center'>{name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Status Icons */}
+            <div>
+              <h3 className='text-p1 font-medium text-black mb-4'>Status Icons</h3>
+              <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
+                {statusIcons.map((name) => (
+                  <div key={name} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                    <Icon name={name} size={24} />
+                    <span className='text-xs text-center'>{name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Icons */}
+            <div>
+              <h3 className='text-p1 font-medium text-black mb-4'>Action Icons</h3>
+              <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
+                {actionIcons.map((name) => (
+                  <div key={name} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                    <Icon name={name} size={24} />
+                    <span className='text-xs text-center'>{name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Business Icons */}
+            <div>
+              <h3 className='text-p1 font-medium text-black mb-4'>Business Icons</h3>
+              <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
+                {businessIcons.map((name) => (
+                  <div key={name} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                    <Icon name={name} size={24} />
+                    <span className='text-xs text-center'>{name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* User Icons */}
+            <div>
+              <h3 className='text-p1 font-medium text-black mb-4'>User Icons</h3>
+              <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
+                {userIcons.map((name) => (
+                  <div key={name} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                    <Icon name={name} size={24} />
+                    <span className='text-xs text-center'>{name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Icon Variants */}
+            <div>
+              <h3 className='text-p1 font-medium text-black mb-4'>Icon Variants (Using InfoCircle)</h3>
+              <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4'>
+                {variants.map((variant) => (
+                  <div key={variant} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                    <Icon name="InfoCircle" size={24} variant={variant} />
+                    <span className='text-xs text-center'>{variant}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Semantic Colors with Variants */}
+            <div>
+              <h3 className='text-p1 font-medium text-black mb-4'>Semantic Colors with Variants</h3>
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
+                {[
+                  { name: 'Info', color: '#00A3FF' },
+                  { name: 'Warning', color: '#FFB800' },
+                  { name: 'Danger', color: '#FF4747' },
+                  { name: 'Success', color: '#00BA34' },
+                ].map(({ name, color }) => (
+                  <div key={name} className='flex flex-col gap-4'>
+                    <span className='text-sm font-medium'>{name}</span>
+                    <div className='grid grid-cols-3 gap-4'>
+                      {['Linear', 'Outline', 'Bold'].map((variant) => (
+                        <div key={variant} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                          <Icon
+                            name="InfoCircle"
+                            size={32}
+                            color={color}
+                            variant={variant as IconProps['variant']}
+                          />
+                          <span className='text-xs text-center'>{variant}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Profile Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Profile</h2>

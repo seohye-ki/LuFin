@@ -7,6 +7,8 @@ import { Icon, IconProps, IconsaxIconName } from '../components/Icon/Icon';
 import Sidebar from '../components/Sidebar/Sidebar';
 import SidebarLayout from '../components/Layout/SidebarLayout';
 import DefaultLayout from '../components/Layout/DefaultLayout';
+import Checkbox from '../components/Form/Checkbox';
+import { useState } from 'react';
 
 const CommonComponents = () => {
   const navigationIcons: IconsaxIconName[] = [
@@ -39,6 +41,11 @@ const CommonComponents = () => {
   ];
 
   const variants: IconProps['variant'][] = ['Linear', 'Outline', 'Broken', 'Bold', 'Bulk', 'TwoTone'];
+
+  // Checkbox states
+  const [checkbox1, setCheckbox1] = useState(false);
+  const [checkbox2, setCheckbox2] = useState(true);
+  const [checkbox5, setCheckbox5] = useState(false);
 
   return (
     <div className='p-8 min-h-screen bg-broken-white'>
@@ -199,10 +206,10 @@ const CommonComponents = () => {
               <h3 className='text-p1 font-medium text-black mb-4'>Semantic Colors with Variants</h3>
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
                 {[
-                  { name: 'Info', color: '#00A3FF' },
-                  { name: 'Warning', color: '#FFB800' },
-                  { name: 'Danger', color: '#FF4747' },
-                  { name: 'Success', color: '#00BA34' },
+                  { name: 'Info', color: 'info' },
+                  { name: 'Warning', color: 'warning' },
+                  { name: 'Danger', color: 'danger' },
+                  { name: 'Success', color: 'success' },
                 ].map(({ name, color }) => (
                   <div key={name} className='flex flex-col gap-4'>
                     <span className='text-sm font-medium'>{name}</span>
@@ -360,6 +367,55 @@ const CommonComponents = () => {
             </div>
           </div>
         </section>
+
+        {/* Form Components Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Form Components</h2>
+          <div className='flex flex-col gap-8 bg-broken-white p-4 rounded-2xl'>
+            {/* Checkbox */}
+            <div>
+              <h3 className='text-p1 font-medium text-black mb-4'>Checkbox</h3>
+              <div className='flex items-center gap-8'>
+                <div className='flex flex-col items-center'>
+                  <Checkbox 
+                    id="checkbox-1" 
+                    checked={checkbox1}
+                    onChange={(e, checked) => setCheckbox1(checked)}
+                  />
+                  <span className='text-xs mt-1'>{checkbox1 ? '체크됨' : '체크 안됨'}</span>
+                </div>
+                <div className='flex flex-col items-center'>
+                  <Checkbox 
+                    id="checkbox-2" 
+                    checked={checkbox2}
+                    onChange={(e, checked) => setCheckbox2(checked)}
+                  />
+                  <span className='text-xs mt-1'>{checkbox2 ? '체크됨' : '체크 안됨'}</span>
+                </div>
+                <div className='flex flex-col items-center'>
+                  <Checkbox id="checkbox-3" disabled />
+                  <span className='text-xs mt-1'>비활성화</span>
+                </div>
+                <div className='flex flex-col items-center'>
+                  <Checkbox id="checkbox-4" disabled defaultChecked />
+                  <span className='text-xs mt-1'>체크된 비활성화</span>
+                </div>
+                <div className='flex flex-col items-center'>
+                  <Checkbox 
+                    id="checkbox-5" 
+                    indeterminate={!checkbox5}
+                    checked={checkbox5}
+                    onChange={(e, checked) => setCheckbox5(checked)}
+                  />
+                  <span className='text-xs mt-1'>
+                    {!checkbox5 ? '중간 상태' : '체크됨'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Sidebar Section */}
         <section className='flex gap-8'>
           <div className='flex flex-col gap-4'>
@@ -371,6 +427,7 @@ const CommonComponents = () => {
             <Sidebar userRole='teacher' />
           </div>
         </section>
+
         {/* Layout Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Layout</h2>

@@ -1,6 +1,7 @@
 import Profile from '../components/Profile/Profile';
 import Lufin from '../components/Lufin/Lufin';
 import Button from '../components/Button/Button';
+import Badge from '../components/Badge/Badge';
 
 const CommonComponents = () => {
   return (
@@ -18,6 +19,19 @@ const CommonComponents = () => {
               variant='certification'
               certificationNumber='5학년 1반'
             />
+          </div>
+        </section>
+
+        {/* Badge Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Badge</h2>
+          <div className='flex gap-2 items-center flex-wrap bg-broken-white p-4 rounded-2xl'>
+            <Badge status='ready'>모집 중</Badge>
+            <Badge status='ing'>수행 중</Badge>
+            <Badge status='reject'>반려</Badge>
+            <Badge status='review'>검토 중</Badge>
+            <Badge status='fail'>실패</Badge>
+            <Badge status='done'>성공</Badge>
           </div>
         </section>
 

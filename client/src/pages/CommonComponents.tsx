@@ -2,10 +2,11 @@ import Profile from '../components/Profile/Profile';
 import Lufin from '../components/Lufin/Lufin';
 import Button from '../components/Button/Button';
 import Badge from '../components/Badge/Badge';
+import Sidebar from '../components/Sidebar/Sidebar';
 
 const CommonComponents = () => {
   return (
-    <div className='p-8 min-h-screen'>
+    <div className='p-8 min-h-screen bg-broken-white'>
       <h1 className='text-h1 font-regular text-black mb-4'>Common Components</h1>
       <div className='flex flex-col gap-8'>
         {/* Profile Section */}
@@ -41,6 +42,7 @@ const CommonComponents = () => {
           <div className='flex flex-col gap-12'>
             <Lufin count={15200} size={16} />
             <Lufin count={15200} size={24} />
+            <Lufin count={15200} size={28} />
             <Lufin count={15200} size={32} />
             <Lufin count={15200} size={40} />
             <Lufin count={15200} size={52} />
@@ -139,6 +141,17 @@ const CommonComponents = () => {
                 </Button>
               </div>
             </div>
+          </div>
+        </section>
+        {/* Sidebar Section */}
+        <section className='flex gap-8'>
+          <div className='flex flex-col gap-4'>
+            <h2 className='text-h2 font-medium text-black mb-4'>학생 사이드바</h2>
+            <Sidebar userRole='student' />
+          </div>
+          <div className='flex flex-col gap-4'>
+            <h2 className='text-h2 font-medium text-black mb-4'>선생님 사이드바</h2>
+            <Sidebar userRole='teacher' />
           </div>
         </section>
       </div>

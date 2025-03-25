@@ -20,8 +20,8 @@ const Profile = ({
       className={twMerge(
         'flex',
         isDefault
-          ? 'flex-col p-0 gap-[4px] items-center w-[42px] h-[58px]'
-          : 'border border-purple rounded-lg flex-row px-4 py-2 gap-[10px] items-center w-[198px] h-[58px]',
+          ? 'flex-col p-0 gap-[4px] items-center w-full h-[58px]'
+          : 'border border-purple-30 rounded-lg flex-row px-2 py-2 gap-[10px] items-center w-full h-[58px]',
       )}
     >
       <img
@@ -32,8 +32,10 @@ const Profile = ({
       <div
         className={twMerge('flex', isDefault ? 'flex-col items-center' : 'flex-col justify-center')}
       >
-        <p className={isDefault ? 'text-c2' : 'text-p2-medium'}>{name}</p>
-        {!isDefault && certificationNumber && <p className='text-c1'>{certificationNumber}</p>}
+        <p className={isDefault ? 'text-c2' : 'text-p2 font-medium'}>{name}</p>
+        {!isDefault && certificationNumber && (
+          <p className='text-c1 font-regular'>{certificationNumber}</p>
+        )}
       </div>
     </div>
   );

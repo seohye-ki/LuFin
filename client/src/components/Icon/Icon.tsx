@@ -52,6 +52,33 @@ import {
   More,
 } from 'iconsax-react';
 
+type CustomColor =
+  | 'white'
+  | 'broken-white'
+  | 'new-grey'
+  | 'grey-25'
+  | 'grey-30'
+  | 'light-grey'
+  | 'grey'
+  | 'dark-grey'
+  | 'black'
+  | 'light-cyan'
+  | 'light-cyan-30'
+  | 'purple'
+  | 'purple-30'
+  | 'yellow'
+  | 'yellow-30'
+  | 'success'
+  | 'danger'
+  | 'info'
+  | 'warning'
+  | 'dark-purple'
+  | 'dark-pink'
+  | 'pink'
+  | 'pink-30'
+  | 'success-30'
+  | 'placeholder';
+
 // Icon name mapping
 const ICONSAX_ICONS = {
   Alarm,
@@ -116,7 +143,7 @@ type IconsaxIconName = keyof typeof ICONSAX_ICONS;
 interface IconProps {
   name: IconsaxIconName;
   size?: number;
-  color?: string;
+  color?: CustomColor | string;
   variant?: 'Linear' | 'Outline' | 'Broken' | 'Bold' | 'Bulk' | 'TwoTone';
   className?: string;
 }
@@ -130,6 +157,11 @@ export const Icon = ({
 }: IconProps) => {
   const IconComponent = ICONSAX_ICONS[name];
   const isCircleIcon = name === 'CircleEdit' || name === 'CircleTrash' || name === 'CircleAdd';
+
+  // Convert color name to CSS variable if it's a CustomColor
+  const getColor = (colorName: string) => {
+    return colorName.startsWith('var(--') ? colorName : `var(--color-${colorName})`;
+  };
 
   if (isCircleIcon) {
     return (
@@ -145,21 +177,21 @@ export const Icon = ({
         {name === 'CircleEdit' ? (
           <Edit2
             size={size * 0.6}
-            color={color}
+            color={color === 'currentColor' ? color : getColor(color)}
             variant={variant}
             className="absolute"
           />
         ) : name === 'CircleTrash' ? (
           <Trash
             size={size * 0.65}
-            color={color}
+            color={color === 'currentColor' ? color : getColor(color)}
             variant={variant}
             className="absolute"
           />
         ) : (
           <Add
             size={size * 0.8}
-            color={color}
+            color={color === 'currentColor' ? color : getColor(color)}
             variant={variant}
             className="absolute"
           />
@@ -171,11 +203,11 @@ export const Icon = ({
   return (
     <IconComponent
       size={size}
-      color={color}
+      color={color === 'currentColor' ? color : getColor(color)}
       variant={variant}
       className={`${className} ${name === 'Close' ? 'rotate-45' : ''}`}
     />
   );
 };
 
-export type { IconProps, IconsaxIconName };
+export type { IconProps, IconsaxIconName, CustomColor };

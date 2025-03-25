@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "item_request")
+@Table(name = "item_requests")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class ItemRequest {

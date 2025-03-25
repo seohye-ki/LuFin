@@ -1,0 +1,67 @@
+import { ButtonHTMLAttributes } from 'react';
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  color?: 'primary' | 'danger' | 'neutral' | 'disabled' | 'info';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  variant?: 'solid' | 'outline' | 'ghost';
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+}
+
+export default function Button({
+  color = 'primary',
+  size = 'md',
+  variant = 'solid',
+  children,
+  className = '',
+  ...props
+}: ButtonProps) {
+  const baseStyles =
+    'rounded-[50px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2';
+
+  const variantStyles = {
+    solid: {
+      primary: 'bg-light-cyan text-black hover:bg-light-cyan-30 focus-visible:outline-light-cyan',
+      danger: 'bg-danger text-white hover:opacity-80 focus-visible:outline-danger',
+      neutral: 'bg-new-grey text-black hover:bg-grey-30 focus-visible:outline-new-grey',
+      disabled: 'bg-light-grey text-white cursor-not-allowed',
+      info: 'bg-info text-white hover:opacity-80 focus-visible:outline-info',
+    },
+    outline: {
+      primary: 'border-2 border-light-cyan text-light-cyan bg-transparent hover:bg-light-cyan-30',
+      danger: 'border-2 border-danger text-danger bg-transparent hover:bg-danger/10',
+      neutral: 'border-2 border-new-grey text-new-grey bg-transparent hover:bg-grey-30',
+      disabled: 'border-2 border-light-grey text-light-grey bg-transparent cursor-not-allowed',
+      info: 'border-2 border-info text-info bg-transparent hover:bg-info/10',
+    },
+    ghost: {
+      primary: 'text-light-cyan hover:bg-light-cyan-30',
+      danger: 'text-danger hover:bg-danger/10',
+      neutral: 'text-new-grey hover:bg-grey-30',
+      disabled: 'text-light-grey cursor-not-allowed',
+      info: 'text-info hover:bg-info/10',
+    },
+  };
+
+  const sizeStyles = {
+    xs: 'px-2.5 py-1 text-xs',
+    sm: 'px-2.5 py-1 text-sm',
+    md: 'px-3 py-1.5 text-sm',
+    lg: 'px-3.5 py-2 text-sm',
+    xl: 'px-4 py-2.5 text-sm',
+    full: 'px-4 py-2.5 text-sm w-full',
+  };
+
+  return (
+    <button
+      type='button'
+      className={`${baseStyles} ${variantStyles[variant][color]} ${sizeStyles[size]} ${className}`}
+      disabled={color === 'disabled'}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}

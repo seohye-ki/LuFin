@@ -2,6 +2,7 @@ import Profile from '../components/Profile/Profile';
 import Lufin from '../components/Lufin/Lufin';
 import Button from '../components/Button/Button';
 import Badge from '../components/Badge/Badge';
+import Alert from '../components/Alert/Alert';
 import { Icon, IconProps, IconsaxIconName } from '../components/Icon/Icon';
 import Sidebar from '../components/Sidebar/Sidebar';
 import SidebarLayout from '../components/Layout/SidebarLayout';
@@ -43,6 +44,74 @@ const CommonComponents = () => {
     <div className='p-8 min-h-screen bg-broken-white'>
       <h1 className='text-h1 font-regular text-black mb-4'>Common Components</h1>
       <div className='flex flex-col gap-8'>
+        {/* Alert Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Alert</h2>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-broken-white p-4 rounded-2xl'>
+            {/* Info Alert - Row buttons */}
+            <Alert
+              title="새로운 미션이 등록됐어요"
+              description="미션 수행하고 루핀을 모아보세요!"
+              status="info"
+              buttonDirection="row"
+              primaryButton={{
+                label: "확인하러 가기",
+                onClick: () => alert("확인하러 가기 클릭"),
+              }}
+              secondaryButton={{
+                label: "취소",
+                onClick: () => alert("취소 클릭"),
+              }}
+            />
+
+            {/* Warning Alert - Column buttons */}
+            <Alert
+              title="지금은 매매할 수 없어요"
+              description="매매 가능 시간은 매일 오시장 14시까지입니다."
+              status="warning"
+              buttonDirection="column"
+              primaryButton={{
+                label: "확인했습니다",
+                onClick: () => alert("확인 클릭"),
+                color: "primary"
+              }}
+              secondaryButton={{
+                label: "이유 보기",
+                onClick: () => alert("이유 보기 클릭"),
+              }}
+            />
+
+            {/* Danger Alert - Single button */}
+            <Alert
+              title="네트워크 오류"
+              description="빠른 시간 내에 조치하겠습니다."
+              status="danger"
+              primaryButton={{
+                label: "확인했습니다",
+                onClick: () => alert("확인 클릭"),
+                color: "danger"
+              }}
+            />
+
+            {/* Success Alert - Row buttons */}
+            <Alert
+              title="삭제가 완료됐어요"
+              description="삭제된 데이터는 복구할 수 없어요."
+              status="success"
+              buttonDirection="row"
+              primaryButton={{
+                label: "확인",
+                onClick: () => alert("확인 클릭"),
+                color: "primary"
+              }}
+              secondaryButton={{
+                label: "되돌리기",
+                onClick: () => alert("되돌리기 클릭"),
+              }}
+            />
+          </div>
+        </section>
+
         {/* Icon Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Icons</h2>
@@ -278,13 +347,13 @@ const CommonComponents = () => {
             <div>
               <h3 className='text-p1 font-medium text-black mb-2'>전체 너비</h3>
               <div className='flex flex-col gap-2'>
-                <Button size='full' variant='solid'>
+                <Button size='md' variant='solid' full>
                   Solid 전체 너비 버튼
                 </Button>
-                <Button size='full' variant='outline'>
+                <Button size='md' variant='outline' full>
                   Outline 전체 너비 버튼
                 </Button>
-                <Button size='full' variant='ghost'>
+                <Button size='md' variant='ghost' full>
                   Ghost 전체 너비 버튼
                 </Button>
               </div>

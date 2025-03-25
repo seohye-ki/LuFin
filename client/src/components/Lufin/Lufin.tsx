@@ -3,7 +3,7 @@ import lufinCoin16 from '../../assets/svgs/lufin-coin-16.svg';
 import lufinCoin24 from '../../assets/svgs/lufin-coin-24.svg';
 import lufinCoin32 from '../../assets/svgs/lufin-coin-32.svg';
 import lufinCoin40 from '../../assets/svgs/lufin-coin-40.svg';
-import lufinCoin48 from '../../assets/svgs/lufin-coin-52.svg';
+import lufinCoin52 from '../../assets/svgs/lufin-coin-52.svg';
 
 interface LufinProps {
   size?: 16 | 24 | 32 | 40 | 52;
@@ -16,7 +16,7 @@ const lufinCoinMap = {
   24: lufinCoin24,
   32: lufinCoin32,
   40: lufinCoin40,
-  52: lufinCoin48,
+  52: lufinCoin52,
 };
 
 const sizeMap = {

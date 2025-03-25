@@ -1,7 +1,8 @@
-package com.lufin.server.account.domain;
+package com.lufin.server.transaction.domain;
 
 import java.time.LocalDateTime;
 
+import com.lufin.server.account.domain.Account;
 import com.lufin.server.common.constants.HistoryStatus;
 import com.lufin.server.member.domain.Member;
 

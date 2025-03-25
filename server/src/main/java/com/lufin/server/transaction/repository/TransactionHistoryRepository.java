@@ -1,4 +1,4 @@
-package com.lufin.server.account.repository;
+package com.lufin.server.transaction.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.lufin.server.account.domain.TransactionHistory;
 import com.lufin.server.common.constants.HistoryStatus;
+import com.lufin.server.transaction.domain.TransactionHistory;
 
 public interface TransactionHistoryRepository extends JpaRepository<TransactionHistory, Integer> {
 
@@ -26,9 +26,9 @@ public interface TransactionHistoryRepository extends JpaRepository<TransactionH
 
 	// 특정 계좌의 특정 기간 동안의 거래 내역 조회
 	@Query("""
-		    SELECT t FROM TransactionHistory t
-		    WHERE t.fromAccount.id = :accountId
-		    AND t.createdAt BETWEEN :start AND :end
+		SELECT t FROM TransactionHistory t
+		WHERE t.fromAccount.id = :accountId
+		AND t.createdAt BETWEEN :start AND :end
 		""")
 	List<TransactionHistory> findByAccountAndDateRange(
 		@Param("accountId") int accountId,

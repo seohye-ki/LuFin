@@ -1,4 +1,4 @@
-package com.lufin.server.account.domain;
+package com.lufin.server.transaction.domain;
 
 public enum TransactionType {
 	DEPOSIT, WITHDRAWAL, TRANSFER

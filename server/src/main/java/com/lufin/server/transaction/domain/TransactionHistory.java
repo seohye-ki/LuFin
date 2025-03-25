@@ -1,7 +1,8 @@
-package com.lufin.server.account.domain;
+package com.lufin.server.transaction.domain;
 
 import java.time.LocalDateTime;
 
+import com.lufin.server.account.domain.Account;
 import com.lufin.server.common.constants.HistoryStatus;
 import com.lufin.server.member.domain.Member;
 
@@ -13,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "transaction_histories")
 public class TransactionHistory {
 
 	@Id

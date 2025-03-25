@@ -5,7 +5,7 @@ import Badge from '../components/Badge/Badge';
 import Sidebar from '../components/Sidebar/Sidebar';
 import SidebarLayout from '../components/Layout/SidebarLayout';
 import DefaultLayout from '../components/Layout/DefaultLayout';
-
+import DashBoardCard from '../components/Card/DashBoardCard';
 const CommonComponents = () => {
   return (
     <div className='p-8 min-h-screen bg-broken-white'>
@@ -22,6 +22,43 @@ const CommonComponents = () => {
               variant='certification'
               certificationNumber='5학년 1반'
             />
+          </div>
+        </section>
+        {/* Card Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Card</h2>
+          <div className='flex gap-4'>
+            <div className='flex flex-col gap-4'>
+              <h3 className='text-p1 font-medium text-black mb-2'>모달 카드</h3>
+              <DashBoardCard
+                titleLeft='제목'
+                titleRight={<Badge status='fail'>실패</Badge>}
+                titleSize='l'
+                content={
+                  <div className='flex flex-col gap-2'>
+                    <p className='text-p2 font-medium text-black'>내용</p>
+                    <div className='flex gap-2 py-4'>
+                      <Button size='full' color='neutral'>
+                        취소
+                      </Button>
+                      <Button size='full' variant='solid' color='primary'>
+                        확인
+                      </Button>
+                    </div>
+                  </div>
+                }
+                isModal
+              />
+            </div>
+            <div className='flex flex-col gap-4'>
+              <h3 className='text-p1 font-medium text-black mb-2'>대시보드 카드</h3>
+              <DashBoardCard
+                titleLeft='제목'
+                titleRight={<Badge status='fail'>실패</Badge>}
+                titleSize='l'
+                isModal={false}
+              />
+            </div>
           </div>
         </section>
 

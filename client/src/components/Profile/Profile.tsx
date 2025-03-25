@@ -18,7 +18,7 @@ const Profile = ({
   return (
     <div
       className={twMerge(
-        'w-full h-[58px] flex border border-purple rounded-lg p-2 gap-2 justify-center items-center',
+        'w-[198px] h-[58px] bg-white flex border border-purple rounded-lg p-2 gap-2 justify-start items-center',
         direction === 'row' ? 'flex-row' : 'flex-col',
       )}
     >
@@ -29,7 +29,7 @@ const Profile = ({
       />
       <div
         className={twMerge(
-          'flex justify-center items-center gap-1',
+          'flex justify-center',
           textDirection === 'row' ? 'flex-row' : 'flex-col',
         )}
       >

@@ -18,9 +18,8 @@ interface CheckboxProps extends Omit<MuiCheckboxProps, 'indeterminate'> {
   /**
    * 체크박스 상태가 변경될 때 호출되는 함수
    * @param event 체크박스 변경 이벤트
-   * @param checked 현재 체크 상태 (true: 체크됨, false: 체크 안됨)
    */
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 // 커스텀 스타일드 체크박스

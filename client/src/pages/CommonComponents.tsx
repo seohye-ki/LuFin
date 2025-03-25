@@ -476,7 +476,9 @@ const CommonComponents = () => {
                   <Checkbox 
                     id="checkbox-1" 
                     checked={checkbox1}
-                    onChange={(checked) => setCheckbox1(checked)}
+                    onChange={(e) => {
+                      setCheckbox1(e.target.checked);
+                    }}
                   />
                   <span className='text-xs mt-1'>{checkbox1 ? '체크됨' : '체크 안됨'}</span>
                 </div>
@@ -484,7 +486,9 @@ const CommonComponents = () => {
                   <Checkbox 
                     id="checkbox-2" 
                     checked={checkbox2}
-                    onChange={(checked) => setCheckbox2(checked)}
+                    onChange={(e) => {
+                      setCheckbox2(e.target.checked);
+                    }}
                   />
                   <span className='text-xs mt-1'>{checkbox2 ? '체크됨' : '체크 안됨'}</span>
                 </div>
@@ -501,7 +505,9 @@ const CommonComponents = () => {
                     id="checkbox-5" 
                     indeterminate={!checkbox5}
                     checked={checkbox5}
-                    onChange={(checked) => setCheckbox5(checked)}
+                    onChange={(e) => {
+                      setCheckbox5(e.target.checked);
+                    }}
                   />
                   <span className='text-xs mt-1'>
                     {!checkbox5 ? '중간 상태' : '체크됨'}

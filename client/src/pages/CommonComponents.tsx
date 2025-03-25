@@ -16,6 +16,7 @@ const CommonComponents = () => {
             variant='certification'
             certificationNumber='5학년 1반 12번'
           />
+          <h2 className='text-h2 font-medium text-black mb-4'>Lufin</h2>
           <div className='flex flex-col gap-12'>
             <Lufin count={15200} size={16} />
             <Lufin count={15200} size={24} />

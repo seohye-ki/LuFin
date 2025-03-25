@@ -61,7 +61,7 @@ const Menu = ({ isActive = false, type, onClick }: MenuProps) => {
   return (
     <button
       className={twMerge(
-        'flex text-p2 font-medium items-center gap-3 w-[168px] h-[40px] p-2 rounded-lg',
+        'flex text-p2 font-medium items-center gap-3 w-[168px] h-[40px] p-2 rounded-lg hover:bg-light-cyan-30',
         isActive && 'bg-light-cyan',
       )}
       onClick={onClick}

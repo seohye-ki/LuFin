@@ -1,21 +1,42 @@
 import Profile from '../components/Profile/Profile';
 import Lufin from '../components/Lufin/Lufin';
 import Button from '../components/Button/Button';
-import Sidebar from '../components/Sidebar/Sidebar';
+import Badge from '../components/Badge/Badge';
 
 const CommonComponents = () => {
   return (
-    <div className='p-8 bg-broken-white'>
-      <h1 className='text-h1 font-bold text-black mb-4'>Common Components</h1>
-      <div className='flex gap-8'>
-        <div className='flex flex-col gap-4'>
-          <Profile name='이재현' profileImage='https://picsum.photos/200/300?random=1' />
-          <Profile
-            name='이재현 선생님'
-            profileImage='https://picsum.photos/200/300?random=1'
-            variant='certification'
-            certificationNumber='5학년 1반 12번'
-          />
+    <div className='p-8 min-h-screen'>
+      <h1 className='text-h1 font-regular text-black mb-4'>Common Components</h1>
+      <div className='flex flex-col gap-8'>
+        {/* Profile Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Profile</h2>
+          <div className='flex flex-col gap-4'>
+            <Profile name='이재현' profileImage='https://picsum.photos/200/300?random=1' />
+            <Profile
+              name='이재현 선생님'
+              profileImage='https://picsum.photos/200/300?random=1'
+              variant='certification'
+              certificationNumber='5학년 1반'
+            />
+          </div>
+        </section>
+
+        {/* Badge Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Badge</h2>
+          <div className='flex gap-2 items-center flex-wrap bg-broken-white p-4 rounded-2xl'>
+            <Badge status='ready'>모집 중</Badge>
+            <Badge status='ing'>수행 중</Badge>
+            <Badge status='reject'>반려</Badge>
+            <Badge status='review'>검토 중</Badge>
+            <Badge status='fail'>실패</Badge>
+            <Badge status='done'>성공</Badge>
+          </div>
+        </section>
+
+        {/* Lufin Section */}
+        <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Lufin</h2>
           <div className='flex flex-col gap-12'>
             <Lufin count={15200} size={16} />

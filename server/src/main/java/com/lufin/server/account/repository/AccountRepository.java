@@ -17,11 +17,15 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 	// 특정 멤버 ID의 모든 계좌 조회
 	List<Account> findByMemberId(Integer memberId);
 
-	// TODO: class 계좌 찾기 추가
+	// 특정 클래스 계좌 조회
+	Optional<Account> findByClassroomId(Integer classroomId);
 
 	// 교사 역할을 가진 멤버의 계좌들 조회
 	@Query("SELECT a FROM Account a WHERE a.member.memberRole = 'TEACHER'")
 	List<Account> findAllTeacherAccounts();
 
 	Optional<Account> findFirstByMemberMemberRole(MemberRole role);
+
+	// 계좌 번호 유무 조회
+	boolean existsByAccountNumber(String newAccountNumber);
 }

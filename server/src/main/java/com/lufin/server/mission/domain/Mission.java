@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "mission")
+@Table(name = "missions")
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

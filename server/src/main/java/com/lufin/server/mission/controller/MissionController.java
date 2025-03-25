@@ -27,11 +27,11 @@ public class MissionController {
 
 	/**
 	 * 미션 상세 조회
-	 * @param missionId
+	 * @param missionId 미션 고유 번호
 	 * @return {}
 	 */
 	@GetMapping("/{missionId}")
-	public ResponseEntity<?> getMissionByMissionId(@PathVariable int missionId) {
+	public ResponseEntity<?> getMissionById(@PathVariable int missionId) {
 		//TODO: ApiResponse 활용하는 걸로 변경
 		return ResponseEntity.ok().body(missionId);
 	}

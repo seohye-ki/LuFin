@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "mission_participation")
+@Table(name = "mission_participations")
 @Builder // 생성자 생성 어노테이션
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

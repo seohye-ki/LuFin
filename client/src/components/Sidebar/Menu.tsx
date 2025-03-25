@@ -1,16 +1,6 @@
-import home from '../../assets/svgs/home-default.svg';
-import mission from '../../assets/svgs/mission-default.svg';
-import wallet from '../../assets/svgs/wallet-default.svg';
-import chart from '../../assets/svgs/chart-default.svg';
-import dollar from '../../assets/svgs/dollar-default.svg';
-import shop from '../../assets/svgs/shop-default.svg';
-import homeGrey from '../../assets/svgs/home-grey.svg';
-import missionGrey from '../../assets/svgs/mission-grey.svg';
-import walletGrey from '../../assets/svgs/wallet-grey.svg';
-import chartGrey from '../../assets/svgs/chart-grey.svg';
-import dollarGrey from '../../assets/svgs/dollar-grey.svg';
-import shopGrey from '../../assets/svgs/shop-grey.svg';
+import { Icon } from '../Icon/Icon';
 import { twMerge } from 'tailwind-merge';
+import type { IconsaxIconName } from '../Icon/Icon';
 
 export type MenuType = 'home' | 'mission' | 'wallet' | 'chart' | 'dollar' | 'shop';
 
@@ -20,54 +10,46 @@ interface MenuProps {
   onClick?: () => void;
 }
 
-const menuConfig = {
+const menuConfig: Record<MenuType, { icon: IconsaxIconName; text: string }> = {
   home: {
-    active: home,
-    inactive: homeGrey,
+    icon: 'Home2',
     text: '홈',
   },
   mission: {
-    active: mission,
-    inactive: missionGrey,
+    icon: 'TaskSquare',
     text: '미션',
   },
   wallet: {
-    active: wallet,
-    inactive: walletGrey,
+    icon: 'Wallet',
     text: '적금',
   },
   chart: {
-    active: chart,
-    inactive: chartGrey,
+    icon: 'ChartSquare',
     text: '투자',
   },
   dollar: {
-    active: dollar,
-    inactive: dollarGrey,
+    icon: 'DollarSquare',
     text: '대출',
   },
   shop: {
-    active: shop,
-    inactive: shopGrey,
+    icon: 'Shop',
     text: '상점',
   },
 };
 
 const Menu = ({ isActive = false, type, onClick }: MenuProps) => {
-  const { active: activeIcon, inactive: inactiveIcon, text } = menuConfig[type];
-  const iconSrc = isActive ? activeIcon : inactiveIcon;
-  const textColor = isActive ? 'text-black' : 'text-grey';
+  const { icon, text } = menuConfig[type];
 
   return (
     <button
       className={twMerge(
-        'flex text-p2 font-medium items-center gap-3 w-[168px] h-[40px] p-2 rounded-lg hover:bg-light-cyan-30',
+        'flex items-center gap-3 w-[168px] h-[40px] p-2 rounded-lg text-p2 font-medium hover:bg-light-cyan-30',
         isActive && 'bg-light-cyan',
       )}
       onClick={onClick}
     >
-      <img src={iconSrc} alt={text} />
-      <p className={textColor}>{text}</p>
+      <Icon name={icon} size={24} color={isActive ? '#292D32' : '#8A8D8E'} />
+      <span className={twMerge(isActive ? 'text-black' : 'text-grey')}>{text}</span>
     </button>
   );
 };

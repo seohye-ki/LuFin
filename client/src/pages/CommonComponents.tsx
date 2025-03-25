@@ -9,38 +9,86 @@ import SidebarLayout from '../components/Layout/SidebarLayout';
 import DefaultLayout from '../components/Layout/DefaultLayout';
 import Checkbox from '../components/Form/Checkbox';
 import { useState } from 'react';
-
+import DashBoardCard from '../components/Card/DashBoardCard';
 const CommonComponents = () => {
   const navigationIcons: IconsaxIconName[] = [
-    'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
-    'ArrowLeft2', 'ArrowRight2', 'ArrowUp2', 'ArrowDown2',
-    'ArrowCircleLeft', 'ArrowCircleRight', 'ArrowCircleUp', 'ArrowCircleDown',
-    'ArrowCircleLeft2', 'ArrowCircleRight2', 'ArrowCircleUp2', 'ArrowCircleDown2',
-    'ArrowSquareLeft', 'ArrowSquareRight', 'ArrowSquareUp', 'ArrowSquareDown',
+    'ArrowLeft',
+    'ArrowRight',
+    'ArrowUp',
+    'ArrowDown',
+    'ArrowLeft2',
+    'ArrowRight2',
+    'ArrowUp2',
+    'ArrowDown2',
+    'ArrowCircleLeft',
+    'ArrowCircleRight',
+    'ArrowCircleUp',
+    'ArrowCircleDown',
+    'ArrowCircleLeft2',
+    'ArrowCircleRight2',
+    'ArrowCircleUp2',
+    'ArrowCircleDown2',
+    'ArrowSquareLeft',
+    'ArrowSquareRight',
+    'ArrowSquareUp',
+    'ArrowSquareDown',
   ];
 
   const statusIcons: IconsaxIconName[] = [
-    'InfoCircle', 'Notification', 'CloseCircle', 'TickCircle',
-    'Alarm', 'MinusSquare', 'MinusCirlce', 'AddCircle',
+    'InfoCircle',
+    'Notification',
+    'CloseCircle',
+    'TickCircle',
+    'Alarm',
+    'MinusSquare',
+    'MinusCirlce',
+    'AddCircle',
   ];
 
   const actionIcons: IconsaxIconName[] = [
-    'Edit', 'Edit2', 'Trash', 'Filter', 'Setting4',
-    'SearchNormal1', 'HambergerMenu', 'MoreCircle',
-    'Add', 'More', 'Close', 'CircleEdit', 'CircleTrash', 'CircleAdd',
+    'Edit',
+    'Edit2',
+    'Trash',
+    'Filter',
+    'Setting4',
+    'SearchNormal1',
+    'HambergerMenu',
+    'MoreCircle',
+    'Add',
+    'More',
+    'Close',
+    'CircleEdit',
+    'CircleTrash',
+    'CircleAdd',
   ];
 
   const businessIcons: IconsaxIconName[] = [
-    'Shop', 'ShoppingCart', 'DollarSquare', 'ChartSquare',
-    'Wallet', 'Briefcase', 'TaskSquare', 'GalleryAdd',
+    'Shop',
+    'ShoppingCart',
+    'DollarSquare',
+    'ChartSquare',
+    'Wallet',
+    'Briefcase',
+    'TaskSquare',
+    'GalleryAdd',
   ];
 
   const userIcons: IconsaxIconName[] = [
-    'ProfileCircle', 'Profile2User', 'Personalcard', 'Home2',
+    'ProfileCircle',
+    'Profile2User',
+    'Personalcard',
+    'Home2',
     'Star',
   ];
 
-  const variants: IconProps['variant'][] = ['Linear', 'Outline', 'Broken', 'Bold', 'Bulk', 'TwoTone'];
+  const variants: IconProps['variant'][] = [
+    'Linear',
+    'Outline',
+    'Broken',
+    'Bold',
+    'Bulk',
+    'TwoTone',
+  ];
 
   // Checkbox states
   const [checkbox1, setCheckbox1] = useState(false);
@@ -48,7 +96,7 @@ const CommonComponents = () => {
   const [checkbox5, setCheckbox5] = useState(false);
 
   return (
-    <div className='p-8 min-h-screen bg-broken-white'>
+    <div className='p-8 bg-broken-white'>
       <h1 className='text-h1 font-regular text-black mb-4'>Common Components</h1>
       <div className='flex flex-col gap-8'>
         {/* Alert Section */}
@@ -57,63 +105,63 @@ const CommonComponents = () => {
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-broken-white p-4 rounded-2xl'>
             {/* Info Alert - Row buttons */}
             <Alert
-              title="새로운 미션이 등록됐어요"
-              description="미션 수행하고 루핀을 모아보세요!"
-              status="info"
-              buttonDirection="row"
+              title='새로운 미션이 등록됐어요'
+              description='미션 수행하고 루핀을 모아보세요!'
+              status='info'
+              buttonDirection='row'
               primaryButton={{
-                label: "확인하러 가기",
-                onClick: () => alert("확인하러 가기 클릭"),
+                label: '확인하러 가기',
+                onClick: () => alert('확인하러 가기 클릭'),
               }}
               secondaryButton={{
-                label: "취소",
-                onClick: () => alert("취소 클릭"),
+                label: '취소',
+                onClick: () => alert('취소 클릭'),
               }}
             />
 
             {/* Warning Alert - Column buttons */}
             <Alert
-              title="지금은 매매할 수 없어요"
-              description="매매 가능 시간은 매일 오시장 14시까지입니다."
-              status="warning"
-              buttonDirection="column"
+              title='지금은 매매할 수 없어요'
+              description='매매 가능 시간은 매일 오시장 14시까지입니다.'
+              status='warning'
+              buttonDirection='column'
               primaryButton={{
-                label: "확인했습니다",
-                onClick: () => alert("확인 클릭"),
-                color: "primary"
+                label: '확인했습니다',
+                onClick: () => alert('확인 클릭'),
+                color: 'primary',
               }}
               secondaryButton={{
-                label: "이유 보기",
-                onClick: () => alert("이유 보기 클릭"),
+                label: '이유 보기',
+                onClick: () => alert('이유 보기 클릭'),
               }}
             />
 
             {/* Danger Alert - Single button */}
             <Alert
-              title="네트워크 오류"
-              description="빠른 시간 내에 조치하겠습니다."
-              status="danger"
+              title='네트워크 오류'
+              description='빠른 시간 내에 조치하겠습니다.'
+              status='danger'
               primaryButton={{
-                label: "확인했습니다",
-                onClick: () => alert("확인 클릭"),
-                color: "danger"
+                label: '확인했습니다',
+                onClick: () => alert('확인 클릭'),
+                color: 'danger',
               }}
             />
 
             {/* Success Alert - Row buttons */}
             <Alert
-              title="삭제가 완료됐어요"
-              description="삭제된 데이터는 복구할 수 없어요."
-              status="success"
-              buttonDirection="row"
+              title='삭제가 완료됐어요'
+              description='삭제된 데이터는 복구할 수 없어요.'
+              status='success'
+              buttonDirection='row'
               primaryButton={{
-                label: "확인",
-                onClick: () => alert("확인 클릭"),
-                color: "primary"
+                label: '확인',
+                onClick: () => alert('확인 클릭'),
+                color: 'primary',
               }}
               secondaryButton={{
-                label: "되돌리기",
-                onClick: () => alert("되돌리기 클릭"),
+                label: '되돌리기',
+                onClick: () => alert('되돌리기 클릭'),
               }}
             />
           </div>
@@ -128,7 +176,10 @@ const CommonComponents = () => {
               <h3 className='text-p1 font-medium text-black mb-4'>Navigation Icons</h3>
               <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
                 {navigationIcons.map((name) => (
-                  <div key={name} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                  <div
+                    key={name}
+                    className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'
+                  >
                     <Icon name={name} size={24} />
                     <span className='text-xs text-center'>{name}</span>
                   </div>
@@ -141,7 +192,10 @@ const CommonComponents = () => {
               <h3 className='text-p1 font-medium text-black mb-4'>Status Icons</h3>
               <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
                 {statusIcons.map((name) => (
-                  <div key={name} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                  <div
+                    key={name}
+                    className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'
+                  >
                     <Icon name={name} size={24} />
                     <span className='text-xs text-center'>{name}</span>
                   </div>
@@ -154,7 +208,10 @@ const CommonComponents = () => {
               <h3 className='text-p1 font-medium text-black mb-4'>Action Icons</h3>
               <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
                 {actionIcons.map((name) => (
-                  <div key={name} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                  <div
+                    key={name}
+                    className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'
+                  >
                     <Icon name={name} size={24} />
                     <span className='text-xs text-center'>{name}</span>
                   </div>
@@ -167,7 +224,10 @@ const CommonComponents = () => {
               <h3 className='text-p1 font-medium text-black mb-4'>Business Icons</h3>
               <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
                 {businessIcons.map((name) => (
-                  <div key={name} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                  <div
+                    key={name}
+                    className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'
+                  >
                     <Icon name={name} size={24} />
                     <span className='text-xs text-center'>{name}</span>
                   </div>
@@ -180,7 +240,10 @@ const CommonComponents = () => {
               <h3 className='text-p1 font-medium text-black mb-4'>User Icons</h3>
               <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
                 {userIcons.map((name) => (
-                  <div key={name} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                  <div
+                    key={name}
+                    className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'
+                  >
                     <Icon name={name} size={24} />
                     <span className='text-xs text-center'>{name}</span>
                   </div>
@@ -190,11 +253,16 @@ const CommonComponents = () => {
 
             {/* Icon Variants */}
             <div>
-              <h3 className='text-p1 font-medium text-black mb-4'>Icon Variants (Using InfoCircle)</h3>
+              <h3 className='text-p1 font-medium text-black mb-4'>
+                Icon Variants (Using InfoCircle)
+              </h3>
               <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4'>
                 {variants.map((variant) => (
-                  <div key={variant} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
-                    <Icon name="InfoCircle" size={24} variant={variant} />
+                  <div
+                    key={variant}
+                    className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'
+                  >
+                    <Icon name='InfoCircle' size={24} variant={variant} />
                     <span className='text-xs text-center'>{variant}</span>
                   </div>
                 ))}
@@ -215,9 +283,12 @@ const CommonComponents = () => {
                     <span className='text-sm font-medium'>{name}</span>
                     <div className='grid grid-cols-3 gap-4'>
                       {['Linear', 'Outline', 'Bold'].map((variant) => (
-                        <div key={variant} className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'>
+                        <div
+                          key={variant}
+                          className='flex flex-col items-center gap-2 p-4 bg-white rounded-lg'
+                        >
                           <Icon
-                            name="InfoCircle"
+                            name='InfoCircle'
                             size={32}
                             color={color}
                             variant={variant as IconProps['variant']}
@@ -244,6 +315,38 @@ const CommonComponents = () => {
               variant='certification'
               certificationNumber='5학년 1반'
             />
+          </div>
+        </section>
+
+        {/* Card Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Card</h2>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-broken-white p-4 rounded-2xl'>
+            {/* Modal Card */}
+            <div className='flex flex-col gap-4'>
+              <h3 className='text-p1 font-medium text-black mb-2'>모달 카드</h3>
+              <DashBoardCard
+                titleLeft='제목'
+                titleRight={<Icon name='Close' size={24} color='#8A8D8E' />}
+                titleSize='l'
+                content={
+                  <div className='flex flex-col gap-2'>
+                    <p className='text-p2 font-medium text-black'>내용</p>
+                  </div>
+                }
+                isModal
+              />
+            </div>
+            {/* Dashboard Card */}
+            <div className='flex flex-col gap-4'>
+              <h3 className='text-p1 font-medium text-black mb-2'>대시보드 카드</h3>
+              <DashBoardCard
+                titleLeft='제목'
+                titleRight={<Badge status='fail'>실패</Badge>}
+                titleSize='l'
+                isModal={false}
+              />
+            </div>
           </div>
         </section>
 

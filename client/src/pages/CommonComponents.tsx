@@ -143,6 +143,7 @@ const CommonComponents = () => {
             </div>
           </div>
         </section>
+        {/* Sidebar Section */}
         <section className='flex gap-8'>
           <div className='flex flex-col gap-4'>
             <h2 className='text-h2 font-medium text-black mb-4'>학생 사이드바</h2>

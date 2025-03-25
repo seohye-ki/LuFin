@@ -1,4 +1,5 @@
 import Profile from '../components/Profile/Profile';
+import Lufin from '../components/Lufin/Lufin';
 
 const CommonComponents = () => {
   return (
@@ -12,6 +13,13 @@ const CommonComponents = () => {
           variant='certification'
           certificationNumber='5학년 1반'
         />
+        <div className='flex flex-col gap-12'>
+          <Lufin count={15200} size={16} />
+          <Lufin count={15200} size={24} />
+          <Lufin count={15200} size={32} />
+          <Lufin count={15200} size={40} />
+          <Lufin count={15200} size={52} />
+        </div>
       </div>
     </div>
   );

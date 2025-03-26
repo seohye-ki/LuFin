@@ -392,14 +392,18 @@ const CommonComponents = () => {
         {/* Profile Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Profile</h2>
-          <div className='flex flex-col gap-4 bg-grey-30 p-4 rounded-2xl'>
-            <Profile name='이재현' profileImage='https://picsum.photos/200/300?random=1' />
-            <Profile
-              name='이재현 선생님'
-              profileImage='https://picsum.photos/200/300?random=1'
-              variant='certification'
-              certificationNumber='5학년 1반'
-            />
+          <div className='flex gap-4 bg-grey-30 p-4 rounded-2xl'>
+            <div className='bg-white rounded-lg p-4'>
+              <Profile name='이재현' profileImage='https://picsum.photos/200/300?random=1' />
+            </div>
+            <div className='bg-white rounded-lg p-4'>
+              <Profile
+                name='이재현 선생님'
+                profileImage='https://picsum.photos/200/300?random=1'
+                variant='certification'
+                certificationNumber='5학년 1반'
+              />
+            </div>
           </div>
         </section>
 

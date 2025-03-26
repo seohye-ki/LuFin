@@ -55,7 +55,7 @@ public class Classroom {
 	private Integer grade;
 
 	@Column(name = "class_group", nullable = false)
-	private String classGroup;
+	private Integer classGroup;
 
 	@Column(name = "name", nullable = false, length = 20)
 	private String name;
@@ -70,7 +70,7 @@ public class Classroom {
 	private LocalDateTime createdAt;
 
 	// 학급 엔티티 생성자 (정적 팩토리에서 호출됨)
-	private Classroom(Member teacher, String code, String school, Integer grade, String classGroup,
+	private Classroom(Member teacher, String code, String school, Integer grade, Integer classGroup,
 		String name, String thumbnailKey) {
 		this.teacher = teacher;
 		this.code = code;
@@ -79,21 +79,15 @@ public class Classroom {
 		this.classGroup = classGroup;
 		this.name = name;
 		this.thumbnailKey = thumbnailKey;
-		this.createdAt = LocalDateTime.now(); // 명시적 설정
+		setCreatedAt();
+		incrementMemberCount();
 	}
 
-	// 썸네일이 있는 학급 생성
-	public static Classroom createWithImage(Member teacher, String code, String school, Integer grade,
-		String classGroup, String name, String thumbnailKey) {
+	// 학급 생성 -> 이미지 없을 시 기본 썸네일 저장
+	public static Classroom create(Member teacher, String code, String school, Integer grade,
+		Integer classGroup, String name, String thumbnailKey) {
 		validate(teacher, code, grade);
 		return new Classroom(teacher, code, school, grade, classGroup, name, thumbnailKey);
-	}
-
-	// 썸네일 없이 학급 생성
-	public static Classroom createWithoutImage(Member teacher, String code, String school, Integer grade,
-		String classGroup, String name) {
-		validate(teacher, code, grade);
-		return new Classroom(teacher, code, school, grade, classGroup, name, null);
 	}
 
 	// 학급 생성 시 유효성 검증 로직

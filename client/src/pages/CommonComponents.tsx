@@ -11,6 +11,8 @@ import Checkbox from '../components/Form/Checkbox';
 import { useState } from 'react';
 import DashBoardCard from '../components/Card/DashBoardCard';
 import TableView, { TableColumn, TableRow } from '../components/Frame/TableView';
+import LoginView from '../components/Frame/LoginView';
+import { dividerClasses } from '@mui/material';
 
 const CommonComponents = () => {
   const navigationIcons: IconsaxIconName[] = [
@@ -97,7 +99,7 @@ const CommonComponents = () => {
     { key: 'wage', label: '급여' },
     { key: 'difficulty', label: '난이도' },
     { key: 'date', label: '수행 날짜' },
-    { key: 'member', label: '수행 인원' },
+    { key: 'participant', label: '수행 인원' },
     { key: 'status', label: '상태' },
     { key: 'request', label: '요청' },
   ];
@@ -106,9 +108,15 @@ const CommonComponents = () => {
     {
       mission: '안내문 나눠주기',
       wage: <Lufin count={1000} size={24} />,
-      difficulty: <Icon name='Star' size={24} color='yellow' variant='Bold' />,
+      difficulty: (
+        <div className='flex items-center gap-1'>
+          <Icon name='Star' size={24} color='yellow' variant='Bold' />
+          <Icon name='Star' size={24} color='yellow' variant='Bold' />
+          <Icon name='Star' size={24} color='yellow' variant='Bold' />
+        </div>
+      ),
       date: '2025-01-01',
-      member: '1/2',
+      participant: '1/2',
       status: <Badge status='done'>성공</Badge>,
       request: (
         <Button variant='ghost' color='info'>
@@ -121,7 +129,7 @@ const CommonComponents = () => {
       wage: <Lufin count={1000} size={24} />,
       difficulty: <Icon name='Star' size={24} color='yellow' variant='Bold' />,
       date: '2025-01-01',
-      member: '1/2',
+      participant: '1/2',
       status: <Badge status='ing'>수행 중</Badge>,
       request: (
         <Button variant='solid' color='primary'>
@@ -573,6 +581,55 @@ const CommonComponents = () => {
           <div className='flex flex-col gap-4'>
             <h2 className='text-h2 font-medium text-black mb-4'>선생님 사이드바</h2>
             <Sidebar userRole='teacher' />
+          </div>
+        </section>
+
+        {/* LoginView Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>LoginView</h2>
+          <div className='flex gap-4'>
+            <LoginView
+              title='반가워요! 이름을 적어주세요'
+              description='루핀 회원이라면 모든 서비스를 이용할 수 있습니다.'
+              content={
+                <p className='text-p2 font-regular text-grey border border-solid border-grey rounded-lg p-4'>
+                  input 컴포넌트
+                </p>
+              }
+              secondaryButton={{
+                text: '다음',
+                onClick: () => {},
+              }}
+            />
+            <LoginView
+              title='이메일을 적어주세요.'
+              description='루핀 회원이라면 모든 서비스를 이용할 수 있습니다.'
+              content={
+                <p className='text-p2 font-regular text-grey border border-solid border-grey rounded-lg p-4'>
+                  input 컴포넌트
+                </p>
+              }
+              primaryButton={{
+                text: '이전',
+                onClick: () => {},
+              }}
+              secondaryButton={{
+                text: '다음',
+                onClick: () => {},
+              }}
+            />
+            <LoginView
+              title='환영합니다!'
+              description='지금부터 슬기로운 루핀 생활을 시작해봐요'
+              content={
+                <div className='flex flex-col gap-2 items-center'>
+                  <Button variant='solid' color='primary' size='lg'>
+                    시작하기
+                  </Button>
+                </div>
+              }
+              backgroundImage
+            />
           </div>
         </section>
 

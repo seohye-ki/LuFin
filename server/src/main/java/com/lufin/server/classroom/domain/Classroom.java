@@ -28,10 +28,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "classroom")
+@Table(name = "classrooms")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Classroom {
+
+	@OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true)
+	private final List<MemberClassroom> memberClassrooms = new ArrayList<>();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,9 +68,6 @@ public class Classroom {
 
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
-
-	@OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<MemberClassroom> memberClassrooms = new ArrayList<>();
 
 	// 학급 엔티티 생성자 (정적 팩토리에서 호출됨)
 	private Classroom(Member teacher, String code, String school, Integer grade, String classGroup,

@@ -2,6 +2,8 @@ package com.lufin.server.item.domain;
 
 import java.time.LocalDateTime;
 
+import javax.net.ssl.SSLSession;
+
 import com.lufin.server.classroom.domain.Classroom;
 
 import jakarta.persistence.Column;
@@ -12,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -31,7 +32,7 @@ public class Item {
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "class_id", nullable = false)
+	@JoinColumn(name = "classroom_id", nullable = false)
 	private Classroom classroom;
 
 	@Column(name = "name", nullable = false, length = 50)
@@ -61,7 +62,8 @@ public class Item {
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
 
-	public static Item create(Classroom classroom, String name, Integer type, Integer price, int quantity, LocalDateTime expirationDate) {
+	public static Item create(Classroom classroom, String name, Integer type, Integer price, int quantity,
+		LocalDateTime expirationDate) {
 		Item item = new Item();
 		item.classroom = classroom;
 		item.name = name;

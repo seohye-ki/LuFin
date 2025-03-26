@@ -14,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -33,8 +32,8 @@ public class ItemRequest {
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "item_id", nullable = false)
-	private Item item;
+	@JoinColumn(name = "item_purchase_id", nullable = false)
+	private ItemPurchase purchase;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "requester_id", nullable = false)
@@ -54,9 +53,9 @@ public class ItemRequest {
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
 
-	public static ItemRequest create(Item item, Member requester) {
+	public static ItemRequest create(ItemPurchase purchase, Member requester) {
 		ItemRequest request = new ItemRequest();
-		request.item = item;
+		request.purchase = purchase;
 		request.requester = requester;
 		request.status = ItemRequestStatus.PENDING;
 		request.createdAt = LocalDateTime.now();

@@ -1,16 +1,16 @@
 import { forwardRef } from 'react';
 import { Icon } from '../Icon/Icon';
 
-interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   description?: string;
   error?: string;
   isDisabled?: boolean;
 }
 
-const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
+const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   ({ label, description, error, isDisabled, className = '', ...props }, ref) => {
-    const baseInputClasses = "block w-full rounded-md bg-white px-3 py-1.5 text-body1 text-black outline-1 -outline-offset-1 outline-grey placeholder:text-grey-25 placeholder:text-body1 focus:outline-2 focus:-outline-offset-2 focus:outline-light-cyan sm:text-sm/6 resize-none";
+    const baseInputClasses = "block w-full rounded-md bg-white px-3 py-1.5 text-body1 text-black outline-1 -outline-offset-1 outline-grey placeholder:text-grey-25 placeholder:text-body1 focus:outline-2 focus:-outline-offset-2 focus:outline-light-cyan sm:text-sm/6";
     
     const inputClasses = error
       ? `${baseInputClasses.replace('outline-grey', 'outline-danger').replace('focus:outline-light-cyan', 'focus:outline-danger')} pr-10 text-danger placeholder:text-danger`
@@ -28,7 +28,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           </label>
         )}
         <div className="mt-2 relative">
-          <textarea
+          <input
             ref={ref}
             disabled={isDisabled}
             className={`${inputClasses} ${disabledClasses} ${className}`}
@@ -37,7 +37,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             {...props}
           />
           {error && (
-            <div className="absolute right-3 top-3">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2">
               <Icon
                 name="InfoCircle"
                 size={20}
@@ -62,6 +62,6 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   }
 );
 
-TextArea.displayName = 'TextArea';
+TextField.displayName = 'TextField';
 
-export default TextArea;
+export default TextField; 

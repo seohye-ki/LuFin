@@ -11,7 +11,7 @@ import com.lufin.server.common.exception.BusinessException;
 /**
  * 검증 관련 유틸리티 클래스
  * <p>
- * 이메일, 비밀번호, 2차 비밀번호 유효성 검증 기능을 제공
+ *  JWT 유효성 검증 기능을 제공
  */
 public class ValidationUtils {
 
@@ -28,16 +28,11 @@ public class ValidationUtils {
 	 * <p>
 	 * [2차 비밀번호 확인]
 	 * - 숫자 6자리
-	 * <p>
-	 * [ClassCode 확인]
-	 * - 영어 대소문자, 숫자만 허용하는 5자리
-	 * - 특수문자나 공백 허용하지 않음
 	 */
 	private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
 	private static final Pattern PASSWORD_PATTERN = Pattern.compile(
 		"^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[~!@#$%^&*_\\-+=`|\\\\(){}\\[\\]:;\"'<>,.?/]).{8,16}$");
 	private static final Pattern SECONDARY_PASSWORD_PATTERN = Pattern.compile("^\\d{6}$");
-	private static final Pattern CLASS_CODE_PATTERN = Pattern.compile("^[a-zA-Z0-9]{5}$");
 
 	private ValidationUtils() {
 		throw new UnsupportedOperationException("Utility class cannot be instantiated");
@@ -57,13 +52,6 @@ public class ValidationUtils {
 	public static boolean isValidSecondaryPassword(String secondaryPassword) {
 		return StringUtils.hasText(secondaryPassword) && SECONDARY_PASSWORD_PATTERN.matcher(secondaryPassword)
 			.matches();
-	}
-
-	// classCode 검증
-	public static void validateClassCode(String classCode) {
-		if(!StringUtils.hasText(classCode) || !CLASS_CODE_PATTERN.matcher(classCode).matches()) {
-			throw new BusinessException(INVALID_INPUT_VALUE);
-		}
 	}
 
 	// JWT: 문자열 ID가 Integer로 변환 가능한지 확인 (null, 공백, 숫자 아닌 경우 예외)

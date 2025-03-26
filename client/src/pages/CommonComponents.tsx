@@ -8,8 +8,14 @@ import Sidebar from '../components/Sidebar/Sidebar';
 import SidebarLayout from '../components/Layout/SidebarLayout';
 import DefaultLayout from '../components/Layout/DefaultLayout';
 import Checkbox from '../components/Form/Checkbox';
+import TextField from '../components/Form/TextField';
+import TextArea from '../components/Form/TextArea';
+import ImageUpload from '../components/Form/ImageUpload';
 import { useState } from 'react';
 import DashBoardCard from '../components/Card/DashBoardCard';
+import Dropdown from '../components/Form/Dropdown';
+import CodeInput from '../components/Form/CodeInput';
+
 const CommonComponents = () => {
   const navigationIcons: IconsaxIconName[] = [
     'ArrowLeft',
@@ -87,6 +93,34 @@ const CommonComponents = () => {
   const [checkbox1, setCheckbox1] = useState(false);
   const [checkbox2, setCheckbox2] = useState(true);
   const [checkbox5, setCheckbox5] = useState(false);
+
+  // Image Upload states
+  const [singleImage, setSingleImage] = useState<File[]>([]);
+  const [multipleImages, setMultipleImages] = useState<File[]>([]);
+  const [errorImage, setErrorImage] = useState<File[]>([]);
+
+  // Dropdown states
+  const [selectedValue, setSelectedValue] = useState<string | number | { type: 'star'; count: 1 | 2 | 3 } | null>(null);
+  const [selectedStars, setSelectedStars] = useState<{ type: 'star'; count: 1 | 2 | 3 } | null>(null);
+
+  // Dropdown items
+  const dropdownItems = [
+    { label: '옵션 1', value: '1' },
+    { label: '옵션 2', value: '2' },
+    { label: '옵션 3', value: '3' },
+  ];
+
+  const starDropdownItems = [
+    { label: '', value: { type: 'star' as const, count: 1 as const } },
+    { label: '', value: { type: 'star' as const, count: 2 as const } },
+    { label: '', value: { type: 'star' as const, count: 3 as const } },
+  ];
+
+  // CodeInput states
+  const [code1, setCode1] = useState('');
+  const [code2, setCode2] = useState('');
+  const [code3, setCode3] = useState('');
+  const [code4, setCode4] = useState('');
 
   return (
     <div className='p-8 bg-broken-white'>
@@ -468,6 +502,172 @@ const CommonComponents = () => {
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Form Components</h2>
           <div className='flex flex-col gap-8 bg-broken-white p-4 rounded-2xl'>
+            {/* ImageUpload */}
+            <div>
+              <h3 className='text-p1 font-medium text-black mb-4'>ImageUpload</h3>
+              <div className='flex flex-col gap-8'>
+                {/* Basic ImageUpload */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>기본 이미지 업로드</span>
+                  <ImageUpload
+                    id="single-image"
+                    label="미션 상세 이미지"
+                    value={singleImage}
+                    onChange={setSingleImage}
+                  />
+                </div>
+
+                {/* Multiple ImageUpload */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>다중 이미지 업로드</span>
+                  <ImageUpload
+                    id="multiple-images"
+                    label="미션 인증 이미지"
+                    description="최대 4장까지 업로드 가능합니다"
+                    maxFiles={4}
+                    value={multipleImages}
+                    onChange={setMultipleImages}
+                  />
+                </div>
+
+                {/* ImageUpload with Error */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>에러가 있는 이미지 업로드</span>
+                  <ImageUpload
+                    id="error-image"
+                    label="프로필 이미지"
+                    error="이미지를 업로드해주세요"
+                    value={errorImage}
+                    onChange={setErrorImage}
+                  />
+                </div>
+
+                {/* Disabled ImageUpload */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>비활성화된 이미지 업로드</span>
+                  <ImageUpload
+                    id="disabled-image"
+                    label="프로필 이미지"
+                    isDisabled={true}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* TextField */}
+            <div>
+              <h3 className='text-p1 font-medium text-black mb-4'>TextField</h3>
+              <div className='flex flex-col gap-8'>
+                {/* Basic TextField */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>기본 입력 필드</span>
+                  <TextField
+                    id="email"
+                    name="email"
+                    type="email"
+                    label="이메일"
+                    placeholder="you@example.com"
+                  />
+                </div>
+
+                {/* TextField with Description */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>설명이 있는 입력 필드</span>
+                  <TextField
+                    id="email-with-desc"
+                    name="email"
+                    type="email"
+                    label="이메일"
+                    placeholder="you@example.com"
+                    description="스팸 메일을 보내지 않습니다."
+                  />
+                </div>
+
+                {/* TextField with Error */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>에러가 있는 입력 필드</span>
+                  <TextField
+                    id="email-with-error"
+                    name="email"
+                    type="email"
+                    label="이메일"
+                    placeholder="you@example.com"
+                    error="올바른 이메일 주소를 입력해주세요."
+                  />
+                </div>
+
+                {/* Disabled TextField */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>비활성화된 입력 필드</span>
+                  <TextField
+                    id="email-disabled"
+                    name="email"
+                    type="email"
+                    label="이메일"
+                    placeholder="you@example.com"
+                    isDisabled={true}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* TextArea */}
+            <div>
+              <h3 className='text-p1 font-medium text-black mb-4'>TextArea</h3>
+              <div className='flex flex-col gap-8'>
+                {/* Basic TextArea */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>기본 텍스트 영역</span>
+                  <TextArea
+                    id="comment"
+                    name="comment"
+                    label="댓글"
+                    placeholder="댓글을 입력해주세요"
+                    rows={4}
+                  />
+                </div>
+
+                {/* TextArea with Description */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>설명이 있는 텍스트 영역</span>
+                  <TextArea
+                    id="comment-with-desc"
+                    name="comment"
+                    label="댓글"
+                    placeholder="댓글을 입력해주세요"
+                    description="최대 500자까지 입력 가능합니다"
+                    rows={4}
+                  />
+                </div>
+
+                {/* TextArea with Error */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>에러가 있는 텍스트 영역</span>
+                  <TextArea
+                    id="comment-with-error"
+                    name="comment"
+                    label="댓글"
+                    placeholder="댓글을 입력해주세요"
+                    error="댓글을 입력해주세요"
+                    rows={4}
+                  />
+                </div>
+
+                {/* Disabled TextArea */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>비활성화된 텍스트 영역</span>
+                  <TextArea
+                    id="comment-disabled"
+                    name="comment"
+                    label="댓글"
+                    placeholder="댓글을 입력해주세요"
+                    isDisabled={true}
+                    rows={4}
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Checkbox */}
             <div>
               <h3 className='text-p1 font-medium text-black mb-4'>Checkbox</h3>
@@ -543,6 +743,103 @@ const CommonComponents = () => {
               <h2 className='text-h2 font-medium text-black mb-4'>Default Layout</h2>
               <p className='text-body'>사이드바가 없는 기본 레이아웃입니다.</p>
             </DefaultLayout>
+          </div>
+        </section>
+
+        {/* Dropdown Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Dropdown</h2>
+          <div className='flex flex-col gap-8 bg-broken-white p-4 rounded-2xl'>
+            {/* Basic Dropdown */}
+            <div className='flex flex-col gap-2'>
+              <span className='text-xs'>기본 드롭다운</span>
+              <Dropdown
+                label="기본 옵션"
+                items={dropdownItems}
+                value={selectedValue}
+                onChange={(value) => setSelectedValue(value as typeof selectedValue)}
+              />
+            </div>
+
+            {/* Star Rating Dropdown */}
+            <div className='flex flex-col gap-2'>
+              <span className='text-xs'>별점 드롭다운</span>
+              <Dropdown
+                label="별점"
+                items={starDropdownItems}
+                value={selectedStars}
+                onChange={(value) => setSelectedStars(value as typeof selectedStars)}
+              />
+            </div>
+
+            {/* Disabled Dropdown */}
+            <div className='flex flex-col gap-2'>
+              <span className='text-xs'>비활성화된 드롭다운</span>
+              <Dropdown
+                label="비활성화"
+                items={dropdownItems}
+                isDisabled={true}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* CodeInput Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>CodeInput</h2>
+          <div className='flex flex-col gap-8 bg-broken-white p-4 rounded-2xl'>
+            {/* Basic CodeInput */}
+            <div className='flex flex-col gap-2'>
+              <span className='text-xs'>기본 코드 입력</span>
+              <CodeInput
+                value={code1}
+                onChange={setCode1}
+                length={5}
+              />
+            </div>
+
+            {/* CodeInput with Different Sizes */}
+            <div className='flex flex-col gap-4'>
+              <span className='text-xs'>크기 옵션</span>
+              <div className='flex flex-col gap-4'>
+                <CodeInput
+                  value={code2}
+                  onChange={setCode2}
+                  length={5}
+                  size="sm"
+                />
+                <CodeInput
+                  value={code3}
+                  onChange={setCode3}
+                  length={5}
+                  size="md"
+                />
+                <CodeInput
+                  value={code4}
+                  onChange={setCode4}
+                  length={5}
+                  size="lg"
+                />
+              </div>
+            </div>
+
+            {/* CodeInput with Error */}
+            <div className='flex flex-col gap-2'>
+              <span className='text-xs'>에러가 있는 코드 입력</span>
+              <CodeInput
+                length={5}
+                error="올바른 코드를 입력해주세요"
+              />
+            </div>
+
+            {/* Disabled CodeInput */}
+            <div className='flex flex-col gap-2'>
+              <span className='text-xs'>비활성화된 코드 입력</span>
+              <CodeInput
+                length={5}
+                isDisabled={true}
+              />
+            </div>
           </div>
         </section>
       </div>

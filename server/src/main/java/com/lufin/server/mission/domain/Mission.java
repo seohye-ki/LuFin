@@ -39,6 +39,10 @@ public class Mission {
 	@OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true) // 양방향 연관관계 주인 mission으로 설정
 	private List<MissionParticipation> participations = new ArrayList<>();
 
+	@Builder.Default
+	@OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true) // 양방향 연관관계 주인 mission으로 설정
+	private List<MissionImage> images = new ArrayList<>();
+
 	// Member Field
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
@@ -55,9 +59,6 @@ public class Mission {
 	@Column(name = "content", nullable = false)
 	@NotBlank
 	private String content;
-
-	@Column(name = "image", length = 255)
-	private String image;
 
 	@Column(name = "difficulty", nullable = false)
 	@Min(1)
@@ -141,6 +142,15 @@ public class Mission {
 		this.incrementParticipants();
 	}
 
+	public void addImage(MissionImage missionImage) {
+		if (missionImage == null) {
+			// TODO: error 코드 변경
+			throw new IllegalArgumentException("MissionImage cannot be null");
+		}
+
+		images.add(missionImage);
+	}
+
 	public void removeParticipation(MissionParticipation participation) {
 		if (participation == null) {
 			//TODO: error 코드 변경
@@ -154,32 +164,14 @@ public class Mission {
 	}
 
 	/**
-	 * 이미지가 없는 미션 객체를 생성하는 팩토리 메서드
+	 * 미션 객체를 생성하는 팩토리 메서드
 	 */
-	public static Mission createWithoutImage(Integer classId, String title, String content, Integer difficulty,
+	public static Mission create(Integer classId, String title, String content, Integer difficulty,
 		Integer maxParticipants, Integer wage, LocalDateTime missionDate) {
 		return Mission.builder()
 			.classId(classId)
 			.title(title)
 			.content(content)
-			.difficulty(difficulty)
-			.maxParticipants(maxParticipants)
-			.wage(wage)
-			.missionDate(missionDate)
-			.build();
-	}
-
-	/**
-	 * 이미지가 있는 미션 객체를 생성하는 팩토리 메서드
-	 */
-	public static Mission createWithImage(Integer classId, String title, String content, String image,
-		Integer difficulty,
-		Integer maxParticipants, Integer wage, LocalDateTime missionDate) {
-		return Mission.builder()
-			.classId(classId)
-			.title(title)
-			.content(content)
-			.image(image)
 			.difficulty(difficulty)
 			.maxParticipants(maxParticipants)
 			.wage(wage)

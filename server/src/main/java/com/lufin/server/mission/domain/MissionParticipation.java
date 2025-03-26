@@ -103,13 +103,12 @@ public class MissionParticipation {
 	}
 
 	/**
-	 * 미션과의 연관관계를 설정
+	 * 미션과의 연관관계를 설정 (package-private)
 	 * 이 메서드는 양방향 연관관계의 일관성을 유지하기 위해 사용
-	 *
 	 * @param mission 연관될 미션 (null이 아니어야 함)
 	 * @throws IllegalArgumentException 미션이 null인 경우
 	 */
-	public void setMission(Mission mission) {
+	void setMission(Mission mission) {
 		if (mission == null) {
 			// TODO: error 코드 수정
 			throw new IllegalArgumentException("Mission cannot be null");
@@ -126,7 +125,7 @@ public class MissionParticipation {
 	 * @return 생성된 미션 참여 객체
 	 * @throws IllegalArgumentException 미션이 null이거나 memberId가 null인 경우
 	 */
-	public static MissionParticipation create(Mission mission, Integer memberId) {
+	public static MissionParticipation createMissionParticipation(Mission mission, Integer memberId) {
 		if (mission == null) {
 			// TODO: error 코드 수정
 			throw new IllegalArgumentException("Mission cannot be null");

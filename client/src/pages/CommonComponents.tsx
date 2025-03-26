@@ -13,6 +13,9 @@ import TextArea from '../components/Form/TextArea';
 import ImageUpload from '../components/Form/ImageUpload';
 import { useState } from 'react';
 import DashBoardCard from '../components/Card/DashBoardCard';
+import TableView, { TableColumn, TableRow } from '../components/Frame/TableView';
+import LoginView from '../components/Frame/LoginView';
+import { dividerClasses } from '@mui/material';
 import Dropdown from '../components/Form/Dropdown';
 import CodeInput from '../components/Form/CodeInput';
 
@@ -87,7 +90,59 @@ const CommonComponents = () => {
     'Star',
   ];
 
-  const variants: IconProps['variant'][] = ['Linear', 'Outline', 'Broken', 'Bold', 'Bulk', 'TwoTone'];
+  const variants: IconProps['variant'][] = [
+    'Linear',
+    'Outline',
+    'Broken',
+    'Bold',
+    'Bulk',
+    'TwoTone',
+  ];
+
+  const columns: TableColumn[] = [
+    { key: 'mission', label: '미션명' },
+    { key: 'wage', label: '급여' },
+    { key: 'difficulty', label: '난이도' },
+    { key: 'date', label: '수행 날짜' },
+    { key: 'participant', label: '수행 인원' },
+    { key: 'status', label: '상태' },
+    { key: 'request', label: '요청' },
+  ];
+
+  const rows: TableRow[] = [
+    {
+      mission: '안내문 나눠주기',
+      wage: <Lufin count={1000} size={24} />,
+      difficulty: (
+        <div className='flex items-center gap-1'>
+          <Icon name='Star' size={24} color='yellow' variant='Bold' />
+          <Icon name='Star' size={24} color='yellow' variant='Bold' />
+          <Icon name='Star' size={24} color='yellow' variant='Bold' />
+        </div>
+      ),
+      date: '2025-01-01',
+      participant: '1/2',
+      status: <Badge status='done'>성공</Badge>,
+      request: (
+        <Button variant='ghost' color='info'>
+          리뷰 요청하기
+        </Button>
+      ),
+    },
+    {
+      mission: '안내문 나눠주기',
+      wage: <Lufin count={1000} size={24} />,
+      difficulty: <Icon name='Star' size={24} color='yellow' variant='Bold' />,
+      date: '2025-01-01',
+      participant: '1/2',
+      status: <Badge status='ing'>수행 중</Badge>,
+      request: (
+        <Button variant='solid' color='primary'>
+          신청하기
+        </Button>
+      ),
+    },
+  ];
 
   // Checkbox states
   const [checkbox1, setCheckbox1] = useState(false);
@@ -673,8 +728,8 @@ const CommonComponents = () => {
               <h3 className='text-p1 font-medium text-black mb-4'>Checkbox</h3>
               <div className='flex items-center gap-8'>
                 <div className='flex flex-col items-center'>
-                  <Checkbox 
-                    id="checkbox-1" 
+                  <Checkbox
+                    id='checkbox-1'
                     checked={checkbox1}
                     onChange={(e) => {
                       setCheckbox1(e.target.checked);
@@ -683,8 +738,8 @@ const CommonComponents = () => {
                   <span className='text-xs mt-1'>{checkbox1 ? '체크됨' : '체크 안됨'}</span>
                 </div>
                 <div className='flex flex-col items-center'>
-                  <Checkbox 
-                    id="checkbox-2" 
+                  <Checkbox
+                    id='checkbox-2'
                     checked={checkbox2}
                     onChange={(e) => {
                       setCheckbox2(e.target.checked);
@@ -693,25 +748,23 @@ const CommonComponents = () => {
                   <span className='text-xs mt-1'>{checkbox2 ? '체크됨' : '체크 안됨'}</span>
                 </div>
                 <div className='flex flex-col items-center'>
-                  <Checkbox id="checkbox-3" disabled />
+                  <Checkbox id='checkbox-3' disabled />
                   <span className='text-xs mt-1'>비활성화</span>
                 </div>
                 <div className='flex flex-col items-center'>
-                  <Checkbox id="checkbox-4" disabled defaultChecked />
+                  <Checkbox id='checkbox-4' disabled defaultChecked />
                   <span className='text-xs mt-1'>체크된 비활성화</span>
                 </div>
                 <div className='flex flex-col items-center'>
-                  <Checkbox 
-                    id="checkbox-5" 
+                  <Checkbox
+                    id='checkbox-5'
                     indeterminate={!checkbox5}
                     checked={checkbox5}
                     onChange={(e) => {
                       setCheckbox5(e.target.checked);
                     }}
                   />
-                  <span className='text-xs mt-1'>
-                    {!checkbox5 ? '중간 상태' : '체크됨'}
-                  </span>
+                  <span className='text-xs mt-1'>{!checkbox5 ? '중간 상태' : '체크됨'}</span>
                 </div>
               </div>
             </div>
@@ -728,6 +781,61 @@ const CommonComponents = () => {
             <h2 className='text-h2 font-medium text-black mb-4'>선생님 사이드바</h2>
             <Sidebar userRole='teacher' />
           </div>
+        </section>
+
+        {/* LoginView Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>LoginView</h2>
+          <div className='flex gap-4'>
+            <LoginView
+              title='반가워요! 이름을 적어주세요'
+              description='루핀 회원이라면 모든 서비스를 이용할 수 있습니다.'
+              content={
+                <p className='text-p2 font-regular text-grey border border-solid border-grey rounded-lg p-4'>
+                  input 컴포넌트
+                </p>
+              }
+              secondaryButton={{
+                text: '다음',
+                onClick: () => {},
+              }}
+            />
+            <LoginView
+              title='이메일을 적어주세요.'
+              description='루핀 회원이라면 모든 서비스를 이용할 수 있습니다.'
+              content={
+                <p className='text-p2 font-regular text-grey border border-solid border-grey rounded-lg p-4'>
+                  input 컴포넌트
+                </p>
+              }
+              primaryButton={{
+                text: '이전',
+                onClick: () => {},
+              }}
+              secondaryButton={{
+                text: '다음',
+                onClick: () => {},
+              }}
+            />
+            <LoginView
+              title='환영합니다!'
+              description='지금부터 슬기로운 루핀 생활을 시작해봐요'
+              content={
+                <div className='flex flex-col gap-2 items-center'>
+                  <Button variant='solid' color='primary' size='lg'>
+                    시작하기
+                  </Button>
+                </div>
+              }
+              backgroundImage
+            />
+          </div>
+        </section>
+
+        {/* TableView Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>TableView</h2>
+          <TableView columns={columns} rows={rows} />
         </section>
 
         {/* Layout Section */}

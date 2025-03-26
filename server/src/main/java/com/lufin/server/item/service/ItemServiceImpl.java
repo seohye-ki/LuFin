@@ -1,5 +1,7 @@
 package com.lufin.server.item.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.lufin.server.classroom.domain.Classroom;
@@ -12,6 +14,7 @@ import com.lufin.server.item.dto.ItemDto;
 import com.lufin.server.item.dto.ItemResponseDto;
 import com.lufin.server.item.repository.ItemRepository;
 import com.lufin.server.member.domain.Member;
+import com.lufin.server.member.domain.MemberRole;
 
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,16 +29,16 @@ public class ItemServiceImpl implements ItemService{
 	private final ItemRepository itemRepository;
 	private final MemberClassroomRepository memberClassroomRepository;
 
-	// teacher의 is_current인 반 찾기(is_current 반 없으면 에러)
-	private Classroom getActiveClassroom(Member teacher) {
+	// member의 is_current인 반 찾기(is_current 없으면 에러)
+	private Classroom getActiveClassroom(Member member) {
 		MemberClassroom memberClassroom = memberClassroomRepository
-			.findByMember_IdAndIsCurrentTrue(teacher.getId())
+			.findByMember_IdAndIsCurrentTrue(member.getId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.REQUEST_DENIED));
 		return memberClassroom.getClassroom();
 	}
 
 	// item id로 item 찾기(아이템이 없으면 에러, 다른반 아이템이면 에러)
-	private Item validateItemOwnership(Integer itemId, Classroom classroom) {
+	private Item getItemInClassroom(Integer itemId, Classroom classroom) {
 		Item item = itemRepository.findById(itemId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 		if (!item.getClassroom().getId().equals(classroom.getId())) {
@@ -44,6 +47,7 @@ public class ItemServiceImpl implements ItemService{
 		return item;
 	}
 
+	// item 생성
 	@Override
 	@Transactional
 	public ItemResponseDto createItem(ItemDto request, Member teacher) {
@@ -59,11 +63,38 @@ public class ItemServiceImpl implements ItemService{
 		return ItemResponseDto.from(itemRepository.save(response));
 	}
 
+	// 아이템 조회
+	@Override
+	public List<ItemResponseDto> getItems(Member member) {
+		Classroom classroom = getActiveClassroom(member);
+
+		List<Item> items;
+		if (member.getMemberRole() == MemberRole.TEACHER) {
+			items = itemRepository.findByClassroomId(classroom.getId());
+		} else {
+			items = itemRepository.findByClassroomIdAndStatusTrue(classroom.getId());
+		}
+
+		return items.stream()
+			.map(ItemResponseDto::from)
+			.toList();
+	}
+
+	// 아이템 조회(단일)
+	@Override
+	public ItemResponseDto getItemDetail(Integer itemId, Member teacher) {
+		Classroom classroom = getActiveClassroom(teacher);
+		Item response = getItemInClassroom(itemId, classroom);
+
+		return ItemResponseDto.from(response);
+	}
+
+	// 아이템 수정
 	@Override
 	@Transactional
 	public ItemResponseDto updateItem(Integer itemId, ItemDto request, Member teacher) {
 		Classroom classroom = getActiveClassroom(teacher);
-		Item response = validateItemOwnership(itemId, classroom);
+		Item response = getItemInClassroom(itemId, classroom);
 
 		response.changeName(request.name());
 		response.changePrice(request.price());
@@ -72,11 +103,12 @@ public class ItemServiceImpl implements ItemService{
 		return ItemResponseDto.from(itemRepository.save(response));
 	}
 
+	// 아이템 삭제
 	@Override
 	@Transactional
 	public void deleteItem(Integer itemId, Member teacher) {
 		Classroom classroom = getActiveClassroom(teacher);
-		Item response = validateItemOwnership(itemId, classroom);
+		Item response = getItemInClassroom(itemId, classroom);
 		itemRepository.delete(response);
 	}
 }

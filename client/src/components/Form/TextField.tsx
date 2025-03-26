@@ -10,7 +10,7 @@ interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   ({ label, description, error, isDisabled, className = '', ...props }, ref) => {
-    const baseInputClasses = "block w-full rounded-md bg-broken-white px-3 py-1.5 text-p1 text-black outline-1 -outline-offset-1 outline-grey placeholder:text-p2 placeholder:text-grey-25 focus:outline-2 focus:-outline-offset-2 focus:outline-light-cyan sm:text-sm/6";
+    const baseInputClasses = "block w-full rounded-md bg-broken-white px-3 py-1.5 text-p1 text-black outline-1 -outline-offset-1 outline-broken-white placeholder:text-p2 placeholder:text-grey-25 focus:outline-2 focus:-outline-offset-2 focus:outline-info sm:text-sm/6";
     
     const inputClasses = error
       ? `${baseInputClasses.replace('outline-grey', 'outline-danger').replace('focus:outline-light-cyan', 'focus:outline-danger')} pr-10 text-danger placeholder:text-danger`

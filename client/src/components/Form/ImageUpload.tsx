@@ -94,7 +94,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
         )}
         <div
           className={`mt-2 flex flex-col justify-center rounded-lg border-2 border-dashed
-            ${isDragging ? 'border-light-cyan bg-light-cyan-30' : 'border-grey-30'}
+            ${isDragging ? 'border-info bg-info/5' : 'border-grey-30'}
             ${error ? 'border-danger bg-danger/5' : ''}
             ${isDisabled ? 'border-grey-30 bg-broken-white cursor-not-allowed' : ''}
           `}
@@ -134,7 +134,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
                   <label
                     htmlFor={props.id}
                     className="w-[200px] h-[200px] flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-grey-30 
-                      cursor-pointer hover:border-light-cyan hover:bg-light-cyan-30 transition-colors"
+                      cursor-pointer hover:border-info hover:bg-info/5 transition-colors"
                   >
                     <Icon
                       name="GalleryAdd"
@@ -169,8 +169,8 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
               <div className="mt-4 flex justify-center text-p1">
                 <label
                   htmlFor={props.id}
-                  className={`relative cursor-pointer rounded-md font-semibold text-light-cyan
-                    ${isDisabled ? 'cursor-not-allowed text-grey' : 'hover:text-light-cyan-30'}`}
+                  className={`relative cursor-pointer rounded-md font-semibold text-info
+                    ${isDisabled ? 'cursor-not-allowed text-grey' : 'hover:text-info/50'}`}
                 >
                   <span>파일 선택</span>
                   <input

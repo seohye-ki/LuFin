@@ -155,8 +155,12 @@ const CommonComponents = () => {
   const [errorImage, setErrorImage] = useState<File[]>([]);
 
   // Dropdown states
-  const [selectedValue, setSelectedValue] = useState<string | number | { type: 'star'; count: 1 | 2 | 3 } | null>(null);
-  const [selectedStars, setSelectedStars] = useState<{ type: 'star'; count: 1 | 2 | 3 } | null>(null);
+  const [selectedValue, setSelectedValue] = useState<
+    string | number | { type: 'star'; count: 1 | 2 | 3 } | null
+  >(null);
+  const [selectedStars, setSelectedStars] = useState<{ type: 'star'; count: 1 | 2 | 3 } | null>(
+    null,
+  );
 
   // Dropdown items
   const dropdownItems = [
@@ -565,8 +569,8 @@ const CommonComponents = () => {
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>기본 이미지 업로드</span>
                   <ImageUpload
-                    id="single-image"
-                    label="미션 상세 이미지"
+                    id='single-image'
+                    label='미션 상세 이미지'
                     value={singleImage}
                     onChange={setSingleImage}
                   />
@@ -576,9 +580,9 @@ const CommonComponents = () => {
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>다중 이미지 업로드</span>
                   <ImageUpload
-                    id="multiple-images"
-                    label="미션 인증 이미지"
-                    description="최대 4장까지 업로드 가능합니다"
+                    id='multiple-images'
+                    label='미션 인증 이미지'
+                    description='최대 4장까지 업로드 가능합니다'
                     maxFiles={4}
                     value={multipleImages}
                     onChange={setMultipleImages}
@@ -589,9 +593,9 @@ const CommonComponents = () => {
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>에러가 있는 이미지 업로드</span>
                   <ImageUpload
-                    id="error-image"
-                    label="프로필 이미지"
-                    error="이미지를 업로드해주세요"
+                    id='error-image'
+                    label='프로필 이미지'
+                    error='이미지를 업로드해주세요'
                     value={errorImage}
                     onChange={setErrorImage}
                   />
@@ -600,11 +604,7 @@ const CommonComponents = () => {
                 {/* Disabled ImageUpload */}
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>비활성화된 이미지 업로드</span>
-                  <ImageUpload
-                    id="disabled-image"
-                    label="프로필 이미지"
-                    isDisabled={true}
-                  />
+                  <ImageUpload id='disabled-image' label='프로필 이미지' isDisabled={true} />
                 </div>
               </div>
             </div>
@@ -617,11 +617,11 @@ const CommonComponents = () => {
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>기본 입력 필드</span>
                   <TextField
-                    id="email"
-                    name="email"
-                    type="email"
-                    label="이메일"
-                    placeholder="you@example.com"
+                    id='email'
+                    name='email'
+                    type='email'
+                    label='이메일'
+                    placeholder='you@example.com'
                   />
                 </div>
 
@@ -629,12 +629,12 @@ const CommonComponents = () => {
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>설명이 있는 입력 필드</span>
                   <TextField
-                    id="email-with-desc"
-                    name="email"
-                    type="email"
-                    label="이메일"
-                    placeholder="you@example.com"
-                    description="스팸 메일을 보내지 않습니다."
+                    id='email-with-desc'
+                    name='email'
+                    type='email'
+                    label='이메일'
+                    placeholder='you@example.com'
+                    description='스팸 메일을 보내지 않습니다.'
                   />
                 </div>
 
@@ -642,12 +642,12 @@ const CommonComponents = () => {
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>에러가 있는 입력 필드</span>
                   <TextField
-                    id="email-with-error"
-                    name="email"
-                    type="email"
-                    label="이메일"
-                    placeholder="you@example.com"
-                    error="올바른 이메일 주소를 입력해주세요."
+                    id='email-with-error'
+                    name='email'
+                    type='email'
+                    label='이메일'
+                    placeholder='you@example.com'
+                    error='올바른 이메일 주소를 입력해주세요.'
                   />
                 </div>
 
@@ -655,11 +655,11 @@ const CommonComponents = () => {
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>비활성화된 입력 필드</span>
                   <TextField
-                    id="email-disabled"
-                    name="email"
-                    type="email"
-                    label="이메일"
-                    placeholder="you@example.com"
+                    id='email-disabled'
+                    name='email'
+                    type='email'
+                    label='이메일'
+                    placeholder='you@example.com'
                     isDisabled={true}
                   />
                 </div>
@@ -674,10 +674,10 @@ const CommonComponents = () => {
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>기본 텍스트 영역</span>
                   <TextArea
-                    id="comment"
-                    name="comment"
-                    label="댓글"
-                    placeholder="댓글을 입력해주세요"
+                    id='comment'
+                    name='comment'
+                    label='댓글'
+                    placeholder='댓글을 입력해주세요'
                     rows={4}
                   />
                 </div>
@@ -686,11 +686,11 @@ const CommonComponents = () => {
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>설명이 있는 텍스트 영역</span>
                   <TextArea
-                    id="comment-with-desc"
-                    name="comment"
-                    label="댓글"
-                    placeholder="댓글을 입력해주세요"
-                    description="최대 500자까지 입력 가능합니다"
+                    id='comment-with-desc'
+                    name='comment'
+                    label='댓글'
+                    placeholder='댓글을 입력해주세요'
+                    description='최대 500자까지 입력 가능합니다'
                     rows={4}
                   />
                 </div>
@@ -699,11 +699,11 @@ const CommonComponents = () => {
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>에러가 있는 텍스트 영역</span>
                   <TextArea
-                    id="comment-with-error"
-                    name="comment"
-                    label="댓글"
-                    placeholder="댓글을 입력해주세요"
-                    error="댓글을 입력해주세요"
+                    id='comment-with-error'
+                    name='comment'
+                    label='댓글'
+                    placeholder='댓글을 입력해주세요'
+                    error='댓글을 입력해주세요'
                     rows={4}
                   />
                 </div>
@@ -712,10 +712,10 @@ const CommonComponents = () => {
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>비활성화된 텍스트 영역</span>
                   <TextArea
-                    id="comment-disabled"
-                    name="comment"
-                    label="댓글"
-                    placeholder="댓글을 입력해주세요"
+                    id='comment-disabled'
+                    name='comment'
+                    label='댓글'
+                    placeholder='댓글을 입력해주세요'
                     isDisabled={true}
                     rows={4}
                   />
@@ -791,9 +791,7 @@ const CommonComponents = () => {
               title='반가워요! 이름을 적어주세요'
               description='루핀 회원이라면 모든 서비스를 이용할 수 있습니다.'
               content={
-                <p className='text-p2 font-regular text-grey border border-solid border-grey rounded-lg p-4'>
-                  input 컴포넌트
-                </p>
+                <TextField id='name' name='name' type='text' placeholder='이름을 적어주세요' />
               }
               secondaryButton={{
                 text: '다음',
@@ -804,9 +802,7 @@ const CommonComponents = () => {
               title='이메일을 적어주세요.'
               description='루핀 회원이라면 모든 서비스를 이용할 수 있습니다.'
               content={
-                <p className='text-p2 font-regular text-grey border border-solid border-grey rounded-lg p-4'>
-                  input 컴포넌트
-                </p>
+                <TextField id='email' name='email' type='email' placeholder='you@example.com' />
               }
               primaryButton={{
                 text: '이전',
@@ -821,7 +817,7 @@ const CommonComponents = () => {
               title='환영합니다!'
               description='지금부터 슬기로운 루핀 생활을 시작해봐요'
               content={
-                <div className='flex flex-col gap-2 items-center'>
+                <div className='flex flex-col gap-2 mt-4 items-center'>
                   <Button variant='solid' color='primary' size='lg'>
                     시작하기
                   </Button>
@@ -862,7 +858,7 @@ const CommonComponents = () => {
             <div className='flex flex-col gap-2'>
               <span className='text-xs'>기본 드롭다운</span>
               <Dropdown
-                label="기본 옵션"
+                label='기본 옵션'
                 items={dropdownItems}
                 value={selectedValue}
                 onChange={(value) => setSelectedValue(value as typeof selectedValue)}
@@ -873,7 +869,7 @@ const CommonComponents = () => {
             <div className='flex flex-col gap-2'>
               <span className='text-xs'>별점 드롭다운</span>
               <Dropdown
-                label="별점"
+                label='별점'
                 items={starDropdownItems}
                 value={selectedStars}
                 onChange={(value) => setSelectedStars(value as typeof selectedStars)}
@@ -883,11 +879,7 @@ const CommonComponents = () => {
             {/* Disabled Dropdown */}
             <div className='flex flex-col gap-2'>
               <span className='text-xs'>비활성화된 드롭다운</span>
-              <Dropdown
-                label="비활성화"
-                items={dropdownItems}
-                isDisabled={true}
-              />
+              <Dropdown label='비활성화' items={dropdownItems} isDisabled={true} />
             </div>
           </div>
         </section>
@@ -899,54 +891,29 @@ const CommonComponents = () => {
             {/* Basic CodeInput */}
             <div className='flex flex-col gap-2'>
               <span className='text-xs'>기본 코드 입력</span>
-              <CodeInput
-                value={code1}
-                onChange={setCode1}
-                length={5}
-              />
+              <CodeInput value={code1} onChange={setCode1} length={5} />
             </div>
 
             {/* CodeInput with Different Sizes */}
             <div className='flex flex-col gap-4'>
               <span className='text-xs'>크기 옵션</span>
               <div className='flex flex-col gap-4'>
-                <CodeInput
-                  value={code2}
-                  onChange={setCode2}
-                  length={5}
-                  size="sm"
-                />
-                <CodeInput
-                  value={code3}
-                  onChange={setCode3}
-                  length={5}
-                  size="md"
-                />
-                <CodeInput
-                  value={code4}
-                  onChange={setCode4}
-                  length={5}
-                  size="lg"
-                />
+                <CodeInput value={code2} onChange={setCode2} length={5} size='sm' />
+                <CodeInput value={code3} onChange={setCode3} length={5} size='md' />
+                <CodeInput value={code4} onChange={setCode4} length={5} size='lg' />
               </div>
             </div>
 
             {/* CodeInput with Error */}
             <div className='flex flex-col gap-2'>
               <span className='text-xs'>에러가 있는 코드 입력</span>
-              <CodeInput
-                length={5}
-                error="올바른 코드를 입력해주세요"
-              />
+              <CodeInput length={5} error='올바른 코드를 입력해주세요' />
             </div>
 
             {/* Disabled CodeInput */}
             <div className='flex flex-col gap-2'>
               <span className='text-xs'>비활성화된 코드 입력</span>
-              <CodeInput
-                length={5}
-                isDisabled={true}
-              />
+              <CodeInput length={5} isDisabled={true} />
             </div>
           </div>
         </section>

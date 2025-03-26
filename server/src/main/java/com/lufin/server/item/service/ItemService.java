@@ -7,9 +7,9 @@ import com.lufin.server.member.domain.Member;
 
 public interface ItemService {
 
-	ItemResponseDto  createItem(ItemDto itemDto, Member teacher);
+	ItemResponseDto  createItem(ItemDto request, Member teacher);
 
-	ItemResponseDto updateItem(Integer itemId, ItemDto itemDto, Member teacher);
+	ItemResponseDto updateItem(Integer itemId, ItemDto request, Member teacher);
 
 	void deleteItem(Integer itemId, Member teacher);
 

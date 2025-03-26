@@ -32,18 +32,18 @@ public class ItemController {
 
 	//아이템 생성
 	@PostMapping
-	public ResponseEntity<ApiResponse<ItemResponseDto>> createItem(@RequestBody ItemDto itemDto) {
+	public ResponseEntity<ApiResponse<ItemResponseDto>> createItem(@RequestBody ItemDto request) {
 
-		ItemResponseDto result = itemService.createItem(itemDto, UserContext.get());
-		return ResponseEntity.ok(ApiResponse.success(result));
+		ItemResponseDto result = itemService.createItem(request, UserContext.get());
+		return ResponseEntity.status(201).body(ApiResponse.success(result));
 	}
 
 	//아이템 수정
 	@PutMapping("/{itemId}")
 	public ResponseEntity<ApiResponse<ItemResponseDto>> updateItem(@PathVariable Integer itemId,
-		@RequestBody ItemDto itemDto) {
+		@RequestBody ItemDto request) {
 
-		ItemResponseDto result = itemService.updateItem(itemId, itemDto, UserContext.get());
+		ItemResponseDto result = itemService.updateItem(itemId, request, UserContext.get());
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
@@ -52,6 +52,6 @@ public class ItemController {
 	public ResponseEntity<ApiResponse<Void>> deleteItem(@PathVariable Integer itemId) {
 
 		itemService.deleteItem(itemId, UserContext.get());
-		return ResponseEntity.ok(ApiResponse.success(null));
+		return ResponseEntity.noContent().build();
 	}
 }

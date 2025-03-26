@@ -46,37 +46,37 @@ public class ItemServiceImpl implements ItemService{
 
 	@Override
 	@Transactional
-	public ItemResponseDto createItem(ItemDto itemDto, Member teacher) {
+	public ItemResponseDto createItem(ItemDto request, Member teacher) {
 		Classroom classroom = getActiveClassroom(teacher);
-		Item item = Item.create(
+		Item response = Item.create(
 			classroom,
-			itemDto.name(),
-			itemDto.type(),
-			itemDto.price(),
-			itemDto.quantityAvailable(),
-			itemDto.expirationDate()
+			request.name(),
+			request.type(),
+			request.price(),
+			request.quantityAvailable(),
+			request.expirationDate()
 		);
-		return ItemResponseDto.from(itemRepository.save(item));
+		return ItemResponseDto.from(itemRepository.save(response));
 	}
 
 	@Override
 	@Transactional
-	public ItemResponseDto updateItem(Integer itemId, ItemDto itemDto, Member teacher) {
+	public ItemResponseDto updateItem(Integer itemId, ItemDto request, Member teacher) {
 		Classroom classroom = getActiveClassroom(teacher);
-		Item item = validateItemOwnership(itemId, classroom);
+		Item response = validateItemOwnership(itemId, classroom);
 
-		item.changeName(itemDto.name());
-		item.changePrice(itemDto.price());
-		item.changeQuantityAvailable(itemDto.quantityAvailable());
-		item.changeExpirationDate(itemDto.expirationDate());
-		return ItemResponseDto.from(itemRepository.save(item));
+		response.changeName(request.name());
+		response.changePrice(request.price());
+		response.changeQuantityAvailable(request.quantityAvailable());
+		response.changeExpirationDate(request.expirationDate());
+		return ItemResponseDto.from(itemRepository.save(response));
 	}
 
 	@Override
 	@Transactional
 	public void deleteItem(Integer itemId, Member teacher) {
 		Classroom classroom = getActiveClassroom(teacher);
-		Item item = validateItemOwnership(itemId, classroom);
-		itemRepository.delete(item);
+		Item response = validateItemOwnership(itemId, classroom);
+		itemRepository.delete(response);
 	}
 }

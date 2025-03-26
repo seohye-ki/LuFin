@@ -26,15 +26,15 @@ public class ItemServiceImpl implements ItemService{
 	private final ItemRepository itemRepository;
 	private final MemberClassroomRepository memberClassroomRepository;
 
-	// teacher의 is_current인 반 찾기(is_current 반 없으면 에러)
-	private Classroom getActiveClassroom(Member teacher) {
+	//  현재 활성화된 클래스 찾기
+	private Classroom getActiveClassroom(Member member) {
 		MemberClassroom memberClassroom = memberClassroomRepository
-			.findByMember_IdAndIsCurrentTrue(teacher.getId())
+			.findByMember_IdAndIsCurrentTrue(member.getId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.REQUEST_DENIED));
 		return memberClassroom.getClassroom();
 	}
 
-	// item id로 item 찾기(아이템이 없으면 에러, 다른반 아이템이면 에러)
+	// 아이템 유효성 검증 및 찾기
 	private Item validateItemOwnership(Integer itemId, Classroom classroom) {
 		Item item = itemRepository.findById(itemId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));

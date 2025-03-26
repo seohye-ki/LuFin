@@ -1,11 +1,12 @@
 package com.lufin.server.item.service;
 
-import com.lufin.server.item.domain.ItemPurchase;
+import java.util.List;
+
 import com.lufin.server.item.dto.ItemPurchaseRequestDto;
+import com.lufin.server.item.dto.ItemPurchaseResponseDto;
 import com.lufin.server.member.domain.Member;
 
 public interface ItemPurchaseService {
 
-	ItemPurchase purchaseItem(ItemPurchaseRequestDto request, Member student);
-
+	List<ItemPurchaseResponseDto> purchaseItem(ItemPurchaseRequestDto request, Member student);
 }

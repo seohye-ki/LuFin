@@ -123,13 +123,13 @@ const CommonComponents = () => {
   const [code4, setCode4] = useState('');
 
   return (
-    <div className='p-8 bg-broken-white'>
+    <div className='p-8 bg-white'>
       <h1 className='text-h1 font-regular text-black mb-4'>Common Components</h1>
       <div className='flex flex-col gap-8'>
         {/* Alert Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Alert</h2>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-broken-white p-4 rounded-2xl'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-grey-30 p-4 rounded-2xl'>
             {/* Info Alert - Row buttons */}
             <Alert
               title='새로운 미션이 등록됐어요'
@@ -197,7 +197,7 @@ const CommonComponents = () => {
         {/* Icon Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Icons</h2>
-          <div className='flex flex-col gap-8 bg-broken-white p-4 rounded-2xl'>
+          <div className='flex flex-col gap-8 bg-grey-30 p-4 rounded-2xl'>
             {/* Navigation Icons */}
             <div>
               <h3 className='text-p1 font-medium text-black mb-4'>Navigation Icons</h3>
@@ -334,7 +334,7 @@ const CommonComponents = () => {
         {/* Profile Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Profile</h2>
-          <div className='flex flex-col gap-4'>
+          <div className='flex flex-col gap-4 bg-grey-30 p-4 rounded-2xl'>
             <Profile name='이재현' profileImage='https://picsum.photos/200/300?random=1' />
             <Profile
               name='이재현 선생님'
@@ -348,7 +348,7 @@ const CommonComponents = () => {
         {/* Card Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Card</h2>
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-broken-white p-4 rounded-2xl'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-grey-30 p-4 rounded-2xl'>
             {/* Modal Card */}
             <div className='flex flex-col gap-4'>
               <h3 className='text-p1 font-medium text-black mb-2'>모달 카드</h3>
@@ -380,7 +380,7 @@ const CommonComponents = () => {
         {/* Badge Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Badge</h2>
-          <div className='flex gap-2 items-center flex-wrap bg-broken-white p-4 rounded-2xl'>
+          <div className='flex gap-2 items-center flex-wrap bg-grey-30 p-4 rounded-2xl'>
             <Badge status='ready'>모집 중</Badge>
             <Badge status='ing'>수행 중</Badge>
             <Badge status='reject'>반려</Badge>
@@ -393,7 +393,7 @@ const CommonComponents = () => {
         {/* Lufin Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Lufin</h2>
-          <div className='flex flex-col gap-12'>
+          <div className='flex flex-col gap-12 bg-grey-30 p-4 rounded-2xl'>
             <Lufin count={15200} size={16} />
             <Lufin count={15200} size={24} />
             <Lufin count={15200} size={28} />
@@ -406,7 +406,7 @@ const CommonComponents = () => {
         {/* Button Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Button</h2>
-          <div className='flex flex-col gap-8 bg-broken-white p-4 rounded-2xl'>
+          <div className='flex flex-col gap-8 bg-white p-4 rounded-2xl'>
             <div>
               <h3 className='text-p1 font-medium text-black mb-2'>기본 버튼 (Solid)</h3>
               <div className='flex gap-2 items-center flex-wrap'>
@@ -501,7 +501,7 @@ const CommonComponents = () => {
         {/* Form Components Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Form Components</h2>
-          <div className='flex flex-col gap-8 bg-broken-white p-4 rounded-2xl'>
+          <div className='flex flex-col gap-8 bg-white p-4 rounded-2xl'>
             {/* ImageUpload */}
             <div>
               <h3 className='text-p1 font-medium text-black mb-4'>ImageUpload</h3>
@@ -557,7 +557,7 @@ const CommonComponents = () => {
             {/* TextField */}
             <div>
               <h3 className='text-p1 font-medium text-black mb-4'>TextField</h3>
-              <div className='flex flex-col gap-8'>
+              <div className='flex flex-col gap-8 bg-grey-30 p-4 rounded-2xl'>
                 {/* Basic TextField */}
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>기본 입력 필드</span>
@@ -614,7 +614,7 @@ const CommonComponents = () => {
             {/* TextArea */}
             <div>
               <h3 className='text-p1 font-medium text-black mb-4'>TextArea</h3>
-              <div className='flex flex-col gap-8'>
+              <div className='flex flex-col gap-8 bg-grey-30 p-4 rounded-2xl'>
                 {/* Basic TextArea */}
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>기본 텍스트 영역</span>
@@ -671,7 +671,7 @@ const CommonComponents = () => {
             {/* Checkbox */}
             <div>
               <h3 className='text-p1 font-medium text-black mb-4'>Checkbox</h3>
-              <div className='flex items-center gap-8'>
+              <div className='flex items-center gap-8 bg-grey-30 p-4 rounded-2xl'>
                 <div className='flex flex-col items-center'>
                   <Checkbox 
                     id="checkbox-1" 
@@ -719,7 +719,7 @@ const CommonComponents = () => {
         </section>
 
         {/* Sidebar Section */}
-        <section className='flex gap-8'>
+        <section className='flex gap-8 bg-grey-30 p-4 rounded-2xl'>
           <div className='flex flex-col gap-4'>
             <h2 className='text-h2 font-medium text-black mb-4'>학생 사이드바</h2>
             <Sidebar userRole='student' />
@@ -733,7 +733,7 @@ const CommonComponents = () => {
         {/* Layout Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Layout</h2>
-          <div className='flex gap-8'>
+          <div className='flex gap-8 bg-grey-30 p-4 rounded-2xl'>
             <SidebarLayout>
               <h2 className='text-h2 font-medium text-black mb-4'>Sidebar Layout</h2>
               <p className='text-body'>사이드바가 포함된 레이아웃입니다.</p>
@@ -749,7 +749,7 @@ const CommonComponents = () => {
         {/* Dropdown Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Dropdown</h2>
-          <div className='flex flex-col gap-8 bg-broken-white p-4 rounded-2xl'>
+          <div className='flex flex-col gap-8 bg-grey-30 p-4 rounded-2xl'>
             {/* Basic Dropdown */}
             <div className='flex flex-col gap-2'>
               <span className='text-xs'>기본 드롭다운</span>
@@ -787,7 +787,7 @@ const CommonComponents = () => {
         {/* CodeInput Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>CodeInput</h2>
-          <div className='flex flex-col gap-8 bg-broken-white p-4 rounded-2xl'>
+          <div className='flex flex-col gap-8 bg-grey-30 p-4 rounded-2xl'>
             {/* Basic CodeInput */}
             <div className='flex flex-col gap-2'>
               <span className='text-xs'>기본 코드 입력</span>

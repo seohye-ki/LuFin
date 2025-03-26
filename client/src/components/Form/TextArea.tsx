@@ -10,7 +10,7 @@ interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 
 const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
   ({ label, description, error, isDisabled, className = '', ...props }, ref) => {
-    const baseInputClasses = "block w-full rounded-md bg-white px-3 py-1.5 text-body1 text-black outline-1 -outline-offset-1 outline-grey placeholder:text-grey-25 placeholder:text-body1 focus:outline-2 focus:-outline-offset-2 focus:outline-light-cyan sm:text-sm/6 resize-none";
+    const baseInputClasses = "block w-full rounded-md bg-white px-3 py-1.5 text-p1 text-black outline-1 -outline-offset-1 outline-grey placeholder:text-p2 placeholder:text-grey-25 focus:outline-2 focus:-outline-offset-2 focus:outline-light-cyan sm:text-sm/6 resize-none";
     
     const inputClasses = error
       ? `${baseInputClasses.replace('outline-grey', 'outline-danger').replace('focus:outline-light-cyan', 'focus:outline-danger')} pr-10 text-danger placeholder:text-danger`

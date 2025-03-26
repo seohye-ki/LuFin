@@ -47,10 +47,10 @@ import {
   Edit2,
   SearchNormal1,
   HambergerMenu,
-  Star1,
   Add,
   More,
 } from 'iconsax-react';
+import { HiStar } from "react-icons/hi2";
 
 type CustomColor =
   | 'white'
@@ -129,7 +129,7 @@ const ICONSAX_ICONS = {
   Edit2,
   SearchNormal1,
   HambergerMenu,
-  Star: Star1,
+  Star: HiStar,
   Add,
   More,
   Close: Add,
@@ -198,6 +198,11 @@ export const Icon = ({
         )}
       </div>
     );
+  }
+
+  // Star 아이콘일 경우 기본 색상을 yellow로 설정
+  if (name === 'Star' && color === 'currentColor') {
+    color = 'yellow';
   }
 
   return (

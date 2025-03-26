@@ -10,6 +10,8 @@ import DefaultLayout from '../components/Layout/DefaultLayout';
 import Checkbox from '../components/Form/Checkbox';
 import { useState } from 'react';
 import DashBoardCard from '../components/Card/DashBoardCard';
+import TableView, { TableColumn, TableRow } from '../components/Frame/TableView';
+
 const CommonComponents = () => {
   const navigationIcons: IconsaxIconName[] = [
     'ArrowLeft',
@@ -81,7 +83,53 @@ const CommonComponents = () => {
     'Star',
   ];
 
-  const variants: IconProps['variant'][] = ['Linear', 'Outline', 'Broken', 'Bold', 'Bulk', 'TwoTone'];
+  const variants: IconProps['variant'][] = [
+    'Linear',
+    'Outline',
+    'Broken',
+    'Bold',
+    'Bulk',
+    'TwoTone',
+  ];
+
+  const columns: TableColumn[] = [
+    { key: 'mission', label: '미션명' },
+    { key: 'wage', label: '급여' },
+    { key: 'difficulty', label: '난이도' },
+    { key: 'date', label: '수행 날짜' },
+    { key: 'member', label: '수행 인원' },
+    { key: 'status', label: '상태' },
+    { key: 'request', label: '요청' },
+  ];
+
+  const rows: TableRow[] = [
+    {
+      mission: '안내문 나눠주기',
+      wage: <Lufin count={1000} size={24} />,
+      difficulty: <Icon name='Star' size={24} color='yellow' variant='Bold' />,
+      date: '2025-01-01',
+      member: '1/2',
+      status: <Badge status='done'>성공</Badge>,
+      request: (
+        <Button variant='ghost' color='info'>
+          리뷰 요청하기
+        </Button>
+      ),
+    },
+    {
+      mission: '안내문 나눠주기',
+      wage: <Lufin count={1000} size={24} />,
+      difficulty: <Icon name='Star' size={24} color='yellow' variant='Bold' />,
+      date: '2025-01-01',
+      member: '1/2',
+      status: <Badge status='ing'>수행 중</Badge>,
+      request: (
+        <Button variant='solid' color='primary'>
+          신청하기
+        </Button>
+      ),
+    },
+  ];
 
   // Checkbox states
   const [checkbox1, setCheckbox1] = useState(false);
@@ -473,8 +521,8 @@ const CommonComponents = () => {
               <h3 className='text-p1 font-medium text-black mb-4'>Checkbox</h3>
               <div className='flex items-center gap-8'>
                 <div className='flex flex-col items-center'>
-                  <Checkbox 
-                    id="checkbox-1" 
+                  <Checkbox
+                    id='checkbox-1'
                     checked={checkbox1}
                     onChange={(e) => {
                       setCheckbox1(e.target.checked);
@@ -483,8 +531,8 @@ const CommonComponents = () => {
                   <span className='text-xs mt-1'>{checkbox1 ? '체크됨' : '체크 안됨'}</span>
                 </div>
                 <div className='flex flex-col items-center'>
-                  <Checkbox 
-                    id="checkbox-2" 
+                  <Checkbox
+                    id='checkbox-2'
                     checked={checkbox2}
                     onChange={(e) => {
                       setCheckbox2(e.target.checked);
@@ -493,25 +541,23 @@ const CommonComponents = () => {
                   <span className='text-xs mt-1'>{checkbox2 ? '체크됨' : '체크 안됨'}</span>
                 </div>
                 <div className='flex flex-col items-center'>
-                  <Checkbox id="checkbox-3" disabled />
+                  <Checkbox id='checkbox-3' disabled />
                   <span className='text-xs mt-1'>비활성화</span>
                 </div>
                 <div className='flex flex-col items-center'>
-                  <Checkbox id="checkbox-4" disabled defaultChecked />
+                  <Checkbox id='checkbox-4' disabled defaultChecked />
                   <span className='text-xs mt-1'>체크된 비활성화</span>
                 </div>
                 <div className='flex flex-col items-center'>
-                  <Checkbox 
-                    id="checkbox-5" 
+                  <Checkbox
+                    id='checkbox-5'
                     indeterminate={!checkbox5}
                     checked={checkbox5}
                     onChange={(e) => {
                       setCheckbox5(e.target.checked);
                     }}
                   />
-                  <span className='text-xs mt-1'>
-                    {!checkbox5 ? '중간 상태' : '체크됨'}
-                  </span>
+                  <span className='text-xs mt-1'>{!checkbox5 ? '중간 상태' : '체크됨'}</span>
                 </div>
               </div>
             </div>
@@ -528,6 +574,12 @@ const CommonComponents = () => {
             <h2 className='text-h2 font-medium text-black mb-4'>선생님 사이드바</h2>
             <Sidebar userRole='teacher' />
           </div>
+        </section>
+
+        {/* TableView Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>TableView</h2>
+          <TableView columns={columns} rows={rows} />
         </section>
 
         {/* Layout Section */}

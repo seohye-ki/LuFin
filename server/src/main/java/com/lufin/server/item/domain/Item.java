@@ -2,6 +2,8 @@ package com.lufin.server.item.domain;
 
 import java.time.LocalDateTime;
 
+import javax.net.ssl.SSLSession;
+
 import com.lufin.server.classroom.domain.Classroom;
 
 import jakarta.persistence.Column;

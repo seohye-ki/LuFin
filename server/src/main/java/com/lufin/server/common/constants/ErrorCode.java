@@ -16,6 +16,8 @@ public enum ErrorCode {
 	INVALID_INPUT_VALUE("E400007", "잘못된 입력 값입니다."),
 	INVALID_DEPOSIT_AMOUNT("E400008", "입금 금액은 0보다 커야 합니다."),
 	INVALID_WITHDRAWAL_AMOUNT("E400009", "출금 금액은 0보다 커야 합니다."),
+	CLASS_CODE_INVALID("E400010", "클래스 입장 코드가 잘못되었습니다."),
+	INVALID_FILE_NAME_FORMAT("E400011", "파일 이름 형식이 잘못되었습니다."),
 
 	INVALID_CREDENTIALS("E401001", "이메일 또는 패스워드를 확인해주세요."),
 	UNAUTHORIZED_ACCESS("E401002", "인증이 필요합니다."),

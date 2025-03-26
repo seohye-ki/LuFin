@@ -1,15 +1,12 @@
 package com.lufin.server.classroom.domain;
 
-import static com.lufin.server.common.constants.ErrorCode.*;
-import static com.lufin.server.common.utils.ValidationUtils.*;
+import static com.lufin.server.classroom.util.ClassroomValidator.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.Member;
-import com.lufin.server.member.domain.MemberRole;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -55,7 +52,7 @@ public class Classroom {
 	private Integer grade;
 
 	@Column(name = "class_group", nullable = false)
-	private String classGroup;
+	private Integer classGroup;
 
 	@Column(name = "name", nullable = false, length = 20)
 	private String name;
@@ -70,7 +67,7 @@ public class Classroom {
 	private LocalDateTime createdAt;
 
 	// 학급 엔티티 생성자 (정적 팩토리에서 호출됨)
-	private Classroom(Member teacher, String code, String school, Integer grade, String classGroup,
+	private Classroom(Member teacher, String code, String school, Integer grade, Integer classGroup,
 		String name, String thumbnailKey) {
 		this.teacher = teacher;
 		this.code = code;
@@ -79,32 +76,19 @@ public class Classroom {
 		this.classGroup = classGroup;
 		this.name = name;
 		this.thumbnailKey = thumbnailKey;
-		this.createdAt = LocalDateTime.now(); // 명시적 설정
+		setCreatedAt();
 	}
 
-	// 썸네일이 있는 학급 생성
-	public static Classroom createWithImage(Member teacher, String code, String school, Integer grade,
-		String classGroup, String name, String thumbnailKey) {
-		validate(teacher, code, grade);
+	// 학급 생성 -> 이미지 없을 시 기본 썸네일 저장
+	public static Classroom create(Member teacher, String code, String school, Integer grade,
+		Integer classGroup, String name, String thumbnailKey) {
+		validateCreateClassroom(teacher, code, grade);
+		if (thumbnailKey != null) {
+			validateThumbnailFileName(thumbnailKey);
+		} else {
+			thumbnailKey = "default";
+		}
 		return new Classroom(teacher, code, school, grade, classGroup, name, thumbnailKey);
-	}
-
-	// 썸네일 없이 학급 생성
-	public static Classroom createWithoutImage(Member teacher, String code, String school, Integer grade,
-		String classGroup, String name) {
-		validate(teacher, code, grade);
-		return new Classroom(teacher, code, school, grade, classGroup, name, null);
-	}
-
-	// 학급 생성 시 유효성 검증 로직
-	private static void validate(Member teacher, String code, Integer grade) {
-		if (teacher == null || teacher.getMemberRole() != MemberRole.TEACHER) {
-			throw new BusinessException(REQUEST_DENIED);
-		}
-		validateClassCode(code);
-		if (grade == null || grade < 4 || grade > 6) {
-			throw new BusinessException(INVALID_INPUT_VALUE);
-		}
 	}
 
 	// 학급에 구성원 추가

@@ -784,7 +784,7 @@ const CommonComponents = () => {
         </section>
 
         {/* LoginView Section */}
-        <section>
+        <section className='flex gap-8 bg-grey-30 p-4 rounded-2xl'>
           <h2 className='text-h2 font-medium text-black mb-4'>LoginView</h2>
           <div className='flex gap-4'>
             <LoginView
@@ -829,7 +829,7 @@ const CommonComponents = () => {
         </section>
 
         {/* TableView Section */}
-        <section>
+        <section className='bg-grey-30 p-4 rounded-2xl'>
           <h2 className='text-h2 font-medium text-black mb-4'>TableView</h2>
           <TableView columns={columns} rows={rows} />
         </section>

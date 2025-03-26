@@ -56,7 +56,7 @@ const LoginView = ({
         <img
           src={background}
           alt='background'
-          className='w-[352px] absolute bottom-0 left-0 object-contain'
+          className='w-[352px] absolute bottom-0 left-0 object-contain rounded-lg'
         />
       )}
     </div>

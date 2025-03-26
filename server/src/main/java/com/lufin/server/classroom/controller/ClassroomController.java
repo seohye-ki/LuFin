@@ -1,7 +1,7 @@
 package com.lufin.server.classroom.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +22,7 @@ public class ClassroomController {
 	private final ClassroomService classroomService;
 
 	// 클래스 생성
-	@GetMapping
+	@PostMapping
 	ResponseEntity<ApiResponse<ClassResponse>> createClassroom(ClassRequest classRequest) {
 		Member currentMember = UserContext.get();
 		ClassResponse result = classroomService.createClassroom(classRequest, currentMember);

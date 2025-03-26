@@ -21,19 +21,19 @@ interface AlertProps {
 const statusConfig = {
   info: {
     icon: 'InfoCircle',
-    color: '#00A3FF',
+    color: 'info',
   },
   warning: {
     icon: 'Notification',
-    color: '#FFB800',
+    color: 'warning',
   },
   danger: {
     icon: 'CloseCircle',
-    color: '#FF4747',
+    color: 'danger',
   },
   success: {
     icon: 'TickCircle',
-    color: '#00BA34',
+    color: 'success',
   },
 } as const;
 

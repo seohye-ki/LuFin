@@ -22,7 +22,7 @@ const TableView = ({ columns, rows }: TableViewProps) => {
               <th
                 key={column.key}
                 className={`
-              px-4 py-2 text-p2 font-semibold border-b border-new-grey text-center
+              px-4 py-3 text-p2 font-semibold border-b border-new-grey text-center
               ${idx === 0 ? 'rounded-tl-xl' : ''}
               ${idx === columns.length - 1 ? 'rounded-tr-xl' : ''}
             `}

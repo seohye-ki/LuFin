@@ -36,9 +36,8 @@ const LoginView = ({
         <div className='flex flex-col items-center gap-2'>
           <h1 className='text-h3 font-semibold text-black'>{title}</h1>
           <p className='text-c1 font-regular text-grey'>{description}</p>
+          {content && <div className={`w-full ${backgroundImage ? 'mb-24' : ''}`}>{content}</div>}
         </div>
-
-        {content && <div className={`w-full ${backgroundImage ? 'mb-24' : ''}`}>{content}</div>}
 
         <div className='flex px-2 gap-2 justify-center w-full'>
           {primaryButton && (

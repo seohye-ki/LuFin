@@ -111,7 +111,7 @@ const Dropdown = ({
               ref={buttonRef}
               disabled={isDisabled}
               className={`
-                inline-flex w-full items-center justify-between gap-x-1.5 rounded-lg px-3 py-2 text-p2
+                inline-flex w-full items-center justify-between gap-x-1.5 rounded-lg px-3 py-2 text-p1
                 ${isDisabled 
                   ? 'bg-broken-white text-grey cursor-not-allowed' 
                   : 'bg-white text-black hover:bg-broken-white'}
@@ -119,7 +119,7 @@ const Dropdown = ({
               `}
             >
               {selectedItem ? renderValue(selectedItem) : (
-                <span className="text-grey">{placeholder}</span>
+                <span className="text-grey text-p2">{placeholder}</span>
               )}
               <Icon 
                 name={open ? "ArrowUp2" : "ArrowDown2"} 

@@ -30,7 +30,7 @@ const CodeInput = ({
 
   // 크기별 스타일 설정
   const sizeStyles = {
-    sm: 'w-8 h-8 text-p3',
+    sm: 'w-8 h-8 text-c1',
     md: 'w-10 h-10 text-p2',
     lg: 'w-12 h-12 text-p1',
   };
@@ -107,14 +107,14 @@ const CodeInput = ({
             disabled={isDisabled}
             className={`
               ${sizeStyles[size]}
-              text-center rounded-lg
+              text-center rounded-lg font-semibold
               ${error 
-                ? 'border-danger focus:border-danger focus:ring-danger/30' 
-                : 'border-grey-30 focus:border-light-cyan focus:ring-light-cyan/30'}
+                ? 'border-2 border-danger focus:border-danger focus:ring-danger/30' 
+                : 'border-2 border-info focus:border-info focus:ring-info/30'}
               ${isDisabled 
                 ? 'bg-broken-white text-grey cursor-not-allowed' 
-                : 'bg-white text-black'}
-              border outline-none
+                : 'bg-white text-info hover:border-info/80'}
+              outline-none
               focus:ring-4 transition-all
             `}
           />

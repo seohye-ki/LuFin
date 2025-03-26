@@ -61,7 +61,7 @@ const Alert = ({
 
       {/* Text Content */}
       <div className="flex flex-col items-center text-center mb-6">
-        <h3 className="text-body-1 font-bold text-black mb-2">{title}</h3>
+        <h3 className="text-p1 font-bold text-black mb-2">{title}</h3>
         {description && (
           <p className="text-c1 text-dark-grey">{description}</p>
         )}

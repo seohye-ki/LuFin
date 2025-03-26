@@ -142,7 +142,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
                       color="grey-25"
                       className="mb-2"
                     />
-                    <span className="text-body1 text-grey">추가하기</span>
+                    <span className="text-p1 text-grey">추가하기</span>
                     <input
                       ref={ref}
                       id={props.id}
@@ -166,7 +166,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
                 color={isDisabled ? "grey-30" : "grey-25"}
                 className="mx-auto"
               />
-              <div className="mt-4 flex justify-center text-body1">
+              <div className="mt-4 flex justify-center text-p1">
                 <label
                   htmlFor={props.id}
                   className={`relative cursor-pointer rounded-md font-semibold text-light-cyan

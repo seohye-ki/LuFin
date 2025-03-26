@@ -51,8 +51,8 @@ export default function Button({
     xs: 'px-2.5 py-1 text-c2',
     sm: 'px-2.5 py-1 text-c1',
     md: 'px-3 py-1.5 text-c1',
-    lg: 'px-3.5 py-2 text-body-1',
-    xl: 'px-4 py-2.5 text-body-1',
+    lg: 'px-3.5 py-2 text-p1',
+    xl: 'px-4 py-2.5 text-p1',
   };
 
   return (

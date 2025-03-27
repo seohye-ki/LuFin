@@ -22,7 +22,7 @@ public class MissionServiceImpl implements MissionService {
 
 	private final MissionRepository missionRepository;
 
-	// TODO: 캐시 추가로 조회 성능 향상 도모
+	// TODO: 추후 캐시 추가로 조회 성능 향상 도모
 	@Override
 	public List<MissionResponseDto.MissionSummaryResponseDto> getAllMissions(Integer classId) {
 		try {
@@ -33,8 +33,8 @@ public class MissionServiceImpl implements MissionService {
 			List<MissionResponseDto.MissionSummaryResponseDto> result = missionRepository.getAllMissions(classId);
 			return result;
 		} catch (Exception e) {
-			// 지정된 오류 이외의 경우 출력
-			throw new Error(e.getMessage(), e);
+			e.printStackTrace();
+			throw new BusinessException(SERVER_ERROR);
 		}
 	}
 
@@ -72,8 +72,8 @@ public class MissionServiceImpl implements MissionService {
 			return result;
 
 		} catch (Exception e) {
-			// 지정된 오류 이외의 것일 경우 출력
-			throw new Error(e.getMessage(), e);
+			e.printStackTrace();
+			throw new BusinessException(SERVER_ERROR);
 		}
 	}
 }

@@ -27,20 +27,38 @@
   align-items: center;
   height: 116px;
   border: 1px solid rgba(217, 217, 217, 0.3);
-  color: #000000;
+  color: #242424;
+}
+
+/* 이번달이 아닌 날짜 */
+.calendarWrapper :global(.react-calendar__month-view__days__day--neighboringMonth) {
+  color: #d9d9d9;
 }
 
 /* 오늘 날짜 스타일 */
 .calendarWrapper :global(.react-calendar__tile--now) {
-  background: transparent;
-  color: #000000;
+  background: transparent !important;
+  color: inherit;
   font-weight: normal;
+  position: relative;
+}
+
+/* 날짜 숫자를 원 안에 넣기 위한 감싸는 요소 */
+.calendarWrapper :global(.react-calendar__tile--now abbr) {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  background-color: #c3ebfa;
+  color: #242424;
+  border-radius: 100%;
+  font-weight: bold;
 }
 
 /* 선택된 날짜 스타일 */
 .calendarWrapper :global(.react-calendar__tile--active) {
-  background: rgba(195, 235, 250, 0.3);
-  color: #000000;
+  color: #242424;
 }
 
 /* 호버 스타일 */
@@ -54,10 +72,11 @@
   color: #666;
   background-color: rgba(195, 235, 250, 0.3);
   padding: 20px 20px;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: semibold;
   font-family: Pretendard;
   text-decoration: none;
+  border: 1px solid rgba(217, 217, 217, 0.3);
 }
 
 .calendarWrapper :global(.react-calendar__month-view__weekdays__weekday:nth-child(7)) {
@@ -89,7 +108,7 @@
   display: inline-block;
   padding: 2px 8px;
   background-color: rgba(250, 226, 124, 0.3);
-  color: #000000;
+  color: #242424;
   border-left: 3px solid #fae27c;
   border-radius: 8px;
   font-weight: 600;
@@ -105,6 +124,6 @@
   margin: 0 2px;
   cursor: pointer;
   font-size: 11px;
-  color: #000000;
+  color: #8a8d8e;
   font-weight: 500;
 }

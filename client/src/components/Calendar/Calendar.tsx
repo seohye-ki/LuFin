@@ -74,10 +74,8 @@ function CalendarView() {
         value={value}
         locale='ko-KR'
         showNavigation={false}
-        formatDay={(locale, date) => moment(date).format('D')}
-        formatShortWeekday={(locale, date) =>
-          ['일', '월', '화', '수', '목', '금', '토'][date.getDay()]
-        }
+        formatDay={(_, date) => moment(date).format('D')}
+        formatShortWeekday={(_, date) => ['일', '월', '화', '수', '목', '금', '토'][date.getDay()]}
         tileContent={({ date }) => {
           const dateKey = getFormattedKey(date);
           const toDo = toDoList[dateKey];

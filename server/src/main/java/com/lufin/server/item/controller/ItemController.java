@@ -75,11 +75,27 @@ public class ItemController {
 		return ResponseEntity.noContent().build();
 	}
 
-	//아이템 구매
+	// 아이템 구매
 	@PostMapping("/purchase")
 	public ResponseEntity<ApiResponse<List<ItemPurchaseResponseDto>>> purchaseItem(@RequestBody @Valid ItemPurchaseRequestDto request) {
 
 		List<ItemPurchaseResponseDto> result = itemPurchaseService.purchaseItem(request, UserContext.get());
+		return ResponseEntity.ok(ApiResponse.success(result));
+	}
+
+	// 나의 구매 아이템 조회
+	@GetMapping("/inventory")
+	public ResponseEntity<ApiResponse<List<ItemPurchaseResponseDto>>> getInventory() {
+
+		List<ItemPurchaseResponseDto> result = itemPurchaseService.getInventory(UserContext.get());
+		return ResponseEntity.ok(ApiResponse.success(result));
+	}
+
+	// 특정 아이템의 구매 내역 조회
+	@GetMapping("/{itemId}/purchases")
+	public ResponseEntity<ApiResponse<List<ItemPurchaseResponseDto>>> getItemPurchaseHistory(@PathVariable Integer itemId) {
+
+		List<ItemPurchaseResponseDto> result = itemPurchaseService.getItemPurchaseHistory(itemId, UserContext.get());
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 }

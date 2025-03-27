@@ -10,7 +10,9 @@ public interface ItemPurchaseService {
 
 	List<ItemPurchaseResponseDto> purchaseItem(ItemPurchaseRequestDto request, Member student);
 
-	List<ItemPurchaseResponseDto> getInventory(Member member);
+	List<ItemPurchaseResponseDto> getInventory(Member student);
 
-	List<ItemPurchaseResponseDto> getItemPurchaseHistory(Integer itemId, Member member);
+	List<ItemPurchaseResponseDto> getItemPurchaseHistory(Integer itemId, Member teacher);
+
+	ItemPurchaseResponseDto refundItem(Integer purchaseId, Member student);
 }

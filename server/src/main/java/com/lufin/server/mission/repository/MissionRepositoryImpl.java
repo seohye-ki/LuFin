@@ -41,7 +41,7 @@ public class MissionRepositoryImpl implements MissionRepository {
 		// 쿼리문
 		List<MissionResponseDto.MissionSummaryResponseDto> result = queryFactory
 			.select(new QMissionResponseDto_MissionSummaryResponseDto(
-				mission.missionId,
+				mission.id,
 				mission.title,
 				mission.difficulty,
 				mission.maxParticipants,
@@ -76,16 +76,16 @@ public class MissionRepositoryImpl implements MissionRepository {
 
 		// missionId와 일치하는 mission만 조회하는 조건 추가
 		if (missionId != null) {
-			builder.and(mission.missionId.eq(missionId));
+			builder.and(mission.id.eq(missionId));
 		}
 
 		MissionResponseDto.MissionDetailResponseDto result = queryFactory
 			.select(new QMissionResponseDto_MissionDetailResponseDto(
-				mission.missionId,
+				mission.id,
 				mission.classId,
 				mission.title,
 				mission.content,
-				mission.image, //TODO: image entity 분리에 따라 join으로 변경 필요
+				mission.images,
 				mission.difficulty,
 				mission.maxParticipants,
 				mission.currentParticipants,

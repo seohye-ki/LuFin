@@ -1,8 +1,10 @@
 package com.lufin.server.mission.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.lufin.server.mission.domain.Mission;
+import com.lufin.server.mission.domain.MissionImage;
 import com.lufin.server.mission.domain.MissionStatus;
 import com.querydsl.core.annotations.QueryProjection;
 
@@ -17,7 +19,7 @@ public class MissionResponseDto {
 		Integer classId,
 		String title,
 		String content,
-		String image,
+		List<MissionImage> images,
 		Integer difficulty,
 		Integer maxParticipants,
 		Integer currentParticipants,
@@ -36,11 +38,11 @@ public class MissionResponseDto {
 		 */
 		public static MissionDetailResponseDto missionEntityToMissionDetailResponseDto(Mission mission) {
 			return new MissionDetailResponseDto(
-				mission.getMissionId(),
+				mission.getId(),
 				mission.getClassId(),
 				mission.getTitle(),
 				mission.getContent(),
-				mission.getImage(),
+				mission.getImages(),
 				mission.getDifficulty(),
 				mission.getMaxParticipants(),
 				mission.getCurrentParticipants(),
@@ -77,7 +79,7 @@ public class MissionResponseDto {
 		 */
 		public static MissionSummaryResponseDto missionEntityToMissionDetailResponseDto(Mission mission) {
 			return new MissionSummaryResponseDto(
-				mission.getMissionId(),
+				mission.getId(),
 				mission.getTitle(),
 				mission.getDifficulty(),
 				mission.getMaxParticipants(),

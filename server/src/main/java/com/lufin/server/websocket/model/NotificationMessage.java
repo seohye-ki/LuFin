@@ -1,25 +1,44 @@
 package com.lufin.server.websocket.model;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import lombok.Getter;
 
 @Getter
-public class NotificationMessage {
+public class NotificationMessage implements Serializable {
+	@Serial
+	private static final long serialVersionUID = 1L;
+
 	private final String id;                 // 알림 고유 ID
 	private final String userId;             // 수신자 ID
 	private final NotificationType type;     // 알림 유형
 	private final String title;              // 알림 제목
 	private final String message;            // 알림 내용
+
+	@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 	private final Object payload;            // 추가 데이터 (타입별로 다름)
+
 	private final NotificationLevel level;   // 알림 중요도
 	private final LocalDateTime timestamp;   // 생성 시간
 
 	// private 생성자
-	private NotificationMessage(String id, String userId, NotificationType type,
-		String title, String message, Object payload,
-		NotificationLevel level, LocalDateTime timestamp) {
+	@JsonCreator
+	private NotificationMessage(
+		@JsonProperty("id") String id,
+		@JsonProperty("userId") String userId,
+		@JsonProperty("type") NotificationType type,
+		@JsonProperty("title") String title,
+		@JsonProperty("message") String message,
+		@JsonProperty("payload") Object payload,
+		@JsonProperty("level") NotificationLevel level,
+		@JsonProperty("timestamp") LocalDateTime timestamp) {
 		this.id = id;
 		this.userId = userId;
 		this.type = type;

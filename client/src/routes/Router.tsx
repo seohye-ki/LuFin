@@ -2,9 +2,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { paths } from './paths';
 
 // pages
-import Home from '../pages/Home';
+import Home from '../pages/common/Home/Home';
 import PrivateRoute from './PrivateRoute';
-import CommonComponents from '../pages/CommonComponents';
+import CommonComponents from '../pages/common/Home/CommonComponents';
 
 const Router = () => {
   return (

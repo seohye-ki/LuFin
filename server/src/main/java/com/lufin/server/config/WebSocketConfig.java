@@ -10,9 +10,17 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import com.lufin.server.websocket.interceptor.JwtHandshakeInterceptor;
+
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+	private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
+
+	public WebSocketConfig(JwtHandshakeInterceptor jwtHandshakeInterceptor) {
+		this.jwtHandshakeInterceptor = jwtHandshakeInterceptor;
+	}
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -20,6 +28,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		registry.addEndpoint("/ws")
 			// CORS 설정
 			.setAllowedOrigins("https://j12a402.p.ssafy.io:8080")
+			.addInterceptors(jwtHandshakeInterceptor)
 			.withSockJS();  // SockJS 지원 추가
 	}
 

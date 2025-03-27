@@ -88,7 +88,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
     return (
       <div className={className}>
         {label && (
-          <label htmlFor={props.id} className="block text-c1 font-medium text-dark-grey">
+          <label htmlFor={props.id} className="block text-p2 font-medium text-dark-grey">
             {label}
           </label>
         )}
@@ -125,7 +125,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
                         </div>
                       )}
                     </div>
-                    <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/50 rounded text-c1 text-white">
+                    <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/50 rounded text-p2 text-white">
                       이미지 {index + 1}
                     </div>
                   </div>
@@ -187,14 +187,14 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
                 </label>
                 {/* <p className="pl-1 text-grey">또는 드래그 앤 드롭</p> */}
               </div>
-              <p className="mt-2 text-c1 text-grey">
+              <p className="mt-2 text-p2 text-grey">
                 {description || `PNG, JPG, GIF (최대 ${maxSize}MB)`}
               </p>
             </div>
           )}
         </div>
         {error && (
-          <p className="mt-2 text-c1 text-danger">
+          <p className="mt-2 text-p2 text-danger">
             {error}
           </p>
         )}

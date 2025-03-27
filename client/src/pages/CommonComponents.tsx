@@ -189,6 +189,9 @@ const CommonComponents = () => {
   const [validationValue, setValidationValue] = useState('');
   const [validationStatus, setValidationStatus] = useState<'normal' | 'success' | 'error'>('normal');
   const [validationMessage, setValidationMessage] = useState('');
+  const [textAreaValue, setTextAreaValue] = useState('');
+  const [textAreaStatus, setTextAreaStatus] = useState<'normal' | 'success' | 'error'>('normal');
+  const [textAreaMessage, setTextAreaMessage] = useState('');
 
   return (
     <div className='p-8 bg-white'>
@@ -791,7 +794,36 @@ const CommonComponents = () => {
                     name='comment'
                     label='댓글'
                     placeholder='댓글을 입력해주세요'
-                    rows={20}
+                    rows={4}
+                  />
+                </div>
+
+                {/* TextArea with Validation */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>10글자 이상 입력 영역</span>
+                  <TextArea
+                    id='validation'
+                    name='validation'
+                    label='검증 예시'
+                    placeholder='10글자 이상 입력해주세요'
+                    rows={4}
+                    value={textAreaValue}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setTextAreaValue(value);
+                      if (value.length >= 10) {
+                        setTextAreaStatus('success');
+                        setTextAreaMessage('올바르게 입력되었습니다.');
+                      } else if (value.length > 0) {
+                        setTextAreaStatus('error');
+                        setTextAreaMessage('10글자 이상 입력해주세요.');
+                      } else {
+                        setTextAreaStatus('normal');
+                        setTextAreaMessage('');
+                      }
+                    }}
+                    variant={textAreaStatus}
+                    description={textAreaMessage}
                   />
                 </div>
 
@@ -804,19 +836,6 @@ const CommonComponents = () => {
                     label='댓글'
                     placeholder='댓글을 입력해주세요'
                     description='최대 500자까지 입력 가능합니다'
-                    rows={4}
-                  />
-                </div>
-
-                {/* TextArea with Error */}
-                <div className='flex flex-col gap-2'>
-                  <span className='text-xs'>에러가 있는 텍스트 영역</span>
-                  <TextArea
-                    id='comment-with-error'
-                    name='comment'
-                    label='댓글'
-                    placeholder='댓글을 입력해주세요'
-                    error='댓글을 입력해주세요'
                     rows={4}
                   />
                 </div>

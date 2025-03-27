@@ -121,7 +121,7 @@ const CodeInput = ({
         ))}
       </div>
       {error && (
-        <p className="text-c1 text-danger">{error}</p>
+        <p className="text-p2 text-danger">{error}</p>
       )}
     </div>
   );

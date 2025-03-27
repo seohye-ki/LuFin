@@ -71,7 +71,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           )}
         </div>
         {variant === 'error' && (
-          <p id={`${props.id}-error`} className="mt-2 text-c1 text-danger">
+          <p id={`${props.id}-error`} className="mt-2 text-p2 text-danger">
             {description}
           </p>
         )}

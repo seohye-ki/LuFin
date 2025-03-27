@@ -18,6 +18,10 @@ import LoginView from '../components/Frame/LoginView';
 import Dropdown from '../components/Form/Dropdown';
 import CodeInput from '../components/Form/CodeInput';
 import CalendarView from '../components/Calendar/Calendar';
+import CreditChart from '../components/Graph/CreditChart';
+import StockChart from '../components/Graph/StockChart';
+import StockGraph from '../components/Graph/StockGraph';
+import { dateUtil } from '../libs/utils/date-util';
 
 const CommonComponents = () => {
   const navigationIcons: IconsaxIconName[] = [
@@ -185,6 +189,79 @@ const CommonComponents = () => {
     <div className='p-8 bg-white'>
       <h1 className='text-h1 font-regular text-black mb-4'>Common Components</h1>
       <div className='flex flex-col gap-8'>
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Graph</h2>
+          <div className='w-full bg-grey-30 p-4 rounded-2xl flex flex-row gap-4'>
+            <div className='bg-white p-4 rounded-2xl w-full'>
+              <CreditChart creditRating='A+'></CreditChart>
+            </div>
+
+            <div className='bg-white p-4 rounded-2xl w-full'>
+              <StockChart
+                stocks={[
+                  { stock: '삼성', amount: 20000 },
+                  { stock: 'LG', amount: 30000 },
+                  { stock: '메리츠', amount: 52000 },
+                ]}
+              ></StockChart>
+            </div>
+
+            <div className='bg-white p-4 rounded-2xl w-full'>
+              <StockGraph
+                stockPriceInfos={[
+                  {
+                    date: dateUtil('2025-03-27T09:00:00Z'),
+                    price: 10250,
+                  },
+                  {
+                    date: dateUtil('2025-03-27T15:00:00Z'),
+                    price: 10500,
+                  },
+                  {
+                    date: dateUtil('2025-03-28T09:00:00Z'),
+                    price: 10100,
+                  },
+                  {
+                    date: dateUtil('2025-03-28T15:00:00Z'),
+                    price: 10350,
+                  },
+                  {
+                    date: dateUtil('2025-03-29T09:00:00Z'),
+                    price: 10400,
+                  },
+                  {
+                    date: dateUtil('2025-03-29T15:00:00Z'),
+                    price: 10700,
+                  },
+                  {
+                    date: dateUtil('2025-03-30T09:00:00Z'),
+                    price: 10800,
+                  },
+                  {
+                    date: dateUtil('2025-03-30T15:00:00Z'),
+                    price: 11000,
+                  },
+                  {
+                    date: dateUtil('2025-03-31T09:00:00Z'),
+                    price: 10600,
+                  },
+                  {
+                    date: dateUtil('2025-03-31T15:00:00Z'),
+                    price: 10950,
+                  },
+                  {
+                    date: dateUtil('2025-04-01T09:00:00Z'),
+                    price: 11200,
+                  },
+                  {
+                    date: dateUtil('2025-04-01T15:00:00Z'),
+                    price: 11350,
+                  },
+                ]}
+              ></StockGraph>
+            </div>
+          </div>
+        </section>
         {/* Calendar Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Calendar</h2>

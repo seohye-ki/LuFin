@@ -47,7 +47,7 @@ const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
     }),
     datasets: [
       {
-        label: '삼성전자',
+        label: '주가',
         data: stockPriceInfos.map((stockPriceInfo) => {
           return stockPriceInfo.price;
         }),
@@ -158,12 +158,13 @@ const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
         const ctx = chart.ctx;
         const chartArea = chart.chartArea;
 
-        // 그라데이션 색상 생성
         const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
         gradient.addColorStop(0, 'rgba(250, 226, 124, 0.4)');
         gradient.addColorStop(1, 'rgba(250, 226, 124, 0)');
 
         chart.data.datasets[0].backgroundColor = gradient;
+
+        chart.update();
       },
     },
     {
@@ -222,7 +223,7 @@ const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
   ];
 
   return (
-    <div className='p-16'>
+    <div className='w-full h-full'>
       <Line data={data} options={options} plugins={plugins} />
     </div>
   );

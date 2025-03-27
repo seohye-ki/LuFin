@@ -101,7 +101,7 @@ const CreditChart: React.FC<{ creditRating: string }> = ({ creditRating }) => {
   };
 
   return (
-    <div className='w-[216px] h-[112px]'>
+    <div className='w-full h-full'>
       <Doughnut data={data} options={options} plugins={[centerTextPlugin]} />
     </div>
   );

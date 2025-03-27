@@ -10,7 +10,7 @@ interface AlertButton {
 
 interface AlertProps {
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   status: 'info' | 'warning' | 'danger' | 'success';
   primaryButton: AlertButton;
   secondaryButton?: AlertButton;
@@ -61,9 +61,9 @@ const Alert = ({
 
       {/* Text Content */}
       <div className="flex flex-col items-center text-center mb-6">
-        <h3 className="text-p1 font-bold text-black mb-2">{title}</h3>
+        <h3 className="text-h3 font-bold text-black mb-2">{title}</h3>
         {description && (
-          <p className="text-c1 text-dark-grey">{description}</p>
+          <p className="text-p2 text-dark-grey">{description}</p>
         )}
       </div>
 

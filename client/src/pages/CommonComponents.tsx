@@ -185,6 +185,14 @@ const CommonComponents = () => {
   const [code3, setCode3] = useState('');
   const [code4, setCode4] = useState('');
 
+  // Validation states
+  const [validationValue, setValidationValue] = useState('');
+  const [validationStatus, setValidationStatus] = useState<'normal' | 'success' | 'error'>('normal');
+  const [validationMessage, setValidationMessage] = useState('');
+  const [textAreaValue, setTextAreaValue] = useState('');
+  const [textAreaStatus, setTextAreaStatus] = useState<'normal' | 'success' | 'error'>('normal');
+  const [textAreaMessage, setTextAreaMessage] = useState('');
+
   return (
     <div className='p-8 bg-white'>
       <h1 className='text-h1 font-regular text-black mb-4'>Common Components</h1>
@@ -719,6 +727,35 @@ const CommonComponents = () => {
                   />
                 </div>
 
+                {/* TextField with Validation */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>5글자 이상 입력 필드</span>
+                  <TextField
+                    id='validation'
+                    name='validation'
+                    type='text'
+                    label='검증 예시'
+                    placeholder='5글자 이상 입력해주세요'
+                    value={validationValue}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setValidationValue(value);
+                      if (value.length >= 5) {
+                        setValidationStatus('success');
+                        setValidationMessage('올바르게 입력되었습니다.');
+                      } else if (value.length > 0) {
+                        setValidationStatus('error');
+                        setValidationMessage('5글자 이상 입력해주세요.');
+                      } else {
+                        setValidationStatus('normal');
+                        setValidationMessage('');
+                      }
+                    }}
+                    variant={validationStatus}
+                    description={validationMessage}
+                  />
+                </div>
+
                 {/* TextField with Description */}
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>설명이 있는 입력 필드</span>
@@ -729,19 +766,6 @@ const CommonComponents = () => {
                     label='이메일'
                     placeholder='you@example.com'
                     description='스팸 메일을 보내지 않습니다.'
-                  />
-                </div>
-
-                {/* TextField with Error */}
-                <div className='flex flex-col gap-2'>
-                  <span className='text-xs'>에러가 있는 입력 필드</span>
-                  <TextField
-                    id='email-with-error'
-                    name='email'
-                    type='email'
-                    label='이메일'
-                    placeholder='you@example.com'
-                    error='올바른 이메일 주소를 입력해주세요.'
                   />
                 </div>
 
@@ -776,6 +800,35 @@ const CommonComponents = () => {
                   />
                 </div>
 
+                {/* TextArea with Validation */}
+                <div className='flex flex-col gap-2'>
+                  <span className='text-xs'>10글자 이상 입력 영역</span>
+                  <TextArea
+                    id='validation'
+                    name='validation'
+                    label='검증 예시'
+                    placeholder='10글자 이상 입력해주세요'
+                    rows={4}
+                    value={textAreaValue}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setTextAreaValue(value);
+                      if (value.length >= 10) {
+                        setTextAreaStatus('success');
+                        setTextAreaMessage('올바르게 입력되었습니다.');
+                      } else if (value.length > 0) {
+                        setTextAreaStatus('error');
+                        setTextAreaMessage('10글자 이상 입력해주세요.');
+                      } else {
+                        setTextAreaStatus('normal');
+                        setTextAreaMessage('');
+                      }
+                    }}
+                    variant={textAreaStatus}
+                    description={textAreaMessage}
+                  />
+                </div>
+
                 {/* TextArea with Description */}
                 <div className='flex flex-col gap-2'>
                   <span className='text-xs'>설명이 있는 텍스트 영역</span>
@@ -785,19 +838,6 @@ const CommonComponents = () => {
                     label='댓글'
                     placeholder='댓글을 입력해주세요'
                     description='최대 500자까지 입력 가능합니다'
-                    rows={4}
-                  />
-                </div>
-
-                {/* TextArea with Error */}
-                <div className='flex flex-col gap-2'>
-                  <span className='text-xs'>에러가 있는 텍스트 영역</span>
-                  <TextArea
-                    id='comment-with-error'
-                    name='comment'
-                    label='댓글'
-                    placeholder='댓글을 입력해주세요'
-                    error='댓글을 입력해주세요'
                     rows={4}
                   />
                 </div>

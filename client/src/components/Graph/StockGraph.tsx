@@ -14,7 +14,7 @@ import {
   Filler,
   Plugin,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import { Line } from 'react-ChartJS-2';
 import sunIcon from '../../assets/svgs/sun.svg';
 import moonIcon from '/src/assets/svgs/moon.svg';
 import { DateUtil } from '../../libs/utils/date-util';

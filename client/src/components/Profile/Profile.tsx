@@ -35,7 +35,7 @@ const Profile = ({
       <div
         className={twMerge('flex', isColumn ? 'flex-col items-center' : 'flex-col justify-center')}
       >
-        <p className={isColumn ? 'text-c2' : 'text-p2 font-medium'}>{name}</p>
+        <p className={isColumn ? 'text-c1' : 'text-p2 font-medium'}>{name}</p>
         {!isColumn && certificationNumber && (
           <p className='text-c1 font-regular'>{certificationNumber}</p>
         )}

@@ -876,7 +876,7 @@ const CommonComponents = () => {
         </section>
 
         {/* LoginView Section */}
-        <section className='flex gap-8 bg-grey-30 p-4 rounded-2xl'>
+        <section className='flex flex-col gap-8 bg-grey-30 p-4 rounded-2xl'>
           <h2 className='text-h2 font-medium text-black mb-4'>LoginView</h2>
           <div className='flex gap-4'>
             <LoginView

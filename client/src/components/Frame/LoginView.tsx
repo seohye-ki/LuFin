@@ -39,7 +39,7 @@ const LoginView = ({
           {content && <div className={`w-full ${backgroundImage ? 'mb-24' : ''}`}>{content}</div>}
         </div>
 
-        <div className='flex px-2 gap-2 justify-center w-full'>
+        <div className='flex gap-2 justify-center w-full'>
           {primaryButton && (
             <Button size='lg' color='neutral' full onClick={primaryButton.onClick}>
               {primaryButton.text}

@@ -14,13 +14,13 @@ import {
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
 
-interface stockInfo {
+interface StockInfo {
   stock: string;
   amount: number;
 }
 
 interface stockChartProps {
-  stocks: stockInfo[];
+  stocks: StockInfo[];
 }
 
 const StockChart: React.FC<stockChartProps> = ({ stocks }) => {

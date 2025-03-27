@@ -56,19 +56,8 @@ const StockChart: React.FC<stockChartProps> = ({ stocks }) => {
   };
 
   return (
-    <div className='w-screen h-screen bg-broken-white flex justify-center items-center'>
-      <div className='bg-white w-[388px] h-[234px] rounded-2xl flex flex-col items-center px-16 py-4 gap-4'>
-        <div className='w-full h-full'>
-          <Doughnut data={data} options={options} />
-        </div>
-        <p className='text-c2 font-light text-grey'>
-          {/* TODO: 전역 상태에서 이름 가져오기 */}님의 보유 주식은 총
-          <span className='font-semibold text-c1 text-black'>
-            {' ' + stocks.reduce((sum, stock) => sum + stock.amount, 0)}
-          </span>
-          루핀 이에요.
-        </p>
-      </div>
+    <div className='w-full h-full'>
+      <Doughnut data={data} options={options} />
     </div>
   );
 };

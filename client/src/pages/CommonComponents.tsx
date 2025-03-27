@@ -17,6 +17,7 @@ import TableView, { TableColumn, TableRow } from '../components/Frame/TableView'
 import LoginView from '../components/Frame/LoginView';
 import Dropdown from '../components/Form/Dropdown';
 import CodeInput from '../components/Form/CodeInput';
+import CalendarView from '../components/Calendar/Calendar';
 
 const CommonComponents = () => {
   const navigationIcons: IconsaxIconName[] = [
@@ -184,6 +185,13 @@ const CommonComponents = () => {
     <div className='p-8 bg-white'>
       <h1 className='text-h1 font-regular text-black mb-4'>Common Components</h1>
       <div className='flex flex-col gap-8'>
+        {/* Calendar Section */}
+        <section>
+          <h2 className='text-h2 font-medium text-black mb-4'>Calendar</h2>
+          <div className='bg-grey-30 p-4 rounded-2xl'>
+            <CalendarView />
+          </div>
+        </section>
         {/* Alert Section */}
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Alert</h2>

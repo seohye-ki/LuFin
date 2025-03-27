@@ -103,56 +103,64 @@ public class MissionParticipation {
 	}
 
 	/**
-	 * 미션과의 연관관계를 설정
-	 * 이 메서드는 양방향 연관관계의 일관성을 유지하기 위해 사용
-	 *
-	 * @param mission 연관될 미션 (null이 아니어야 함)
-	 * @throws IllegalArgumentException 미션이 null인 경우
-	 */
-	public void setMission(Mission mission) {
-		if (mission == null) {
-			// TODO: error 코드 수정
-			throw new IllegalArgumentException("Mission cannot be null");
-		}
-		this.mission = mission;
-	}
-
-	/**
 	 * 새로운 미션 참여를 생성
-	 * 이 팩토리 메서드는 양방향 연관관계의 일관성을 유지
-	 *
-	 * @param mission  참여할 미션 (null이 아니어야 함)
+	 * 양방향 연관관계의 일관성을 유지하기 위한 로직이 추가되어 있음
+	 * @param mission  참여할 미션
 	 * @param memberId 참여 회원 ID
 	 * @return 생성된 미션 참여 객체
-	 * @throws IllegalArgumentException 미션이 null이거나 memberId가 null인 경우
 	 */
-	public static MissionParticipation create(Mission mission, Integer memberId) {
+	MissionParticipation create(Mission mission, Integer memberId) {
+		// service 레이어에서 호출 할 때 null이 들어올 수도 있기에 null 체크 실행
 		if (mission == null) {
-			// TODO: error 코드 수정
 			throw new IllegalArgumentException("Mission cannot be null");
 		}
+
 		if (memberId == null) {
 			// TODO: error 코드 수정
 			throw new IllegalArgumentException("Member ID cannot be null");
 		}
 
+		// 객체를 먼저 생성하고 메서드를 통해 양방향 관계 설정
 		MissionParticipation participation = MissionParticipation.builder()
-			.mission(mission)
 			.memberId(memberId)
 			.build();
 
 		mission.addParticipation(participation);
+
 		return participation;
 	}
 
 	/**
+	 * 미션과의 연관관계를 설정 (package-private)
+	 * 이 메서드는 양방향 연관관계의 일관성을 유지하기 위해 사용
+	 * @param mission 연관될 미션 (null이 아니어야 함)
+	 */
+	void setMission(Mission mission) {
+		// 중복체크는 addParticipation에서 진행
+		this.mission = mission;
+	}
+
+	/**
 	 * 현재 미션이 성공 상태인지 확인
-	 *
 	 * @return 성공 상태인 경우 true
 	 */
 	public boolean isCompleted() {
 		return this.status == MissionParticipationStatus.SUCCESS;
 	}
 
-	// 기본 메서드는 DTO에서
+	// 무한 루프 방지를 위해 contains()를 사용하면서 id를 기준으로 체크하기 위해 equals override
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		MissionParticipation that = (MissionParticipation)o;
+		return id != null && id.equals(that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
+	}
 }

@@ -39,6 +39,10 @@ public class Mission {
 	@OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true) // 양방향 연관관계 주인 mission으로 설정
 	private List<MissionParticipation> participations = new ArrayList<>();
 
+	@Builder.Default
+	@OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true) // 양방향 연관관계 주인 mission으로 설정
+	private List<MissionImage> images = new ArrayList<>();
+
 	// Member Field
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
@@ -55,9 +59,6 @@ public class Mission {
 	@Column(name = "content", nullable = false)
 	@NotBlank
 	private String content;
-
-	@Column(name = "image", length = 255)
-	private String image;
 
 	@Column(name = "difficulty", nullable = false)
 	@Min(1)
@@ -110,6 +111,24 @@ public class Mission {
 		this.status = status;
 	}
 
+	/**
+	 * 미션 객체를 생성하는 팩토리 메서드
+	 */
+	public static Mission create(Integer classId, String title, String content, Integer difficulty,
+		Integer maxParticipants, Integer wage, LocalDateTime missionDate) {
+		return Mission.builder()
+			.classId(classId)
+			.title(title)
+			.content(content)
+			.difficulty(difficulty)
+			.maxParticipants(maxParticipants)
+			.wage(wage)
+			.missionDate(missionDate)
+			.build();
+	}
+
+	/* 관계 유지를 위한 메서드 */
+
 	public void incrementParticipants() {
 		if (this.currentParticipants >= this.maxParticipants) {
 			//TODO: error 코드 변경
@@ -126,65 +145,77 @@ public class Mission {
 		this.currentParticipants--;
 	}
 
+	/**
+	 * missionParticipation과 양방향 연관관계를 위한 메서드
+	 * 내부적 연관관계 설정에서만 사용하므로 participation이 null이 아니어야함
+	 * @param participation
+	 */
 	public void addParticipation(MissionParticipation participation) {
-		if (participation == null) {
-			//TODO: error 코드 변경
-			throw new IllegalArgumentException("Participation cannot be null");
-		}
-
 		if (this.currentParticipants >= this.maxParticipants) {
 			//TODO: error 코드 변경
 			throw new IllegalStateException("Maximum participants reached");
 		}
 
-		participations.add(participation);
-		this.incrementParticipants();
+		// 중복 체크 후 없으면 추가
+		if (participations.contains(participation) == false) {
+			participations.add(participation);
+			this.incrementParticipants();
+		}
+
+		// 양방향 관계 설정 (무한 루프 방지 조건)
+		if (participation.getMission() != this) {
+			participation.setMission(this);
+		}
+
 	}
 
-	public void removeParticipation(MissionParticipation participation) {
-		if (participation == null) {
-			//TODO: error 코드 변경
-			throw new IllegalArgumentException("Participation cannot be null");
+	/**
+	 * missionParticipation과 양방향 연관관계를 위한 메서드
+	 * 내부적 연관관계 설정에서만 사용하므로 participation이 null이 아니어야함
+	 * @param participation
+	 */
+	void removeParticipation(MissionParticipation participation) {
+		if (participations.isEmpty()) {
+			throw new IllegalStateException("No participation found");
+		}
+
+		if (participations.contains(participation) == false) {
+			throw new IllegalStateException("No such participation found");
 		}
 
 		boolean removed = participations.remove(participation);
+
 		if (removed) {
 			this.decrementParticipants();
 		}
 	}
 
 	/**
-	 * 이미지가 없는 미션 객체를 생성하는 팩토리 메서드
+	 * missionImage와 mission 간의 양방향 관계의 일관성을 유지하기 위한 메서드
+	 * 내부적 연관관계 관리용으로, 반드시 null이 아닌 missionImage만 전달되어야 합니다.
 	 */
-	public static Mission createWithoutImage(Integer classId, String title, String content, Integer difficulty,
-		Integer maxParticipants, Integer wage, LocalDateTime missionDate) {
-		return Mission.builder()
-			.classId(classId)
-			.title(title)
-			.content(content)
-			.difficulty(difficulty)
-			.maxParticipants(maxParticipants)
-			.wage(wage)
-			.missionDate(missionDate)
-			.build();
+	void addImage(MissionImage missionImage) {
+		// 중복 체크 후 없으면 추가
+		if (!images.contains(missionImage)) {
+			images.add(missionImage);
+		}
+
+		if (missionImage.getMission() != this) {
+			missionImage.setMission(this);
+		}
+
 	}
 
-	/**
-	 * 이미지가 있는 미션 객체를 생성하는 팩토리 메서드
-	 */
-	public static Mission createWithImage(Integer classId, String title, String content, String image,
-		Integer difficulty,
-		Integer maxParticipants, Integer wage, LocalDateTime missionDate) {
-		return Mission.builder()
-			.classId(classId)
-			.title(title)
-			.content(content)
-			.image(image)
-			.difficulty(difficulty)
-			.maxParticipants(maxParticipants)
-			.wage(wage)
-			.missionDate(missionDate)
-			.build();
+	void removeImage(MissionImage missionImage) {
+		if (images.isEmpty()) {
+			throw new IllegalStateException("No mission image found");
+		}
+
+		if (images.contains(missionImage) == false) {
+			throw new IllegalStateException("No such mission image found");
+		}
+
+		images.remove(missionImage);
 	}
 
 	/**
@@ -194,5 +225,19 @@ public class Mission {
 		return this.currentParticipants == this.participations.size();
 	}
 
-	// 기본 메서드는 DTO에서
+	// 무한 루프 방지를 위해 contains()를 사용하면서 id를 기준으로 체크하기 위해 equals override
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Mission mission = (Mission)o;
+		return id != null && id.equals(mission.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
+	}
 }

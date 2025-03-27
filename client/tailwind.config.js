@@ -41,9 +41,9 @@ export default {
       fontSize: {
         'h1': ['var(--text-h1)', { lineHeight: 'var(--leading-h1)' }],
         'h2': ['var(--text-h2)', { lineHeight: 'var(--leading-h2)' }],
+        'h3': ['var(--text-h3)', { lineHeight: 'var(--leading-h3)' }],
         'p1': ['var(--text-p1)', { lineHeight: 'var(--leading-p1)' }],
         'p2': ['var(--text-p2)', { lineHeight: 'var(--leading-p2)' }],
-        'p3': ['var(--text-p3)', { lineHeight: 'var(--leading-p3)' }],
         'c1': ['var(--text-c1)', { lineHeight: 'var(--leading-c1)' }],
         'c2': ['var(--text-c2)', { lineHeight: 'var(--leading-c2)' }],
       },
@@ -55,7 +55,7 @@ export default {
         bold: 'var(--font-weight-bold)',
       },
       fontFamily: {
-        pretendard: 'var(--font-pretendard)',
+        pretendard: ['var(--font-pretendard)', 'system-ui', 'sans-serif'],
       },
     },
   },

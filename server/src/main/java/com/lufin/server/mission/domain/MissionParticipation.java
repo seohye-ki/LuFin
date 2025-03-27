@@ -156,11 +156,11 @@ public class MissionParticipation {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		MissionParticipation that = (MissionParticipation)o;
-		return id != null && id.equals(that.id);
+		return participationId != null && participationId.equals(that.participationId);
 	}
 
 	@Override
 	public int hashCode() {
-		return id != null ? id.hashCode() : 0;
+		return participationId != null ? participationId.hashCode() : 0;
 	}
 }

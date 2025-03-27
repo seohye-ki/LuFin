@@ -73,6 +73,9 @@ const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
       mode: 'index',
       intersect: false,
     },
+    layout: {
+      padding: 16,
+    },
     plugins: {
       legend: {
         display: false,
@@ -84,18 +87,18 @@ const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
         enabled: true,
         borderColor: 'rgba(167,169,170, 0.2)',
         borderWidth: 0.5,
-        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
         titleColor: '#242424',
         bodyColor: '#8A8D8E',
         titleFont: {
           family: 'Pretendard',
           weight: 500,
-          size: 9,
+          size: 14,
         },
         bodyFont: {
           family: 'Pretendard',
           weight: 400,
-          size: 8,
+          size: 12,
         },
         callbacks: {
           title: (context) => {
@@ -117,32 +120,35 @@ const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
         },
         grid: {
           color: 'transparent',
+          tickLength: 12,
         },
         ticks: {
           color: '#A7A9AA',
           font: {
             family: 'Pretendard',
             weight: 600,
-            size: 8,
+            size: 12,
           },
         },
       },
       y: {
         border: {
           display: false,
-          dash: [2, 2],
+          dash: [4, 2],
         },
         grid: {
-          color: 'rgba(167,169,170, 0.2)',
+          color: 'rgba(167,169,170, 0.3)',
           tickColor: 'transparent',
           lineWidth: 0.7,
+          tickLength: 24,
         },
         ticks: {
+          padding: 1,
           color: '#A7A9AA',
           font: {
             family: 'Pretendard',
             weight: 600,
-            size: 8,
+            size: 12,
           },
 
           maxTicksLimit: 6,
@@ -183,16 +189,16 @@ const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
           const date = stockPriceInfos[index].date;
           image.src = date.hour > 12 ? moonIcon : sunIcon;
 
-          const sunIconWidth = 8;
-          const sunIconHeight = 8;
-          const moonIconWidth = 6;
-          const moonIconHeight = 6;
+          const sunIconWidth = 12;
+          const sunIconHeight = 12;
+          const moonIconWidth = 10;
+          const moonIconHeight = 10;
 
           const iconWidth = date.hour >= 12 ? moonIconWidth : sunIconWidth;
           const iconHeight = date.hour >= 12 ? moonIconHeight : sunIconHeight;
 
           const iconX = x.getPixelForValue(index) - iconWidth / 2;
-          const iconY = bottom + 3;
+          const iconY = date.hour >= 12 ? bottom + 33 : bottom + 32;
 
           ctx.drawImage(image, iconX, iconY, iconWidth, iconHeight);
         });

@@ -40,7 +40,7 @@ const CreditChart: React.FC<{ creditRating: string }> = ({ creditRating }) => {
       {
         label: '주가',
         data: [value, Object.keys(ratingInfo).length - value],
-        backgroundColor: ['#CFCEFF', '#FAE27C'],
+        backgroundColor: ['#4ABDE8', '#D9D9D9'],
         borderRadius: 4,
         borderWidth: 0,
       },
@@ -76,23 +76,23 @@ const CreditChart: React.FC<{ creditRating: string }> = ({ creditRating }) => {
       ctx.restore();
 
       const creditRatingText = creditRating;
-      ctx.font = `bold 1.5rem Pretendard`;
+      ctx.font = `bold 2rem Pretendard`;
       ctx.textBaseline = 'bottom';
       ctx.fillStyle = '#242424';
 
       const creditRatingWidth = ctx.measureText(creditRatingText).width;
       const creditRatingX = (chartWidth - creditRatingWidth) / 2;
-      const creditRatingY = chartHeight - 14;
+      const creditRatingY = chartHeight - 24;
 
       ctx.fillText(creditRatingText, creditRatingX, creditRatingY);
 
       const evaluationText = text;
-      ctx.font = `lighter 0.625rem Pretendard`;
+      ctx.font = `1rem Pretendard`;
       ctx.fillStyle = '#8A8D8E';
 
       const evaluationTextWidth = ctx.measureText(evaluationText).width;
       const evaluationX = (chartWidth - evaluationTextWidth) / 2;
-      const evaluationY = chartHeight - 2;
+      const evaluationY = chartHeight - 4;
 
       ctx.fillText(evaluationText, evaluationX, evaluationY);
 

@@ -191,19 +191,21 @@ const CommonComponents = () => {
       <div className='flex flex-col gap-8'>
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Graph</h2>
-          <div className='w-full bg-grey-30 p-4 rounded-2xl flex flex-row gap-4'>
-            <div className='bg-white p-4 rounded-2xl w-full'>
-              <CreditChart creditRating='A+'></CreditChart>
-            </div>
+          <div className='w-full bg-grey-30 p-4 rounded-2xl flex flex-col gap-4'>
+            <div className='flex flex-row w-full gap-4'>
+              <div className='bg-white p-4 rounded-2xl w-full'>
+                <CreditChart creditRating='A+'></CreditChart>
+              </div>
 
-            <div className='bg-white p-4 rounded-2xl w-full'>
-              <StockChart
-                stocks={[
-                  { stock: '삼성', amount: 20000 },
-                  { stock: 'LG', amount: 30000 },
-                  { stock: '메리츠', amount: 52000 },
-                ]}
-              ></StockChart>
+              <div className='bg-white p-4 rounded-2xl w-full'>
+                <StockChart
+                  stocks={[
+                    { stock: '삼성', amount: 20000 },
+                    { stock: 'LG', amount: 30000 },
+                    { stock: '메리츠', amount: 52000 },
+                  ]}
+                ></StockChart>
+              </div>
             </div>
 
             <div className='bg-white p-4 rounded-2xl w-full'>

@@ -29,7 +29,7 @@ const StockChart: React.FC<stockChartProps> = ({ stocks }) => {
     datasets: [
       {
         data: stocks.map((stock) => stock.amount),
-        backgroundColor: ['#00997E', '#FF414B', '#4ABDE8', '#FFAE41', '#8785FF'],
+        backgroundColor: ['#C3EBFA', '#CFCEFF', '#FAE27C', '#FFDBF7', '#8785FF'],
         borderRadius: 4,
       },
     ],
@@ -47,8 +47,8 @@ const StockChart: React.FC<stockChartProps> = ({ stocks }) => {
           color: '#242424',
           font: {
             family: 'Pretendard',
-            size: 10,
-            weight: 400,
+            size: 12,
+            weight: 500,
           },
         },
       },
@@ -56,7 +56,7 @@ const StockChart: React.FC<stockChartProps> = ({ stocks }) => {
   };
 
   return (
-    <div className='w-full h-full'>
+    <div className='w-full h-full px-48'>
       <Doughnut data={data} options={options} />
     </div>
   );

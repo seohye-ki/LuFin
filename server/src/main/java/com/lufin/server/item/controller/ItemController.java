@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -37,7 +38,6 @@ public class ItemController {
 	// 아이템 생성
 	@PostMapping
 	public ResponseEntity<ApiResponse<ItemResponseDto>> createItem(@RequestBody @Valid ItemDto request) {
-
 		ItemResponseDto result = itemService.createItem(request, UserContext.get());
 		return ResponseEntity.status(201).body(ApiResponse.success(result));
 	}
@@ -45,7 +45,6 @@ public class ItemController {
 	// 아이템 전체 조회
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<ItemResponseDto>>> getItems() {
-
 		List<ItemResponseDto> result = itemService.getItems(UserContext.get());
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
@@ -53,7 +52,6 @@ public class ItemController {
 	// 아이템 단일 조회
 	@GetMapping("/{itemId}")
 	ResponseEntity<ApiResponse<ItemResponseDto>> getItemDetail(@PathVariable Integer itemId) {
-
 		ItemResponseDto result = itemService.getItemDetail(itemId, UserContext.get());
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
@@ -62,7 +60,6 @@ public class ItemController {
 	@PutMapping("/{itemId}")
 	public ResponseEntity<ApiResponse<ItemResponseDto>> updateItem(@PathVariable Integer itemId,
 		@RequestBody @Valid ItemDto request) {
-
 		ItemResponseDto result = itemService.updateItem(itemId, request, UserContext.get());
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
@@ -70,7 +67,6 @@ public class ItemController {
 	// 아이템 삭제
 	@DeleteMapping("/{itemId}")
 	public ResponseEntity<ApiResponse<Void>> deleteItem(@PathVariable Integer itemId) {
-
 		itemService.deleteItem(itemId, UserContext.get());
 		return ResponseEntity.noContent().build();
 	}
@@ -78,7 +74,6 @@ public class ItemController {
 	// 아이템 구매
 	@PostMapping("/purchase")
 	public ResponseEntity<ApiResponse<List<ItemPurchaseResponseDto>>> purchaseItem(@RequestBody @Valid ItemPurchaseRequestDto request) {
-
 		List<ItemPurchaseResponseDto> result = itemPurchaseService.purchaseItem(request, UserContext.get());
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
@@ -86,7 +81,6 @@ public class ItemController {
 	// 나의 구매 아이템 조회
 	@GetMapping("/inventory")
 	public ResponseEntity<ApiResponse<List<ItemPurchaseResponseDto>>> getInventory() {
-
 		List<ItemPurchaseResponseDto> result = itemPurchaseService.getInventory(UserContext.get());
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
@@ -94,8 +88,14 @@ public class ItemController {
 	// 특정 아이템의 구매 내역 조회
 	@GetMapping("/{itemId}/purchases")
 	public ResponseEntity<ApiResponse<List<ItemPurchaseResponseDto>>> getItemPurchaseHistory(@PathVariable Integer itemId) {
-
 		List<ItemPurchaseResponseDto> result = itemPurchaseService.getItemPurchaseHistory(itemId, UserContext.get());
+		return ResponseEntity.ok(ApiResponse.success(result));
+	}
+
+	// 아이템 환불
+	@PatchMapping("purchases/{purchaseId}/refund")
+	ResponseEntity<ApiResponse<ItemPurchaseResponseDto>> refundItem(@PathVariable Integer purchaseId) {
+		ItemPurchaseResponseDto result = itemPurchaseService.refundItem(purchaseId, UserContext.get());
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 }

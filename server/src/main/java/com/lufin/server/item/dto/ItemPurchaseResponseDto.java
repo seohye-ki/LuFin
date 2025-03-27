@@ -9,6 +9,7 @@ public record ItemPurchaseResponseDto(
 	Integer purchaseId,
 	Integer itemId,
 	Integer itemCount,
+	Integer purchasePrice,
 	ItemPurchaseStatus status,
 	LocalDateTime createdAt,
 	LocalDateTime updatedAt
@@ -18,6 +19,7 @@ public record ItemPurchaseResponseDto(
 			itemPurchase.getId(),
 			itemPurchase.getItem().getId(),
 			itemPurchase.getItemCount(),
+			itemPurchase.getPurchasePrice(),
 			itemPurchase.getStatus(),
 			itemPurchase.getCreatedAt(),
 			itemPurchase.getUpdatedAt()

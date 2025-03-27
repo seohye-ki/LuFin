@@ -43,6 +43,9 @@ public class ItemPurchase {
 	@Column(name = "item_count", nullable = false)
 	private Integer itemCount = 1;
 
+	@Column(name = "purchase_price", nullable = false)
+	private Integer purchasePrice;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
 	private ItemPurchaseStatus status = ItemPurchaseStatus.BUY;
@@ -58,6 +61,7 @@ public class ItemPurchase {
 		purchase.item = item;
 		purchase.member = member;
 		purchase.itemCount = itemCount;
+		purchase.purchasePrice = item.getPrice();
 		purchase.status = ItemPurchaseStatus.BUY;
 		purchase.createdAt = LocalDateTime.now();
 		purchase.updatedAt = LocalDateTime.now();

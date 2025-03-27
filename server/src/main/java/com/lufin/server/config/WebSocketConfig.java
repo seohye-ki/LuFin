@@ -13,7 +13,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		// 웹소켓 연결 엔드포인트 설정
-		registry.addEndpoint("/ws");
+		registry.addEndpoint("/ws")
+			// CORS 설정
+			.setAllowedOrigins("https://j12a402.p.ssafy.io:8080")
+			.withSockJS();  // SockJS 지원 추가
 	}
 
 	// 메시지 브로커 설정

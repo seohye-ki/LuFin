@@ -138,6 +138,20 @@ public class NotificationMessage implements Serializable {
 		);
 	}
 
+	public static NotificationMessage loan(String userId, String title,
+		String message, Object loanData) {
+		return new NotificationMessage(
+			UUID.randomUUID().toString(),
+			userId,
+			NotificationType.LOAN,
+			title,
+			message,
+			loanData,
+			NotificationLevel.INFO,
+			LocalDateTime.now()
+		);
+	}
+
 	// 레벨별 편의 메서드
 	public static NotificationMessage success(String userId, NotificationType type,
 		String title, String message, Object payload) {

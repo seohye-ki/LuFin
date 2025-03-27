@@ -29,6 +29,12 @@ public class AuthInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
+		String uri = request.getRequestURI();
+
+		if (isExcluded(uri)) {
+			return true;
+		}
+
 		String token = request.getHeader("Authorization");
 		if (token == null || !token.startsWith("Bearer ")) {
 			throw new BusinessException(INVALID_AUTH_HEADER);
@@ -44,6 +50,14 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 		UserContext.set(member);
 		return true;
+	}
+
+	private boolean isExcluded(String uri) {
+		return uri.startsWith("/auth/login")
+			|| uri.startsWith("/register")
+			|| uri.startsWith("/api/test-login")
+			|| uri.startsWith("/ws")
+			|| uri.startsWith("/app");
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.lufin.server.item.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.domain.MemberClassroom;
@@ -16,7 +17,6 @@ import com.lufin.server.item.repository.ItemRepository;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
 
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,12 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ItemServiceImpl implements ItemService{
-
+public class ItemServiceImpl implements ItemService {
 	private final ItemRepository itemRepository;
 	private final MemberClassroomRepository memberClassroomRepository;
 
-	// member의 is_current인 반 찾기(is_current 없으면 에러)
+	// 현재 활성화된 클래스 찾기
 	private Classroom getActiveClassroom(Member member) {
 		MemberClassroom memberClassroom = memberClassroomRepository
 			.findByMember_IdAndIsCurrentTrue(member.getId())
@@ -38,7 +37,7 @@ public class ItemServiceImpl implements ItemService{
 	}
 
 	// item id로 item 찾기(아이템이 없으면 에러, 다른반 아이템이면 에러)
-	private Item getItemInClassroom(Integer itemId, Classroom classroom) {
+	private Item validateItemOwnership(Integer itemId, Classroom classroom) {
 		Item item = itemRepository.findById(itemId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 		if (!item.getClassroom().getId().equals(classroom.getId())) {
@@ -84,7 +83,7 @@ public class ItemServiceImpl implements ItemService{
 	@Override
 	public ItemResponseDto getItemDetail(Integer itemId, Member teacher) {
 		Classroom classroom = getActiveClassroom(teacher);
-		Item response = getItemInClassroom(itemId, classroom);
+		Item response = validateItemOwnership(itemId, classroom);
 
 		return ItemResponseDto.from(response);
 	}
@@ -94,7 +93,7 @@ public class ItemServiceImpl implements ItemService{
 	@Transactional
 	public ItemResponseDto updateItem(Integer itemId, ItemDto request, Member teacher) {
 		Classroom classroom = getActiveClassroom(teacher);
-		Item response = getItemInClassroom(itemId, classroom);
+		Item response = validateItemOwnership(itemId, classroom);
 
 		response.changeName(request.name());
 		response.changePrice(request.price());
@@ -108,7 +107,7 @@ public class ItemServiceImpl implements ItemService{
 	@Transactional
 	public void deleteItem(Integer itemId, Member teacher) {
 		Classroom classroom = getActiveClassroom(teacher);
-		Item response = getItemInClassroom(itemId, classroom);
+		Item response = validateItemOwnership(itemId, classroom);
 		itemRepository.delete(response);
 	}
 }

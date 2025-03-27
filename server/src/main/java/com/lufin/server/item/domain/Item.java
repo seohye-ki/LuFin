@@ -94,12 +94,12 @@ public class Item {
 		this.expirationDate = expirationDate;
 	}
 
-	public void increaseQuantitySold() {
-		this.quantitySold++;
+	public void increaseQuantitySold(int count) {
+		this.quantitySold += count;
 	}
 
-	public void decreaseQuantitySold() {
-		this.quantitySold--;
+	public void decreaseQuantitySold(int count) {
+		this.quantitySold -= count;
 	}
 
 	public void disable() {

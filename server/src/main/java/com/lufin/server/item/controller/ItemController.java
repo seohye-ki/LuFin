@@ -12,17 +12,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.dto.ApiResponse;
-import com.lufin.server.common.exception.BusinessException;
-import com.lufin.server.item.domain.Item;
 import com.lufin.server.item.dto.ItemDto;
+import com.lufin.server.item.dto.ItemPurchaseRequestDto;
+import com.lufin.server.item.dto.ItemPurchaseResponseDto;
 import com.lufin.server.item.dto.ItemResponseDto;
+import com.lufin.server.item.service.ItemPurchaseService;
 import com.lufin.server.item.service.ItemService;
-import com.lufin.server.member.domain.Member;
-import com.lufin.server.member.domain.MemberRole;
+
 import com.lufin.server.member.support.UserContext;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,12 +30,13 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/lufin/items")
 public class ItemController {
 	private final ItemService itemService;
+	private final ItemPurchaseService itemPurchaseService;
 
 	// TODO: 선생님 AOP넣기 (@TeacherOnly)
 
 	// 아이템 생성
 	@PostMapping
-	public ResponseEntity<ApiResponse<ItemResponseDto>> createItem(@RequestBody ItemDto request) {
+	public ResponseEntity<ApiResponse<ItemResponseDto>> createItem(@RequestBody @Valid ItemDto request) {
 
 		ItemResponseDto result = itemService.createItem(request, UserContext.get());
 		return ResponseEntity.status(201).body(ApiResponse.success(result));
@@ -60,7 +61,7 @@ public class ItemController {
 	// 아이템 수정
 	@PutMapping("/{itemId}")
 	public ResponseEntity<ApiResponse<ItemResponseDto>> updateItem(@PathVariable Integer itemId,
-		@RequestBody ItemDto request) {
+		@RequestBody @Valid ItemDto request) {
 
 		ItemResponseDto result = itemService.updateItem(itemId, request, UserContext.get());
 		return ResponseEntity.ok(ApiResponse.success(result));
@@ -72,5 +73,13 @@ public class ItemController {
 
 		itemService.deleteItem(itemId, UserContext.get());
 		return ResponseEntity.noContent().build();
+	}
+
+	//아이템 구매
+	@PostMapping("/purchase")
+	public ResponseEntity<ApiResponse<List<ItemPurchaseResponseDto>>> purchaseItem(@RequestBody @Valid ItemPurchaseRequestDto request) {
+
+		List<ItemPurchaseResponseDto> result = itemPurchaseService.purchaseItem(request, UserContext.get());
+		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 }

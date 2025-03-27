@@ -4,14 +4,19 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.lufin.server.classroom.domain.Classroom;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -35,6 +40,10 @@ public class Mission {
 	public static final int MAX_TITLE_LENGTH = 100;
 
 	// JPA 연관관계 매핑
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "class_id", nullable = false)
+	private Classroom classroom;
+
 	@Builder.Default
 	@OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true) // 양방향 연관관계 주인 mission으로 설정
 	private List<MissionParticipation> participations = new ArrayList<>();
@@ -114,9 +123,9 @@ public class Mission {
 	/**
 	 * 미션 객체를 생성하는 팩토리 메서드
 	 */
-	public static Mission create(Integer classId, String title, String content, Integer difficulty,
+	public static Mission create(Integer classId, Classroom classroom, String title, String content, Integer difficulty,
 		Integer maxParticipants, Integer wage, LocalDateTime missionDate) {
-		return Mission.builder()
+		Mission mission = Mission.builder()
 			.classId(classId)
 			.title(title)
 			.content(content)
@@ -125,9 +134,14 @@ public class Mission {
 			.wage(wage)
 			.missionDate(missionDate)
 			.build();
+
+		// 교실과 연관관계 설정
+		classroom.addMission(mission);
+
+		return mission;
 	}
 
-	/* 관계 유지를 위한 메서드 */
+	/* participation 관계 유지를 위한 메서드 */
 
 	public void incrementParticipants() {
 		if (this.currentParticipants >= this.maxParticipants) {
@@ -157,7 +171,7 @@ public class Mission {
 		}
 
 		// 중복 체크 후 없으면 추가
-		if (participations.contains(participation) == false) {
+		if (!participations.contains(participation)) {
 			participations.add(participation);
 			this.incrementParticipants();
 		}
@@ -179,7 +193,7 @@ public class Mission {
 			throw new IllegalStateException("No participation found");
 		}
 
-		if (participations.contains(participation) == false) {
+		if (!participations.contains(participation)) {
 			throw new IllegalStateException("No such participation found");
 		}
 
@@ -189,6 +203,8 @@ public class Mission {
 			this.decrementParticipants();
 		}
 	}
+
+	/* image 관계 유지를 위한 메서드 */
 
 	/**
 	 * missionImage와 mission 간의 양방향 관계의 일관성을 유지하기 위한 메서드
@@ -211,7 +227,7 @@ public class Mission {
 			throw new IllegalStateException("No mission image found");
 		}
 
-		if (images.contains(missionImage) == false) {
+		if (!images.contains(missionImage)) {
 			throw new IllegalStateException("No such mission image found");
 		}
 
@@ -223,6 +239,15 @@ public class Mission {
 	 */
 	public boolean isParticipantsCountConsistent() {
 		return this.currentParticipants == this.participations.size();
+	}
+
+	/* classroom 연관 관계 메서드 */
+	public void setClassroom(Classroom classroom) {
+		if (classroom == null) {
+			throw new IllegalArgumentException("Classroom cannot be null");
+		}
+
+		this.classroom = classroom;
 	}
 
 	// 무한 루프 방지를 위해 contains()를 사용하면서 id를 기준으로 체크하기 위해 equals override

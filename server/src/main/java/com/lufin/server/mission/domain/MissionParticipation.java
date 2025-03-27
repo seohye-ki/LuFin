@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "mission_participation")
+@Table(name = "mission_participations")
 @Builder // 생성자 생성 어노테이션
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -37,7 +37,7 @@ public class MissionParticipation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "participation_id")
-	private Integer id;
+	private Integer participationId;
 
 	@Column(name = "member_id", nullable = false)
 	private Integer memberId;
@@ -156,11 +156,11 @@ public class MissionParticipation {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		MissionParticipation that = (MissionParticipation)o;
-		return id != null && id.equals(that.id);
+		return participationId != null && participationId.equals(that.participationId);
 	}
 
 	@Override
 	public int hashCode() {
-		return id != null ? id.hashCode() : 0;
+		return participationId != null ? participationId.hashCode() : 0;
 	}
 }

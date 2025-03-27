@@ -30,9 +30,9 @@ const CodeInput = ({
 
   // 크기별 스타일 설정
   const sizeStyles = {
-    sm: 'w-8 h-8 text-c1',
-    md: 'w-10 h-10 text-p2',
-    lg: 'w-12 h-12 text-p1',
+    sm: 'w-8 h-8 text-h3',
+    md: 'w-10 h-10 text-h2',
+    lg: 'w-12 h-12 text-h1',
   };
 
   // 입력 처리

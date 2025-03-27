@@ -10,7 +10,7 @@ interface AlertButton {
 
 interface AlertProps {
   title: string;
-  description?: string;
+  description?: string; // todo: react node 타입 변경경
   status: 'info' | 'warning' | 'danger' | 'success';
   primaryButton: AlertButton;
   secondaryButton?: AlertButton;

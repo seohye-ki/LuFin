@@ -21,7 +21,7 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const baseStyles =
-    'rounded-[50px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2';
+    'rounded-[24px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2';
 
   const variantStyles = {
     solid: {
@@ -48,11 +48,11 @@ export default function Button({
   };
 
   const sizeStyles = {
-    xs: 'px-2.5 py-1 text-c2',
-    sm: 'px-2.5 py-1 text-c1',
-    md: 'px-3 py-1.5 text-c1',
-    lg: 'px-3.5 py-2 text-p1',
-    xl: 'px-4 py-2.5 text-p1',
+    xs: 'px-4 py-1.5 text-c2',
+    sm: 'px-4.5 py-1.5 text-c1',
+    md: 'px-5 py-2 text-p1',
+    lg: 'px-5.5 py-2.5 text-h3',
+    xl: 'px-6 py-2.5 text-h2',
   };
 
   return (

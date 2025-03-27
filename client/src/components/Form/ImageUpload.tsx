@@ -95,7 +95,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
         <div
           className={`mt-2 flex flex-col justify-center rounded-lg border-2 border-dashed
             ${isDragging ? 'border-info bg-info/5' : 'border-grey-30'}
-            ${error ? 'border-danger bg-danger/5' : ''}
+            ${error ? 'border-danger bg-danger/5' : ''} 
             ${isDisabled ? 'border-grey-30 bg-broken-white cursor-not-allowed' : ''}
           `}
           onDragOver={handleDragOver}
@@ -169,8 +169,8 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
               <div className="mt-4 flex justify-center text-p1">
                 <label
                   htmlFor={props.id}
-                  className={`relative cursor-pointer rounded-md font-semibold text-info
-                    ${isDisabled ? 'cursor-not-allowed text-grey' : 'hover:text-info/50'}`}
+                  className={`relative cursor-pointer rounded-md font-semibold
+                    ${error ? 'text-danger' : isDisabled ? 'text-dark-grey cursor-not-allowed' : 'text-info hover:text-info/50'}`}
                 >
                   <span>파일 선택</span>
                   <input
@@ -185,7 +185,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
                     {...props}
                   />
                 </label>
-                <p className="pl-1 text-grey">또는 드래그 앤 드롭</p>
+                {/* <p className="pl-1 text-grey">또는 드래그 앤 드롭</p> */}
               </div>
               <p className="mt-2 text-c1 text-grey">
                 {description || `PNG, JPG, GIF (최대 ${maxSize}MB)`}

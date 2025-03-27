@@ -112,7 +112,7 @@ const CommonComponents = () => {
   const rows: TableRow[] = [
     {
       mission: '안내문 나눠주기',
-      wage: <Lufin count={1000} size={24} />,
+      wage: <Lufin count={1000} size='s' />,
       difficulty: (
         <div className='flex items-center gap-1'>
           <Icon name='Star' size={24} color='yellow' variant='Bold' />
@@ -131,7 +131,7 @@ const CommonComponents = () => {
     },
     {
       mission: '안내문 나눠주기',
-      wage: <Lufin count={1000} size={24} />,
+      wage: <Lufin count={1000} size='s' />,
       difficulty: <Icon name='Star' size={24} color='yellow' variant='Bold' />,
       date: '2025-01-01',
       participant: '1/2',
@@ -406,10 +406,17 @@ const CommonComponents = () => {
             </div>
             <div className='bg-white rounded-lg p-4'>
               <Profile
+                name='이재현'
+                profileImage='https://picsum.photos/200/300?random=1'
+                variant='row'
+              />
+            </div>
+            <div className='bg-white rounded-lg p-4'>
+              <Profile
                 name='이재현 선생님'
                 profileImage='https://picsum.photos/200/300?random=1'
-                variant='certification'
-                certificationNumber='5학년 1반'
+                variant='row'
+                className='border border-purple-30 rounded-lg'
               />
             </div>
           </div>
@@ -464,12 +471,9 @@ const CommonComponents = () => {
         <section>
           <h2 className='text-h2 font-medium text-black mb-4'>Lufin</h2>
           <div className='flex flex-col gap-12 bg-grey-30 p-4 rounded-2xl'>
-            <Lufin count={15200} size={16} />
-            <Lufin count={15200} size={24} />
-            <Lufin count={15200} size={28} />
-            <Lufin count={15200} size={32} />
-            <Lufin count={15200} size={40} />
-            <Lufin count={15200} size={52} />
+            <Lufin count={15200} size='s' />
+            <Lufin count={15200} size='m' />
+            <Lufin count={15200} size='l' />
           </div>
         </section>
 

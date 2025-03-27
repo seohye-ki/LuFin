@@ -28,15 +28,16 @@ const Sidebar = ({ userRole, className = '친구들의 금융 모임' }: Sidebar
         {userRole === 'student' && (
           <div className='flex w-full h-21 flex-col bg-yellow rounded-lg p-4 gap-1'>
             <p className='text-c1 text-dark-grey'>총 자산</p>
-            <Lufin count={15200} size={28} />
+            <Lufin count={15200} size='l' />
           </div>
         )}
 
         <Profile
           name='이재현'
-          variant='certification'
+          variant='row'
           certificationNumber='5학년 1반 12번'
           profileImage='https://picsum.photos/200/300?random=1'
+          className='border border-purple-30 rounded-lg'
         />
       </div>
     </div>

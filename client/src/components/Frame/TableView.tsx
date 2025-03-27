@@ -22,7 +22,7 @@ const TableView = ({ columns, rows }: TableViewProps) => {
               <th
                 key={column.key}
                 className={`
-              px-4 py-3 text-p2 font-semibold border-b border-new-grey text-center
+              px-4 py-3 text-p1 font-semibold border-b border-new-grey text-center
               ${idx === 0 ? 'rounded-tl-xl' : ''}
               ${idx === columns.length - 1 ? 'rounded-tr-xl' : ''}
             `}
@@ -38,7 +38,7 @@ const TableView = ({ columns, rows }: TableViewProps) => {
               {columns.map((column) => (
                 <td
                   key={column.key}
-                  className='px-4 py-2 text-p2 font-regular border-b border-new-grey'
+                  className='px-4 py-2 text-p1 font-regular border-b border-new-grey'
                 >
                   <div className='flex justify-center items-center'>{row[column.key]}</div>
                 </td>

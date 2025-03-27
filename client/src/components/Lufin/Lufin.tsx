@@ -22,7 +22,7 @@ const sizeMap = {
 };
 
 const fontSizeMap = {
-  s: 'text-p2 font-semibold',
+  s: 'text-p1 font-semibold',
   m: 'text-h3 font-semibold',
   l: 'text-h2 font-semibold',
 };
@@ -35,7 +35,7 @@ const Lufin = ({ size = 'l', count, className }: LufinProps) => {
   return (
     <div className={twMerge('flex items-center gap-1', className)}>
       <img src={lufinSrc} alt='루핀 코인' className={lufinSize} />
-      {count !== undefined && <span className={fontSize}>{count}</span>}
+      {count !== undefined && <span className={fontSize}>{count.toLocaleString()}</span>}
     </div>
   );
 };

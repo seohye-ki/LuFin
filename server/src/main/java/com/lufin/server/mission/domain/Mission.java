@@ -111,58 +111,6 @@ public class Mission {
 		this.status = status;
 	}
 
-	public void incrementParticipants() {
-		if (this.currentParticipants >= this.maxParticipants) {
-			//TODO: error 코드 변경
-			throw new IllegalStateException("Cannot exceed maximum participants: " + this.maxParticipants);
-		}
-		this.currentParticipants++;
-	}
-
-	public void decrementParticipants() {
-		if (this.currentParticipants <= 0) {
-			//TODO: error 코드 변경
-			throw new IllegalStateException("Current participants cannot be negative");
-		}
-		this.currentParticipants--;
-	}
-
-	public void addParticipation(MissionParticipation participation) {
-		if (participation == null) {
-			//TODO: error 코드 변경
-			throw new IllegalArgumentException("Participation cannot be null");
-		}
-
-		if (this.currentParticipants >= this.maxParticipants) {
-			//TODO: error 코드 변경
-			throw new IllegalStateException("Maximum participants reached");
-		}
-
-		participations.add(participation);
-		this.incrementParticipants();
-	}
-
-	public void addImage(MissionImage missionImage) {
-		if (missionImage == null) {
-			// TODO: error 코드 변경
-			throw new IllegalArgumentException("MissionImage cannot be null");
-		}
-
-		images.add(missionImage);
-	}
-
-	public void removeParticipation(MissionParticipation participation) {
-		if (participation == null) {
-			//TODO: error 코드 변경
-			throw new IllegalArgumentException("Participation cannot be null");
-		}
-
-		boolean removed = participations.remove(participation);
-		if (removed) {
-			this.decrementParticipants();
-		}
-	}
-
 	/**
 	 * 미션 객체를 생성하는 팩토리 메서드
 	 */
@@ -179,6 +127,97 @@ public class Mission {
 			.build();
 	}
 
+	/* 관계 유지를 위한 메서드 */
+
+	public void incrementParticipants() {
+		if (this.currentParticipants >= this.maxParticipants) {
+			//TODO: error 코드 변경
+			throw new IllegalStateException("Cannot exceed maximum participants: " + this.maxParticipants);
+		}
+		this.currentParticipants++;
+	}
+
+	public void decrementParticipants() {
+		if (this.currentParticipants <= 0) {
+			//TODO: error 코드 변경
+			throw new IllegalStateException("Current participants cannot be negative");
+		}
+		this.currentParticipants--;
+	}
+
+	/**
+	 * missionParticipation과 양방향 연관관계를 위한 메서드
+	 * 내부적 연관관계 설정에서만 사용하므로 participation이 null이 아니어야함
+	 * @param participation
+	 */
+	public void addParticipation(MissionParticipation participation) {
+		if (this.currentParticipants >= this.maxParticipants) {
+			//TODO: error 코드 변경
+			throw new IllegalStateException("Maximum participants reached");
+		}
+
+		// 중복 체크 후 없으면 추가
+		if (participations.contains(participation) == false) {
+			participations.add(participation);
+			this.incrementParticipants();
+		}
+
+		// 양방향 관계 설정 (무한 루프 방지 조건)
+		if (participation.getMission() != this) {
+			participation.setMission(this);
+		}
+
+	}
+
+	/**
+	 * missionParticipation과 양방향 연관관계를 위한 메서드
+	 * 내부적 연관관계 설정에서만 사용하므로 participation이 null이 아니어야함
+	 * @param participation
+	 */
+	void removeParticipation(MissionParticipation participation) {
+		if (participations.isEmpty()) {
+			throw new IllegalStateException("No participation found");
+		}
+
+		if (participations.contains(participation) == false) {
+			throw new IllegalStateException("No such participation found");
+		}
+
+		boolean removed = participations.remove(participation);
+
+		if (removed) {
+			this.decrementParticipants();
+		}
+	}
+
+	/**
+	 * missionImage와 mission 간의 양방향 관계의 일관성을 유지하기 위한 메서드
+	 * 내부적 연관관계 관리용으로, 반드시 null이 아닌 missionImage만 전달되어야 합니다.
+	 */
+	void addImage(MissionImage missionImage) {
+		// 중복 체크 후 없으면 추가
+		if (!images.contains(missionImage)) {
+			images.add(missionImage);
+		}
+
+		if (missionImage.getMission() != this) {
+			missionImage.setMission(this);
+		}
+
+	}
+
+	void removeImage(MissionImage missionImage) {
+		if (images.isEmpty()) {
+			throw new IllegalStateException("No mission image found");
+		}
+
+		if (images.contains(missionImage) == false) {
+			throw new IllegalStateException("No such mission image found");
+		}
+
+		images.remove(missionImage);
+	}
+
 	/**
 	 * 현재 참가자 수와 참가자 목록의 크기가 일치하는지 확인
 	 */
@@ -186,5 +225,19 @@ public class Mission {
 		return this.currentParticipants == this.participations.size();
 	}
 
-	// 기본 메서드는 DTO에서
+	// 무한 루프 방지를 위해 contains()를 사용하면서 id를 기준으로 체크하기 위해 equals override
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Mission mission = (Mission)o;
+		return id != null && id.equals(mission.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
+	}
 }

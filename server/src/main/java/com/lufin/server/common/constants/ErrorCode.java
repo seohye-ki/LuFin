@@ -43,6 +43,7 @@ public enum ErrorCode {
 
 	EMAIL_ALREADY_REGISTERED("E409001", "이미 가입된 이메일입니다."),
 	DUPLICATE_COUPON_USAGE("E409002", "이미 등록된 교번/학번 입니다."),
+	DUPLICATE_CLASSROOM("E409003", "이미 등록된 클래스입니다."),
 
 	INSUFFICIENT_CREDIT_SCORE("E422001", "신용 점수가 부족하여 이용할 수 없습니다."),
 	INSUFFICIENT_BALANCE("E422002", "잔액이 부족합니다."),

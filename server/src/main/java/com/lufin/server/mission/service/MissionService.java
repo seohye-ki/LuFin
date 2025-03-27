@@ -9,5 +9,5 @@ public interface MissionService {
 	List<MissionResponseDto.MissionSummaryResponseDto> getAllMissions(Integer classId);
 
 	// 미션 상세 조회
-	MissionResponseDto.MissionDetailResponseDto getMissionById(Integer classId, Integer missionId);
+	MissionResponseDto.MissionDetailResponseDto getMissionById(Integer classId, Integer missionId, String role);
 }

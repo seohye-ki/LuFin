@@ -2,9 +2,16 @@ package com.lufin.server.mission.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.lufin.server.member.domain.Member;
+import com.lufin.server.member.support.UserContext;
+import com.lufin.server.mission.dto.MissionRequestDto;
+import com.lufin.server.mission.dto.MissionResponseDto;
+import com.lufin.server.mission.service.MissionService;
+import com.lufin.server.mission.service.MissionServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,8 +27,17 @@ public class MissionController {
 	 * @return [{}, {} ...]
 	 */
 	@GetMapping("/")
-	public ResponseEntity<?> getMissions() {
-		//TODO: ApiResponse 활용하는 걸로 변경
+	public ResponseEntity<?> getMissions(MissionRequestDto request) {
+		try {
+			Member currentMember = UserContext.get();
+
+			// TODO: classroomID 패러미터에 넣기
+			MissionService service = new MissionServiceImpl();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().build();
+		}
 		return ResponseEntity.ok().build();
 	}
 
@@ -31,7 +47,10 @@ public class MissionController {
 	 * @return {}
 	 */
 	@GetMapping("/{missionId}")
-	public ResponseEntity<?> getMissionById(@PathVariable int missionId) {
+	public ResponseEntity<?> getMissionById(
+		MissionResponseDto rqeust,
+		@RequestParam(required = true) Integer missionId
+	) {
 		//TODO: ApiResponse 활용하는 걸로 변경
 		return ResponseEntity.ok().body(missionId);
 	}

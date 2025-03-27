@@ -14,9 +14,11 @@ import com.lufin.server.common.utils.TokenUtils;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
 	private final TokenUtils tokenUtils;
@@ -36,6 +38,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 					attributes.put("classId", claims.get("classId"));
 					return true;
 				} catch (Exception e) {
+					log.warn("💡 WebSocket JWT 인증 실패: {}", e.getMessage());
 					return false;
 				}
 			}

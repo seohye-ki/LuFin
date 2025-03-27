@@ -48,7 +48,15 @@ public enum ErrorCode {
 	INSUFFICIENT_BALANCE("E422002", "잔액이 부족합니다."),
 
 	SERVER_ERROR("E500001", "요청을 처리할 수 없습니다. 다시 시도해 주세요."),
-	SERVICE_UNAVAILABLE("E503001", "현재 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해 주세요.");
+	SERVICE_UNAVAILABLE("E503001", "현재 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해 주세요."),
+
+	// 웹소켓 관련 에러 코드 추가
+	WEBSOCKET_CONNECTION_FAILED("WS400001", "웹소켓 연결에 실패했습니다."),
+	WEBSOCKET_MESSAGE_ERROR("WS400002", "웹소켓 메시지 처리 중 오류가 발생했습니다."),
+	WEBSOCKET_AUTH_REQUIRED("WS401001", "웹소켓 연결에 인증이 필요합니다."),
+	WEBSOCKET_UNAUTHORIZED("WS403001", "웹소켓 작업 권한이 없습니다."),
+	WEBSOCKET_DEST_NOT_FOUND("WS404001", "웹소켓 대상을 찾을 수 없습니다."),
+	WEBSOCKET_INTERNAL_ERROR("WS500001", "웹소켓 서버 오류가 발생했습니다.");
 
 	private final String code;
 	private final String message;

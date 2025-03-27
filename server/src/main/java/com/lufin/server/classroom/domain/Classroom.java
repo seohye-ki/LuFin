@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.lufin.server.member.domain.Member;
+import com.lufin.server.mission.domain.Mission;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -32,6 +33,9 @@ public class Classroom {
 
 	@OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<MemberClassroom> memberClassrooms = new ArrayList<>();
+
+	@OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true)
+	private final List<Mission> missions = new ArrayList<>();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -115,10 +119,50 @@ public class Classroom {
 		}
 	}
 
+	/* mission 연관관계 메서드 */
+	public void addMission(Mission mission) {
+		// 중복 체크 후 없으면 추가
+		if (!missions.contains(mission)) {
+			missions.add(mission);
+		}
+
+		// 무한루프 방지 체크 및 연관관계 설정
+		if (mission.getClassroom() != this) {
+			mission.setClassroom(this);
+		}
+	}
+
+	public void removeMissions(Mission mission) {
+		if (missions.contains(mission)) {
+			missions.remove(mission);
+		}
+	}
+
+	public void removeMission(Mission mission) {
+		this.missions.remove(mission);
+	}
+
 	@PrePersist
 	private void setCreatedAt() {
 		if (this.createdAt == null) {
 			this.createdAt = LocalDateTime.now();
 		}
 	}
+
+	/* 무한루프 방지를 위한 contains()를 위해 id 기반으로 equals() 오버라이딩 */
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Classroom classroom = (Classroom)o;
+		return id != null && id.equals(classroom.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
+	}
+
 }

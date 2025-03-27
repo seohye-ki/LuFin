@@ -14,6 +14,7 @@ import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.common.constants.ErrorCode;
+import com.lufin.server.common.constants.HistoryStatus;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.item.domain.Item;
 import com.lufin.server.item.domain.ItemPurchase;
@@ -24,6 +25,9 @@ import com.lufin.server.item.dto.ItemResponseDto;
 import com.lufin.server.item.repository.ItemPurchaseRepository;
 import com.lufin.server.item.repository.ItemRepository;
 import com.lufin.server.member.domain.Member;
+import com.lufin.server.transaction.domain.TransactionSourceType;
+import com.lufin.server.transaction.domain.TransactionType;
+import com.lufin.server.transaction.service.TransactionHistoryService;
 
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +43,7 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 	private final ItemPurchaseRepository itemPurchaseRepository;
 	private final MemberClassroomRepository memberClassroomRepository;
 	private final AccountRepository accountRepository;
+	private final TransactionHistoryService transactionHistoryService;
 
 	// 현재 활성화된 클래스 찾기
 	private Classroom getActiveClassroom(Member member) {
@@ -70,6 +75,13 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 
+	// 멤버가 속한 반의 클래스계좌
+	private Account getClassAccount(Classroom classroom) {
+		return accountRepository.findByClassroomId(classroom.getId())
+			.filter(account -> account.getType() == AccountType.CLASSROOM)
+			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
+	}
+
 	// 아이템 판매 상태 확인 및 재고 검사
 	private void validateItemStatus(Item item, int itemCount) {
 		if (!item.getStatus()) {
@@ -80,7 +92,8 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 			throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK);
 		}
 	}
-
+	
+	// TODO: 동시성 처리 로직 추가하기
 	// 아이템 구매
 	@Override
 	@Transactional
@@ -98,6 +111,18 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 		Account account = getActiveAccount(student, classroom);
 		int totalPrice = item.getPrice() * request.itemCount();
 		account.withdraw(totalPrice);
+		Account classAccount = getClassAccount(classroom);
+		transactionHistoryService.record(
+			account,
+			classAccount.getAccountNumber(),
+			student,
+			totalPrice,
+			account.getBalance(),
+			TransactionType.WITHDRAWAL,
+			HistoryStatus.SUCCESS,
+			"아이템 구매",
+			TransactionSourceType.ITEM_PURCHASE
+		);
 
 		// 5. 재고 차감
 		item.increaseQuantitySold(request.itemCount());
@@ -136,6 +161,55 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 		return purchases.stream()
 			.map(ItemPurchaseResponseDto::from)
 			.collect(Collectors.toList());
+	}
+
+	// 아이템 환불
+	@Override
+	@Transactional
+	public ItemPurchaseResponseDto refundItem(Integer purchaseId, Member student) {
+		// 1. 구매 기록 조회
+		ItemPurchase purchase = itemPurchaseRepository.findById(purchaseId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.PURCHASE_RECORD_NOT_FOUND));
+
+		// 2. 본인 구매인지 확인
+		if (!purchase.isPurchasedBy(student)) {
+			throw new BusinessException(ErrorCode.REQUEST_DENIED);
+		}
+
+		// 3. 활성화된 반과 일치하는지 확인
+		Classroom classroom = getActiveClassroom(student);
+		if (!purchase.getItem().getClassroom().getId().equals(classroom.getId())) {
+			throw new BusinessException(ErrorCode.REQUEST_DENIED);
+		}
+
+		// 4. 환불 가능 상태 체크
+		if (purchase.getStatus() != ItemPurchaseStatus.BUY) {
+			throw new BusinessException(ErrorCode.INVALID_REFUND_CONDITION);
+		}
+
+		// 5. 환불 처리
+		purchase.refund();
+
+		// 6. 금액 환급
+		Account account = getActiveAccount(student, classroom);
+		account.deposit(purchase.getPurchasePrice());
+		Account classAccount = getClassAccount(classroom);
+		transactionHistoryService.record(
+			classAccount,
+			account.getAccountNumber(),
+			student,
+			purchase.getPurchasePrice(),
+			account.getBalance(),
+			TransactionType.DEPOSIT,
+			HistoryStatus.SUCCESS,
+			"아이템 환불",
+			TransactionSourceType.REFUND
+		);
+
+		// 7. 재고 복원
+		purchase.getItem().decreaseQuantitySold(1);
+
+		return ItemPurchaseResponseDto.from(purchase);
 	}
 
 }

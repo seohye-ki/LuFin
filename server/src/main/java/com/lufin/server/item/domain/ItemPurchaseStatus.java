@@ -4,5 +4,6 @@ public enum ItemPurchaseStatus {
 	BUY,
 	REFUND,
 	USED,
-	EXPIRED
+	EXPIRED,
+	PENDING
 }

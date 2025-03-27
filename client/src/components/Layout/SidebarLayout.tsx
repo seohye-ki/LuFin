@@ -7,7 +7,7 @@ interface Props {
 
 const SidebarLayout = ({ children }: Props) => {
   return (
-    <div className='flex w-256'>
+    <div className='flex w-full'>
       <Sidebar userRole='student' />
       <main className='flex-1 p-4 bg-broken-white'>{children}</main>
     </div>

@@ -1,4 +1,3 @@
-import React, { useEffect, useRef } from 'react';
 import { Doughnut } from 'react-ChartJS-2';
 import {
   Chart,
@@ -8,7 +7,6 @@ import {
   ArcElement,
   CategoryScale,
   LinearScale,
-  plugins,
   ChartOptions,
   ChartData,
   Plugin,

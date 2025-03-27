@@ -17,8 +17,10 @@ import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.item.domain.Item;
 import com.lufin.server.item.domain.ItemPurchase;
+import com.lufin.server.item.domain.ItemPurchaseStatus;
 import com.lufin.server.item.dto.ItemPurchaseRequestDto;
 import com.lufin.server.item.dto.ItemPurchaseResponseDto;
+import com.lufin.server.item.dto.ItemResponseDto;
 import com.lufin.server.item.repository.ItemPurchaseRepository;
 import com.lufin.server.item.repository.ItemRepository;
 import com.lufin.server.member.domain.Member;
@@ -104,11 +106,36 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 		List<ItemPurchase> purchases = new ArrayList<>();
 		for (int i = 0; i < request.itemCount(); i++) {
 			ItemPurchase purchase = ItemPurchase.create(item, student, 1);
-			purchases.add(itemPurchaseRepository.save(purchase));
+			purchases.add(purchase);
 		}
+		itemPurchaseRepository.saveAll(purchases);
 
 		return purchases.stream()
 			.map(ItemPurchaseResponseDto::from)
 			.collect(Collectors.toList());
 	}
+
+	// 인벤토리 조회
+	@Override
+	public List<ItemPurchaseResponseDto> getInventory(Member student) {
+		Classroom classroom = getActiveClassroom(student);
+		List<ItemPurchase> inventory = itemPurchaseRepository.findInventory(student.getId(), ItemPurchaseStatus.BUY, classroom.getId());
+
+		return inventory.stream()
+			.map(ItemPurchaseResponseDto::from)
+			.collect(Collectors.toList());
+	}
+
+	// 특정 아이템의 구매 내역 조회
+	@Override
+	public List<ItemPurchaseResponseDto> getItemPurchaseHistory(Integer itemId, Member teacher) {
+		Classroom classroom = getActiveClassroom(teacher);
+		Item item = validateItemOwnership(itemId, classroom);
+		List<ItemPurchase> purchases = itemPurchaseRepository.findByItemId(item.getId());
+
+		return purchases.stream()
+			.map(ItemPurchaseResponseDto::from)
+			.collect(Collectors.toList());
+	}
+
 }

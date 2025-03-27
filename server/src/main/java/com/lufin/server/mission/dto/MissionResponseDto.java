@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.lufin.server.mission.domain.Mission;
 import com.lufin.server.mission.domain.MissionImage;
+import com.lufin.server.mission.domain.MissionParticipation;
 import com.lufin.server.mission.domain.MissionStatus;
 import com.querydsl.core.annotations.QueryProjection;
 
@@ -23,6 +24,7 @@ public class MissionResponseDto {
 		Integer difficulty,
 		Integer maxParticipants,
 		Integer currentParticipants,
+		List<MissionParticipation> participations,
 		Integer wage,
 		LocalDateTime missionDate,
 		MissionStatus status,
@@ -46,6 +48,7 @@ public class MissionResponseDto {
 				mission.getDifficulty(),
 				mission.getMaxParticipants(),
 				mission.getCurrentParticipants(),
+				mission.getParticipations(),
 				mission.getWage(),
 				mission.getMissionDate(),
 				mission.getStatus(),

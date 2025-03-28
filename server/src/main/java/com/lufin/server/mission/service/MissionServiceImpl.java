@@ -3,6 +3,7 @@ package com.lufin.server.mission.service;
 import static com.lufin.server.common.constants.ErrorCode.*;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import com.lufin.server.mission.domain.Mission;
 import com.lufin.server.mission.dto.MissionRequestDto;
 import com.lufin.server.mission.dto.MissionResponseDto;
 import com.lufin.server.mission.repository.MissionRepository;
+import com.lufin.server.mission.repository.MissionUtilRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class MissionServiceImpl implements MissionService {
 
+	private final MissionUtilRepository missionUtilRepository;
 	private final MissionRepository missionRepository;
 	private final ClassroomRepository classroomRepository;
 
@@ -131,6 +134,41 @@ public class MissionServiceImpl implements MissionService {
 			Mission savedMission = missionRepository.save(newMission);
 
 			return new MissionResponseDto.MissionPostResponseDto(savedMission.getId());
+		} catch (Exception e) {
+			log.error("An error occurred: {}", e.getMessage(), e);
+			throw new BusinessException(SERVER_ERROR);
+		}
+	}
+
+	@Override
+	public void deleteMission(Integer classId, Integer missionId, String role) {
+		log.info("미션 삭제 요청: classId: {}, missionId: {}, role: {}", classId, missionId, role);
+
+		if (classId == null) {
+			throw new BusinessException(MISSING_REQUIRED_VALUE);
+		}
+
+		if (missionId == null) {
+			throw new BusinessException(MISSING_REQUIRED_VALUE);
+		}
+
+		if (role == null) {
+			throw new BusinessException(MISSING_REQUIRED_VALUE);
+		}
+
+		try {
+			// 선생님이 아니면 삭제 불가
+			if (!role.equals("TEACHER")) {
+				throw new BusinessException(FORBIDDEN_REQUEST);
+			}
+
+			// 해당 클래스의 담당교사가 아닌 경우 삭제 불가
+			if (!Objects.equals(missionUtilRepository.getClassIdByMissionId(missionId), classId)) {
+				throw new BusinessException(FORBIDDEN_REQUEST);
+			}
+
+			missionUtilRepository.deleteMission(classId, missionId);
+
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);

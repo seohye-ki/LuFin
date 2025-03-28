@@ -15,4 +15,7 @@ public interface MissionService {
 	// 미션 등록
 	MissionResponseDto.MissionPostResponseDto postMission(MissionRequestDto.MissionPostRequestDto requestDto,
 		Integer classId);
+
+	// 미션 삭제
+	void deleteMission(Integer classId, Integer missionId, String role);
 }

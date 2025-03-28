@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,6 +72,13 @@ public class MissionController {
 
 	}
 
+	/**
+	 * 미션 생성
+	 * @param requestDto 미션 생성에 필요한 데이터
+	 * @param request 리퀘스트 그 자체(JSON -> JAVA 객체로 바꿔줌)
+	 * @param bindingResult DTO 검증 결과
+	 * @return "data": { "id": Number }
+	 */
 	@PostMapping
 	public ResponseEntity<ApiResponse<MissionResponseDto.MissionPostResponseDto>> createMission(
 		@Valid @RequestBody MissionRequestDto.MissionPostRequestDto requestDto,
@@ -86,6 +94,21 @@ public class MissionController {
 		MissionResponseDto.MissionPostResponseDto response = missionService.postMission(requestDto, classId);
 
 		return ResponseEntity.status(201).body(ApiResponse.success(response));
+	}
+
+	@DeleteMapping("/{missionId}")
+	public ResponseEntity<ApiResponse> deleteMission(
+		@PathVariable @Positive Integer missionId,
+		HttpServletRequest request
+	) {
+		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
+
+		Member currentMember = UserContext.get();
+		String role = String.valueOf(currentMember.getMemberRole());
+
+		missionService.deleteMission(classId, missionId, role);
+		return ResponseEntity.noContent().build();
+
 	}
 
 	/* 미션 참여 관련 */

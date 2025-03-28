@@ -126,6 +126,9 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 
 		// 5. 재고 차감
 		item.increaseQuantitySold(request.itemCount());
+		if (item.getQuantityAvailable().equals(item.getQuantitySold())) {
+			item.disable();
+		}
 
 		// 6. 아이템 구매 기록 저장
 		List<ItemPurchase> purchases = new ArrayList<>();
@@ -184,7 +187,7 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 
 		// 4. 환불 가능 상태 체크
 		if (purchase.getStatus() != ItemPurchaseStatus.BUY) {
-			throw new BusinessException(ErrorCode.INVALID_REFUND_CONDITION);
+			throw new BusinessException(ErrorCode.PURCHASE_STATUS_NOT_BUY);
 		}
 
 		// 5. 환불 처리
@@ -207,7 +210,11 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 		);
 
 		// 7. 재고 복원
-		purchase.getItem().decreaseQuantitySold(1);
+		Item item = purchase.getItem();
+		item.decreaseQuantitySold(1);
+		if (!item.isExpired() && item.getQuantityAvailable() - item.getQuantitySold() > 0 ) {
+			item.enable();
+		}
 
 		return ItemPurchaseResponseDto.from(purchase);
 	}

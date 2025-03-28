@@ -13,16 +13,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.common.dto.ApiResponse;
+import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.item.dto.ItemDto;
 import com.lufin.server.item.dto.ItemPurchaseRequestDto;
 import com.lufin.server.item.dto.ItemPurchaseResponseDto;
+import com.lufin.server.item.dto.ItemRequestResponseDto;
 import com.lufin.server.item.dto.ItemResponseDto;
 import com.lufin.server.item.service.ItemPurchaseService;
+import com.lufin.server.item.service.ItemRequestService;
 import com.lufin.server.item.service.ItemService;
 
 import com.lufin.server.member.support.UserContext;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 public class ItemController {
 	private final ItemService itemService;
 	private final ItemPurchaseService itemPurchaseService;
+	private final ItemRequestService itemRequestService;
 
 	// TODO: 선생님 AOP넣기 (@TeacherOnly)
 
@@ -97,5 +103,13 @@ public class ItemController {
 	ResponseEntity<ApiResponse<ItemPurchaseResponseDto>> refundItem(@PathVariable Integer purchaseId) {
 		ItemPurchaseResponseDto result = itemPurchaseService.refundItem(purchaseId, UserContext.get());
 		return ResponseEntity.ok(ApiResponse.success(result));
+	}
+
+	// 아이템 사용
+	@PostMapping("/purchases/{purchaseId}/request")
+	public ResponseEntity<ApiResponse<ItemRequestResponseDto>> requestItemUse(HttpServletRequest httpRequest, @PathVariable Integer purchaseId) {
+		Integer classId = (Integer) httpRequest.getAttribute("classId");
+		ItemRequestResponseDto result = itemRequestService.requestItemUse(purchaseId, UserContext.get(), classId);
+		return ResponseEntity.status(201).body(ApiResponse.success(result));
 	}
 }

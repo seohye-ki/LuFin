@@ -80,6 +80,10 @@ public class ItemPurchase {
 		this.status = ItemPurchaseStatus.EXPIRED;
 	}
 
+	public void pending() {
+		this.status = ItemPurchaseStatus.PENDING;
+	}
+
 	public boolean isPurchasedBy(Member member) {
 		return this.member.equals(member);
 	}

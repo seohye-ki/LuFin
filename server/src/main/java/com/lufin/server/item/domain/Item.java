@@ -110,6 +110,10 @@ public class Item {
 		this.status = true;
 	}
 
+	public boolean isExpired() {
+		return LocalDateTime.now().isAfter(this.expirationDate);
+	}
+
 	@PreUpdate
 	protected void setUpdatedAt() {
 		this.updatedAt = LocalDateTime.now();

@@ -58,7 +58,7 @@ public class Mission {
 	@Column(name = "mission_id")
 	private Integer id;
 
-	@Column(name = "class_id", nullable = false)
+	@Column(name = "class_id", insertable = false, updatable = false, nullable = false)
 	private Integer classId;
 
 	@Column(name = "title", nullable = false, length = MAX_TITLE_LENGTH)
@@ -118,6 +118,30 @@ public class Mission {
 			throw new IllegalArgumentException("Statsu cannot be null");
 		}
 		this.status = status;
+	}
+
+	public void modifyTitle(String title) {
+		this.title = title;
+	}
+
+	public void modifyContent(String content) {
+		this.content = content;
+	}
+
+	public void modifyDifficulty(Integer difficulty) {
+		this.difficulty = difficulty;
+	}
+
+	public void modifyMaxParticipants(Integer maxParticipants) {
+		this.maxParticipants = maxParticipants;
+	}
+
+	public void modifyWage(Integer wage) {
+		this.wage = wage;
+	}
+
+	public void modifyMissionDate(LocalDateTime missionDate) {
+		this.missionDate = missionDate;
 	}
 
 	/**

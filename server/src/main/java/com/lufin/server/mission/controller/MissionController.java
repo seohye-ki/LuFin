@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.dto.ApiResponse;
+import com.lufin.server.common.utils.ValidationUtils;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
 import com.lufin.server.member.support.UserContext;
@@ -42,7 +44,8 @@ public class MissionController {
 	public ResponseEntity<ApiResponse<List<MissionResponseDto.MissionSummaryResponseDto>>> getMissions(
 		HttpServletRequest request
 	) {
-		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
+		Integer classId = (Integer)request.getAttribute("classId");
+		ValidationUtils.validateClassId(classId);
 
 		List<MissionResponseDto.MissionSummaryResponseDto> missions = missionService.getAllMissions(classId);
 		return ResponseEntity.status(200).body(ApiResponse.success(missions));
@@ -59,7 +62,8 @@ public class MissionController {
 		@PathVariable @Positive Integer missionId,
 		HttpServletRequest request
 	) {
-		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
+		Integer classId = (Integer)request.getAttribute("classId");
+		ValidationUtils.validateClassId(classId);
 
 		Member currentMember = UserContext.get();
 		Enum<MemberRole> role = currentMember.getMemberRole();
@@ -82,7 +86,7 @@ public class MissionController {
 	 */
 	@PostMapping
 	public ResponseEntity<ApiResponse<MissionResponseDto.MissionPostResponseDto>> createMission(
-		@Valid @RequestBody MissionRequestDto.MissionPostRequestDto requestDto,
+		@Valid @RequestBody MissionRequestDto.MissionRequestInfoDto requestDto,
 		HttpServletRequest request,
 		BindingResult bindingResult) {
 		// 유효성 검증에 실패한 경우 직접 처리
@@ -90,7 +94,8 @@ public class MissionController {
 			return ResponseEntity.status(400).body(ApiResponse.failure(ErrorCode.INVALID_INPUT_VALUE));
 		}
 
-		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
+		Integer classId = (Integer)request.getAttribute("classId");
+		ValidationUtils.validateClassId(classId);
 
 		MissionResponseDto.MissionPostResponseDto response = missionService.postMission(requestDto, classId);
 
@@ -102,7 +107,8 @@ public class MissionController {
 		@PathVariable @Positive Integer missionId,
 		HttpServletRequest request
 	) {
-		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
+		Integer classId = (Integer)request.getAttribute("classId");
+		ValidationUtils.validateClassId(classId);
 
 		Member currentMember = UserContext.get();
 		Enum<MemberRole> role = currentMember.getMemberRole();
@@ -110,6 +116,30 @@ public class MissionController {
 		missionService.deleteMission(classId, missionId, role);
 		return ResponseEntity.noContent().build();
 
+	}
+
+	@PutMapping("/{missionId}")
+	public ResponseEntity<ApiResponse<MissionResponseDto.MissionDetailResponseDto>> modifyMission(
+		@PathVariable @Positive Integer missionId,
+		@Valid @RequestBody MissionRequestDto.MissionRequestInfoDto requestDto,
+		HttpServletRequest request,
+		BindingResult bindingResult
+	) {
+		// input 값 검증
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.status(400).body(ApiResponse.failure(ErrorCode.INVALID_INPUT_VALUE));
+		}
+
+		Integer classId = (Integer)request.getAttribute("classId");
+		ValidationUtils.validateClassId(classId);
+
+		Member currentMember = UserContext.get();
+		Enum<MemberRole> role = currentMember.getMemberRole();
+		
+		MissionResponseDto.MissionDetailResponseDto response = missionService.putMission(requestDto, classId, missionId,
+			role);
+
+		return ResponseEntity.status(200).body(ApiResponse.success(response));
 	}
 
 	/* 미션 참여 관련 */

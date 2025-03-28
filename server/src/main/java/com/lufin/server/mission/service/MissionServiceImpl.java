@@ -39,6 +39,7 @@ public class MissionServiceImpl implements MissionService {
 		log.info("미션 전체 조회 요청: classId: {}", classId);
 		try {
 			if (classId == null) {
+				log.error("미션 상세 조회에 필수 값이 누락되었습니다. classId: ");
 				throw new BusinessException(MISSING_REQUIRED_VALUE);
 			}
 
@@ -55,15 +56,8 @@ public class MissionServiceImpl implements MissionService {
 		Enum<MemberRole> role) {
 		log.info("미션 상세 조회 요청: classId: {}, missionId: {}, role: {}", classId, missionId, role);
 
-		if (classId == null) {
-			throw new BusinessException(MISSING_REQUIRED_VALUE);
-		}
-
-		if (missionId == null) {
-			throw new BusinessException(MISSING_REQUIRED_VALUE);
-		}
-
-		if (role == null) {
+		if (classId == null || missionId == null || role == null) {
+			log.error("미션 상세 조회에 필수 값이 누락되었습니다. classId: {}, missionId: {}", classId, missionId);
 			throw new BusinessException(MISSING_REQUIRED_VALUE);
 		}
 
@@ -92,25 +86,20 @@ public class MissionServiceImpl implements MissionService {
 
 	@Transactional
 	@Override
-	public MissionResponseDto.MissionPostResponseDto postMission(MissionRequestDto.MissionPostRequestDto requestDto,
+	public MissionResponseDto.MissionPostResponseDto postMission(MissionRequestDto.MissionRequestInfoDto requestDto,
 		Integer classId) {
-		log.info("미션 생성 요청: classId: {}, with request details: {}", classId, requestDto);
+		log.info("미션 생성 요청: classId: {}, requestDto: {}", classId, requestDto);
 
-		if (classId == null) {
-			throw new BusinessException(MISSING_REQUIRED_VALUE);
-		}
+		// 선생님이 아닌 경우 생성 불가
+		Member currentMember = UserContext.get();
 
-		if (requestDto == null) {
+		if (classId == null || requestDto == null || currentMember == null) {
+			log.error("미션 생성 요청에 필수 값이 누락되었습니다. classId: {}, requestDto: {}, currentMember: {}", classId, requestDto,
+				currentMember);
 			throw new BusinessException(MISSING_REQUIRED_VALUE);
 		}
 
 		try {
-			// 선생님이 아닌 경우 생성 불가
-			Member currentMember = UserContext.get();
-
-			if (currentMember == null) {
-				throw new BusinessException(UNAUTHORIZED_ACCESS);
-			}
 
 			if (!String.valueOf(currentMember.getMemberRole()).equals("TEACHER")) {
 				throw new BusinessException(FORBIDDEN_REQUEST);
@@ -146,15 +135,9 @@ public class MissionServiceImpl implements MissionService {
 	public void deleteMission(Integer classId, Integer missionId, Enum<MemberRole> role) {
 		log.info("미션 삭제 요청: classId: {}, missionId: {}, role: {}", classId, missionId, role);
 
-		if (classId == null) {
-			throw new BusinessException(MISSING_REQUIRED_VALUE);
-		}
-
-		if (missionId == null) {
-			throw new BusinessException(MISSING_REQUIRED_VALUE);
-		}
-
-		if (role == null) {
+		if (classId == null || missionId == null || role == null) {
+			log.error("미션 삭제 요청에 필수 값이 누락되었습니다. classId: {}, missionId: {}, role: {}", classId, missionId,
+				role);
 			throw new BusinessException(MISSING_REQUIRED_VALUE);
 		}
 
@@ -173,6 +156,45 @@ public class MissionServiceImpl implements MissionService {
 
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
+			throw new BusinessException(SERVER_ERROR);
+		}
+	}
+
+	@Transactional
+	@Override
+	public MissionResponseDto.MissionDetailResponseDto putMission(
+		MissionRequestDto.MissionRequestInfoDto requestDto,
+		Integer classId, Integer missionId, Enum<MemberRole> role) {
+		log.info("미션 수정 요청: classId: {}, missionId: {}, requestDto: {}", classId, missionId, requestDto);
+
+		if (classId == null || missionId == null || requestDto == null || role == null) {
+			log.error("미션 수정 요청에 필수 값이 누락되었습니다. classId: {}, missionId: {}, requestDto: {}, role: {}",
+				classId, missionId, requestDto, role);
+			throw new BusinessException(MISSING_REQUIRED_VALUE);
+		}
+
+		// 선생님이 아니면 삭제 불가
+		if (role != MemberRole.TEACHER) {
+			throw new BusinessException(FORBIDDEN_REQUEST);
+		}
+
+		try {
+			Mission mission = missionRepository.findById(missionId)
+				.orElseThrow(() -> new BusinessException(MISSION_NOT_FOUND));
+
+			/* JPA 더티 체킹으로 객체에 먼저 변경 사항이 캐시된 후, transaction이 끝날 때 자동으로 쿼리를 통해 DB를 업데이트 */
+			mission.modifyTitle(requestDto.title());
+			mission.modifyContent(requestDto.content());
+			mission.modifyDifficulty(requestDto.difficulty());
+			mission.modifyMaxParticipants(requestDto.maxParticipants());
+			mission.modifyWage(requestDto.wage());
+			mission.modifyMissionDate(requestDto.missionDate());
+
+			// Mission 엔티티를 dto로 변환
+			return MissionResponseDto.MissionDetailResponseDto.missionEntityToMissionDetailResponseDto(
+				mission);
+		} catch (Exception e) {
+			log.error("An error occurred during mission modification: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}

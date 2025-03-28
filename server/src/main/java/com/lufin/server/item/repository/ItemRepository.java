@@ -10,9 +10,9 @@ import com.lufin.server.item.domain.Item;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer> {
 
-	// 전체 조회
 	List<Item> findByClassroomId(Integer id);
 
-	// 판매중인 아이템 조회
 	List<Item> findByClassroomIdAndStatusTrue(Integer classroomId);
+
+	List<Item> findByStatusTrue();
 }

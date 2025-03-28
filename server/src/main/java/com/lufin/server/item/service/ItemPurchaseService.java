@@ -15,4 +15,6 @@ public interface ItemPurchaseService {
 	List<ItemPurchaseResponseDto> getItemPurchaseHistory(Integer itemId, Member teacher);
 
 	ItemPurchaseResponseDto refundItem(Integer purchaseId, Member student);
+
+	void expireItemPurchases();
 }

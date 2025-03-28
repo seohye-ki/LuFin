@@ -10,7 +10,7 @@ interface SidebarProps {
 
 const Sidebar = ({ userRole, className = '친구들의 금융 모임' }: SidebarProps) => {
   return (
-    <div className='w-[200px] h-screen p-4 flex flex-col bg-white'>
+    <div className='w-[200px] h-full p-4 flex flex-col bg-white'>
       <div className='flex flex-col gap-4'>
         <div className='flex flex-col items-center gap-2'>
           <div className='flex flex-col gap-3'>

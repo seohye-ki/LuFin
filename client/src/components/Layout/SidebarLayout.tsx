@@ -7,9 +7,9 @@ interface Props {
 
 const SidebarLayout = ({ children }: Props) => {
   return (
-    <div className='flex w-full h-screen'>
+    <div className='w-full max-w-[1920px] h-screen max-h-[1024px] mx-auto flex'>
       <Sidebar userRole='student' />
-      <main className='flex-1 p-4 bg-broken-white h-screen overflow-auto'>{children}</main>
+      <main className='w-full h-full p-4 bg-broken-white flex-1 overflow-hidden'>{children}</main>
     </div>
   );
 };

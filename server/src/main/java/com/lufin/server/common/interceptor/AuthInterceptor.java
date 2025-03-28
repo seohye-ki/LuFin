@@ -46,7 +46,9 @@ public class AuthInterceptor implements HandlerInterceptor {
 		Member member = memberRepository.findById(userId)
 			.orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
 
-		// TODO: 회원 상태 체크 추가 (탈퇴여부)
+		if (member.getStatus().getActivationStatus() != 1) {
+			throw new BusinessException(MEMBER_ALREADY_DELETED);
+		}
 
 		UserContext.set(member);
 		return true;

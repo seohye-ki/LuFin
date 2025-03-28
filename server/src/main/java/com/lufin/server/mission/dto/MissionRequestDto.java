@@ -11,7 +11,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 public class MissionRequestDto {
-	public record MissionPostRequestDto(
+	public record MissionRequestInfoDto(
 		@NotBlank(message = "제목은 필수 입력값입니다.")
 		@Size(max = 100, message = "제목은 100자를 넘을 수 없습니다.")
 		String title,

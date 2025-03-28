@@ -12,4 +12,6 @@ public interface MissionUtilRepository {
 	// 미션의 classId 조회
 	@Query(value = "SELECT class_id FROM mission WHERE id = :missionId", nativeQuery = true)
 	Integer getClassIdByMissionId(Integer missionId);
+
+	// 미션 수정은 JPA 더티 체킹으로 시행
 }

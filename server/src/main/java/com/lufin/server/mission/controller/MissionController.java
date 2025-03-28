@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -82,7 +83,7 @@ public class MissionController {
 	 */
 	@PostMapping
 	public ResponseEntity<ApiResponse<MissionResponseDto.MissionPostResponseDto>> createMission(
-		@Valid @RequestBody MissionRequestDto.MissionPostRequestDto requestDto,
+		@Valid @RequestBody MissionRequestDto.MissionRequestInfoDto requestDto,
 		HttpServletRequest request,
 		BindingResult bindingResult) {
 		// 유효성 검증에 실패한 경우 직접 처리
@@ -110,6 +111,18 @@ public class MissionController {
 		missionService.deleteMission(classId, missionId, role);
 		return ResponseEntity.noContent().build();
 
+	}
+
+	@PutMapping("/{missionId}")
+	public ResponseEntity<ApiResponse<MissionResponseDto.MissionPostResponseDto>> modifyMission(
+		@PathVariable @Positive Integer missionId,
+		@Valid @RequestBody MissionRequestDto.MissionRequestInfoDto requestDto,
+		HttpServletRequest request,
+		BindingResult bindingResult
+	) {
+
+		// TODO: null에서 data로 변경
+		return ResponseEntity.status(200).body(ApiResponse.success(null));
 	}
 
 	/* 미션 참여 관련 */

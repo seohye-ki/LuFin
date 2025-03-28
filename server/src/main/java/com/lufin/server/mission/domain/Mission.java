@@ -120,6 +120,30 @@ public class Mission {
 		this.status = status;
 	}
 
+	public void modifyTitle(String title) {
+		this.title = title;
+	}
+
+	public void modifyContent(String content) {
+		this.content = content;
+	}
+
+	public void modifyDifficulty(Integer difficulty) {
+		this.difficulty = difficulty;
+	}
+
+	public void modifyMaxParticipants(Integer maxParticipants) {
+		this.maxParticipants = maxParticipants;
+	}
+
+	public void modifyWage(Integer wage) {
+		this.wage = wage;
+	}
+
+	public void modifyMissionDate(LocalDateTime missionDate) {
+		this.missionDate = missionDate;
+	}
+
 	/**
 	 * 미션 객체를 생성하는 팩토리 메서드
 	 */

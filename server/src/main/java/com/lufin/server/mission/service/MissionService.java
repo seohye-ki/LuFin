@@ -15,9 +15,13 @@ public interface MissionService {
 		Enum<MemberRole> role);
 
 	// 미션 등록
-	MissionResponseDto.MissionPostResponseDto postMission(MissionRequestDto.MissionPostRequestDto requestDto,
+	MissionResponseDto.MissionPostResponseDto postMission(MissionRequestDto.MissionRequestInfoDto requestDto,
 		Integer classId);
 
 	// 미션 삭제
 	void deleteMission(Integer classId, Integer missionId, Enum<MemberRole> role);
+
+	// 미션 수정
+	MissionResponseDto.MissionPostResponseDto putMission(MissionRequestDto.MissionRequestInfoDto requestDto,
+		Integer classId, Integer missionId);
 }

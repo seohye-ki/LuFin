@@ -1,0 +1,81 @@
+export interface Mission {
+  mission_id: number;
+  class_id: number;
+  title: string;
+  content: string;
+  difficulty: number;
+  maxParticipant: number;
+  currentParticipant: number;
+  wage: number;
+  mission_date: string; // 미션 수행일
+  status: 'RECRUITING' | 'IN_PROGRESS' | 'CLOSED';
+  createdAt: string; // 생성일
+  updatedAt: string; // 수정일
+}
+
+export interface MissionImage {
+  mission_image_id: number;
+  mission_id: number;
+  image_url: string;
+}
+
+export interface MissionParticipation {
+  participation_id: number;
+  mission_id: number;
+  member_id: number;
+  status: 'IN_PROGRESS' | 'CHECKING' | 'SUCCESS' | 'FAILED' | 'REJECTED';
+  wage_status: boolean;
+  reject_count: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MissionDetail extends Mission {
+  mission_images: MissionImage[];
+  mission_participations: MissionParticipation[];
+}
+
+export const missions: Mission[] = [
+  {
+    mission_id: 1,
+    class_id: 1,
+    title: '칠판 정리하기',
+    content: '칠판을 정리하세요.',
+    difficulty: 1,
+    maxParticipant: 2,
+    currentParticipant: 1,
+    wage: 1000,
+    mission_date: '2025-03-20',
+    status: 'CLOSED',
+    createdAt: '2025-03-20',
+    updatedAt: '2025-03-20',
+  },
+  {
+    mission_id: 2,
+    class_id: 1,
+    title: '안내문 정리하기',
+    content: '안내문을 정리하세요.',
+    wage: 1000,
+    difficulty: 1,
+    maxParticipant: 2,
+    currentParticipant: 1,
+    mission_date: '2025-03-20',
+    status: 'RECRUITING',
+    createdAt: '2025-03-20',
+    updatedAt: '2025-03-20',
+  },
+  {
+    mission_id: 3,
+    class_id: 1,
+    title: '칠판 정리하기',
+    content: '칠판을 정리하세요.',
+    wage: 1000,
+    difficulty: 3,
+    maxParticipant: 2,
+    currentParticipant: 1,
+    mission_date: '2025-03-21',
+    status: 'RECRUITING',
+    createdAt: '2025-03-21',
+    updatedAt: '2025-03-21',
+  },
+];

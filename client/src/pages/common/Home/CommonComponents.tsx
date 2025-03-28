@@ -12,7 +12,7 @@ import TextField from '../../../components/Form/TextField';
 import TextArea from '../../../components/Form/TextArea';
 import ImageUpload from '../../../components/Form/ImageUpload';
 import { useState } from 'react';
-import DashBoardCard from '../../../components/Card/DashBoardCard';
+import DashBoardCard from '../../../components/Card/Card';
 import TableView, { TableColumn, TableRow } from '../../../components/Frame/TableView';
 import LoginView from '../../../components/Frame/LoginView';
 import Dropdown from '../../../components/Form/Dropdown';

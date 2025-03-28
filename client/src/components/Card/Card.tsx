@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-type DashBoardCardProps = {
+type CardProps = {
   titleLeft?: string;
   titleRight?: string | ReactNode;
   titleSize?: 's' | 'm' | 'l';
@@ -9,14 +9,14 @@ type DashBoardCardProps = {
   isModal?: boolean;
 };
 
-const DashBoardCard = ({
+const Card = ({
   titleLeft,
   titleRight,
   titleSize = 'l',
   content,
   className,
   isModal = false,
-}: DashBoardCardProps) => {
+}: CardProps) => {
   const titleStyle = {
     s: 'text-c1 font-semibold text-grey',
     m: 'text-p2 font-semibold text-black',
@@ -26,7 +26,7 @@ const DashBoardCard = ({
   return (
     <div className={`rounded-xl w-full h-full bg-white ${className}`}>
       {(titleLeft || titleRight) && (
-        <div className='flex h-16 gap-4 p-4 justify-between items-center mb-2'>
+        <div className='flex h-16 gap-4 p-4 justify-between items-center'>
           <span className={titleStyle[titleSize]}>{titleLeft}</span>
           {titleRight && <span className={titleStyle[titleSize]}>{titleRight}</span>}
         </div>
@@ -37,4 +37,4 @@ const DashBoardCard = ({
   );
 };
 
-export default DashBoardCard;
+export default Card;

@@ -1,5 +1,7 @@
 package com.lufin.server.member.domain;
 
+import static com.lufin.server.member.util.MemberValidator.*;
+
 import java.time.LocalDateTime;
 
 import com.lufin.server.common.utils.HashUtils;
@@ -12,19 +14,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberAuth {
 
-	@Column(name = "password", nullable = false, length = 255)
+	@Column(name = "password", nullable = false)
 	private String password;
 
-	@Column(name = "salt", nullable = false, length = 255)
+	@Column(name = "salt", nullable = false)
 	private String salt;
 
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
-	@Column(name = "secondary_password", nullable = false, length = 255)
+	@Column(name = "secondary_password", nullable = false)
 	private String secondaryPassword;
 
 	public MemberAuth(String password, String secondaryPassword) {
+		isValidPassword(password);
+		isValidSecondaryPassword(secondaryPassword);
 		this.salt = HashUtils.generateSalt();
 		this.password = HashUtils.hashPassword(password, salt);
 		this.secondaryPassword = HashUtils.hashPassword(secondaryPassword, salt);

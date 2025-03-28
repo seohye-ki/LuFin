@@ -1,3 +1,5 @@
+import CalendarView from '../../../components/Calendar/Calendar';
+import DefaultLayout from '../../../components/Layout/DefaultLayout';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
 
 const TeacherMission = () => {
@@ -5,7 +7,7 @@ const TeacherMission = () => {
     <div>
       <SidebarLayout>
         <div>
-          <h1>Teacher Mission Page</h1>
+          <CalendarView />
         </div>
       </SidebarLayout>
     </div>

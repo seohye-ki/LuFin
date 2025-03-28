@@ -8,8 +8,10 @@ import com.lufin.server.common.utils.HashUtils;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @Embeddable
 @RequiredArgsConstructor
 public class MemberAuth {

@@ -3,7 +3,9 @@ package com.lufin.server.member.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.PrePersist;
+import lombok.Getter;
 
+@Getter
 @Embeddable
 public class MemberStatus {
 

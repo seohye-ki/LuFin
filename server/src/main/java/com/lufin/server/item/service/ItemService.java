@@ -21,4 +21,6 @@ public interface ItemService {
 	ItemResponseDto updateItem(Integer itemId, ItemDto request, Member teacher);
 
 	void deleteItem(Integer itemId, Member teacher);
+
+	void expireItems();
 }

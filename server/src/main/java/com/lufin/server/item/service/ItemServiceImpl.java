@@ -95,6 +95,10 @@ public class ItemServiceImpl implements ItemService {
 		Classroom classroom = getActiveClassroom(teacher);
 		Item response = validateItemOwnership(itemId, classroom);
 
+		if (request.quantityAvailable() < response.getQuantitySold()) {
+			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
+		}
+
 		response.changeName(request.name());
 		response.changePrice(request.price());
 		response.changeQuantityAvailable(request.quantityAvailable());
@@ -109,5 +113,18 @@ public class ItemServiceImpl implements ItemService {
 		Classroom classroom = getActiveClassroom(teacher);
 		Item response = validateItemOwnership(itemId, classroom);
 		itemRepository.delete(response);
+	}
+
+	// 아이템 기간만료
+	@Override
+	@Transactional
+	public void expireItems() {
+		List<Item> activeItems = itemRepository.findByStatusTrue();
+
+		for (Item item : activeItems) {
+			if (item.isExpired()) {
+				item.disable();
+			}
+		}
 	}
 }

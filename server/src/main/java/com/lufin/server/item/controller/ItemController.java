@@ -19,6 +19,7 @@ import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.item.dto.ItemDto;
 import com.lufin.server.item.dto.ItemPurchaseRequestDto;
 import com.lufin.server.item.dto.ItemPurchaseResponseDto;
+import com.lufin.server.item.dto.ItemRequestApprovalDto;
 import com.lufin.server.item.dto.ItemRequestResponseDto;
 import com.lufin.server.item.dto.ItemResponseDto;
 import com.lufin.server.item.service.ItemPurchaseService;
@@ -35,6 +36,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/lufin/items")
 public class ItemController {
+	private static final String CLASS_ID = "classId";
+
 	private final ItemService itemService;
 	private final ItemPurchaseService itemPurchaseService;
 	private final ItemRequestService itemRequestService;
@@ -108,8 +111,24 @@ public class ItemController {
 	// 아이템 사용
 	@PostMapping("/purchases/{purchaseId}/request")
 	public ResponseEntity<ApiResponse<ItemRequestResponseDto>> requestItemUse(HttpServletRequest httpRequest, @PathVariable Integer purchaseId) {
-		Integer classId = (Integer) httpRequest.getAttribute("classId");
+		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
 		ItemRequestResponseDto result = itemRequestService.requestItemUse(purchaseId, UserContext.get(), classId);
 		return ResponseEntity.status(201).body(ApiResponse.success(result));
+	}
+
+	// 아이템 사용 목록 조회
+	@GetMapping("/requests")
+	public ResponseEntity<ApiResponse<List<ItemRequestResponseDto>>> getItemRequests(HttpServletRequest httpRequest) {
+		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		List<ItemRequestResponseDto> result = itemRequestService.getItemRequests(classId);
+		return ResponseEntity.ok(ApiResponse.success(result));
+	}
+
+	// 아이템 사용요청 승인,거절
+	@PatchMapping("/requests/{requestId}")
+	public ResponseEntity<ApiResponse<ItemRequestResponseDto>> updateItemRequestStatus(HttpServletRequest httpRequest, @PathVariable Integer requestId, @RequestBody @Valid ItemRequestApprovalDto requestDto) {
+		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		ItemRequestResponseDto result = itemRequestService.updateItemRequestStatus(requestId, requestDto, UserContext.get(), classId);
+		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 }

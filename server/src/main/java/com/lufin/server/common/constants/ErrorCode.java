@@ -19,6 +19,7 @@ public enum ErrorCode {
 	CLASS_CODE_INVALID("E400010", "클래스 입장 코드가 잘못되었습니다."),
 	INVALID_FILE_NAME_FORMAT("E400011", "파일 이름 형식이 잘못되었습니다."),
 	PURCHASE_STATUS_NOT_BUY("E400012", "아이템 구매 상태가 BUY가 아니어서 처리할 수 없습니다."),
+	REQUEST_ALREADY_HANDLED("E400013", "이미 처리된 요청입니다."),
 
 	INVALID_CREDENTIALS("E401001", "이메일 또는 패스워드를 확인해주세요."),
 	UNAUTHORIZED_ACCESS("E401002", "인증이 필요합니다."),
@@ -40,6 +41,7 @@ public enum ErrorCode {
 	ITEM_NOT_FOUND("E404007", "해당 아이템을 찾을 수 없습니다."),
 	LOAN_PRODUCT_NOT_FOUND("E404008", "해당 대출 상품을 찾을 수 없습니다."),
 	ACCOUNT_NOT_FOUND("E404009", "계좌를 찾을 수 없습니다."),
+	ITEM_REQUEST_NOT_FOUND("E404010", "해당 아이템 사용 요청을 찾을 수 없습니다."),
 
 	EMAIL_ALREADY_REGISTERED("E409001", "이미 가입된 이메일입니다."),
 	DUPLICATE_COUPON_USAGE("E409002", "이미 등록된 교번/학번 입니다."),

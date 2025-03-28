@@ -1,14 +1,17 @@
 package com.lufin.server.item.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.item.domain.ItemPurchase;
 import com.lufin.server.item.domain.ItemPurchaseStatus;
 import com.lufin.server.item.domain.ItemRequest;
+import com.lufin.server.item.domain.ItemRequestStatus;
+import com.lufin.server.item.dto.ItemRequestApprovalDto;
 import com.lufin.server.item.dto.ItemRequestResponseDto;
 import com.lufin.server.item.repository.ItemPurchaseRepository;
 import com.lufin.server.item.repository.ItemRequestRepository;
@@ -53,6 +56,47 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
 		// 구매 상태 변경: BUY → PENDING
 		purchase.pending();
+
+		return ItemRequestResponseDto.from(request);
+	}
+
+	@Override
+	public List<ItemRequestResponseDto> getItemRequests(Integer classroomId) {
+		// 해당반의 요청 PENDING 목록 조회
+		List<ItemRequest> pendingRequests = itemRequestRepository
+			.findByClassroomIdAndStatus(classroomId, ItemRequestStatus.PENDING);
+
+		return pendingRequests.stream()
+			.map(ItemRequestResponseDto::from)
+			.toList();
+	}
+
+	@Override
+	@Transactional
+	public ItemRequestResponseDto updateItemRequestStatus(Integer requestId, ItemRequestApprovalDto requestDto, Member member, Integer classroomId) {
+		ItemRequest request = itemRequestRepository.findById(requestId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
+
+		// 요청이 해당 교사의 반에 속한 요청인지 검증
+		if (!request.getPurchase().getItem().getClassroom().getId().equals(classroomId)) {
+			throw new BusinessException(ErrorCode.REQUEST_DENIED);
+		}
+
+		// 상태가 PENDING이 아니면 수정 불가
+		if (request.getStatus() != ItemRequestStatus.PENDING) {
+			throw new BusinessException(ErrorCode.REQUEST_DENIED);
+		}
+
+		ItemRequestStatus status = requestDto.status();
+		if (ItemRequestStatus.APPROVED.equals(status)) {
+			request.approve(member);
+			request.getPurchase().used();
+		} else if (ItemRequestStatus.REJECTED.equals(status)) {
+			request.reject(member);
+			request.getPurchase().buy();
+		} else {
+			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
+		}
 
 		return ItemRequestResponseDto.from(request);
 	}

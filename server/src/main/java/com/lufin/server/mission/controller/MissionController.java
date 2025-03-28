@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.dto.ApiResponse;
+import com.lufin.server.common.utils.ValidationUtils;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
 import com.lufin.server.member.support.UserContext;
@@ -43,7 +44,8 @@ public class MissionController {
 	public ResponseEntity<ApiResponse<List<MissionResponseDto.MissionSummaryResponseDto>>> getMissions(
 		HttpServletRequest request
 	) {
-		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
+		Integer classId = (Integer)request.getAttribute("classId");
+		ValidationUtils.validateClassId(classId);
 
 		List<MissionResponseDto.MissionSummaryResponseDto> missions = missionService.getAllMissions(classId);
 		return ResponseEntity.status(200).body(ApiResponse.success(missions));
@@ -60,7 +62,8 @@ public class MissionController {
 		@PathVariable @Positive Integer missionId,
 		HttpServletRequest request
 	) {
-		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
+		Integer classId = (Integer)request.getAttribute("classId");
+		ValidationUtils.validateClassId(classId);
 
 		Member currentMember = UserContext.get();
 		Enum<MemberRole> role = currentMember.getMemberRole();
@@ -91,7 +94,8 @@ public class MissionController {
 			return ResponseEntity.status(400).body(ApiResponse.failure(ErrorCode.INVALID_INPUT_VALUE));
 		}
 
-		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
+		Integer classId = (Integer)request.getAttribute("classId");
+		ValidationUtils.validateClassId(classId);
 
 		MissionResponseDto.MissionPostResponseDto response = missionService.postMission(requestDto, classId);
 
@@ -103,7 +107,8 @@ public class MissionController {
 		@PathVariable @Positive Integer missionId,
 		HttpServletRequest request
 	) {
-		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
+		Integer classId = (Integer)request.getAttribute("classId");
+		ValidationUtils.validateClassId(classId);
 
 		Member currentMember = UserContext.get();
 		Enum<MemberRole> role = currentMember.getMemberRole();
@@ -120,9 +125,21 @@ public class MissionController {
 		HttpServletRequest request,
 		BindingResult bindingResult
 	) {
+		// input 값 검증
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.status(400).body(ApiResponse.failure(ErrorCode.INVALID_INPUT_VALUE));
+		}
 
-		// TODO: null에서 data로 변경
-		return ResponseEntity.status(200).body(ApiResponse.success(null));
+		Integer classId = (Integer)request.getAttribute("classId");
+		ValidationUtils.validateClassId(classId);
+
+		Member currentMember = UserContext.get();
+		Enum<MemberRole> role = currentMember.getMemberRole();
+		
+		MissionResponseDto.MissionDetailResponseDto response = missionService.putMission(requestDto, classId, missionId,
+			role);
+
+		return ResponseEntity.status(200).body(ApiResponse.success(response));
 	}
 
 	/* 미션 참여 관련 */

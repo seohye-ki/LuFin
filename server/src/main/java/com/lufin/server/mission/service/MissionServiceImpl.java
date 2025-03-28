@@ -182,7 +182,7 @@ public class MissionServiceImpl implements MissionService {
 			Mission mission = missionRepository.findById(missionId)
 				.orElseThrow(() -> new BusinessException(MISSION_NOT_FOUND));
 
-			// 수정
+			/* JPA 더티 체킹으로 객체에 먼저 변경 사항이 캐시된 후, transaction이 끝날 때 자동으로 쿼리를 통해 DB를 업데이트 */
 			mission.modifyTitle(requestDto.title());
 			mission.modifyContent(requestDto.content());
 			mission.modifyDifficulty(requestDto.difficulty());
@@ -190,6 +190,7 @@ public class MissionServiceImpl implements MissionService {
 			mission.modifyWage(requestDto.wage());
 			mission.modifyMissionDate(requestDto.missionDate());
 
+			// Mission 엔티티를 dto로 변환
 			return MissionResponseDto.MissionDetailResponseDto.missionEntityToMissionDetailResponseDto(
 				mission);
 		} catch (Exception e) {

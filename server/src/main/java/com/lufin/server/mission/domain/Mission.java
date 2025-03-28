@@ -58,7 +58,7 @@ public class Mission {
 	@Column(name = "mission_id")
 	private Integer id;
 
-	@Column(name = "class_id", nullable = false)
+	@Column(name = "class_id", insertable = false, updatable = false, nullable = false)
 	private Integer classId;
 
 	@Column(name = "title", nullable = false, length = MAX_TITLE_LENGTH)

@@ -208,9 +208,9 @@ public class Mission {
 
 	/**
 	 * missionImage와 mission 간의 양방향 관계의 일관성을 유지하기 위한 메서드
-	 * 내부적 연관관계 관리용으로, 반드시 null이 아닌 missionImage만 전달되어야 합니다.
+	 * 연관관계 관리용으로, 반드시 null이 아닌 missionImage만 전달되어야 합니다.
 	 */
-	void addImage(MissionImage missionImage) {
+	public void addImage(MissionImage missionImage) {
 		// 중복 체크 후 없으면 추가
 		if (!images.contains(missionImage)) {
 			images.add(missionImage);

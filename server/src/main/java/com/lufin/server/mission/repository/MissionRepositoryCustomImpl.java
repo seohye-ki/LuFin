@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-public class MissionRepositoryImpl implements MissionRepository {
+public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 
 	private final JPAQueryFactory queryFactory;
 

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -64,6 +65,11 @@ public class MissionController {
 
 		return ResponseEntity.ok().body(ApiResponse.success(mission));
 
+	}
+
+	@PostMapping
+	public ResponseEntity<ApiResponse<Void>> createMission() {
+		
 	}
 
 	/* 미션 참여 관련 */

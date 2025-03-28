@@ -68,6 +68,10 @@ public class ItemPurchase {
 		return purchase;
 	}
 
+	public void buy() {
+		this.status = ItemPurchaseStatus.BUY;
+	}
+
 	public void used() {
 		this.status = ItemPurchaseStatus.USED;
 	}

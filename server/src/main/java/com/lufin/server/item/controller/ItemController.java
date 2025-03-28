@@ -112,7 +112,8 @@ public class ItemController {
 
 	// 아이템 사용
 	@PostMapping("/purchases/{purchaseId}/request")
-	public ResponseEntity<ApiResponse<ItemRequestResponseDto>> requestItemUse(HttpServletRequest httpRequest, @PathVariable Integer purchaseId) {
+	public ResponseEntity<ApiResponse<ItemRequestResponseDto>> requestItemUse(HttpServletRequest httpRequest,
+		@PathVariable Integer purchaseId) {
 		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);
 		ItemRequestResponseDto result = itemRequestService.requestItemUse(purchaseId, UserContext.get(), classId);
@@ -128,9 +129,11 @@ public class ItemController {
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
-	// 아이템 사용요청 승인,거절
+	// 아이템 사용요청 승인 또는 거절
 	@PatchMapping("/requests/{requestId}")
-	public ResponseEntity<ApiResponse<ItemRequestResponseDto>> updateItemRequestStatus(HttpServletRequest httpRequest, @PathVariable Integer requestId, @RequestBody @Valid ItemRequestApprovalDto requestDto) {
+	public ResponseEntity<ApiResponse<ItemRequestResponseDto>> updateItemRequestStatus(HttpServletRequest httpRequest,
+		@PathVariable Integer requestId,
+		@RequestBody @Valid ItemRequestApprovalDto requestDto) {
 		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);
 		ItemRequestResponseDto result = itemRequestService.updateItemRequestStatus(requestId, requestDto, UserContext.get(), classId);

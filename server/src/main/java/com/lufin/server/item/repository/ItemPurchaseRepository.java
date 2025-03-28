@@ -22,6 +22,7 @@ public interface ItemPurchaseRepository extends JpaRepository<ItemPurchase, Inte
 		@Param("status") ItemPurchaseStatus status,
 		@Param("classroomId") Integer classroomId);
 
-	// 특정 아이템 구매 내역 조회
 	List<ItemPurchase> findByItemId(Integer itemId);
+
+	List<ItemPurchase> findAllByStatus(ItemPurchaseStatus status);
 }

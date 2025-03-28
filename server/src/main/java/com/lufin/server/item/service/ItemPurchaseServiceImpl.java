@@ -219,4 +219,17 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 		return ItemPurchaseResponseDto.from(purchase);
 	}
 
+	// 구매한 상품 기간 만료 처리
+	@Override
+	@Transactional
+	public void expireItemPurchases() {
+		List<ItemPurchase> purchases = itemPurchaseRepository.findAllByStatus(ItemPurchaseStatus.BUY);
+
+		for (ItemPurchase purchase : purchases) {
+			LocalDateTime expiration = purchase.getItem().getExpirationDate();
+			if (expiration.isBefore(LocalDateTime.now())) {
+				purchase.expired();
+			}
+		}
+	}
 }

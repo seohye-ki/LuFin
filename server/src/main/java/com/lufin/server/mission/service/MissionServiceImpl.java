@@ -12,6 +12,7 @@ import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.repository.ClassroomRepository;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.Member;
+import com.lufin.server.member.domain.MemberRole;
 import com.lufin.server.member.support.UserContext;
 import com.lufin.server.mission.domain.Mission;
 import com.lufin.server.mission.dto.MissionRequestDto;
@@ -50,7 +51,8 @@ public class MissionServiceImpl implements MissionService {
 	}
 
 	@Override
-	public MissionResponseDto.MissionDetailResponseDto getMissionById(Integer classId, Integer missionId, String role) {
+	public MissionResponseDto.MissionDetailResponseDto getMissionById(Integer classId, Integer missionId,
+		Enum<MemberRole> role) {
 		log.info("미션 상세 조회 요청: classId: {}, missionId: {}, role: {}", classId, missionId, role);
 
 		if (classId == null) {
@@ -69,11 +71,11 @@ public class MissionServiceImpl implements MissionService {
 			MissionResponseDto.MissionDetailResponseDto result;
 
 			// 선생님이면 participations가 있고, 학생이면 없음
-			if (role.equals("TEACHER")) {
+			if (role != MemberRole.TEACHER) {
 				result = missionRepository.getMissionByIdForTeacher(classId,
 					missionId);
 
-			} else if (role.equals("STUDENT")) {
+			} else if (role != MemberRole.STUDENT) {
 				result = missionRepository.getMissionByIdForStudent(classId,
 					missionId);
 			} else {
@@ -141,7 +143,7 @@ public class MissionServiceImpl implements MissionService {
 	}
 
 	@Override
-	public void deleteMission(Integer classId, Integer missionId, String role) {
+	public void deleteMission(Integer classId, Integer missionId, Enum<MemberRole> role) {
 		log.info("미션 삭제 요청: classId: {}, missionId: {}, role: {}", classId, missionId, role);
 
 		if (classId == null) {
@@ -158,7 +160,7 @@ public class MissionServiceImpl implements MissionService {
 
 		try {
 			// 선생님이 아니면 삭제 불가
-			if (!role.equals("TEACHER")) {
+			if (role != MemberRole.TEACHER) {
 				throw new BusinessException(FORBIDDEN_REQUEST);
 			}
 

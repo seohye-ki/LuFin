@@ -2,6 +2,7 @@ package com.lufin.server.mission.service;
 
 import java.util.List;
 
+import com.lufin.server.member.domain.MemberRole;
 import com.lufin.server.mission.dto.MissionRequestDto;
 import com.lufin.server.mission.dto.MissionResponseDto;
 
@@ -10,12 +11,13 @@ public interface MissionService {
 	List<MissionResponseDto.MissionSummaryResponseDto> getAllMissions(Integer classId);
 
 	// 미션 상세 조회
-	MissionResponseDto.MissionDetailResponseDto getMissionById(Integer classId, Integer missionId, String role);
+	MissionResponseDto.MissionDetailResponseDto getMissionById(Integer classId, Integer missionId,
+		Enum<MemberRole> role);
 
 	// 미션 등록
 	MissionResponseDto.MissionPostResponseDto postMission(MissionRequestDto.MissionPostRequestDto requestDto,
 		Integer classId);
 
 	// 미션 삭제
-	void deleteMission(Integer classId, Integer missionId, String role);
+	void deleteMission(Integer classId, Integer missionId, Enum<MemberRole> role);
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.dto.ApiResponse;
 import com.lufin.server.member.domain.Member;
+import com.lufin.server.member.domain.MemberRole;
 import com.lufin.server.member.support.UserContext;
 import com.lufin.server.mission.dto.MissionRequestDto;
 import com.lufin.server.mission.dto.MissionResponseDto;
@@ -61,7 +62,7 @@ public class MissionController {
 		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
 
 		Member currentMember = UserContext.get();
-		String role = String.valueOf(currentMember.getMemberRole());
+		Enum<MemberRole> role = currentMember.getMemberRole();
 
 		MissionResponseDto.MissionDetailResponseDto mission = missionService.getMissionById(
 			classId,
@@ -104,7 +105,7 @@ public class MissionController {
 		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
 
 		Member currentMember = UserContext.get();
-		String role = String.valueOf(currentMember.getMemberRole());
+		Enum<MemberRole> role = currentMember.getMemberRole();
 
 		missionService.deleteMission(classId, missionId, role);
 		return ResponseEntity.noContent().build();

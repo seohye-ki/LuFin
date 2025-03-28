@@ -5,7 +5,7 @@ interface Props {
 }
 
 const DefaultLayout = ({ children }: Props) => {
-  return <div className='w-full bg-broken-white p-4'>{children}</div>;
+  return <div className='flex w-full h-screen bg-broken-white p-4'>{children}</div>;
 };
 
 export default DefaultLayout;

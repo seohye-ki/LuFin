@@ -3,20 +3,24 @@ package com.lufin.server.mission.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.dto.ApiResponse;
-import com.lufin.server.common.utils.TokenUtils;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.support.UserContext;
+import com.lufin.server.mission.dto.MissionRequestDto;
 import com.lufin.server.mission.dto.MissionResponseDto;
 import com.lufin.server.mission.service.MissionService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/lufin/missions")
 @RequiredArgsConstructor
 public class MissionController {
-	private final TokenUtils tokenUtils;
 	private final MissionService missionService;
 
 	/* 미션 관련(참여x) */
@@ -46,7 +49,8 @@ public class MissionController {
 	/**
 	 * 미션 상세 조회
 	 * @param missionId 미션 고유 번호
-	 * @return "data": {missionId, title, content, image, difficulty, maxParticipants, currentParticipants, wage, missionDate}
+	 * @return "data":
+	 * {missionId, title, content, image, difficulty, maxParticipants, currentParticipants, wage, missionDate}
 	 */
 	@GetMapping("/{missionId}")
 	public ResponseEntity<ApiResponse<MissionResponseDto.MissionDetailResponseDto>> getMissionById(
@@ -63,13 +67,25 @@ public class MissionController {
 			missionId,
 			role);
 
-		return ResponseEntity.ok().body(ApiResponse.success(mission));
+		return ResponseEntity.status(200).body(ApiResponse.success(mission));
 
 	}
 
 	@PostMapping
-	public ResponseEntity<ApiResponse<Void>> createMission() {
-		
+	public ResponseEntity<ApiResponse<MissionResponseDto.MissionPostResponseDto>> createMission(
+		@Valid @RequestBody MissionRequestDto.MissionPostRequestDto requestDto,
+		HttpServletRequest request,
+		BindingResult bindingResult) {
+		// 유효성 검증에 실패한 경우 직접 처리
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.status(400).body(ApiResponse.failure(ErrorCode.INVALID_INPUT_VALUE));
+		}
+
+		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
+
+		MissionResponseDto.MissionPostResponseDto response = missionService.postMission(requestDto, classId);
+
+		return ResponseEntity.status(201).body(ApiResponse.success(response));
 	}
 
 	/* 미션 참여 관련 */

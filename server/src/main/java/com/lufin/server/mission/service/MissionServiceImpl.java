@@ -32,6 +32,7 @@ public class MissionServiceImpl implements MissionService {
 	// TODO: 추후 캐시 추가로 조회 성능 향상 도모
 	@Override
 	public List<MissionResponseDto.MissionSummaryResponseDto> getAllMissions(Integer classId) {
+		log.info("미션 전체 조회 요청: classId: {}", classId);
 		try {
 			if (classId == null) {
 				throw new BusinessException(MISSING_REQUIRED_VALUE);
@@ -40,7 +41,7 @@ public class MissionServiceImpl implements MissionService {
 			List<MissionResponseDto.MissionSummaryResponseDto> result = missionRepository.getAllMissions(classId);
 			return result;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
@@ -79,42 +80,60 @@ public class MissionServiceImpl implements MissionService {
 			return result;
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
 
+	@Transactional
 	@Override
 	public MissionResponseDto.MissionPostResponseDto postMission(MissionRequestDto.MissionPostRequestDto requestDto,
 		Integer classId) {
-		// 선생님이 아닌 경우 생성 불가
-		Member currentMember = UserContext.get();
+		log.info("미션 생성 요청: classId: {}, with request details: {}", classId, requestDto);
 
-		if (currentMember == null) {
-			throw new BusinessException(UNAUTHORIZED_ACCESS);
+		if (classId == null) {
+			throw new BusinessException(MISSING_REQUIRED_VALUE);
 		}
 
-		if (!String.valueOf(currentMember.getMemberRole()).equals("TEACHER")) {
-			throw new BusinessException(FORBIDDEN_REQUEST);
+		if (requestDto == null) {
+			throw new BusinessException(MISSING_REQUIRED_VALUE);
 		}
 
-		// classId로 Classroom 객체 조회
-		Classroom classroom = classroomRepository.findById(classId)
-			.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
+		try {
+			// 선생님이 아닌 경우 생성 불가
+			Member currentMember = UserContext.get();
 
-		Mission newMission = Mission.create(
-			classId,
-			classroom,
-			requestDto.title(),
-			requestDto.content(),
-			requestDto.difficulty(),
-			requestDto.maxParticipants(),
-			requestDto.wage(),
-			requestDto.missionDate()
-		);
+			if (currentMember == null) {
+				throw new BusinessException(UNAUTHORIZED_ACCESS);
+			}
 
-		Mission savedMission = missionRepository.save(newMission);
+			if (!String.valueOf(currentMember.getMemberRole()).equals("TEACHER")) {
+				throw new BusinessException(FORBIDDEN_REQUEST);
+			}
 
-		return new MissionResponseDto.MissionPostResponseDto(savedMission.getId());
+			// classId로 Classroom 객체 조회
+			Classroom classroom = classroomRepository.findById(classId)
+				.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
+
+			// Mission 엔티티 생성
+			Mission newMission = Mission.create(
+				classId,
+				classroom,
+				requestDto.title(),
+				requestDto.content(),
+				requestDto.difficulty(),
+				requestDto.maxParticipants(),
+				requestDto.wage(),
+				requestDto.missionDate()
+			);
+
+			// JPA repository save() 활용해서 저장한 엔티티 조회
+			Mission savedMission = missionRepository.save(newMission);
+
+			return new MissionResponseDto.MissionPostResponseDto(savedMission.getId());
+		} catch (Exception e) {
+			log.error("An error occurred: {}", e.getMessage(), e);
+			throw new BusinessException(SERVER_ERROR);
+		}
 	}
 }

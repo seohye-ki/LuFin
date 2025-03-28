@@ -10,8 +10,6 @@ import com.lufin.server.mission.domain.MissionStatus;
 import com.querydsl.core.annotations.QueryProjection;
 
 public class MissionResponseDto {
-	// TODO: record를 활용해 dto 작성
-
 	/**
 	 * 미션 상세 응답 DTO
 	 */
@@ -91,6 +89,12 @@ public class MissionResponseDto {
 				mission.getMissionDate(),
 				mission.getStatus()
 			);
+		}
+	}
+
+	public record MissionPostResponseDto(Integer missionId) {
+		@QueryProjection
+		public MissionPostResponseDto {
 		}
 	}
 

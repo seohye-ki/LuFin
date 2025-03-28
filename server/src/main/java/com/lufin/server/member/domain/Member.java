@@ -1,5 +1,7 @@
 package com.lufin.server.member.domain;
 
+import static com.lufin.server.member.util.MemberValidator.*;
+
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -16,7 +18,6 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @Entity
@@ -33,13 +34,13 @@ public class Member {
 	@Column(name = "member_role", nullable = false)
 	private MemberRole memberRole;
 
-	@Column(name = "email", nullable = false, unique = true, length = 255)
+	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 
 	@Column(name = "profile_image")
 	private String profileImage;
 
-	@Column(name = "name", nullable = false, length = 50)
+	@Column(name = "name", nullable = false, length = 10)
 	private String name;
 
 	@Column(name = "certification_number")
@@ -67,6 +68,7 @@ public class Member {
 
 	private static Member create(String email, String name, String password, String secondaryPassword,
 		MemberRole role) {
+		isValidEmail(email);
 		Member member = new Member();
 		member.email = email;
 		member.name = name;
@@ -84,10 +86,6 @@ public class Member {
 	@PreUpdate
 	private void setUpdatedAt() {
 		this.updatedAt = LocalDateTime.now();
-	}
-
-	public void updateStatus(Byte status, String description) {
-		this.status.updateStatus(status, description);
 	}
 
 	public void updateLastLogin() {

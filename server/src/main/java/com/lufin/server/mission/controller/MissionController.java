@@ -3,25 +3,31 @@ package com.lufin.server.mission.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.dto.ApiResponse;
-import com.lufin.server.common.utils.TokenUtils;
+import com.lufin.server.member.domain.Member;
+import com.lufin.server.member.support.UserContext;
+import com.lufin.server.mission.dto.MissionRequestDto;
 import com.lufin.server.mission.dto.MissionResponseDto;
 import com.lufin.server.mission.service.MissionService;
 
-import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/lufin/missions")
 @RequiredArgsConstructor
 public class MissionController {
-	private final TokenUtils tokenUtils;
 	private final MissionService missionService;
 
 	/* 미션 관련(참여x) */
@@ -31,11 +37,10 @@ public class MissionController {
 	 * @return [{}, {} ...]
 	 */
 	@GetMapping
-	public ResponseEntity<?> getMissions(
-		@RequestHeader("Authorization") String token
+	public ResponseEntity<ApiResponse<List<MissionResponseDto.MissionSummaryResponseDto>>> getMissions(
+		HttpServletRequest request
 	) {
-		Claims jwtClaim = tokenUtils.extractClaims(token);
-		Integer classId = jwtClaim.get("classId", Integer.class);
+		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
 
 		List<MissionResponseDto.MissionSummaryResponseDto> missions = missionService.getAllMissions(classId);
 		return ResponseEntity.status(200).body(ApiResponse.success(missions));
@@ -43,27 +48,44 @@ public class MissionController {
 
 	/**
 	 * 미션 상세 조회
-	 *
 	 * @param missionId 미션 고유 번호
-	 * @return {}
+	 * @return "data":
+	 * {missionId, title, content, image, difficulty, maxParticipants, currentParticipants, wage, missionDate}
 	 */
 	@GetMapping("/{missionId}")
-	public ResponseEntity<?> getMissionById(
-		@PathVariable Integer missionId,
-		@RequestHeader("Authorization") String token
+	public ResponseEntity<ApiResponse<MissionResponseDto.MissionDetailResponseDto>> getMissionById(
+		@PathVariable @Positive Integer missionId,
+		HttpServletRequest request
 	) {
+		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
 
-		Claims jwtClaim = tokenUtils.extractClaims(token);
-		Integer classId = jwtClaim.get("classId", Integer.class);
-		String role = jwtClaim.get("role", String.class);
+		Member currentMember = UserContext.get();
+		String role = String.valueOf(currentMember.getMemberRole());
 
 		MissionResponseDto.MissionDetailResponseDto mission = missionService.getMissionById(
 			classId,
 			missionId,
 			role);
 
-		return ResponseEntity.ok().body(ApiResponse.success(mission));
+		return ResponseEntity.status(200).body(ApiResponse.success(mission));
 
+	}
+
+	@PostMapping
+	public ResponseEntity<ApiResponse<MissionResponseDto.MissionPostResponseDto>> createMission(
+		@Valid @RequestBody MissionRequestDto.MissionPostRequestDto requestDto,
+		HttpServletRequest request,
+		BindingResult bindingResult) {
+		// 유효성 검증에 실패한 경우 직접 처리
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.status(400).body(ApiResponse.failure(ErrorCode.INVALID_INPUT_VALUE));
+		}
+
+		Integer classId = request.getAttribute("classId") != null ? (Integer)request.getAttribute("classId") : null;
+
+		MissionResponseDto.MissionPostResponseDto response = missionService.postMission(requestDto, classId);
+
+		return ResponseEntity.status(201).body(ApiResponse.success(response));
 	}
 
 	/* 미션 참여 관련 */

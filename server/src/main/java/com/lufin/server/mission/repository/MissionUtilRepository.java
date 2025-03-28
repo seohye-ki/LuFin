@@ -14,4 +14,5 @@ public interface MissionUtilRepository {
 	Integer getClassIdByMissionId(Integer missionId);
 
 	// 미션 수정은 JPA 더티 체킹으로 시행
+
 }

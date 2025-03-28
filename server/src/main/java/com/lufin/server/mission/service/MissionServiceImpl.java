@@ -160,21 +160,38 @@ public class MissionServiceImpl implements MissionService {
 		}
 	}
 
+	@Transactional
 	@Override
-	public MissionResponseDto.MissionPostResponseDto putMission(
+	public MissionResponseDto.MissionDetailResponseDto putMission(
 		MissionRequestDto.MissionRequestInfoDto requestDto,
-		Integer classId, Integer missionId) {
+		Integer classId, Integer missionId, Enum<MemberRole> role) {
 		log.info("미션 수정 요청: classId: {}, missionId: {}, requestDto: {}", classId, missionId, requestDto);
 
-		if (classId == null || missionId == null || requestDto == null) {
-			log.error("미션 수정 요청에 필수 값이 누락되었습니다. classId: {}, missionId: {}, requestDto: {}", classId, missionId,
-				requestDto);
+		if (classId == null || missionId == null || requestDto == null || role == null) {
+			log.error("미션 수정 요청에 필수 값이 누락되었습니다. classId: {}, missionId: {}, requestDto: {}, role: {}",
+				classId, missionId, requestDto, role);
 			throw new BusinessException(MISSING_REQUIRED_VALUE);
 		}
 
-		try {
+		// 선생님이 아니면 삭제 불가
+		if (role != MemberRole.TEACHER) {
+			throw new BusinessException(FORBIDDEN_REQUEST);
+		}
 
-			return null;
+		try {
+			Mission mission = missionRepository.findById(missionId)
+				.orElseThrow(() -> new BusinessException(MISSION_NOT_FOUND));
+
+			// 수정
+			mission.modifyTitle(requestDto.title());
+			mission.modifyContent(requestDto.content());
+			mission.modifyDifficulty(requestDto.difficulty());
+			mission.modifyMaxParticipants(requestDto.maxParticipants());
+			mission.modifyWage(requestDto.wage());
+			mission.modifyMissionDate(requestDto.missionDate());
+
+			return MissionResponseDto.MissionDetailResponseDto.missionEntityToMissionDetailResponseDto(
+				mission);
 		} catch (Exception e) {
 			log.error("An error occurred during mission modification: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);

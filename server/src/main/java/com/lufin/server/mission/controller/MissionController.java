@@ -114,7 +114,7 @@ public class MissionController {
 	}
 
 	@PutMapping("/{missionId}")
-	public ResponseEntity<ApiResponse<MissionResponseDto.MissionPostResponseDto>> modifyMission(
+	public ResponseEntity<ApiResponse<MissionResponseDto.MissionDetailResponseDto>> modifyMission(
 		@PathVariable @Positive Integer missionId,
 		@Valid @RequestBody MissionRequestDto.MissionRequestInfoDto requestDto,
 		HttpServletRequest request,

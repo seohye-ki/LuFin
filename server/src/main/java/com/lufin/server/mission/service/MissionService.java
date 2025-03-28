@@ -22,6 +22,6 @@ public interface MissionService {
 	void deleteMission(Integer classId, Integer missionId, Enum<MemberRole> role);
 
 	// 미션 수정
-	MissionResponseDto.MissionPostResponseDto putMission(MissionRequestDto.MissionRequestInfoDto requestDto,
-		Integer classId, Integer missionId);
+	MissionResponseDto.MissionDetailResponseDto putMission(MissionRequestDto.MissionRequestInfoDto requestDto,
+		Integer classId, Integer missionId, Enum<MemberRole> role);
 }

@@ -100,7 +100,7 @@ const Dropdown = ({
   return (
     <div className={`relative inline-block ${className}`}>
       {label && (
-        <label className="block text-c1 font-medium text-dark-grey mb-2">
+        <label className="block text-p2 font-medium text-dark-grey mb-2">
           {label}
         </label>
       )}

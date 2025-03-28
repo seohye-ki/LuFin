@@ -42,11 +42,11 @@ public class MemberAuth {
 
 	public boolean isPasswordMatch(String inputPassword) {
 		String hashedPassword = HashUtils.hashPassword(inputPassword, this.salt);
-		return this.password.matches(hashedPassword);
+		return this.password.equals(hashedPassword);
 	}
 
 	public boolean isSecondaryPasswordMatch(String inputPassword) {
 		String hashedPassword = HashUtils.hashPassword(inputPassword, this.salt);
-		return this.secondaryPassword.matches(hashedPassword);
+		return this.secondaryPassword.equals(hashedPassword);
 	}
 }

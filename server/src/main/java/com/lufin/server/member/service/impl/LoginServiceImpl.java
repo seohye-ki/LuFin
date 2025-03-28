@@ -57,7 +57,6 @@ public class LoginServiceImpl implements LoginService {
 				return new BusinessException(INVALID_CREDENTIALS);
 			});
 
-		isValidPassword(inputPassword);
 		if (!member.getAuth().isPasswordMatch(inputPassword)) {
 			log.warn("[로그인 실패] 비밀번호 불일치 - 이메일: {}", maskEmail(inputEmail));
 			increaseLoginFailCount(failKey);
@@ -118,9 +117,20 @@ public class LoginServiceImpl implements LoginService {
 
 	private void increaseLoginFailCount(String failKey) {
 		Long count = redisTemplate.opsForValue().increment(failKey);
-		// 로그인 시도마다 TTL을 새로 설정하여 자동 삭제 보장
-		redisTemplate.expire(failKey, LOGIN_BLOCK_DURATION_MINUTES, TimeUnit.MINUTES);
-		log.warn("[로그인 실패 횟수 증가] 키: {}, 현재 실패 횟수: {}", failKey, count);
+
+		if (count == null) {
+			log.error("[로그인 실패] Redis 오류로 실패 횟수를 가져오지 못했습니다.");
+			return;
+		}
+
+		// 실패 횟수가 MAX를 처음으로 초과한 경우에만 TTL 설정
+		if (count == MAX_LOGIN_FAIL_COUNT + 1) {
+			redisTemplate.expire(failKey, LOGIN_BLOCK_DURATION_MINUTES, TimeUnit.MINUTES);
+			log.warn("[로그인 차단 시작] 키: {}, 실패 횟수: {}, 차단 시간(분): {}", failKey, count, LOGIN_BLOCK_DURATION_MINUTES);
+		} else {
+			// TTL 연장하지 않음 (누적만)
+			log.warn("[로그인 실패 횟수 증가] 키: {}, 현재 실패 횟수: {}", failKey, count);
+		}
 	}
 
 	// 예: example@gmail.com -> e***e@gmail.com

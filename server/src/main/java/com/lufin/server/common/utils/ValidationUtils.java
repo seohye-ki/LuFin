@@ -4,7 +4,10 @@ import static com.lufin.server.common.constants.ErrorCode.*;
 
 import org.springframework.util.StringUtils;
 
+import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.exception.BusinessException;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 검증 관련 유틸리티 클래스
@@ -22,6 +25,12 @@ public class ValidationUtils {
 			Integer.parseInt(idValue);
 		} catch (NumberFormatException e) {
 			throw new BusinessException(INVALID_INPUT_VALUE);
+		}
+	}
+
+	public static void validateClassId(Integer classId) {
+		if (classId == null) {
+			throw new BusinessException(UNAUTHORIZED_ACCESS);
 		}
 	}
 }

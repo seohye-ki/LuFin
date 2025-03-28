@@ -1,5 +1,7 @@
 package com.lufin.server.item.controller;
 
+import static com.lufin.server.common.utils.ValidationUtils.*;
+
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -112,6 +114,7 @@ public class ItemController {
 	@PostMapping("/purchases/{purchaseId}/request")
 	public ResponseEntity<ApiResponse<ItemRequestResponseDto>> requestItemUse(HttpServletRequest httpRequest, @PathVariable Integer purchaseId) {
 		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		validateClassId(classId);
 		ItemRequestResponseDto result = itemRequestService.requestItemUse(purchaseId, UserContext.get(), classId);
 		return ResponseEntity.status(201).body(ApiResponse.success(result));
 	}
@@ -120,6 +123,7 @@ public class ItemController {
 	@GetMapping("/requests")
 	public ResponseEntity<ApiResponse<List<ItemRequestResponseDto>>> getItemRequests(HttpServletRequest httpRequest) {
 		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		validateClassId(classId);
 		List<ItemRequestResponseDto> result = itemRequestService.getItemRequests(classId);
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
@@ -128,6 +132,7 @@ public class ItemController {
 	@PatchMapping("/requests/{requestId}")
 	public ResponseEntity<ApiResponse<ItemRequestResponseDto>> updateItemRequestStatus(HttpServletRequest httpRequest, @PathVariable Integer requestId, @RequestBody @Valid ItemRequestApprovalDto requestDto) {
 		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		validateClassId(classId);
 		ItemRequestResponseDto result = itemRequestService.updateItemRequestStatus(requestId, requestDto, UserContext.get(), classId);
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}

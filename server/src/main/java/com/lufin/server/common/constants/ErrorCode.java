@@ -20,6 +20,7 @@ public enum ErrorCode {
 	INVALID_FILE_NAME_FORMAT("E400011", "파일 이름 형식이 잘못되었습니다."),
 	PURCHASE_STATUS_NOT_BUY("E400012", "아이템 구매 상태가 BUY가 아니어서 처리할 수 없습니다."),
 	REQUEST_ALREADY_HANDLED("E400013", "이미 처리된 요청입니다."),
+	INVALID_ENUM("E400014", "잘못된 입력 값입니다."),
 
 	INVALID_CREDENTIALS("E401001", "이메일 또는 패스워드를 확인해주세요."),
 	UNAUTHORIZED_ACCESS("E401002", "인증이 필요합니다."),
@@ -49,6 +50,7 @@ public enum ErrorCode {
 
 	INSUFFICIENT_CREDIT_SCORE("E422001", "신용 점수가 부족하여 이용할 수 없습니다."),
 	INSUFFICIENT_BALANCE("E422002", "잔액이 부족합니다."),
+	ACCOUNT_TEMPORARILY_LOCKED("E422003", "해당 계정은 5분간 로그인할 수 없습니다"),
 
 	SERVER_ERROR("E500001", "요청을 처리할 수 없습니다. 다시 시도해 주세요."),
 	SERVICE_UNAVAILABLE("E503001", "현재 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해 주세요."),

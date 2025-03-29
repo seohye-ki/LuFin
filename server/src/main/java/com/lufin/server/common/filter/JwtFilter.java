@@ -60,7 +60,7 @@ public class JwtFilter implements Filter {
 	}
 
 	// userId, tokenType, classId 유효성 검증
-	private Claims validateToken(HttpServletRequest request) {
+	private void validateToken(HttpServletRequest request) {
 		String authorizationHeader = request.getHeader("Authorization");
 		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
 			throw new BusinessException(INVALID_AUTH_HEADER);
@@ -83,12 +83,11 @@ public class JwtFilter implements Filter {
 			validateIntegerId(classId);
 			request.setAttribute("classId", Integer.parseInt(classId));
 		}
-		return claims;
 	}
 
 	private boolean isExcluded(String uri) {
-		return uri.startsWith("/auth/login")
-			|| uri.startsWith("/register")
+		return uri.startsWith("/api/v1/lufin/auth/login")
+			|| uri.startsWith("/api/v1/lufin/register")
 			|| uri.startsWith("/api/test-login")
 			|| uri.startsWith("/ws")
 			|| uri.startsWith("/app");

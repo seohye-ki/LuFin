@@ -1,11 +1,16 @@
 package com.lufin.server.mission.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.lufin.server.mission.domain.Mission;
+
 @Repository
-public interface MissionUtilRepository {
+public interface MissionUtilRepository extends JpaRepository<Mission, Integer> {
 	// (선생님) 미션 삭제
+	@Modifying
 	@Query(value = "DELETE FROM mission WHERE id = :missionId AND class_id = :classId", nativeQuery = true)
 	void deleteMission(Integer classId, Integer missionId);
 

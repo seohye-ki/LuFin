@@ -2,6 +2,8 @@ package com.lufin.server.mission.domain;
 
 import java.time.LocalDateTime;
 
+import com.lufin.server.member.domain.Member;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -33,13 +35,17 @@ public class MissionParticipation {
 	@JoinColumn(name = "mission_id", nullable = false) // name을 통해 JPA가 자동으로 외래 키 관리
 	private Mission mission;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
+
 	// Member Field
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "participation_id")
 	private Integer participationId;
 
-	@Column(name = "member_id", nullable = false)
+	@Column(name = "member_id", insertable = false, updatable = false, nullable = false)
 	private Integer memberId;
 
 	@Enumerated(EnumType.STRING)
@@ -109,16 +115,8 @@ public class MissionParticipation {
 	 * @param memberId 참여 회원 ID
 	 * @return 생성된 미션 참여 객체
 	 */
-	MissionParticipation create(Mission mission, Integer memberId) {
-		// service 레이어에서 호출 할 때 null이 들어올 수도 있기에 null 체크 실행
-		if (mission == null) {
-			throw new IllegalArgumentException("Mission cannot be null");
-		}
-
-		if (memberId == null) {
-			// TODO: error 코드 수정
-			throw new IllegalArgumentException("Member ID cannot be null");
-		}
+	MissionParticipation create(Mission mission, Member member, Integer memberId) {
+		// service 레이어에서 null 체크 실행
 
 		// 객체를 먼저 생성하고 메서드를 통해 양방향 관계 설정
 		MissionParticipation participation = MissionParticipation.builder()
@@ -126,6 +124,7 @@ public class MissionParticipation {
 			.build();
 
 		mission.addParticipation(participation);
+		member.addMissionParticipation(participation);
 
 		return participation;
 	}
@@ -138,6 +137,26 @@ public class MissionParticipation {
 	void setMission(Mission mission) {
 		// 중복체크는 addParticipation에서 진행
 		this.mission = mission;
+	}
+
+	/**
+	 * 회원과의 연관관계를 설정 (package-private)
+	 * 이 메소드는 양방향 연관관계의 일관성을 유지하기 위해 사용
+	 * @param member 연관될 회원 (null이 될 수 있음)
+	 */
+	public void setMember(Member member) {
+		// 기존 회원과 연관관계 제거
+		if (this.member != null && this.member != member) {
+			this.member.getMissionParticipations().remove(this);
+		}
+
+		this.member = member;
+		this.memberId = member != null ? member.getId() : null;
+
+		// 새로운 회원과 연관관계 설정
+		if (member != null && !member.getMissionParticipations().contains(this)) {
+			member.getMissionParticipations().add(this);
+		}
 	}
 
 	/**

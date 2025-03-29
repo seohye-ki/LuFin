@@ -11,7 +11,6 @@ import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Getter
 @Embeddable
 @RequiredArgsConstructor
 public class MemberAuth {
@@ -22,6 +21,7 @@ public class MemberAuth {
 	@Column(name = "salt", nullable = false)
 	private String salt;
 
+	@Getter
 	@Column(name = "last_login")
 	private LocalDateTime lastLogin;
 
@@ -38,5 +38,15 @@ public class MemberAuth {
 
 	public void updateLastLogin() {
 		this.lastLogin = LocalDateTime.now();
+	}
+
+	public boolean isPasswordMatch(String inputPassword) {
+		String hashedPassword = HashUtils.hashPassword(inputPassword, this.salt);
+		return this.password.equals(hashedPassword);
+	}
+
+	public boolean isSecondaryPasswordMatch(String inputPassword) {
+		String hashedPassword = HashUtils.hashPassword(inputPassword, this.salt);
+		return this.secondaryPassword.equals(hashedPassword);
 	}
 }

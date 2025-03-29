@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import com.lufin.server.member.repository.MemberRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
 class ClassroomServiceTest {
 
@@ -36,7 +38,7 @@ class ClassroomServiceTest {
 		memberRepository.save(teacher);
 
 		ClassRequest request = new ClassRequest(
-			"싸피반", "서울초등학교", 4, 2, "class.png", "image/png"
+			"싸피반", "서울초등학교", 4, 2, "classroom-thumbnail/36bfc1d0-d9ea-4d0e-a812-ea37877f4866.png", "image/png"
 		);
 
 		// when

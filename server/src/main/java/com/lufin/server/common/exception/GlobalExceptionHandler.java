@@ -2,9 +2,11 @@ package com.lufin.server.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.dto.ApiResponse;
 import com.lufin.server.common.exception.type.BadRequestException;
 import com.lufin.server.common.exception.type.ConflictException;
@@ -15,6 +17,9 @@ import com.lufin.server.common.exception.type.ServiceUnavailableException;
 import com.lufin.server.common.exception.type.UnauthorizedException;
 import com.lufin.server.common.exception.type.UnprocessableEntityException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -64,5 +69,25 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(ServiceUnavailableException.class)
 	public ResponseEntity<ApiResponse<Void>> handleServiceUnavailableException(ServiceUnavailableException e) {
 		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ApiResponse.failure(e.getErrorCode()));
+	}
+
+	// BuisnessException 처리
+	@ExceptionHandler(BusinessException.class)
+	public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException e) {
+		log.warn("BusinessException 발생: {}", e.getErrorCode(), e);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.failure(e.getErrorCode()));
+	}
+
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<ApiResponse<Void>> handleJsonParseException(HttpMessageNotReadableException e) {
+		log.warn("역직렬화 실패 - 요청 본문 확인 필요: {}", e.getMostSpecificCause().getMessage());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.failure(ErrorCode.INVALID_ENUM));
+	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ApiResponse<Void>> handleUncaughtException(Exception e) {
+		log.error("처리되지 않은 예외 발생", e);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(ApiResponse.failure(ErrorCode.SERVER_ERROR));
 	}
 }

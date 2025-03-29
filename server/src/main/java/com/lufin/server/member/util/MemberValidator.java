@@ -46,7 +46,7 @@ public class MemberValidator {
 		if (!StringUtils.hasText(password)) {
 			throw new BusinessException(MISSING_REQUIRED_VALUE);
 		} else if (!PASSWORD_PATTERN.matcher(password).matches()) {
-			throw new BusinessException(INVALID_INPUT_VALUE);
+			throw new BusinessException(INVALID_PASSWORD_FORMAT);
 		}
 	}
 

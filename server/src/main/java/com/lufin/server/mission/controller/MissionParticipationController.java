@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,6 +15,7 @@ import com.lufin.server.common.dto.ApiResponse;
 import com.lufin.server.common.utils.ValidationUtils;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.support.UserContext;
+import com.lufin.server.mission.dto.MissionParticipationRequestDto;
 import com.lufin.server.mission.dto.MissionParticipationResponseDto;
 import com.lufin.server.mission.service.MissionParticipationService;
 
@@ -75,5 +78,35 @@ public class MissionParticipationController {
 		);
 
 		return ResponseEntity.status(200).body(ApiResponse.success(participants));
+	}
+
+	/**
+	 * 미션 참여 상태 변경
+	 * @param missionId
+	 * @param participationId
+	 * @param requestDto
+	 * @param request
+	 * @return
+	 */
+	@PatchMapping("/{participationId}")
+	public ResponseEntity<ApiResponse<MissionParticipationResponseDto.MissionParticipationStatusResponseDto>> updateMissionParticipationStatus(
+		@PathVariable @Positive Integer missionId,
+		@PathVariable @Positive Integer participationId,
+		@RequestBody MissionParticipationRequestDto.MissionParticipationStatusRequestDto requestDto,
+		HttpServletRequest request
+	) {
+		Integer classId = (Integer)request.getAttribute("classId");
+		ValidationUtils.validateClassId(classId);
+
+		Member currentMember = UserContext.get();
+
+		MissionParticipationResponseDto.MissionParticipationStatusResponseDto result = missionParticipationService.changeMissionParticipationStatus(
+			classId,
+			missionId,
+			currentMember,
+			requestDto.status()
+		);
+
+		return ResponseEntity.status(200).body(ApiResponse.success(result));
 	}
 }

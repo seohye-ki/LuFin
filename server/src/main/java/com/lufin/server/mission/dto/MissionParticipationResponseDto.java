@@ -30,4 +30,12 @@ public class MissionParticipationResponseDto {
 		public MissionParticipationSummaryResponseDto {
 		}
 	}
+
+	public record MissionParticipationStatusResponseDto(
+		MissionParticipationStatus status
+	) {
+		@QueryProjection
+		public MissionParticipationStatusResponseDto {
+		}
+	}
 }

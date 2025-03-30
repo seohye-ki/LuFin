@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.repository.ClassroomRepository;
 import com.lufin.server.classroom.service.ClassroomService;
 import com.lufin.server.common.exception.BusinessException;
+import com.lufin.server.config.TestRedisConfiguration;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.repository.MemberRepository;
 
@@ -22,6 +24,7 @@ import com.lufin.server.member.repository.MemberRepository;
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
+@Import(TestRedisConfiguration.class)
 class ClassroomServiceTest {
 
 	@Autowired

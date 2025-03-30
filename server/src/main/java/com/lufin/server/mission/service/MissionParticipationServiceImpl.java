@@ -15,7 +15,6 @@ import com.lufin.server.mission.domain.MissionParticipation;
 import com.lufin.server.mission.domain.MissionParticipationStatus;
 import com.lufin.server.mission.dto.MissionParticipationResponseDto;
 import com.lufin.server.mission.repository.MissionParticipationRepository;
-import com.lufin.server.mission.repository.MissionParticipationRepositoryCustom;
 import com.lufin.server.mission.repository.MissionRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,6 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 
 	private final MissionRepository missionRepository;
 	private final MissionParticipationRepository missionParticipationRepository;
-	private final MissionParticipationRepositoryCustom missionParticipationRepositoryCustom;
 
 	/**
 	 * 미션 참여 신청
@@ -101,7 +99,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 		}
 
 		try {
-			List<MissionParticipationResponseDto.MissionParticipationSummaryResponseDto> missionParticipants = missionParticipationRepositoryCustom.getMissionParticipationList(
+			List<MissionParticipationResponseDto.MissionParticipationSummaryResponseDto> missionParticipants = missionParticipationRepository.getMissionParticipationList(
 				classId,
 				missionId
 			);
@@ -114,6 +112,16 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 
 	}
 
+	/**
+	 * 미션 참여 상태 변경
+	 * @param classId
+	 * @param missionId
+	 * @param participationId
+	 * @param currentMember
+	 * @param status
+	 * @return
+	 */
+	@Transactional
 	@Override
 	public MissionParticipationResponseDto.MissionParticipationStatusResponseDto changeMissionParticipationStatus(
 		Integer classId,
@@ -138,6 +146,17 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			MissionParticipation participation = missionParticipationRepository.findById(participationId)
 				.orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
 
+			// 해당 미션 참여가 요청한 미션에 속해 있는지 확인
+			Mission mission = participation.getMission();
+			if (mission == null
+				|| !mission.getId().equals(missionId)
+				|| !mission.getClassId().equals(classId)) {
+				throw new BusinessException(INVALID_INPUT_VALUE);
+			}
+
+			//CHECK: 필요하면 reject -> success로 변경이 안되는 것처럼 상태 변경 가능 여부 검증 로직 추가 필요
+			// validateStatusChange(participation.getStatus(), status);
+
 			/* JPA 더티 체킹으로 객체에 먼저 변경 사항이 캐시된 후, transaction이 끝날 때 자동으로 쿼리를 통해 DB를 업데이트 */
 			participation.changeMissionStatus(status);
 
@@ -150,4 +169,16 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
+
+	/*
+	 * 상태 변경이 유효한지 검증
+
+	private void validateStatusChange(MissionParticipationStatus current, MissionParticipationStatus target) {
+		// 예시: 이미 완료된 상태는 다시 변경할 수 없음
+		if (current == MissionParticipationStatus.SUCCESS || current == MissionParticipationStatus.FAILED) {
+			throw new BusinessException(INVALID_STATUS_CHANGE);
+		}
+
+	}
+	*/
 }

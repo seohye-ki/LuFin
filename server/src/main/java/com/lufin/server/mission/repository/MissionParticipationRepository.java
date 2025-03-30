@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.lufin.server.mission.domain.MissionParticipation;
 
 @Repository
-public interface MissionParticipationRepository extends JpaRepository<MissionParticipation, Integer> {
+public interface MissionParticipationRepository
+	extends JpaRepository<MissionParticipation, Integer>, MissionParticipationRepositoryCustom {
 }

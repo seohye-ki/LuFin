@@ -115,7 +115,7 @@ public class MissionParticipation {
 	 * @param memberId 참여 회원 ID
 	 * @return 생성된 미션 참여 객체
 	 */
-	MissionParticipation create(Mission mission, Member member, Integer memberId) {
+	public static MissionParticipation create(Mission mission, Member member, Integer memberId) {
 		// service 레이어에서 null 체크 실행
 
 		// 객체를 먼저 생성하고 메서드를 통해 양방향 관계 설정

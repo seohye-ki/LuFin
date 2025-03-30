@@ -8,7 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
+import com.lufin.server.mission.domain.Mission;
+import com.lufin.server.mission.domain.MissionParticipation;
 import com.lufin.server.mission.dto.MissionResponseDto;
+import com.lufin.server.mission.repository.MissionRepository;
+import com.lufin.server.mission.repository.missionParticipationRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class MissionParticipationServiceImpl implements MissionParticipationService {
 
+	private final MissionRepository missionRepository;
+	private final missionParticipationRepository missionParticipationRepository;
+
 	@Override
 	public MissionResponseDto.MissionApplyResponseDto applyMission(Integer classId, Integer missionId,
 		Member currentMember) {
@@ -28,12 +35,25 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			throw new BusinessException(MISSING_REQUIRED_VALUE);
 		}
 
+		// 학생이 아닐 경우 신청 불가
 		if (currentMember.getMemberRole() != MemberRole.STUDENT) {
 			throw new BusinessException(INVALID_ROLE_SELECTION);
 		}
 
 		try {
-			//TODO: 서비스 비즈니스 로직 추가
+			Mission mission = missionRepository.findById(missionId)
+				.orElseThrow(() -> new BusinessException(MISSION_NOT_FOUND));
+
+			// MissionParticipation 엔티티 생성
+			MissionParticipation newParticipation = MissionParticipation.create(
+				mission,
+				currentMember,
+				currentMember.getId()
+			);
+
+			MissionParticipation savedParticipation = missionParticipationRepository.save(newParticipation);
+
+			// TODO: response dto 작성후 해당 dto로 반환
 			return null;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);

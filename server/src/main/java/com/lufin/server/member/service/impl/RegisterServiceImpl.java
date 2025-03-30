@@ -3,6 +3,9 @@ package com.lufin.server.member.service.impl;
 import static com.lufin.server.common.constants.ErrorCode.*;
 import static com.lufin.server.member.util.MemberValidator.*;
 
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,14 +24,17 @@ import lombok.RequiredArgsConstructor;
 public class RegisterServiceImpl implements RegisterService {
 
 	private final MemberRepository memberRepository;
+	private final RedisTemplate<String, String> redisTemplate;
 
 	@Transactional
 	@Override
 	public RegisterResponse register(RegisterRequest request) {
 
-		// 이메일 검증
-		validateRegisterEmail(request.email());
-
+		// 이메일 검증 하고왔나요?
+		String redisEmail = redisTemplate.opsForValue().get("email" + request.email());
+		if (redisEmail == null) {
+			throw new BusinessException(UNAUTHORIZED_ACCESS);
+		}
 		// 비밀번호 유효성 검증
 		isValidPassword(request.password());
 
@@ -66,5 +72,7 @@ public class RegisterServiceImpl implements RegisterService {
 		if (memberRepository.findByEmail(inputEmail).isPresent()) {
 			throw new BusinessException(EMAIL_ALREADY_REGISTERED);
 		}
+		// 이메일 중복체크 통과 시 redis에 5분간 저장
+		redisTemplate.opsForValue().set("email:" + inputEmail, inputEmail, 5, TimeUnit.MINUTES);
 	}
 }

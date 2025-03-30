@@ -3,18 +3,17 @@ import {
   ArcElement,
   CategoryScale,
   Chart,
-  ChartData,
   Legend,
   LinearScale,
   Title,
   Tooltip,
   PointElement,
   LineElement,
-  ChartOptions,
   Filler,
   Plugin,
+  TooltipItem,
 } from 'chart.js';
-import { Line } from 'react-ChartJS-2';
+import { Line } from 'react-chartjs-2';
 import sunIcon from '../../assets/svgs/sun.svg';
 import moonIcon from '/src/assets/svgs/moon.svg';
 import { DateUtil } from '../../libs/utils/date-util';
@@ -41,7 +40,7 @@ interface StockGraphProps {
 }
 
 const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
-  const data: ChartData = {
+  const data = {
     labels: stockPriceInfos.map((stockPriceInfo) => {
       return stockPriceInfo.date.dayOfWeek;
     }),
@@ -65,12 +64,12 @@ const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
     ],
   };
 
-  const options: ChartOptions = {
+  const options = {
     responsive: true,
-    clip: false,
+    clip: false as const,
     maintainAspectRatio: false,
     interaction: {
-      mode: 'index',
+      mode: 'index' as const,
       intersect: false,
     },
     layout: {
@@ -81,8 +80,8 @@ const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
         display: false,
       },
       tooltip: {
-        titleAlign: 'center',
-        bodyAlign: 'center',
+        titleAlign: 'center' as const,
+        bodyAlign: 'center' as const,
         displayColors: false,
         enabled: true,
         borderColor: 'rgba(167,169,170, 0.2)',
@@ -101,11 +100,11 @@ const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
           size: 12,
         },
         callbacks: {
-          title: (context) => {
+          title: (context: TooltipItem<'line'>[]) => {
             const value = context[0].raw as number;
             return `${value.toLocaleString()} 루핀`;
           },
-          label: (context) => {
+          label: (context: TooltipItem<'line'>) => {
             const date = stockPriceInfos[context.dataIndex].date;
             return `${date.formattedDate}`;
           },
@@ -184,7 +183,7 @@ const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
         } = chart;
 
         ctx.save();
-        data.labels?.forEach((label, index) => {
+        data.labels?.forEach((_, index) => {
           const image = new Image();
           const date = stockPriceInfos[index].date;
           image.src = date.hour > 12 ? moonIcon : sunIcon;

@@ -741,7 +741,8 @@ const CommonComponents = () => {
                     type='email'
                     label='이메일'
                     placeholder='you@example.com'
-                    error='올바른 이메일 주소를 입력해주세요.'
+                    description='올바른 이메일 주소를 입력해주세요.'
+                    variant='error'
                   />
                 </div>
 
@@ -797,8 +798,9 @@ const CommonComponents = () => {
                     name='comment'
                     label='댓글'
                     placeholder='댓글을 입력해주세요'
-                    error='댓글을 입력해주세요'
+                    description='댓글을 입력해주세요'
                     rows={4}
+                    variant='error'
                   />
                 </div>
 

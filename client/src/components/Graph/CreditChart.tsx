@@ -1,4 +1,4 @@
-import { Doughnut } from 'react-ChartJS-2';
+import { Doughnut } from 'react-chartjs-2';
 import {
   Chart,
   Title,
@@ -7,8 +7,8 @@ import {
   ArcElement,
   CategoryScale,
   LinearScale,
-  ChartOptions,
-  ChartData,
+} from 'chart.js';
+import type {
   Plugin,
 } from 'chart.js';
 
@@ -35,7 +35,7 @@ const ratingInfo: { [key: string]: { value: number; text: string } } = {
 const CreditChart: React.FC<{ creditRating: string }> = ({ creditRating }) => {
   const { value, text } = ratingInfo[creditRating] || { value: 0, text: '알 수 없음' };
 
-  const data: ChartData = {
+  const data = {
     datasets: [
       {
         label: '주가',
@@ -47,7 +47,7 @@ const CreditChart: React.FC<{ creditRating: string }> = ({ creditRating }) => {
     ],
   };
 
-  const options: ChartOptions = {
+  const options = {
     responsive: true,
     maintainAspectRatio: false,
     rotation: 270,

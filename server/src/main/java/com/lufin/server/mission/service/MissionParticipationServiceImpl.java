@@ -68,4 +68,13 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
+
+	@Override
+	public MissionParticipationResponseDto.MissionParticipationSummaryResponseDto getAllMissionParticipants(
+		Integer classId,
+		Integer missionId
+	) {
+		// TODO: 비즈니스 로직 구현
+		return null;
+	}
 }

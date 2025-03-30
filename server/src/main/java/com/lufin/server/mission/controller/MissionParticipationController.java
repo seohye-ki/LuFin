@@ -1,6 +1,7 @@
 package com.lufin.server.mission.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +26,12 @@ public class MissionParticipationController {
 
 	/* 미션 참여 관련 */
 
-	// 미션 참여 신청
+	/**
+	 * 미션 참여 신청
+	 * @param missionId
+	 * @param request
+	 * @return
+	 */
 	@PostMapping
 	public ResponseEntity<ApiResponse<MissionParticipationResponseDto.MissionApplicationResponseDto>> applyMission(
 		@PathVariable @Positive Integer missionId,
@@ -42,5 +48,20 @@ public class MissionParticipationController {
 			currentMember);
 
 		return ResponseEntity.status(201).body(ApiResponse.success(response));
+	}
+
+	/**
+	 * 미션 참여자 목록 조회
+	 * @param missionId
+	 * @param request
+	 * @return
+	 */
+	@GetMapping
+	public ResponseEntity<ApiResponse<MissionParticipationResponseDto.MissionParticipationSummaryResponseDto>> getAllMissionParticipants(
+		@PathVariable @Positive Integer missionId,
+		HttpServletRequest request
+	) {
+		// TODO: null -> responseDto
+		return ResponseEntity.status(200).body(ApiResponse.success(null));
 	}
 }

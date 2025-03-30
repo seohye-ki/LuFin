@@ -103,6 +103,7 @@ public class MissionParticipationController {
 		MissionParticipationResponseDto.MissionParticipationStatusResponseDto result = missionParticipationService.changeMissionParticipationStatus(
 			classId,
 			missionId,
+			participationId,
 			currentMember,
 			requestDto.status()
 		);

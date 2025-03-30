@@ -25,6 +25,7 @@ public interface MissionParticipationService {
 	MissionParticipationResponseDto.MissionParticipationStatusResponseDto changeMissionParticipationStatus(
 		Integer classId,
 		Integer missionId,
+		Integer participationId,
 		Member currentMember,
 		MissionParticipationStatus status
 	);

@@ -37,5 +37,13 @@ public class MissionParticipationResponseDto {
 		@QueryProjection
 		public MissionParticipationStatusResponseDto {
 		}
+
+		/**
+		 * MissionParticipation 엔티티를 DTO로 변환
+		 */
+		public static MissionParticipationStatusResponseDto missionParticipationToMissionParticipationStatusResponseDto(
+			MissionParticipationStatus status) {
+			return new MissionParticipationStatusResponseDto(status);
+		}
 	}
 }

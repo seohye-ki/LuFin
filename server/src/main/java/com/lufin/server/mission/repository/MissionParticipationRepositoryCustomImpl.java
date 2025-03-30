@@ -31,14 +31,10 @@ public class MissionParticipationRepositoryCustomImpl implements MissionParticip
 		BooleanBuilder builder = new BooleanBuilder();
 
 		// missionId에 일치하는 것만 조회하는 조건
-		if (missionId != null) {
-			builder.and(missionParticipation.mission.id.eq(missionId));
-		}
+		builder.and(missionParticipation.mission.id.eq(missionId));
 
 		// classId에 일치하는 것만 조회하는 조건
-		if (classId != null) {
-			builder.and(missionParticipation.mission.classId.eq(classId));
-		}
+		builder.and(missionParticipation.mission.classId.eq(classId));
 
 		// 쿼리문
 		List<MissionParticipationResponseDto.MissionParticipationSummaryResponseDto> result = queryFactory

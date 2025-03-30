@@ -24,7 +24,7 @@ public class MissionParticipationResponseDto {
 		String name,
 		String profileImage,
 		Integer creditRating,
-		Enum<MissionParticipationStatus> status
+		MissionParticipationStatus status
 	) {
 		@QueryProjection
 		public MissionParticipationSummaryResponseDto {

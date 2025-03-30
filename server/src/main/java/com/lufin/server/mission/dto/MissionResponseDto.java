@@ -102,14 +102,4 @@ public class MissionResponseDto {
 		}
 	}
 
-	/**
-	 * 미션 참여 신청 응답 DTO
-	 * @param participationId
-	 */
-	public record MissionApplyResponseDto(Integer participationId) {
-		@QueryProjection
-		public MissionApplyResponseDto {
-		}
-	}
-
 }

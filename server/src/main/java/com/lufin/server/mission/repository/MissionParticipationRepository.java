@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.lufin.server.mission.domain.MissionParticipation;
 
-public interface missionParticipationRepository extends JpaRepository<MissionParticipation, Integer> {
+public interface MissionParticipationRepository extends JpaRepository<MissionParticipation, Integer> {
 }

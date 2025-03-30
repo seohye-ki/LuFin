@@ -10,9 +10,9 @@ import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
 import com.lufin.server.mission.domain.Mission;
 import com.lufin.server.mission.domain.MissionParticipation;
-import com.lufin.server.mission.dto.MissionResponseDto;
+import com.lufin.server.mission.dto.MissionParticipationResponseDto;
+import com.lufin.server.mission.repository.MissionParticipationRepository;
 import com.lufin.server.mission.repository.MissionRepository;
-import com.lufin.server.mission.repository.missionParticipationRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +24,12 @@ import lombok.extern.slf4j.Slf4j;
 public class MissionParticipationServiceImpl implements MissionParticipationService {
 
 	private final MissionRepository missionRepository;
-	private final missionParticipationRepository missionParticipationRepository;
+	private final MissionParticipationRepository missionParticipationRepository;
 
 	@Override
-	public MissionResponseDto.MissionApplyResponseDto applyMission(Integer classId, Integer missionId,
+	@Transactional
+	public MissionParticipationResponseDto.MissionApplicationResponseDto applyMission(Integer classId,
+		Integer missionId,
 		Member currentMember) {
 		log.info("미션 참여 신청 요청: classId: {}, missionId: {}, currentMember: {}", classId, missionId, currentMember);
 
@@ -41,8 +43,14 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 		}
 
 		try {
-			Mission mission = missionRepository.findById(missionId)
+			// 비관적 락을 통해 동시성 문제 해결 시도
+			Mission mission = missionRepository.findByIdAndClassIdWithPessimisticLock(missionId, classId)
 				.orElseThrow(() -> new BusinessException(MISSION_NOT_FOUND));
+
+			// 인원수가 다 찼으면 신청 불가능
+			if (mission.getCurrentParticipants() >= mission.getMaxParticipants()) {
+				throw new BusinessException(MISSION_CAPACITY_FULL);
+			}
 
 			// MissionParticipation 엔티티 생성
 			MissionParticipation newParticipation = MissionParticipation.create(
@@ -53,8 +61,8 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 
 			MissionParticipation savedParticipation = missionParticipationRepository.save(newParticipation);
 
-			// TODO: response dto 작성후 해당 dto로 반환
-			return null;
+			return new MissionParticipationResponseDto.MissionApplicationResponseDto(
+				savedParticipation.getParticipationId());
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);

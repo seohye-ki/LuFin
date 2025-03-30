@@ -10,7 +10,7 @@ import com.lufin.server.common.dto.ApiResponse;
 import com.lufin.server.common.utils.ValidationUtils;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.support.UserContext;
-import com.lufin.server.mission.dto.MissionResponseDto;
+import com.lufin.server.mission.dto.MissionParticipationResponseDto;
 import com.lufin.server.mission.service.MissionParticipationService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +27,7 @@ public class MissionParticipationController {
 
 	// 미션 참여 신청
 	@PostMapping
-	public ResponseEntity<ApiResponse<MissionResponseDto.MissionApplyResponseDto>> applyMission(
+	public ResponseEntity<ApiResponse<MissionParticipationResponseDto.MissionApplicationResponseDto>> applyMission(
 		@PathVariable @Positive Integer missionId,
 		HttpServletRequest request
 	) {
@@ -36,8 +36,10 @@ public class MissionParticipationController {
 
 		Member currentMember = UserContext.get();
 
-		MissionResponseDto.MissionApplyResponseDto response = missionParticipationService.applyMission(classId,
-			missionId, currentMember);
+		MissionParticipationResponseDto.MissionApplicationResponseDto response = missionParticipationService.applyMission(
+			classId,
+			missionId,
+			currentMember);
 
 		return ResponseEntity.status(201).body(ApiResponse.success(response));
 	}

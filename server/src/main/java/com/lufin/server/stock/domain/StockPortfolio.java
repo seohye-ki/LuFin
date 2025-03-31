@@ -30,6 +30,7 @@ import lombok.Setter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StockPortfolio {
+	/* 연관관계 */
 	@Setter
 	@ManyToOne
 	@JoinColumn(name = "member_id", nullable = false)
@@ -40,6 +41,7 @@ public class StockPortfolio {
 	@JoinColumn(name = "stock_product_id", nullable = false)
 	private StockProduct stockProduct;
 
+	/* 멤버 필드 */
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "stock_portfolio_id", nullable = false)

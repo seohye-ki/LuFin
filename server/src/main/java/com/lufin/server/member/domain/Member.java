@@ -3,7 +3,9 @@ package com.lufin.server.member.domain;
 import static com.lufin.server.member.util.MemberValidator.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.lufin.server.mission.domain.MissionParticipation;
@@ -28,7 +30,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "member")
+@Table(name = "members")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
@@ -37,7 +39,7 @@ public class Member {
 	private Set<MissionParticipation> missionParticipations = new HashSet<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<StockPortfolio> stockPortfolios = new HashSet<>();
+	private List<StockPortfolio> stockPortfolios = new ArrayList<>();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -30,16 +30,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StockProduct {
 	@Builder.Default
-	@OneToMany(mappedBy = "stockPortfolio", cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<StockPortfolio> portfolios = new ArrayList<>();
+	@OneToMany(mappedBy = "stockProduct", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<StockPortfolio> portfolios = new ArrayList<>();
 
 	@Builder.Default
 	@OneToMany(mappedBy = "stockProduct", cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<StockNews> news = new ArrayList<>();
+	private List<StockNews> news = new ArrayList<>();
 
 	@Builder.Default
 	@OneToMany(mappedBy = "stockProduct", cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<StockPriceHistory> priceHistory = new ArrayList<>();
+	private List<StockPriceHistory> priceHistory = new ArrayList<>();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -112,7 +112,6 @@ public class StockProduct {
 	/**
 	 * 주식 가격 기록(StockPriceHistory)와의 양방향 연관관계를 위한 메서드
 	 * @param priceHistory
-	 * @return
 	 */
 	public void addPriceHistory(StockPriceHistory priceHistory) {
 		if (!this.priceHistory.contains(priceHistory)) {
@@ -128,7 +127,6 @@ public class StockProduct {
 	/**
 	 * 주식 포트폴리오(StockPortfolio)와의 양방향 연관관계를 위한 메서드
 	 * @param portfolio
-	 * @return
 	 */
 	public void addPortfolio(StockPortfolio portfolio) {
 		if (!this.portfolios.contains(portfolio)) {

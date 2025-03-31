@@ -45,7 +45,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     return (
       <div className='flex flex-col gap-1'>
         {label && (
-          <label htmlFor={props.id} className='text-p2 font-medium text-black'>
+          <label htmlFor={props.id} className='text-p2 font-medium text-dark-grey'>
             {label}
           </label>
         )}

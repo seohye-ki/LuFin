@@ -52,6 +52,7 @@ public enum ErrorCode {
 	INSUFFICIENT_CREDIT_SCORE("E422001", "신용 점수가 부족하여 이용할 수 없습니다."),
 	INSUFFICIENT_BALANCE("E422002", "잔액이 부족합니다."),
 	ACCOUNT_TEMPORARILY_LOCKED("E422003", "해당 계정은 5분간 로그인할 수 없습니다"),
+	INVALID_EXTENSION("E422004", "허용되지 않은 확장자입니다."),
 
 	SERVER_ERROR("E500001", "요청을 처리할 수 없습니다. 다시 시도해 주세요."),
 	SERVICE_UNAVAILABLE("E503001", "현재 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해 주세요."),

@@ -1,5 +1,7 @@
 package com.lufin.server.image.service;
 
+import static com.lufin.server.common.constants.ErrorCode.*;
+
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.lufin.server.common.exception.BusinessException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +28,7 @@ public class S3Service {
 
 	public String generatePresignedUrlWithKey(String key, String extension) {
 		if (!ALLOWED_EXTENSIONS.contains(extension)) {
-			throw new IllegalArgumentException("허용되지 않은 확장자입니다.");
+			throw new BusinessException(INVALID_EXTENSION);
 		}
 
 		Date expiration = new Date(System.currentTimeMillis() + (1000 * 60 * 5)); // 5분 유효

@@ -1,0 +1,155 @@
+import Card from '../../../../components/Card/Card';
+import Badge from '../../../../components/Badge/Badge';
+import Button from '../../../../components/Button/Button';
+import { MissionDetail, MissionParticipation } from '../../../../types/Mission/mission';
+import { Icon } from '../../../../components/Icon/Icon';
+import Lufin from '../../../../components/Lufin/Lufin';
+import { useState } from 'react';
+
+interface MyMissionModalProps {
+  onClose: () => void;
+  mission: MissionDetail;
+  participation?: MissionParticipation;
+}
+
+const MyMissionModal = ({ onClose, mission, participation }: MyMissionModalProps) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const getStatusBadge = (): {
+    status: 'ready' | 'done' | 'ing' | 'review' | 'fail' | 'reject';
+    text: string;
+  } => {
+    if (!participation) {
+      return { status: 'ready', text: '모집 중' };
+    }
+    switch (participation.status) {
+      case 'SUCCESS':
+        return { status: 'done', text: '성공' };
+      case 'IN_PROGRESS':
+        return { status: 'ing', text: '수행 중' };
+      case 'CHECKING':
+        return { status: 'review', text: '검토 중' };
+      case 'FAILED':
+        return { status: 'fail', text: '실패' };
+      case 'REJECTED':
+        return { status: 'reject', text: '거절' };
+      default:
+        return { status: 'ready', text: '모집 중' };
+    }
+  };
+
+  const status = getStatusBadge();
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? mission.mission_images.length - 2 : prev - 2));
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev >= mission.mission_images.length - 2 ? 0 : prev + 2));
+  };
+
+  const getVisibleImages = () => {
+    const images = [];
+    for (let i = 0; i < 2; i++) {
+      const index = (currentImageIndex + i) % mission.mission_images.length;
+      images.push(mission.mission_images[index]);
+    }
+    return images;
+  };
+
+  return (
+    <Card
+      titleLeft={participation ? '나의 미션' : '수행 가능 미션'}
+      titleRight={<Badge status={status.status}>{status.text}</Badge>}
+      titleSize='l'
+      isModal
+    >
+      <div className='flex flex-col w-[352px] gap-2 overflow-y-auto sm:max-h-[80vh] md:max-h-[60vh] [&::-webkit-scrollbar]:hidden'>
+        <div className='flex flex-col gap-2'>
+          <span className='text-c1 text-grey'>미션</span>
+          <span className='text-p1 font-semibold'>{mission.title}</span>
+        </div>
+        <div className='flex flex-col gap-2'>
+          <span className='text-c1 text-grey'>난이도</span>
+          <div className='flex items-center'>
+            {Array(mission.difficulty)
+              .fill(0)
+              .map((_, i) => (
+                <Icon key={i} name='Star' />
+              ))}
+          </div>
+        </div>
+        <div className='flex flex-col gap-2'>
+          <span className='text-c1 text-grey'>참여 인원</span>
+          <div className='flex flex-col gap-2'>
+            {`${mission.currentParticipant}/${mission.maxParticipant}`}
+          </div>
+        </div>
+        <div className='flex flex-col gap-2'>
+          <span className='text-c1 text-grey'>보상</span>
+          <Lufin size='s' count={mission.wage} />
+        </div>
+        <div className='flex flex-col gap-2'>
+          <span className='text-c1 text-grey'>설명</span>
+          <span className='text-p1 font-semibold'>{mission.content}</span>
+        </div>
+        <div className='flex flex-col gap-2'>
+          <span className='text-c1 text-grey'>사진</span>
+          {mission.mission_images.length > 0 && (
+            <div className='mt-2 relative'>
+              <div className='grid grid-cols-2 gap-2'>
+                {getVisibleImages().map((image) => (
+                  <div key={image.mission_image_id} className='relative aspect-square'>
+                    <img
+                      src={image.image_url}
+                      alt='미션 인증 이미지'
+                      className='w-full h-full object-cover rounded-lg'
+                    />
+                  </div>
+                ))}
+              </div>
+              {mission.mission_images.length > 2 && (
+                <>
+                  <button
+                    onClick={handlePrevImage}
+                    className='absolute left-2 top-1/2 -translate-y-1/2 bg-light-cyan-30 bg-opacity-50 text-white p-2 rounded-full'
+                  >
+                    <Icon name='ArrowLeft2' size={20} />
+                  </button>
+                  <button
+                    onClick={handleNextImage}
+                    className='absolute right-2 top-1/2 -translate-y-1/2 bg-light-cyan-30 bg-opacity-50 text-white p-2 rounded-full'
+                  >
+                    <Icon name='ArrowRight2' size={20} />
+                  </button>
+                  <div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1'>
+                    {Array.from({ length: Math.ceil(mission.mission_images.length / 2) }).map(
+                      (_, index) => (
+                        <div
+                          key={index}
+                          className={`w-2 h-2 rounded-full ${
+                            index === Math.floor(currentImageIndex / 2) ? 'bg-white' : 'bg-white/50'
+                          }`}
+                        />
+                      ),
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+      <div className='flex gap-2 mt-2'>
+        <Button variant='solid' color='neutral' size='md' full onClick={onClose}>
+          취소
+        </Button>
+        <Button variant='solid' color='primary' size='md' full>
+          신청하기
+        </Button>
+      </div>
+    </Card>
+  );
+};
+
+export default MyMissionModal;

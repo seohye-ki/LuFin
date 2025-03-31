@@ -8,6 +8,7 @@ import Button from '../../../../components/Button/Button';
 import { useState } from 'react';
 import Profile from '../../../../components/Profile/Profile';
 import MissionEditModal from './MissionEditModal';
+import Alert from '../../../../components/Alert/Alert';
 
 interface MissionReadModalProps {
   mission: MissionDetail;
@@ -17,6 +18,9 @@ interface MissionReadModalProps {
 const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [isApproveMode, setIsApproveMode] = useState(false);
+  const [selectedParticipation, setSelectedParticipation] = useState<number | null>(null);
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? mission.mission_images.length - 2 : prev - 2));
@@ -42,7 +46,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
       case 'IN_PROGRESS':
         return <Badge status='ing'>진행중</Badge>;
       case 'CHECKING':
-        return <Badge status='ing'>확인중</Badge>;
+        return <Badge status='ing'>검토 대기중</Badge>;
       case 'FAILED':
         return <Badge status='fail'>실패</Badge>;
       case 'REJECTED':
@@ -52,8 +56,85 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
     }
   };
 
+  const handleParticipationClick = (participationId: number, status: string) => {
+    if (status === 'CHECKING') {
+      setSelectedParticipation(participationId);
+      setIsApproveMode(true);
+    }
+  };
+
   if (isEditMode) {
     return <MissionEditModal mission={mission} onClose={() => setIsEditMode(false)} />;
+  }
+
+  if (isDeleteMode) {
+    return (
+      <div className='fixed inset-0 flex items-center justify-center z-50'>
+        <Alert
+          title='미션을 삭제하시겠습니까?'
+          description='삭제된 미션은 복구할 수 없습니다.'
+          status='danger'
+          primaryButton={{
+            label: '취소',
+            onClick: () => {
+              // TODO: 미션 삭제 API 호출
+              onClose();
+            },
+            color: 'neutral',
+          }}
+          secondaryButton={{
+            label: '삭제하기',
+            onClick: () => setIsDeleteMode(false),
+            color: 'danger',
+          }}
+          buttonDirection='row'
+        />
+      </div>
+    );
+  }
+
+  if (isApproveMode) {
+    return (
+      <div className='fixed inset-0 flex items-center justify-center z-50'>
+        <Alert
+          title='미션을 승인하시겠습니까?'
+          description={
+            <div className='flex flex-col gap-2'>
+              <Profile
+                name={
+                  members.find((m) => m.member_id === selectedParticipation)?.name || '알 수 없음'
+                }
+                profileImage={
+                  members.find((m) => m.member_id === selectedParticipation)?.profile_image ||
+                  'https://picsum.photos/200/300?random=1'
+                }
+                variant='row'
+              />
+              <span className='text-c1'>승인하면 보상이 지급됩니다.</span>
+            </div>
+          }
+          status='success'
+          primaryButton={{
+            label: '취소',
+            onClick: () => {
+              setIsApproveMode(false);
+              setSelectedParticipation(null);
+            },
+            color: 'neutral',
+          }}
+          secondaryButton={{
+            label: '승인하기',
+            onClick: () => {
+              // TODO: 미션 승인 API 호출
+              setIsApproveMode(true);
+              setSelectedParticipation(null);
+            },
+            color: 'primary',
+          }}
+          buttonDirection='row'
+        />
+      </div>
+    );
   }
 
   return (
@@ -61,8 +142,13 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
       <Card
         titleLeft='오늘의 미션'
         titleRight={
-          <div onClick={() => setIsEditMode(true)}>
-            <Icon name='CircleEdit' size={32} />
+          <div className='flex gap-2'>
+            <button onClick={() => setIsEditMode(true)}>
+              <Icon name='CircleEdit' size={32} />
+            </button>
+            <button onClick={() => setIsDeleteMode(true)}>
+              <Icon name='CircleTrash' size={32} />
+            </button>
           </div>
         }
         titleSize='l'
@@ -89,7 +175,17 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
               {mission.mission_participations.map((participation) => {
                 const member = members.find((m) => m.member_id === participation.member_id);
                 return (
-                  <div key={participation.participation_id} className='flex items-center gap-2'>
+                  <div
+                    key={participation.participation_id}
+                    className={`flex items-center gap-2 ${
+                      participation.status === 'CHECKING'
+                        ? 'cursor-pointer hover:bg-grey-50 p-2 rounded-lg'
+                        : ''
+                    }`}
+                    onClick={() =>
+                      handleParticipationClick(participation.participation_id, participation.status)
+                    }
+                  >
                     <Profile
                       name={member?.name || '알 수 없음'}
                       variant='row'
@@ -154,14 +250,14 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
               )}
             </div>
           )}
-          <div className='flex gap-2'>
-            <Button variant='solid' color='neutral' size='md' full onClick={onClose}>
-              취소
-            </Button>
-            <Button variant='solid' color='primary' size='md' full>
-              확인
-            </Button>
-          </div>
+        </div>
+        <div className='flex gap-2 mt-2'>
+          <Button variant='solid' color='neutral' size='md' full onClick={onClose}>
+            취소
+          </Button>
+          <Button variant='solid' color='primary' size='md' full>
+            확인
+          </Button>
         </div>
       </Card>
     </div>

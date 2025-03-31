@@ -1,5 +1,3 @@
-import React from 'react';
-
 const DesignSystem = () => {
   return (
     <div className='p-8 bg-broken-white min-h-screen'>

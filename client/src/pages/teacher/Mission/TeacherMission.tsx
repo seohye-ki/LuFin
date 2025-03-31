@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import CalendarView from '../../../components/Calendar/Calendar';
 import { WeeklyMissionModal } from './Components/WeeklyMissionModal';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';

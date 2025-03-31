@@ -12,9 +12,9 @@ import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
 import com.lufin.server.mission.domain.Mission;
 import com.lufin.server.mission.domain.MissionParticipation;
+import com.lufin.server.mission.domain.MissionParticipationStatus;
 import com.lufin.server.mission.dto.MissionParticipationResponseDto;
 import com.lufin.server.mission.repository.MissionParticipationRepository;
-import com.lufin.server.mission.repository.MissionParticipationRepositoryCustom;
 import com.lufin.server.mission.repository.MissionRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,6 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 
 	private final MissionRepository missionRepository;
 	private final MissionParticipationRepository missionParticipationRepository;
-	private final MissionParticipationRepositoryCustom missionParticipationRepositoryCustom;
 
 	/**
 	 * 미션 참여 신청
@@ -100,7 +99,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 		}
 
 		try {
-			List<MissionParticipationResponseDto.MissionParticipationSummaryResponseDto> missionParticipants = missionParticipationRepositoryCustom.getMissionParticipationList(
+			List<MissionParticipationResponseDto.MissionParticipationSummaryResponseDto> missionParticipants = missionParticipationRepository.getMissionParticipationList(
 				classId,
 				missionId
 			);
@@ -111,5 +110,61 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			throw new BusinessException(SERVER_ERROR);
 		}
 
+	}
+
+	/**
+	 * 미션 참여 상태 변경
+	 * @param classId
+	 * @param missionId
+	 * @param participationId
+	 * @param currentMember
+	 * @param status
+	 * @return
+	 */
+	@Transactional
+	@Override
+	public MissionParticipationResponseDto.MissionParticipationStatusResponseDto changeMissionParticipationStatus(
+		Integer classId,
+		Integer missionId,
+		Integer participationId,
+		Member currentMember,
+		MissionParticipationStatus status
+	) {
+		log.info("미션 참여 상태 변경 요청: classId: {}, missionId: {}, currentMember: {}, status: {}", classId, missionId,
+			currentMember, status);
+
+		if (classId == null || missionId == null || currentMember == null || status == null) {
+			throw new BusinessException(MISSING_REQUIRED_VALUE);
+		}
+
+		// 선생님이 아니면 상태 변경 불가
+		if (currentMember.getMemberRole() != MemberRole.TEACHER) {
+			throw new BusinessException(FORBIDDEN_REQUEST);
+		}
+
+		try {
+			MissionParticipation participation = missionParticipationRepository.findById(participationId)
+				.orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+
+			// 해당 미션 참여가 요청한 미션에 속해 있는지 확인
+			Mission mission = participation.getMission();
+			if (mission == null
+				|| !mission.getId().equals(missionId)
+				|| !mission.getClassId().equals(classId)) {
+				throw new BusinessException(INVALID_INPUT_VALUE);
+			}
+
+
+			/* JPA 더티 체킹으로 객체에 먼저 변경 사항이 캐시된 후, transaction이 끝날 때 자동으로 쿼리를 통해 DB를 업데이트 */
+			participation.changeMissionStatus(status);
+
+			// MissionParticipation 엔티티를 DTO로 변환
+			return MissionParticipationResponseDto.MissionParticipationStatusResponseDto
+				.missionParticipationToMissionParticipationStatusResponseDto(status);
+
+		} catch (Exception e) {
+			log.error("An error occurred: {}", e.getMessage(), e);
+			throw new BusinessException(SERVER_ERROR);
+		}
 	}
 }

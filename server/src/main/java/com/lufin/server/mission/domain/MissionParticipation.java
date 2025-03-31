@@ -160,6 +160,13 @@ public class MissionParticipation {
 	}
 
 	/**
+	 * 미션 상태 변경 메서드
+	 */
+	public void changeMissionStatus(MissionParticipationStatus status) {
+		this.status = status;
+	}
+
+	/**
 	 * 현재 미션이 성공 상태인지 확인
 	 * @return 성공 상태인 경우 true
 	 */

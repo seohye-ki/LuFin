@@ -41,6 +41,10 @@ public class StockProduct {
 	@OneToMany(mappedBy = "stockProduct", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<StockPriceHistory> priceHistory = new ArrayList<>();
 
+	@Builder.Default
+	@OneToMany(mappedBy = "stockProduct", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<StockTransactionHistories> transactionHistories = new ArrayList<>();
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "stock_product_id", nullable = false)
@@ -136,6 +140,22 @@ public class StockProduct {
 		// 양방향 관계 설정 (무한 루프 방지 조건)
 		if (portfolio.getStockProduct() != this) {
 			portfolio.setStockProduct(this);
+		}
+	}
+
+	/**
+	 * 주식 투자 내역(StockTransactionHistories)와의 양방향 연관관계를 위한 메서드
+	 * @param transactionHistories
+	 * @return
+	 */
+	public void addTransactionHistories(StockTransactionHistories transactionHistories) {
+		if (!this.transactionHistories.contains(transactionHistories)) {
+			this.transactionHistories.add(transactionHistories);
+		}
+
+		// 양방향 관계 설정 (무한 루프 방지 조건)
+		if (transactionHistories.getStockProduct() != this) {
+			transactionHistories.setStockProduct(this);
 		}
 	}
 

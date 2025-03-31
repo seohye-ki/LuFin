@@ -4,12 +4,11 @@ import static com.lufin.server.member.util.MemberValidator.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.lufin.server.mission.domain.MissionParticipation;
 import com.lufin.server.stock.domain.StockPortfolio;
+import com.lufin.server.stock.domain.StockTransactionHistories;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -36,10 +35,13 @@ public class Member {
 
 	/* 양방향 연관관계 */
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<MissionParticipation> missionParticipations = new HashSet<>();
+	private List<MissionParticipation> missionParticipations = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<StockPortfolio> stockPortfolios = new ArrayList<>();
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<StockTransactionHistories> stockTransactionHistories = new ArrayList<>();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -113,13 +115,15 @@ public class Member {
 	 * @param participation
 	 */
 	public void addMissionParticipation(MissionParticipation participation) {
-		if (participation != null) {
+		if (!this.missionParticipations.contains(participation)) {
 			this.missionParticipations.add(participation);
-			// 이미 참여에 회원이 설정되어 있지 않은 경우에만 설정 (무한루프 방지)
-			if (participation.getMember() != this) {
-				participation.setMember(this);
-			}
 		}
+
+		// 이미 참여에 회원이 설정되어 있지 않은 경우에만 설정 (무한루프 방지)
+		if (participation.getMember() != this) {
+			participation.setMember(this);
+		}
+
 	}
 
 	/**
@@ -138,8 +142,9 @@ public class Member {
 	 * @param portfolio
 	 */
 	public void addStockPortfolio(StockPortfolio portfolio) {
-		// 중복 체크는 Set이 해줌
-		stockPortfolios.add(portfolio);
+		if (!this.stockPortfolios.contains(portfolio)) {
+			this.stockPortfolios.add(portfolio);
+		}
 
 		// 양방향 관계 설정(무한 루프 방지)
 		if (portfolio.getMember() != this) {
@@ -152,10 +157,35 @@ public class Member {
 	 * @param portfolio
 	 */
 	public void removeStockPortfolio(StockPortfolio portfolio) {
-		stockPortfolios.remove(portfolio);
+		this.stockPortfolios.remove(portfolio);
 
 		if (portfolio.getMember() == this) {
 			portfolio.setMember(null);
+		}
+	}
+
+	/**
+	 * StockTransactionHistories와의 양방향 연관관계 일관성 유지를 위한 메서드
+	 * @param histories
+	 */
+	public void addStockTransactionHistories(StockTransactionHistories histories) {
+		if (!this.stockTransactionHistories.contains(histories)) {
+			this.stockTransactionHistories.add(histories);
+		}
+
+		// 양방향 관계 설정(무한 루프 방지)
+		if (histories.getMember() != this) {
+			histories.setMember(this);
+		}
+	}
+
+	public void removeStockTransactionHistories(StockTransactionHistories histories) {
+		if (this.stockTransactionHistories.contains(histories) && histories.getMember() == this) {
+			this.stockTransactionHistories.remove(histories);
+		}
+
+		if (histories.getMember() == this) {
+			histories.setMember(null);
 		}
 	}
 }

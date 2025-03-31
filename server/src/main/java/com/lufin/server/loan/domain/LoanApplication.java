@@ -1,0 +1,110 @@
+package com.lufin.server.loan.domain;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.JoinColumn;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+import com.lufin.server.member.domain.Member;
+
+@Entity
+@Table(name = "loan_applications")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+public class LoanApplication {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "loan_application_id")
+	private Integer id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "loan_product_id", nullable = false)
+	private LoanProduct loanProduct;
+
+	@Column(name = "description", nullable = false)
+	private String description;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
+	private LoanApplicationStatus status = LoanApplicationStatus.PENDING;
+
+	@Column(name = "required_amount", nullable = false)
+	private Integer requiredAmount;
+
+	@Column(name = "interest_amount", nullable = false)
+	private Integer interestAmount;
+
+	@Column(name = "overdue_count")
+	private Integer overdueCount;
+
+	@Column(name = "next_payment_date")
+	private LocalDateTime nextPaymentDate;
+
+	@Column(name = "created_at", nullable = false)
+	private LocalDateTime createdAt;
+
+	@Column(name = "started_at")
+	private LocalDateTime startedAt;
+
+	@Column(name = "due_date")
+	private LocalDateTime dueDate;
+
+	public static LoanApplication create(
+		Member member,
+		LoanProduct loanProduct,
+		String description,
+		Integer requiredAmount,
+		Integer interestAmount
+	) {
+		LoanApplication application = new LoanApplication();
+		application.member = member;
+		application.loanProduct = loanProduct;
+		application.description = description;
+		application.status = LoanApplicationStatus.PENDING;
+		application.requiredAmount = requiredAmount;
+		application.interestAmount = interestAmount;
+		application.overdueCount = 0;
+		application.createdAt = LocalDateTime.now();
+		return application;
+	}
+
+	public void approve() {
+		this.status = LoanApplicationStatus.APPROVED;
+		this.startedAt = LocalDateTime.now();
+		int periodInMonths = (loanProduct.getPeriod() != null) ? loanProduct.getPeriod() : 12;
+		this.dueDate = this.startedAt.plusMonths(periodInMonths);
+	}
+
+	public void reject() {
+		this.status = LoanApplicationStatus.REJECTED;
+	}
+
+	public void open() {
+		this.status = LoanApplicationStatus.OPEN;
+	}
+
+	public void overdued() {
+		this.status = LoanApplicationStatus.OVERDUED;
+	}
+
+	public void close() {
+		this.status = LoanApplicationStatus.CLOSED;
+	}
+}

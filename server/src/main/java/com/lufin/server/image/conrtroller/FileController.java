@@ -31,4 +31,10 @@ public class FileController {
 
 		return ResponseEntity.ok(new PresignedUrlResponse(uploadUrl, key));
 	}
+
+	@GetMapping("/download-url")
+	public ResponseEntity<PresignedUrlResponse> getDownloadUrl(@RequestParam String key) {
+		String url = s3Service.generateDownloadUrl(key);
+		return ResponseEntity.ok(new PresignedUrlResponse(url, key));
+	}
 }

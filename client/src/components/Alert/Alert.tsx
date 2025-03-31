@@ -1,104 +1,68 @@
+import { useEffect } from 'react';
 import { Icon } from '../Icon/Icon';
 import Button from '../Button/Button';
-
-interface AlertButton {
-  label: string;
-  onClick: () => void;
-  variant?: 'solid' | 'outline' | 'ghost';
-  color?: 'primary' | 'danger' | 'neutral' | 'info';
-}
-
-interface AlertProps {
-  title: string;
-  description?: React.ReactNode;
-  status: 'info' | 'warning' | 'danger' | 'success';
-  primaryButton: AlertButton;
-  secondaryButton?: AlertButton;
-  buttonDirection?: 'row' | 'column';
-  className?: string;
-}
+import useAlertStore from '../../libs/store/alertStore';
 
 const statusConfig = {
-  info: {
-    icon: 'InfoCircle',
-    color: 'info',
-  },
-  warning: {
-    icon: 'Notification',
-    color: 'warning',
-  },
-  danger: {
-    icon: 'CloseCircle',
-    color: 'danger',
-  },
-  success: {
-    icon: 'TickCircle',
-    color: 'success',
-  },
+  info: { icon: 'InfoCircle', color: 'info' },
+  warning: { icon: 'Notification', color: 'warning' },
+  danger: { icon: 'CloseCircle', color: 'danger' },
+  success: { icon: 'TickCircle', color: 'success' },
 } as const;
 
-const Alert = ({
-  title,
-  description,
-  status,
-  primaryButton,
-  secondaryButton,
-  buttonDirection = 'column',
-  className = '',
-}: AlertProps) => {
+const Alert = () => {
+  const { isVisible, isOpening, title, item, description, status, primaryButton, secondaryButton } =
+    useAlertStore((state) => state);
+
+  useEffect(() => {
+    if (isVisible) {
+      setTimeout(() => {
+        useAlertStore.setState({ isOpening: true });
+      }, 0);
+    }
+  }, [isVisible]);
+
+  console.log(status);
   const { icon, color } = statusConfig[status];
 
   return (
-    <div className={`flex flex-col items-center p-4 rounded-2xl bg-white w-80 h-fit ${className}`}>
-      {/* Icon */}
-      <Icon
-        name={icon}
-        size={42}
-        color={color}
-        variant="Bold"
-        className="mb-4"
-      />
-
-      {/* Text Content */}
-      <div className="flex flex-col items-center text-center mb-6">
-        <h3 className="text-h3 font-bold text-black mb-2">{title}</h3>
-        {description && (
-          <p className="text-p2 text-dark-grey">{description}</p>
-        )}
-      </div>
-
-      {/* Buttons */}
-      <div 
-        className={`w-full flex ${
-          buttonDirection === 'row' 
-            ? 'flex-row gap-3 [&>*]:flex-1' 
-            : 'flex-col gap-2'
-        }`}
-      >
-        <Button
-          variant={primaryButton.variant || 'solid'}
-          color={primaryButton.color || 'primary'}
-          size="md"
-          full={buttonDirection === 'column'}
-          onClick={primaryButton.onClick}
+    isVisible && (
+      <div className='fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-black/80 z-50'>
+        <div
+          className={`w-80 h-fit p-8 rounded-2xl gap-8 bg-white flex flex-col items-center transition-all ease-out duration-300 ${isOpening ? 'scale-100 opacity-100' : 'scale-100 opacity-0'}`}
         >
-          {primaryButton.label}
-        </Button>
-        
-        {secondaryButton && (
-          <Button
-            variant={secondaryButton.variant || 'solid'}
-            color={secondaryButton.color || 'neutral'}
-            size="md" 
-            full={buttonDirection === 'column'}
-            onClick={secondaryButton.onClick}
-          >
-            {secondaryButton.label}
-          </Button>
-        )}
+          <div className='w-full h-full flex flex-col items-center gap-2'>
+            <Icon name={icon} size={42} color={color} variant='Bold' />
+            <h3 className='text-h3 font-bold text-black'>{title}</h3>
+            <div className='w-full'>{item}</div>
+            {description && <p className='text-p2 text-dark-grey'>{description}</p>}
+          </div>
+          <div className='w-full flex flex-row gap-2'>
+            <Button
+              variant={primaryButton?.variant || 'solid'}
+              color={primaryButton?.color || 'primary'}
+              size='md'
+              onClick={primaryButton?.onClick}
+              className='w-full'
+            >
+              {primaryButton?.label}
+            </Button>
+            {secondaryButton && (
+              <Button
+                variant={secondaryButton?.variant || 'solid'}
+                color={secondaryButton?.color || 'neutral'}
+                size='md'
+                onClick={secondaryButton?.onClick}
+                className='w-full'
+              >
+                {secondaryButton?.label}
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    )
   );
 };
 
-export default Alert; 
+export default Alert;

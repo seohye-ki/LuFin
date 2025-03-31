@@ -5,4 +5,6 @@ export const paths = {
   SHOP: '/shop',
   TEACHER_MISSION: '/mission/teacher',
   STUDENT_MISSION: '/mission',
+  DESIGN_SYSTEM: '/design-system',
+
 } as const;

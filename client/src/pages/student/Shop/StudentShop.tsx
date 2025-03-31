@@ -3,7 +3,7 @@ import SidebarLayout from '../../../components/Layout/SidebarLayout';
 import { dateUtil } from '../../../libs/utils/date-util';
 import Awning from './components/Awning';
 import Item from './components/Item';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -22,7 +22,7 @@ const itemsData = [
 ];
 
 const StudentShop = () => {
-  const [items, setItems] = useState(itemsData);
+  const [items] = useState(itemsData);
 
   const settings = {
     speed: 1000,

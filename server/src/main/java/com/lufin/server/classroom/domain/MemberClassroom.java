@@ -31,8 +31,8 @@ public class MemberClassroom {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "member_classroom_id")
-	private Long id;
+	@Column(name = "member_class_id")
+	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)

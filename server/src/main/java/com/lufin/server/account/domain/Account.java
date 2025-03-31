@@ -34,6 +34,7 @@ public class Account {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "account_id")
 	private Integer id;
 
 	@OneToOne(fetch = FetchType.LAZY)

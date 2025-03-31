@@ -154,8 +154,6 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 				throw new BusinessException(INVALID_INPUT_VALUE);
 			}
 
-			//CHECK: 필요하면 reject -> success로 변경이 안되는 것처럼 상태 변경 가능 여부 검증 로직 추가 필요
-			// validateStatusChange(participation.getStatus(), status);
 
 			/* JPA 더티 체킹으로 객체에 먼저 변경 사항이 캐시된 후, transaction이 끝날 때 자동으로 쿼리를 통해 DB를 업데이트 */
 			participation.changeMissionStatus(status);
@@ -169,16 +167,4 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
-
-	/*
-	 * 상태 변경이 유효한지 검증
-
-	private void validateStatusChange(MissionParticipationStatus current, MissionParticipationStatus target) {
-		// 예시: 이미 완료된 상태는 다시 변경할 수 없음
-		if (current == MissionParticipationStatus.SUCCESS || current == MissionParticipationStatus.FAILED) {
-			throw new BusinessException(INVALID_STATUS_CHANGE);
-		}
-
-	}
-	*/
 }

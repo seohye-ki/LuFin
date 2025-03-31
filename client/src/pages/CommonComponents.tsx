@@ -522,13 +522,12 @@ const CommonComponents = () => {
                 titleLeft='제목'
                 titleRight={<Icon name='Close' size={24} color='#8A8D8E' />}
                 titleSize='l'
-                content={
-                  <div className='flex flex-col gap-2'>
-                    <p className='text-p2 font-medium text-black'>내용</p>
-                  </div>
-                }
                 isModal
-              />
+              >
+                <div className='flex flex-col gap-2'>
+                  <p className='text-p2 font-medium text-black'>내용</p>
+                </div>
+              </DashBoardCard>
             </div>
             {/* Dashboard Card */}
             <div className='flex flex-col gap-4'>

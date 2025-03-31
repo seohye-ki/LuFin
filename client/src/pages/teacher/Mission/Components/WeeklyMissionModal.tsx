@@ -1,5 +1,5 @@
 import TableView from '../../../../components/Frame/TableView';
-import { missions, MissionDetail, missionDetails } from '../../../../types/Mission/mission';
+import { MissionDetail, missionDetails } from '../../../../types/Mission/mission';
 import moment from 'moment';
 import { Icon } from '../../../../components/Icon/Icon';
 import Badge from '../../../../components/Badge/Badge';

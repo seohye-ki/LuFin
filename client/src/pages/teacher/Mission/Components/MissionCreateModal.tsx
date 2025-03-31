@@ -102,14 +102,14 @@ const MissionCreateModal = ({ onClose }: MissionCreateModalProps) => {
             value={multipleImages}
             onChange={setMultipleImages}
           />
-          <div className='flex gap-2'>
-            <Button variant='solid' color='neutral' size='md' full onClick={onClose}>
-              취소
-            </Button>
-            <Button variant='solid' color='primary' size='md' full>
-              생성하기
-            </Button>
-          </div>
+        </div>
+        <div className='flex gap-2'>
+          <Button variant='solid' color='neutral' size='md' full onClick={onClose}>
+            취소
+          </Button>
+          <Button variant='solid' color='primary' size='md' full>
+            생성하기
+          </Button>
         </div>
       </Card>
     </div>

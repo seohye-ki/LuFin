@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
+  mainRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 const SidebarLayout = ({ children }: Props) => {

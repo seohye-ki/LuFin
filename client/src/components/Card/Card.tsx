@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-type DashBoardCardProps = {
+type CardProps = {
   titleLeft?: string;
   titleRight?: string | ReactNode;
   titleSize?: 's' | 'm' | 'l';
@@ -9,14 +9,14 @@ type DashBoardCardProps = {
   isModal?: boolean;
 };
 
-const DashBoardCard = ({
+const Card = ({
   titleLeft,
   titleRight,
   titleSize = 'l',
   children,
   className,
   isModal = false,
-}: DashBoardCardProps) => {
+}: CardProps) => {
   const titleStyle = {
     s: 'text-c1 font-semibold text-grey',
     m: 'text-p2 font-semibold text-black',
@@ -37,4 +37,4 @@ const DashBoardCard = ({
   );
 };
 
-export default DashBoardCard;
+export default Card;

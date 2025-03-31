@@ -1,4 +1,4 @@
-import DashBoardCard from '../../../components/Card/DashBoardCard';
+import Card from '../../../components/Card/Card';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
 import { dateUtil } from '../../../libs/utils/date-util';
 import Awning from './components/Awning';
@@ -36,7 +36,7 @@ const StudentShop = () => {
   return (
     <SidebarLayout>
       <div className='w-full h-full flex flex-col gap-4'>
-        <DashBoardCard titleLeft='내 아이템' className='w-full h-fit pb-7'>
+        <Card titleLeft='내 아이템' className='w-full h-fit pb-7'>
           <Slider {...settings}>
             {items.map((item, index) => (
               <div key={index}>
@@ -44,8 +44,8 @@ const StudentShop = () => {
               </div>
             ))}
           </Slider>
-        </DashBoardCard>
-        <DashBoardCard className='w-full h-full bg-yellow-30 overflow-hidden'>
+        </Card>
+        <Card className='w-full h-full bg-yellow-30 overflow-hidden'>
           <Awning />
           <div className='w-full h-fit flex flex-row flex-wrap gap-4 justify-start items-start overflow-y-auto'>
             {items.map((item, index) => (
@@ -54,7 +54,7 @@ const StudentShop = () => {
               </div>
             ))}
           </div>
-        </DashBoardCard>
+        </Card>
       </div>
     </SidebarLayout>
   );

@@ -1,6 +1,7 @@
 package com.lufin.server.member.service.impl;
 
 import static com.lufin.server.common.constants.ErrorCode.*;
+import static com.lufin.server.member.util.MaskingUtil.*;
 import static com.lufin.server.member.util.MemberValidator.*;
 
 import java.util.concurrent.TimeUnit;
@@ -18,7 +19,9 @@ import com.lufin.server.member.repository.MemberRepository;
 import com.lufin.server.member.service.RegisterService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RegisterServiceImpl implements RegisterService {
@@ -32,9 +35,14 @@ public class RegisterServiceImpl implements RegisterService {
 
 		// 이메일 검증 하고왔나요?
 		String redisEmail = redisTemplate.opsForValue().get("email" + request.email());
+		log.info("[회원가입 요청] 이메일: {}", maskEmail(request.email()));
 		if (redisEmail == null) {
+			log.warn("🔐[회원가입 실패 - 이메일 인증 과정 누락] 이메일: {}", maskEmail(request.email()));
 			throw new BusinessException(UNAUTHORIZED_ACCESS);
 		}
+
+		redisTemplate.delete(redisEmail);
+
 		// 비밀번호 유효성 검증
 		isValidPassword(request.password());
 
@@ -56,11 +64,14 @@ public class RegisterServiceImpl implements RegisterService {
 				request.password(),
 				request.secondaryPassword());
 		} else {
+			log.warn("🔐[회원가입 실패] 이메일:{}, Role:{}", maskEmail(request.email()), request.role().name());
 			throw new BusinessException(INVALID_ROLE_SELECTION);
 		}
 
 		// 저장
 		memberRepository.save(member);
+		log.info("[회원가입 성공] 이메일:{}, 이름:{}, Role:{}", maskEmail(member.getEmail()), maskName(member.getName()),
+			member.getMemberRole().name());
 
 		// 반환
 		return new RegisterResponse(member.getEmail(), member.getMemberRole());
@@ -70,6 +81,7 @@ public class RegisterServiceImpl implements RegisterService {
 	public void validateRegisterEmail(String inputEmail) {
 		isValidEmail(inputEmail);
 		if (memberRepository.findByEmail(inputEmail).isPresent()) {
+			log.warn("🔐[이메일 인증 실패 - 이메일 중복] 이메일: {}", maskEmail(inputEmail));
 			throw new BusinessException(EMAIL_ALREADY_REGISTERED);
 		}
 		// 이메일 중복체크 통과 시 redis에 5분간 저장

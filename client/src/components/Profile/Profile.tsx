@@ -22,8 +22,8 @@ const Profile = ({
       className={twMerge(
         'flex',
         isColumn
-          ? 'flex-col p-0 gap-[4px] items-center w-full h-[58px]'
-          : 'rounded-lg flex-row px-2 py-2 gap-[10px] items-center w-full h-[58px]',
+          ? 'flex-col p-0 gap-[4px] items-center h-[58px]'
+          : 'rounded-lg flex-row px-2 py-2 gap-[10px] items-center h-[58px]',
         className,
       )}
     >

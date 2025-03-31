@@ -10,9 +10,10 @@ export type TableRow = {
 interface TableViewProps {
   columns: TableColumn[];
   rows: TableRow[];
+  onRowClick?: (row: TableRow) => void;
 }
 
-const TableView = ({ columns, rows }: TableViewProps) => {
+const TableView = ({ columns, rows, onRowClick }: TableViewProps) => {
   return (
     <div className='w-full h-full'>
       <table className='w-full h-full border-separate border-spacing-0'>
@@ -34,7 +35,11 @@ const TableView = ({ columns, rows }: TableViewProps) => {
         </thead>
         <tbody className='bg-white'>
           {rows.map((row, index) => (
-            <tr key={index}>
+            <tr
+              key={index}
+              className={`hover:bg-light-cyan-30 ${onRowClick ? 'cursor-pointer' : ''}`}
+              onClick={() => onRowClick?.(row)}
+            >
               {columns.map((column) => (
                 <td
                   key={column.key}

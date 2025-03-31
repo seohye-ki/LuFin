@@ -79,3 +79,72 @@ export const missions: Mission[] = [
     updatedAt: '2025-03-21',
   },
 ];
+
+export const missionImages: MissionImage[] = [
+  {
+    mission_image_id: 1,
+    mission_id: 1,
+    image_url: 'https://picsum.photos/200/300?random=1',
+  },
+  {
+    mission_image_id: 2,
+    mission_id: 1,
+    image_url: 'https://picsum.photos/200/300?random=2',
+  },
+  {
+    mission_image_id: 3,
+    mission_id: 1,
+    image_url: 'https://picsum.photos/200/300?random=3',
+  },
+  {
+    mission_image_id: 4,
+    mission_id: 2,
+    image_url: 'https://picsum.photos/200/300?random=4',
+  },
+  {
+    mission_image_id: 5,
+    mission_id: 2,
+    image_url: 'https://picsum.photos/200/300?random=5',
+  },
+];
+
+export const missionParticipations: MissionParticipation[] = [
+  {
+    participation_id: 1,
+    mission_id: 1,
+    member_id: 1,
+    status: 'SUCCESS',
+    wage_status: true,
+    reject_count: 0,
+    createdAt: '2025-03-20',
+    updatedAt: '2025-03-20',
+  },
+  {
+    participation_id: 2,
+    mission_id: 1,
+    member_id: 2,
+    status: 'IN_PROGRESS',
+    wage_status: false,
+    reject_count: 0,
+    createdAt: '2025-03-20',
+    updatedAt: '2025-03-20',
+  },
+  {
+    participation_id: 3,
+    mission_id: 2,
+    member_id: 3,
+    status: 'CHECKING',
+    wage_status: false,
+    reject_count: 1,
+    createdAt: '2025-03-20',
+    updatedAt: '2025-03-20',
+  },
+];
+
+export const missionDetails: MissionDetail[] = missions.map((mission) => ({
+  ...mission,
+  mission_images: missionImages.filter((image) => image.mission_id === mission.mission_id),
+  mission_participations: missionParticipations.filter(
+    (participation) => participation.mission_id === mission.mission_id,
+  ),
+}));

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Doughnut } from 'react-ChartJS-2';
+import { Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   Title,
@@ -8,8 +8,6 @@ import {
   ArcElement,
   CategoryScale,
   LinearScale,
-  ChartData,
-  ChartOptions,
 } from 'chart.js';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
@@ -24,7 +22,7 @@ interface stockChartProps {
 }
 
 const StockChart: React.FC<stockChartProps> = ({ stocks }) => {
-  const data: ChartData = {
+  const data = {
     labels: stocks.map((stock) => stock.stock),
     datasets: [
       {
@@ -35,13 +33,13 @@ const StockChart: React.FC<stockChartProps> = ({ stocks }) => {
     ],
   };
 
-  const options: ChartOptions = {
+  const options = {
     responsive: true,
     maintainAspectRatio: false,
     cutout: '60%',
     plugins: {
       legend: {
-        position: 'right',
+        position: 'right' as const,
         labels: {
           usePointStyle: true,
           color: '#242424',

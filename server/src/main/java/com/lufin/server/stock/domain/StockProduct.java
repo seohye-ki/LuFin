@@ -29,10 +29,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StockProduct {
-	//TODO: 다른 테이블과 연관관계 설정
+	//TODO: StockPortfolio 테이블과 연관관계 설정
 	@Builder.Default
 	@OneToMany(mappedBy = "stockProduct", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<StockNews> news = new ArrayList<>();
+
+	@Builder.Default
+	@OneToMany(mappedBy = "stockProduct", cascade = CascadeType.ALL, orphanRemoval = true)
+	private final List<StockPriceHistory> priceHistory = new ArrayList<>();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -102,6 +106,22 @@ public class StockProduct {
 		}
 	}
 
+	/**
+	 * 주식 가격 기록(StockPriceHistory)와의 양방향 연관관계를 위한 메서드
+	 * @param priceHistory
+	 * @return
+	 */
+	public void addPriceHistory(StockPriceHistory priceHistory) {
+		if (!this.priceHistory.contains(priceHistory)) {
+			this.priceHistory.add(priceHistory);
+		}
+
+		// 양방향 관계 설정 (무한 루프 방지 조건)
+		if (priceHistory.getStockProduct() != this) {
+			priceHistory.setStockProduct(this);
+		}
+	}
+
 	// 무한 루프 방지를 위해 contains()를 사용하면서 id를 기준으로 체크하기 위해 equals override
 	@Override
 	public boolean equals(Object o) {
@@ -112,7 +132,7 @@ public class StockProduct {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-			
+
 		StockProduct that = (StockProduct)o;
 		return id == that.id;
 	}

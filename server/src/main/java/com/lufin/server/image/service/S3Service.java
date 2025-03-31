@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class S3Service {
 
-	private static final List<String> ALLOWED_EXTENSIONS = List.of("png", "jpg");
+	private static final List<String> ALLOWED_EXTENSIONS = List.of("png", "jpg", "jpeg");
 	private final AmazonS3 amazonS3;
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucketName;
@@ -37,6 +37,17 @@ public class S3Service {
 			.withMethod(HttpMethod.PUT)
 			.withExpiration(expiration)
 			.withContentType(getMimeType(extension));
+
+		URL url = amazonS3.generatePresignedUrl(request);
+		return url.toString();
+	}
+
+	public String generateDownloadUrl(String key) {
+		Date expiration = new Date(System.currentTimeMillis() + (1000 * 60 * 5)); // 5분 유효
+
+		GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, key)
+			.withMethod(HttpMethod.GET)
+			.withExpiration(expiration);
 
 		URL url = amazonS3.generatePresignedUrl(request);
 		return url.toString();

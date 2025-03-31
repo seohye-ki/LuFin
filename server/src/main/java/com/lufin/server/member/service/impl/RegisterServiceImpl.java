@@ -34,7 +34,7 @@ public class RegisterServiceImpl implements RegisterService {
 	public RegisterResponse register(RegisterRequest request) {
 
 		// 이메일 검증 하고왔나요?
-		String redisEmail = redisTemplate.opsForValue().get("email" + request.email());
+		String redisEmail = redisTemplate.opsForValue().get("email:" + request.email());
 		log.info("[회원가입 요청] 이메일: {}", maskEmail(request.email()));
 		if (redisEmail == null) {
 			log.warn("🔐[회원가입 실패 - 이메일 인증 과정 누락] 이메일: {}", maskEmail(request.email()));

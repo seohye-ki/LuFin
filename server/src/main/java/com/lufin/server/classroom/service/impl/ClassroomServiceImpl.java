@@ -3,14 +3,17 @@ package com.lufin.server.classroom.service.impl;
 import static com.lufin.server.common.constants.ErrorCode.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.classroom.domain.Classroom;
+import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.classroom.dto.ClassRequest;
 import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.repository.ClassroomRepository;
+import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.classroom.service.ClassroomService;
 import com.lufin.server.classroom.util.ClassCodeGenerator;
 import com.lufin.server.common.exception.BusinessException;
@@ -24,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class ClassroomServiceImpl implements ClassroomService {
 
 	private final ClassroomRepository classroomRepository;
+	private final MemberClassroomRepository memberClassroomRepository;
 
 	@Transactional
 	@Override
@@ -40,6 +44,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 			throw new BusinessException(DUPLICATE_CLASSROOM);
 		}
 
+		// 클래스 코드 생성
 		String classCode = generateUniqueClassCode();
 
 		Classroom newClass = Classroom.create(
@@ -49,10 +54,20 @@ public class ClassroomServiceImpl implements ClassroomService {
 			request.grade(),
 			request.classGroup(),
 			request.name(),
-			request.fileName()
+			request.key()
 		);
 
 		classroomRepository.save(newClass);
+		Optional<MemberClassroom> hasCurrentClassroom = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(
+			currentMember.getId());
+
+		// 기존에 소속된 클래스(isCurrent=true)가 있다면 deactivate() → save() 없는 이유 : 더티 체킹에 의존
+		if (hasCurrentClassroom.isPresent()) {
+			hasCurrentClassroom.get().deactivate();
+		}
+		// 교사를 클래스에 매핑
+		MemberClassroom addTeacher = MemberClassroom.enroll(teacher, newClass);
+		memberClassroomRepository.save(addTeacher);
 
 		return new ClassResponse(
 			newClass.getId(),

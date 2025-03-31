@@ -41,8 +41,7 @@ class ClassroomServiceTest {
 		memberRepository.save(teacher);
 
 		ClassRequest request = new ClassRequest(
-			"싸피반", "서울초등학교", 4, 2, "classroom-thumbnail/36bfc1d0-d9ea-4d0e-a812-ea37877f4866.png", "image/png"
-		);
+			"싸피반", "서울초등학교", 4, 2, "classrooms/36bfc1d0-d9ea-4d0e-a812-ea37877f4866.png");
 
 		// when
 		ClassResponse response = classroomService.createClassroom(request, teacher);
@@ -64,8 +63,7 @@ class ClassroomServiceTest {
 		memberRepository.save(student);
 
 		ClassRequest request = new ClassRequest(
-			"열정반", "부산초등학교", 5, 1, "logo.png", "image/png"
-		);
+			"열정반", "부산초등학교", 5, 1, "logo.png");
 
 		// when & then
 		assertThatThrownBy(() -> classroomService.createClassroom(request, student))

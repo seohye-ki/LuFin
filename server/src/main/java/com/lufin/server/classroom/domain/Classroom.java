@@ -90,7 +90,7 @@ public class Classroom {
 		if (thumbnailKey != null) {
 			validateThumbnailFileName(thumbnailKey);
 		} else {
-			thumbnailKey = "default";
+			thumbnailKey = "classrooms/302e3f79-083c-4e7c-adf7-a788d9b9c891.jpg";
 		}
 		return new Classroom(teacher, code, school, grade, classGroup, name, thumbnailKey);
 	}

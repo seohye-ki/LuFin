@@ -2,6 +2,8 @@ package com.lufin.server.mission.service;
 
 import static com.lufin.server.common.constants.ErrorCode.*;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,7 @@ import com.lufin.server.mission.domain.Mission;
 import com.lufin.server.mission.domain.MissionParticipation;
 import com.lufin.server.mission.dto.MissionParticipationResponseDto;
 import com.lufin.server.mission.repository.MissionParticipationRepository;
+import com.lufin.server.mission.repository.MissionParticipationRepositoryCustom;
 import com.lufin.server.mission.repository.MissionRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +28,15 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 
 	private final MissionRepository missionRepository;
 	private final MissionParticipationRepository missionParticipationRepository;
+	private final MissionParticipationRepositoryCustom missionParticipationRepositoryCustom;
 
+	/**
+	 * 미션 참여 신청
+	 * @param classId
+	 * @param missionId
+	 * @param currentMember
+	 * @return
+	 */
 	@Override
 	@Transactional
 	public MissionParticipationResponseDto.MissionApplicationResponseDto applyMission(Integer classId,
@@ -67,5 +78,38 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
 		}
+	}
+
+	/**
+	 * 미션 참여자 목록 전체 조회
+	 * @param classId
+	 * @param missionId
+	 * @param currentMember
+	 * @return
+	 */
+	@Override
+	public List<MissionParticipationResponseDto.MissionParticipationSummaryResponseDto> getAllMissionParticipants(
+		Integer classId,
+		Integer missionId,
+		Member currentMember
+	) {
+		log.info("미션 참여자 전체 목록 조회 요청: classId: {}, missionId: {}", classId, missionId);
+
+		if (classId == null || missionId == null || currentMember == null) {
+			throw new BusinessException(MISSING_REQUIRED_VALUE);
+		}
+
+		try {
+			List<MissionParticipationResponseDto.MissionParticipationSummaryResponseDto> missionParticipants = missionParticipationRepositoryCustom.getMissionParticipationList(
+				classId,
+				missionId
+			);
+
+			return missionParticipants;
+		} catch (RuntimeException e) {
+			log.error("An error occurred: {}", e.getMessage(), e);
+			throw new BusinessException(SERVER_ERROR);
+		}
+
 	}
 }

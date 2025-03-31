@@ -4,8 +4,9 @@ import { paths } from './paths';
 // pages
 import Home from '../pages/common/Home/Home';
 import PrivateRoute from './PrivateRoute';
-import CommonComponents from '../pages/CommonComponents';
+import CommonComponents from '../pages/common/Home/CommonComponents';
 import TeacherMission from '../pages/teacher/Mission/TeacherMission';
+import StudentShop from '../pages/student/Shop/StudentShop';
 
 const Router = () => {
   return (
@@ -13,6 +14,7 @@ const Router = () => {
       <Routes>
         <Route path={paths.HOME} element={<Home />} />
         <Route path={paths.COMMON_COMPONENTS} element={<CommonComponents />} />
+        <Route path={paths.SHOP} element={<StudentShop />} />
         <Route path={paths.TEACHER_MISSION} element={<TeacherMission />} />
         {/* 인증이 필요한 라우트들은 PrivateRoute로 감싸기 */}
         <Route element={<PrivateRoute />}>{/* 여기에 인증이 필요한 라우트들 추가 */}</Route>

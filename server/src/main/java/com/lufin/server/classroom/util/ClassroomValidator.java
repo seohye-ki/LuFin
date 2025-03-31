@@ -14,7 +14,7 @@ public class ClassroomValidator {
 
 	private static final Pattern CLASS_CODE_PATTERN = Pattern.compile("^[a-zA-Z0-9]{5}$");
 	private static final Pattern FILE_NAME_PATTERN =
-		Pattern.compile("^classroom-thumbnail/[a-f0-9\\-]{36}\\.(png|jpg|jpeg)$", Pattern.CASE_INSENSITIVE);
+		Pattern.compile("^classrooms/[a-f0-9\\-]{36}\\.(png|jpg|jpeg)$", Pattern.CASE_INSENSITIVE);
 
 	private ClassroomValidator() {
 	}

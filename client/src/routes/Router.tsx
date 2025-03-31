@@ -9,12 +9,16 @@ import CommonComponents from '../pages/common/DesignSystem/CommonComponents';
 import TeacherMission from '../pages/teacher/Mission/TeacherMission';
 import StudentMission from '../pages/student/Mission/StudentMission';
 import StudentShop from '../pages/student/Shop/StudentShop';
+import Login from '../pages/common/Login/Login';
+import Register from '../pages/common/Register/Register';
 
 const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path={paths.HOME} element={<Home />} />
+        <Route path={paths.LOGIN} element={<Login />} />
+        <Route path={paths.REGISTER} element={<Register />} />
         <Route path={paths.DESIGN_SYSTEM} element={<DesignSystem />} />
         <Route path={paths.COMMON_COMPONENTS} element={<CommonComponents />} />
         <Route path={paths.SHOP} element={<StudentShop />} />

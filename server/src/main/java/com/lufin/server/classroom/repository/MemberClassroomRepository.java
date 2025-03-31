@@ -23,8 +23,11 @@ public interface MemberClassroomRepository extends JpaRepository<MemberClassroom
 	@Query("""
 		SELECT COUNT(m) FROM MemberClassroom m WHERE m.classroom.id = :classroomId AND m.isCurrent=true
 		""")
-	int countByClassroom_IdAndMemberIsCurrentTrue(Integer classroomId);
+	int countByClassroom_Id(Integer classroomId);
 
 	// 특정 회원이 특정 학급에 소속되었는지 확인 (중복 등록 방지)
 	boolean existsByMember_IdAndClassroom_Id(Integer memberId, Integer classroomId);
+
+	// 특정 회원이 소속된 학급 조회
+	List<MemberClassroom> findByMember_Id(int memberId);
 }

@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.lufin.server.mission.domain.MissionParticipation;
+import com.lufin.server.stock.domain.StockPortfolio;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,13 +32,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
+	/* 양방향 연관관계 */
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<MissionParticipation> missionParticipations = new HashSet<>();
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<StockPortfolio> stockPortfolios = new HashSet<>();
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_id")
 	private Integer id;
-
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<MissionParticipation> missionParticipations = new HashSet<>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "member_role", nullable = false)
@@ -126,4 +131,29 @@ public class Member {
 		}
 	}
 
+	/**
+	 * Stockportfolio와의 양방향 연관관계 일관성 유지를 위한 메서드
+	 * @param portfolio
+	 */
+	public void addStockPortfolio(StockPortfolio portfolio) {
+		// 중복 체크는 Set이 해줌
+		stockPortfolios.add(portfolio);
+
+		// 양방향 관계 설정(무한 루프 방지)
+		if (portfolio.getMember() != this) {
+			portfolio.setMember(this);
+		}
+	}
+
+	/**
+	 * Stockportfolio와의 양방향 연관관계 일관성 유지를 위한 메서드
+	 * @param portfolio
+	 */
+	public void removeStockPortfolio(StockPortfolio portfolio) {
+		stockPortfolios.remove(portfolio);
+
+		if (portfolio.getMember() == this) {
+			portfolio.setMember(null);
+		}
+	}
 }

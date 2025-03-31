@@ -29,7 +29,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StockProduct {
-	//TODO: StockPortfolio 테이블과 연관관계 설정
+	@Builder.Default
+	@OneToMany(mappedBy = "stockPortfolio", cascade = CascadeType.ALL, orphanRemoval = true)
+	private final List<StockPortfolio> portfolios = new ArrayList<>();
+
 	@Builder.Default
 	@OneToMany(mappedBy = "stockProduct", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<StockNews> news = new ArrayList<>();
@@ -119,6 +122,22 @@ public class StockProduct {
 		// 양방향 관계 설정 (무한 루프 방지 조건)
 		if (priceHistory.getStockProduct() != this) {
 			priceHistory.setStockProduct(this);
+		}
+	}
+
+	/**
+	 * 주식 포트폴리오(StockPortfolio)와의 양방향 연관관계를 위한 메서드
+	 * @param portfolio
+	 * @return
+	 */
+	public void addPortfolio(StockPortfolio portfolio) {
+		if (!this.portfolios.contains(portfolio)) {
+			this.portfolios.add(portfolio);
+		}
+
+		// 양방향 관계 설정 (무한 루프 방지 조건)
+		if (portfolio.getStockProduct() != this) {
+			portfolio.setStockProduct(this);
 		}
 	}
 

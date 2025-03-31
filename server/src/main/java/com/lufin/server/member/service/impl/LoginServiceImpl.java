@@ -1,6 +1,7 @@
 package com.lufin.server.member.service.impl;
 
 import static com.lufin.server.common.constants.ErrorCode.*;
+import static com.lufin.server.member.util.MaskingUtil.*;
 import static com.lufin.server.member.util.MemberValidator.*;
 
 import java.util.Optional;
@@ -39,26 +40,31 @@ public class LoginServiceImpl implements LoginService {
 	@Override
 	public LoginResponse login(String inputEmail, String inputPassword) {
 
-		// 입력값 검증
-		isValidEmail(inputEmail);
-		isValidPassword(inputPassword);
-
 		String failKey = LOGIN_FAIL_PREFIX + inputEmail;
-
 		log.info("[로그인 요청] 이메일: {}", maskEmail(inputEmail));
 
 		// 로그인 차단 여부 확인
 		loginFailCheck(failKey);
 
+		try {
+			// 입력값 검증
+			isValidEmail(inputEmail);
+			isValidPassword(inputPassword);
+		} catch (BusinessException e) {
+			log.warn("🔐[로그인 실패 - 입력값 오류] 이메일: {}, 이유: {}", maskEmail(inputEmail), e.getMessage());
+			increaseLoginFailCount(failKey);
+			throw e; // 다시 던져서 전역 예외 처리됨
+		}
+
 		Member member = memberRepository.findByEmail(inputEmail)
 			.orElseThrow(() -> {
-				log.warn("[로그인 실패] 존재하지 않는 이메일: {}", maskEmail(inputEmail));
+				log.warn("🔐[로그인 실패] 존재하지 않는 이메일: {}", maskEmail(inputEmail));
 				increaseLoginFailCount(failKey);
 				return new BusinessException(INVALID_CREDENTIALS);
 			});
 
 		if (!member.getAuth().isPasswordMatch(inputPassword)) {
-			log.warn("[로그인 실패] 비밀번호 불일치 - 이메일: {}", maskEmail(inputEmail));
+			log.warn("🔐[로그인 실패] 비밀번호 불일치 - 이메일: {}", maskEmail(inputEmail));
 			increaseLoginFailCount(failKey);
 			throw new BusinessException(INVALID_CREDENTIALS);
 		}
@@ -67,23 +73,27 @@ public class LoginServiceImpl implements LoginService {
 		redisTemplate.delete(failKey);
 		log.info("[로그인 성공] 사용자 ID: {}", member.getId());
 
+		// Optional<MemberClassroom> 현재 로그인한 멤버가 클래스에 등록되어 있다면 값이 있고, 아니면 비어있음
+		Optional<MemberClassroom> optionalClassroom = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(
+			member.getId());
+		int classId = optionalClassroom.map(c -> c.getClassroom().getId()).orElse(0);
+
 		// Token 발급
-		Result getTokens = createTokens(member);
+		Result getTokens = createTokens(member, optionalClassroom);
 
 		// 로그인 성공
 		member.updateLastLogin();
 
-		log.info("[로그인 완료] 사용자 ID: {}, 역할: {}", member.getId(), member.getMemberRole().name());
+		log.info("[로그인 완료] 사용자 ID: {}, 이름: {}, Role: {}, 소속 반: {}", member.getId(), maskName(member.getName()),
+			member.getMemberRole().name(), classId);
 
-		return new LoginResponse(getTokens.accessToken(), getTokens.refreshToken(), member.getMemberRole().name());
+		return new LoginResponse(getTokens.accessToken(), getTokens.refreshToken(), member.getMemberRole().name(),
+			classId);
 	}
 
 	// 사용자 정보로 액세스 토큰과 리프레시 토큰을 생성
-	private Result createTokens(Member member) {
+	private Result createTokens(Member member, Optional<MemberClassroom> optionalClassroom) {
 		String accessToken;
-		// Optional<MemberClassroom> 현재 로그인한 멤버가 클래스에 등록되어 있다면 값이 있고, 아니면 비어있음
-		Optional<MemberClassroom> optionalClassroom = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(
-			member.getId());
 
 		if (optionalClassroom.isPresent()) {
 			int classId = optionalClassroom.get().getClassroom().getId();
@@ -109,7 +119,7 @@ public class LoginServiceImpl implements LoginService {
 		if (failCount >= MAX_LOGIN_FAIL_COUNT) {
 			Long ttl = redisTemplate.getExpire(failKey, TimeUnit.SECONDS);
 			if (ttl != null && ttl > 0) {
-				log.warn("[로그인 차단] 키: {}, 남은 차단 시간(초): {}", failKey, ttl);
+				log.warn("🔐[로그인 차단] 키: {}, 남은 차단 시간(초): {}", failKey, ttl);
 				throw new BusinessException(ACCOUNT_TEMPORARILY_LOCKED);
 			}
 		}
@@ -119,36 +129,18 @@ public class LoginServiceImpl implements LoginService {
 		Long count = redisTemplate.opsForValue().increment(failKey);
 
 		if (count == null) {
-			log.error("[로그인 실패] Redis 오류로 실패 횟수를 가져오지 못했습니다.");
+			log.error("🔐[로그인 실패] Redis 오류로 실패 횟수를 가져오지 못했습니다.");
 			return;
 		}
 
 		// 실패 횟수가 MAX를 처음으로 초과한 경우에만 TTL 설정
 		if (count == MAX_LOGIN_FAIL_COUNT + 1) {
 			redisTemplate.expire(failKey, LOGIN_BLOCK_DURATION_MINUTES, TimeUnit.MINUTES);
-			log.warn("[로그인 차단 시작] 키: {}, 실패 횟수: {}, 차단 시간(분): {}", failKey, count, LOGIN_BLOCK_DURATION_MINUTES);
+			log.warn("🔐[로그인 차단 시작] 키: {}, 실패 횟수: {}, 차단 시간(분): {}", failKey, count, LOGIN_BLOCK_DURATION_MINUTES);
 		} else {
 			// TTL 연장하지 않음 (누적만)
-			log.warn("[로그인 실패 횟수 증가] 키: {}, 현재 실패 횟수: {}", failKey, count);
+			log.warn("🔐[로그인 실패 횟수 증가] 키: {}, 현재 실패 횟수: {}", failKey, count);
 		}
-	}
-
-	// 예: example@gmail.com -> e***e@gmail.com
-	private String maskEmail(String email) {
-		int atIndex = email.indexOf('@');
-		if (atIndex <= 1) {
-			return email; // 이메일 형식이 아닌 경우 그대로 반환
-		}
-
-		String localPart = email.substring(0, atIndex);
-		String domainPart = email.substring(atIndex + 1);
-
-		String maskedLocal = localPart.charAt(0)
-			+ "***"
-			+ (localPart.length() > 1 ? localPart.charAt(localPart.length() - 1) : "");
-
-		// 도메인은 가리지 않음
-		return maskedLocal + "@" + domainPart;
 	}
 
 	private record Result(String accessToken, String refreshToken) {

@@ -101,7 +101,7 @@ public class MissionServiceImpl implements MissionService {
 
 		try {
 
-			if (!String.valueOf(currentMember.getMemberRole()).equals("TEACHER")) {
+			if (currentMember.getMemberRole() != MemberRole.TEACHER) {
 				throw new BusinessException(FORBIDDEN_REQUEST);
 			}
 
@@ -198,4 +198,5 @@ public class MissionServiceImpl implements MissionService {
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
+
 }

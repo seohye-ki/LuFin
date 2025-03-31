@@ -135,12 +135,11 @@ public class MissionController {
 
 		Member currentMember = UserContext.get();
 		Enum<MemberRole> role = currentMember.getMemberRole();
-		
+
 		MissionResponseDto.MissionDetailResponseDto response = missionService.putMission(requestDto, classId, missionId,
 			role);
 
 		return ResponseEntity.status(200).body(ApiResponse.success(response));
 	}
 
-	/* 미션 참여 관련 */
 }

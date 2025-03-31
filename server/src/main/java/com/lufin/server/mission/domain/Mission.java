@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.lufin.server.classroom.domain.Classroom;
+import com.lufin.server.common.constants.ErrorCode;
+import com.lufin.server.common.exception.BusinessException;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -32,7 +34,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "mission")
+@Table(name = "missions")
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -169,8 +171,7 @@ public class Mission {
 
 	public void incrementParticipants() {
 		if (this.currentParticipants >= this.maxParticipants) {
-			//TODO: error 코드 변경
-			throw new IllegalStateException("Cannot exceed maximum participants: " + this.maxParticipants);
+			throw new BusinessException(ErrorCode.MISSION_CAPACITY_FULL);
 		}
 		this.currentParticipants++;
 	}
@@ -178,7 +179,7 @@ public class Mission {
 	public void decrementParticipants() {
 		if (this.currentParticipants <= 0) {
 			//TODO: error 코드 변경
-			throw new IllegalStateException("Current participants cannot be negative");
+			throw new BusinessException(ErrorCode.REQUEST_ALREADY_HANDLED);
 		}
 		this.currentParticipants--;
 	}

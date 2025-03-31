@@ -3,7 +3,12 @@ package com.lufin.server.member.domain;
 import static com.lufin.server.member.util.MemberValidator.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.lufin.server.mission.domain.MissionParticipation;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -12,6 +17,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -29,6 +35,9 @@ public class Member {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_id")
 	private Integer id;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<MissionParticipation> missionParticipations = new HashSet<>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "member_role", nullable = false)
@@ -91,4 +100,30 @@ public class Member {
 	public void updateLastLogin() {
 		this.auth.updateLastLogin();
 	}
+
+	/**
+	 * MissionParticipation과의 양방향 연관관계 일관성 유지를 위한 메서드
+	 * @param participation
+	 */
+	public void addMissionParticipation(MissionParticipation participation) {
+		if (participation != null) {
+			this.missionParticipations.add(participation);
+			// 이미 참여에 회원이 설정되어 있지 않은 경우에만 설정 (무한루프 방지)
+			if (participation.getMember() != this) {
+				participation.setMember(this);
+			}
+		}
+	}
+
+	/**
+	 * MissionParticipation과의 양방향 연관관계 일관성 유지를 위한 메서드
+	 * @param participation
+	 */
+	public void removeMissionParticipation(MissionParticipation participation) {
+		if (participation != null) {
+			this.missionParticipations.remove(participation);
+			participation.setMember(null);
+		}
+	}
+
 }

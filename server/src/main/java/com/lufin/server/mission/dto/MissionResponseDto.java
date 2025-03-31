@@ -92,6 +92,10 @@ public class MissionResponseDto {
 		}
 	}
 
+	/**
+	 * 미션 등록 응답 DTO
+	 * @param missionId
+	 */
 	public record MissionPostResponseDto(Integer missionId) {
 		@QueryProjection
 		public MissionPostResponseDto {

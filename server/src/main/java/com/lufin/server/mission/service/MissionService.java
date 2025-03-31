@@ -24,4 +24,5 @@ public interface MissionService {
 	// 미션 수정
 	MissionResponseDto.MissionDetailResponseDto putMission(MissionRequestDto.MissionRequestInfoDto requestDto,
 		Integer classId, Integer missionId, Enum<MemberRole> role);
+
 }

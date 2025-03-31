@@ -3,8 +3,9 @@ import { paths } from './paths';
 
 // pages
 import Home from '../pages/common/Home/Home';
+import DesignSystem from '../pages/common/DesignSystem/DesignSystem';
 import PrivateRoute from './PrivateRoute';
-import CommonComponents from '../pages/common/Home/CommonComponents';
+import CommonComponents from '../pages/common/DesignSystem/CommonComponents';
 import TeacherMission from '../pages/teacher/Mission/TeacherMission';
 import StudentShop from '../pages/student/Shop/StudentShop';
 
@@ -13,6 +14,7 @@ const Router = () => {
     <BrowserRouter>
       <Routes>
         <Route path={paths.HOME} element={<Home />} />
+        <Route path={paths.DESIGN_SYSTEM} element={<DesignSystem />} />
         <Route path={paths.COMMON_COMPONENTS} element={<CommonComponents />} />
         <Route path={paths.SHOP} element={<StudentShop />} />
         <Route path={paths.TEACHER_MISSION} element={<TeacherMission />} />

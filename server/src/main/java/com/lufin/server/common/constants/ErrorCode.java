@@ -48,11 +48,13 @@ public enum ErrorCode {
 	EMAIL_ALREADY_REGISTERED("E409001", "이미 가입된 이메일입니다."),
 	DUPLICATE_COUPON_USAGE("E409002", "이미 등록된 교번/학번 입니다."),
 	DUPLICATE_CLASSROOM("E409003", "이미 등록된 클래스입니다."),
+	LOAN_APPLICATION_ALREADY_EXISTS("E409004", "이미 진행중인 대출이 존재합니다."),
 
 	INSUFFICIENT_CREDIT_SCORE("E422001", "신용 점수가 부족하여 이용할 수 없습니다."),
 	INSUFFICIENT_BALANCE("E422002", "잔액이 부족합니다."),
-	ACCOUNT_TEMPORARILY_LOCKED("E422003", "해당 계정은 5분간 로그인할 수 없습니다"),
+	ACCOUNT_TEMPORARILY_LOCKED("E422003", "해당 계정은 5분간 로그인할 수 없습니다."),
 	INVALID_EXTENSION("E422004", "허용되지 않은 확장자입니다."),
+	LOAN_AMOUNT_EXCEEDS_MAX("E422005", "요청 금액이 대출 상품의 최대 한도를 초과합니다."),
 
 	SERVER_ERROR("E500001", "요청을 처리할 수 없습니다. 다시 시도해 주세요."),
 	SERVICE_UNAVAILABLE("E503001", "현재 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해 주세요."),

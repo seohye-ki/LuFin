@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.member.domain.Member;
 
 @Entity
@@ -33,6 +34,10 @@ public class LoanApplication {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "classroom_id", nullable = false)
+	private Classroom classroom;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "loan_product_id", nullable = false)
@@ -68,6 +73,7 @@ public class LoanApplication {
 
 	public static LoanApplication create(
 		Member member,
+		Classroom classroom,
 		LoanProduct loanProduct,
 		String description,
 		Integer requiredAmount,
@@ -75,6 +81,7 @@ public class LoanApplication {
 	) {
 		LoanApplication application = new LoanApplication();
 		application.member = member;
+		application.classroom = classroom;
 		application.loanProduct = loanProduct;
 		application.description = description;
 		application.status = LoanApplicationStatus.PENDING;

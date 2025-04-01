@@ -1,9 +1,9 @@
 package com.lufin.server.classroom.service.impl;
 
+import static com.lufin.server.classroom.util.ClassroomValidator.*;
 import static com.lufin.server.common.constants.ErrorCode.*;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -14,20 +14,17 @@ import com.lufin.server.account.service.AccountService;
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.classroom.dto.ClassCodeRequest;
-import com.lufin.server.classroom.dto.ClassCodeResponse;
 import com.lufin.server.classroom.dto.ClassRequest;
 import com.lufin.server.classroom.dto.ClassResponse;
-import com.lufin.server.classroom.dto.FindClassesResponse;
 import com.lufin.server.classroom.dto.LoginWithClassResponse;
 import com.lufin.server.classroom.dto.UpdateClassRequest;
 import com.lufin.server.classroom.factory.ResponseFactory;
 import com.lufin.server.classroom.repository.ClassroomRepository;
 import com.lufin.server.classroom.repository.MemberClassroomRepository;
-import com.lufin.server.classroom.service.ClassroomService;
+import com.lufin.server.classroom.service.ClassroomCommandService;
 import com.lufin.server.classroom.util.ClassCodeGenerator;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.Member;
-import com.lufin.server.member.domain.MemberRole;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ClassroomServiceImpl implements ClassroomService {
+public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 
 	private final ClassroomRepository classroomRepository;
 	private final MemberClassroomRepository memberClassroomRepository;
@@ -47,7 +44,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 	public LoginWithClassResponse createClassroom(ClassRequest request, Member currentMember) {
 
 		log.info("[클래스 생성 시도] 요청자: {}", currentMember);
-		Member teacher = memberAuthorization(currentMember);
+		Member teacher = validateTeacherRole(currentMember);
 
 		// 동일한 교사가 같은 해, 같은 학교, 같은 학년, 같은 반 번호로 클래스 생성 시 중복
 		checkDuplicateClassroom(request.school(), request.grade(), request.classGroup(), teacher);
@@ -84,82 +81,6 @@ public class ClassroomServiceImpl implements ClassroomService {
 		return responseFactory.createLoginWithClassResponse(teacher, newClass, account);
 	}
 
-	@Transactional(readOnly = true)
-	@Override
-	public List<FindClassesResponse> findClasses(int memberId) {
-		log.info("[클래스 이력 조회 요청] memberId: {}", memberId);
-
-		// 특정 회원이 소속된 모든 학급 이력 조회
-		List<MemberClassroom> memberClassrooms = memberClassroomRepository.findByMember_Id(memberId);
-		log.debug("[조회된 클래스 수] {}", memberClassrooms.size());
-
-		// 각 학급 정보를 DTO로 변환하여 반환
-		return memberClassrooms.stream()
-			.map(mc -> {
-				Classroom classroom = mc.getClassroom();
-
-				// 현재 학급에 속한 전체 인원 수 조회
-				int memberCount = memberClassroomRepository.countByClassroom_Id(classroom.getId());
-
-				// 현재 학급
-
-				return new FindClassesResponse(
-					classroom.getName(),
-					classroom.getSchool(),
-					classroom.getCreatedAt().getYear(),
-					classroom.getGrade(),
-					classroom.getClassGroup(),
-					memberCount,
-					classroom.getThumbnailKey()
-				);
-			})
-			.toList(); // 스트림을 리스트로 변환하여 반환
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public FindClassesResponse findCurrentClass(int memberId) {
-		log.info("[현재 소속 클래스 조회 요청] memberId: {}", memberId);
-
-		Optional<MemberClassroom> currentClassroom =
-			memberClassroomRepository.findByMember_IdAndIsCurrentTrue(memberId);
-
-		if (currentClassroom.isPresent()) {
-			Classroom classroom = currentClassroom.get().getClassroom();
-			int memberCount = memberClassroomRepository.countByClassroom_Id(classroom.getId());
-
-			log.info("[현재 클래스 조회 성공] classId: {}, className: {}", classroom.getId(), classroom.getName());
-
-			return new FindClassesResponse(
-				classroom.getName(),
-				classroom.getSchool(),
-				classroom.getCreatedAt().getYear(),
-				classroom.getGrade(),
-				classroom.getClassGroup(),
-				memberCount,
-				classroom.getThumbnailKey()
-			);
-		}
-		log.warn("🏫[현재 소속 클래스 없음] memberId: {}", memberId);
-		throw new BusinessException(CLASS_NOT_FOUND);
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public ClassCodeResponse findClassCode(Member teacher) {
-		log.info("[클래스 코드 조회 요청] teacher: {}", teacher);
-
-		Member currentMember = memberAuthorization(teacher);
-
-		return memberClassroomRepository
-			.findByMember_IdAndIsCurrentTrue(currentMember.getId())
-			.map(memberClassroom -> new ClassCodeResponse(memberClassroom.getClassroom().getCode()))
-			.orElseThrow(() -> {
-				log.warn("🏫[현재 소속된 클래스 없음]: {}", teacher);
-				return new BusinessException(CLASS_NOT_FOUND);
-			});
-	}
-
 	@Transactional
 	@Override
 	public LoginWithClassResponse enrollClass(Member member, ClassCodeRequest request) {
@@ -191,7 +112,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 	public ClassResponse updateClassroom(Member member, UpdateClassRequest request) {
 		log.info("[클래스 정보 수정 요청] 요청자: {}", member);
 
-		Member teacher = memberAuthorization(member);
+		Member teacher = validateTeacherRole(member);
 
 		// 현재 소속 클래스 조회
 		MemberClassroom current = memberClassroomRepository
@@ -236,7 +157,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 	public void deleteClassroom(Member member, int classId) {
 		log.info("[클래스 삭제 시도] 요청자: {}, classId: {}", member.getId(), classId);
 
-		Member teacher = memberAuthorization(member);
+		Member teacher = validateTeacherRole(member);
 
 		// 교사가 해당 클래스에 소속되어 있는지 확인
 		boolean existsClassroom = memberClassroomRepository
@@ -276,19 +197,6 @@ public class ClassroomServiceImpl implements ClassroomService {
 			log.warn("🏫[클래스 중복 발생] 동일한 조건의 클래스 존재 - teacherId: {}, year: {}", teacher.getId(), year);
 			throw new BusinessException(DUPLICATE_CLASSROOM);
 		}
-	}
-
-	private Member memberAuthorization(Member currentMember) {
-		if (currentMember == null) {
-			log.warn("🏫[권한 확인 실패] 요청한 사용자 정보 없음 (null)");
-			throw new BusinessException(UNAUTHORIZED_ACCESS);
-		}
-		if (currentMember.getMemberRole() != MemberRole.TEACHER) {
-			log.warn("🏫[권한 확인 실패] 교사가 아님 - memberId: {}, role: {}", currentMember.getId(),
-				currentMember.getMemberRole());
-			throw new BusinessException(REQUEST_DENIED);
-		}
-		return currentMember;
 	}
 
 	private String generateUniqueClassCode() {

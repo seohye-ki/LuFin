@@ -3,6 +3,7 @@ package com.lufin.server.common.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -82,6 +83,14 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ApiResponse<Void>> handleJsonParseException(HttpMessageNotReadableException e) {
 		log.warn("역직렬화 실패 - 요청 본문 확인 필요: {}", e.getMostSpecificCause().getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.failure(ErrorCode.INVALID_ENUM));
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(
+		MethodArgumentNotValidException e) {
+		log.error("DTO 입력 값 누락 : ", e);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			.body(ApiResponse.failure(ErrorCode.MISSING_REQUIRED_VALUE));
 	}
 
 	@ExceptionHandler(Exception.class)

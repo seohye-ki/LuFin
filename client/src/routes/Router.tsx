@@ -11,6 +11,7 @@ import StudentMission from '../pages/student/Mission/StudentMission';
 import StudentShop from '../pages/student/Shop/StudentShop';
 import Login from '../pages/common/Login/Login';
 import Register from '../pages/common/Register/Register';
+import TeacherShop from '../pages/teacher/Shop/TeacherShop';
 import TeacherClassroom from '../pages/teacher/Classroom/TeacherClassroom';
 import StudentClassroom from '../pages/student/Classroom/StudentClassroom';
 
@@ -23,7 +24,8 @@ const Router = () => {
         <Route path={paths.REGISTER} element={<Register />} />
         <Route path={paths.DESIGN_SYSTEM} element={<DesignSystem />} />
         <Route path={paths.COMMON_COMPONENTS} element={<CommonComponents />} />
-        <Route path={paths.SHOP} element={<StudentShop />} />
+        <Route path={paths.STUDENT_SHOP} element={<StudentShop />} />
+        <Route path={paths.TEACHER_SHOP} element={<TeacherShop />} />
         <Route path={paths.TEACHER_MISSION} element={<TeacherMission />} />
         <Route path={paths.STUDENT_MISSION} element={<StudentMission />} />
         <Route path={paths.TEACHER_CLASSROOM} element={<TeacherClassroom />} />

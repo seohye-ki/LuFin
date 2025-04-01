@@ -15,7 +15,6 @@ import com.lufin.server.classroom.dto.ClassCodeResponse;
 import com.lufin.server.classroom.dto.ClassRequest;
 import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.dto.DeleteClassRequest;
-import com.lufin.server.classroom.dto.FindClassesResponse;
 import com.lufin.server.classroom.dto.LoginWithClassResponse;
 import com.lufin.server.classroom.dto.UpdateClassRequest;
 import com.lufin.server.classroom.service.ClassroomCommandService;
@@ -46,17 +45,17 @@ public class ClassroomController {
 
 	// 본인이 소속된 모든 클래스 조회
 	@GetMapping
-	ResponseEntity<ApiResponse<List<FindClassesResponse>>> getAllClassrooms() {
+	ResponseEntity<ApiResponse<List<ClassResponse>>> getAllClassrooms() {
 		Member currentMember = UserContext.get();
-		List<FindClassesResponse> result = queryService.findClasses(currentMember.getId());
+		List<ClassResponse> result = queryService.findClasses(currentMember.getId());
 		return ResponseEntity.status(200).body(ApiResponse.success(result));
 	}
 
 	// 	본인이 현재 소속된 클래스 조회
 	@GetMapping("/current")
-	ResponseEntity<ApiResponse<FindClassesResponse>> getCurrentClassroom() {
+	ResponseEntity<ApiResponse<ClassResponse>> getCurrentClassroom() {
 		Member currentMember = UserContext.get();
-		FindClassesResponse response = queryService.findCurrentClass(currentMember.getId());
+		ClassResponse response = queryService.findCurrentClass(currentMember.getId());
 		return ResponseEntity.status(200).body(ApiResponse.success(response));
 	}
 

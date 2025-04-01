@@ -1,6 +1,5 @@
 package com.lufin.server.classroom.service.impl;
 
-import static com.lufin.server.classroom.util.ClassroomValidator.*;
 import static com.lufin.server.common.constants.ErrorCode.*;
 
 import java.time.LocalDate;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.account.domain.Account;
+import com.lufin.server.account.repository.AccountRepository;
 import com.lufin.server.account.service.AccountService;
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.domain.MemberClassroom;
@@ -23,6 +23,8 @@ import com.lufin.server.classroom.repository.ClassroomRepository;
 import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.classroom.service.ClassroomCommandService;
 import com.lufin.server.classroom.util.ClassCodeGenerator;
+import com.lufin.server.common.annotation.StudentOnly;
+import com.lufin.server.common.annotation.TeacherOnly;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.Member;
 
@@ -37,24 +39,25 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 	private final ClassroomRepository classroomRepository;
 	private final MemberClassroomRepository memberClassroomRepository;
 	private final AccountService accountService;
+	private final AccountRepository accountRepository;
 	private final ResponseFactory responseFactory;
 
 	@Transactional
+	@TeacherOnly
 	@Override
 	public LoginWithClassResponse createClassroom(ClassRequest request, Member currentMember) {
 
-		log.info("[클래스 생성 시도] 요청자: {}", currentMember);
-		Member teacher = validateTeacherRole(currentMember);
+		log.info("[클래스 생성 시도] 요청자 ID: {}", currentMember.getId());
 
 		// 동일한 교사가 같은 해, 같은 학교, 같은 학년, 같은 반 번호로 클래스 생성 시 중복
-		checkDuplicateClassroom(request.school(), request.grade(), request.classGroup(), teacher);
+		checkDuplicateClassroom(request.school(), request.grade(), request.classGroup(), currentMember);
 
 		// 클래스 코드 생성
 		String classCode = generateUniqueClassCode();
 		log.debug("[클래스 코드 생성] {}", classCode);
 
 		Classroom newClass = Classroom.create(
-			teacher,
+			currentMember,
 			classCode,
 			request.school(),
 			request.grade(),
@@ -71,17 +74,22 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 		log.info("[클래스 계좌 생성 완료] accountId: {}", account.getId());
 
 		// 기존에 소속된 클래스(isCurrent=true)가 있다면 deactivate()
-		deactivateIfInActiveClass(teacher);
+		deactivateIfInActiveClass(currentMember);
 
 		// 교사를 클래스에 매핑
-		MemberClassroom addTeacher = MemberClassroom.enroll(teacher, newClass);
-		memberClassroomRepository.save(addTeacher);
-		log.info("[교사 클래스 매핑 완료] 교사: {}, 클래스: {}", teacher.getName(), newClass.getName());
+		MemberClassroom addTeacher = MemberClassroom.enroll(currentMember, newClass);
 
-		return responseFactory.createLoginWithClassResponse(teacher, newClass, account);
+		// memberCount++
+		newClass.addMemberClass(addTeacher);
+
+		memberClassroomRepository.save(addTeacher);
+		log.info("[교사 클래스 매핑 완료] 교사ID: {}, 클래스: {}", currentMember.getId(), newClass.getName());
+
+		return responseFactory.createLoginWithClassResponse(currentMember, newClass, account);
 	}
 
 	@Transactional
+	@StudentOnly
 	@Override
 	public LoginWithClassResponse enrollClass(Member member, ClassCodeRequest request) {
 		log.info("[클래스 등록 요청] memberId: {}, classCode: {}", member.getId(), request.code());
@@ -97,7 +105,12 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 		deactivateIfInActiveClass(member);
 
 		// 클래스에 멤버 저장 후 계좌 개설
-		MemberClassroom.enroll(member, classroom);
+		MemberClassroom addStudent = MemberClassroom.enroll(member, classroom);
+
+		// memberCount++
+		classroom.addMemberClass(addStudent);
+
+		memberClassroomRepository.save(addStudent);
 		log.info("[학생 클래스 매핑 완료] memberId: {}, classId: {}", member.getId(), classroom.getId());
 
 		Account account = accountService.createAccountForMember(member.getId());
@@ -108,25 +121,20 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 	}
 
 	@Transactional
+	@TeacherOnly
 	@Override
 	public ClassResponse updateClassroom(Member member, UpdateClassRequest request) {
-		log.info("[클래스 정보 수정 요청] 요청자: {}", member);
-
-		Member teacher = validateTeacherRole(member);
+		log.info("[클래스 정보 수정 요청] 요청자 ID: {}", member.getId());
 
 		// 현재 소속 클래스 조회
 		MemberClassroom current = memberClassroomRepository
-			.findByMember_IdAndIsCurrentTrue(teacher.getId())
+			.findByMember_IdAndIsCurrentTrue(member.getId())
 			.orElseThrow(() -> {
-				log.warn("🏫[수정 실패 - 소속 클래스 없음] teacherId: {}", teacher.getId());
+				log.warn("🏫[수정 실패 - 소속 클래스 없음] teacherId: {}", member.getId());
 				return new BusinessException(CLASS_NOT_FOUND);
 			});
 
 		Classroom classroom = current.getClassroom();
-
-		// 수정하려는 정보로 중복 체크 (학교, 학년, 반 번호 + 연도 + 교사)
-		checkDuplicateClassroom(request.school(), request.grade(), request.classGroup(), teacher);
-		log.debug("[중복 체크 완료] 수정할 classId: {}", classroom.getId());
 
 		// 엔티티 내부에서 수정 메서드 호출
 		classroom.updateInfo(
@@ -138,7 +146,8 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 		);
 		log.info("[클래스 정보 수정 완료] classId: {}", classroom.getId());
 
-		Account account = accountService.createAccountForMember(member.getId());
+		Account account = accountRepository.findByClassroomId(classroom.getId())
+			.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
 
 		return new ClassResponse(
 			classroom.getId(),
@@ -148,27 +157,28 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 			classroom.getGrade(),
 			classroom.getClassGroup(),
 			classroom.getCode(),
-			account.getBalance()
+			classroom.getMemberCount(),
+			account.getBalance(),
+			classroom.getThumbnailKey()
 		);
 	}
 
 	@Transactional
+	@TeacherOnly
 	@Override
 	public void deleteClassroom(Member member, int classId) {
 		log.info("[클래스 삭제 시도] 요청자: {}, classId: {}", member.getId(), classId);
 
-		Member teacher = validateTeacherRole(member);
-
 		// 교사가 해당 클래스에 소속되어 있는지 확인
 		boolean existsClassroom = memberClassroomRepository
-			.existsByMember_IdAndClassroom_Id(teacher.getId(), classId);
+			.existsByMember_IdAndClassroom_Id(member.getId(), classId);
 		if (!existsClassroom) {
-			log.warn("🏫[삭제 실패 - 소속된 클래스 아님] teacherId: {}, classId: {}", teacher.getId(), classId);
+			log.warn("🏫[삭제 실패 - 소속된 클래스 아님] teacherId: {}, classId: {}", member.getId(), classId);
 			throw new BusinessException(CLASS_NOT_FOUND);
 		}
 
 		// 교사가 만든 클래스인지 확인
-		Classroom classroom = classroomRepository.findByIdAndTeacher_Id(classId, teacher.getId())
+		Classroom classroom = classroomRepository.findByIdAndTeacher_Id(classId, member.getId())
 			.orElseThrow(() -> {
 				log.warn("🏫[삭제 실패 - 본인이 생성한 클래스 아님] classId: {}", classId);
 				return new BusinessException(CLASS_NOT_FOUND);
@@ -176,7 +186,7 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 
 		// 다른 멤버가 존재하면 삭제 불가 (본인 포함 2명이면 1명만 존재)
 		int memberCount = memberClassroomRepository.countByClassroom_Id(classroom.getId());
-		if (memberCount > 2) {
+		if (memberCount > 1) {
 			log.warn("🏫[삭제 실패 - 학생 존재] classId: {}, 멤버 수: {}", classId, memberCount);
 			throw new BusinessException(CLASS_HAS_STUDENTS);
 		}

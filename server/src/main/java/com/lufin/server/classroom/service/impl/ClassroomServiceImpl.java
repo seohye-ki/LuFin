@@ -13,6 +13,7 @@ import com.lufin.server.account.domain.Account;
 import com.lufin.server.account.service.AccountService;
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.domain.MemberClassroom;
+import com.lufin.server.classroom.dto.ClassCodeRequest;
 import com.lufin.server.classroom.dto.ClassCodeResponse;
 import com.lufin.server.classroom.dto.ClassRequest;
 import com.lufin.server.classroom.dto.FindClassesResponse;
@@ -43,14 +44,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 		Member teacher = memberAuthorization(currentMember);
 
 		// 동일한 교사가 같은 해, 같은 학교, 같은 학년, 같은 반 번호로 클래스 생성 시 중복
-		int year = LocalDate.now().getYear();
-
-		boolean exist = classroomRepository.existsDuplicateClassroom(request.school(), request.grade(),
-			request.classGroup(), year, teacher.getId());
-
-		if (exist) {
-			throw new BusinessException(DUPLICATE_CLASSROOM);
-		}
+		checkDuplicateClassroom(request, teacher);
 
 		// 클래스 코드 생성
 		String classCode = generateUniqueClassCode();
@@ -70,14 +64,9 @@ public class ClassroomServiceImpl implements ClassroomService {
 		// 클래스 계좌 생성
 		Account account = accountService.createAccountForClassroom(newClass);
 
-		Optional<MemberClassroom> hasCurrentClassroom = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(
-			currentMember.getId());
+		// 기존에 소속된 클래스(isCurrent=true)가 있다면 deactivate()
+		deactivateIfInActiveClass(teacher);
 
-		// 기존에 소속된 클래스(isCurrent=true)가 있다면 deactivate() → save() 없는 이유 : 더티 체킹에 의존
-		if (hasCurrentClassroom.isPresent()) {
-			hasCurrentClassroom.get().deactivate();
-			memberClassroomRepository.save(hasCurrentClassroom.get());
-		}
 		// 교사를 클래스에 매핑
 		MemberClassroom addTeacher = MemberClassroom.enroll(teacher, newClass);
 		memberClassroomRepository.save(addTeacher);
@@ -151,6 +140,34 @@ public class ClassroomServiceImpl implements ClassroomService {
 			.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
 	}
 
+	@Transactional
+	@Override
+	public LoginWithClassResponse enrollClass(Member member, ClassCodeRequest request) {
+
+		// 코드로 조회되는 반이 있나요?
+		Classroom classroom = classroomRepository.findByCode(request.code())
+			.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
+
+		// 기존에 소속된 클래스(isCurrent=true)가 있다면 deactivate()
+		deactivateIfInActiveClass(member);
+
+		// 클래스에 멤버 저장 후 계좌 개설
+		MemberClassroom.enroll(member, classroom);
+		Account account = accountService.createAccountForMember(member.getId());
+
+		// 토큰 발급
+		return responseFactory.createLoginWithClassResponse(member, classroom, account);
+	}
+
+	private void checkDuplicateClassroom(ClassRequest request, Member teacher) {
+		int year = LocalDate.now().getYear();
+		boolean exist = classroomRepository.existsDuplicateClassroom(request.school(), request.grade(),
+			request.classGroup(), year, teacher.getId());
+		if (exist) {
+			throw new BusinessException(DUPLICATE_CLASSROOM);
+		}
+	}
+
 	private Member memberAuthorization(Member currentMember) {
 		if (currentMember == null) {
 			throw new BusinessException(UNAUTHORIZED_ACCESS);
@@ -167,5 +184,15 @@ public class ClassroomServiceImpl implements ClassroomService {
 			classCode = ClassCodeGenerator.generateClassCode();
 		} while (classroomRepository.findByCode(classCode).isPresent());
 		return classCode;
+	}
+
+	private void deactivateIfInActiveClass(Member teacher) {
+		Optional<MemberClassroom> hasCurrentClassroom = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(
+			teacher.getId());
+
+		if (hasCurrentClassroom.isPresent()) {
+			hasCurrentClassroom.get().deactivate();
+			memberClassroomRepository.save(hasCurrentClassroom.get());
+		}
 	}
 }

@@ -49,6 +49,7 @@ public enum ErrorCode {
 	DUPLICATE_COUPON_USAGE("E409002", "이미 등록된 교번/학번 입니다."),
 	DUPLICATE_CLASSROOM("E409003", "이미 등록된 클래스입니다."),
 	LOAN_APPLICATION_ALREADY_EXISTS("E409004", "이미 진행중인 대출이 존재합니다."),
+	DUPLICATE_NEWS("E409005", "이미 생성된 공시정보가 존재합니다."),
 
 	INSUFFICIENT_CREDIT_SCORE("E422001", "신용 점수가 부족하여 이용할 수 없습니다."),
 	INSUFFICIENT_BALANCE("E422002", "잔액이 부족합니다."),
@@ -66,7 +67,10 @@ public enum ErrorCode {
 	WEBSOCKET_AUTH_REQUIRED("WS401001", "웹소켓 연결에 인증이 필요합니다."),
 	WEBSOCKET_UNAUTHORIZED("WS403001", "웹소켓 작업 권한이 없습니다."),
 	WEBSOCKET_DEST_NOT_FOUND("WS404001", "웹소켓 대상을 찾을 수 없습니다."),
-	WEBSOCKET_INTERNAL_ERROR("WS500001", "웹소켓 서버 오류가 발생했습니다.");
+	WEBSOCKET_INTERNAL_ERROR("WS500001", "웹소켓 서버 오류가 발생했습니다."),
+
+	// AI 관련 에러 코드 추가
+	GENERATE_FAILED("AI500001", "AI를 활용한 생성에 실패했습니다. 잠시 후 다시 시도해 주십시오.");
 
 	private final String code;
 	private final String message;

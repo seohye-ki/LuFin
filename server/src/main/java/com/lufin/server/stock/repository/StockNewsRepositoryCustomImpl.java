@@ -76,4 +76,5 @@ public class StockNewsRepositoryCustomImpl implements StockNewsRepositoryCustom 
 
 		return result;
 	}
+
 }

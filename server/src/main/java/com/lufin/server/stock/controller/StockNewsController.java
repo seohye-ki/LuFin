@@ -1,5 +1,6 @@
 package com.lufin.server.stock.controller;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -56,11 +57,17 @@ public class StockNewsController {
 	}
 
 	/**
-	 * 특정 주식 공시 정보 생성
+	 * 특정 주식 공시 정보 생성(수동)
 	 */
 	@PostMapping
-	public ResponseEntity<ApiResponse<StockNewsResponseDto.NewsCreateUpdateDto>> createNews() {
-		// TODO: null -> dto
-		return ResponseEntity.status(201).body(ApiResponse.success(null));
+	public ResponseEntity<ApiResponse<StockNewsResponseDto.NewsCreateUpdateDto>> createNews(
+		@PathVariable @Positive Integer productId
+	) {
+		StockNewsResponseDto.NewsCreateUpdateDto result;
+		int currentHour = LocalTime.now().getHour();
+
+		result = stockNewsService.createNews(productId, currentHour);
+
+		return ResponseEntity.status(201).body(ApiResponse.success(result));
 	}
 }

@@ -1,7 +1,9 @@
 package com.lufin.server.stock.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,26 +72,72 @@ public class StockNewsServiceImpl implements StockNewsService {
 
 	/**
 	 * 특정 주식 공시 정보 생성
-	 * 공시되기 n분 전에 자동으로 생성될 필요 있음
+	 * 공시되는 시각에 생성
 	 * @param stockProductId
-	 * @param newsInfoDto
 	 */
+	@Scheduled(cron = "0 0 9 * * Mon-Fri")
 	@Override
-	public StockNewsResponseDto.NewsCreateUpdateDto createNews(Integer stockProductId,
-		StockNewsRequestDto.NewsInfoDto newsInfoDto) {
-		log.info("특정 주식 공시 정보 생성 요청: stockProductId = {}, newsInfoDto = {}", stockProductId, newsInfoDto);
+	public StockNewsResponseDto.NewsCreateUpdateDto createMorningNews(Integer stockProductId) {
+		return createNews(stockProductId, 9);
+	}
 
-		if (stockProductId == null || newsInfoDto == null) {
+	@Scheduled(cron = "0 0 13 * * Mon-Fri")
+	@Override
+	public StockNewsResponseDto.NewsCreateUpdateDto createAfternoonNews(Integer stockProductId) {
+		return createNews(stockProductId, 13);
+	}
+
+	@Transactional
+	@Override
+	public StockNewsResponseDto.NewsCreateUpdateDto createNews(
+		Integer stockProductId,
+		Integer hour
+	) {
+		log.info("특정 주식 공시 정보 생성 요청: stockProductId = {}, LocalDateTime = {}", stockProductId,
+			LocalDateTime.now());
+
+		if (stockProductId == null) {
 			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
 		}
 
+		/* 동시성 문제 방지를 위해 아토믹 업데이트 및 중복 체크 적용 */
+		LocalDateTime now = LocalDateTime.now();
+		// 오늘 날짜의 지정된 시간으로 설정
+		LocalDateTime startTime = LocalDateTime.of(
+			now.getYear(),
+			now.getMonth(),
+			now.getDayOfMonth(),
+			hour, // 9시 또는 13시
+			0,    // 0분
+			0     // 0초
+		);
+		LocalDateTime endTime = startTime.plusHours(1); // 1시간 차이 이내에 있는 지 확인
+
+		// db에서 시작 시간과 끝 시간 사이에 이미 stockProductId에 해당하는 공시 정보가 존재하는 지 확인
+		boolean existsInTimeRange = stockNewsRepository.existsByStockProductIdAndCreatedAtBetween(
+			stockProductId, startTime, endTime);
+
+		if (existsInTimeRange) {
+			log.warn("해당 시간대에 이미 생성된 뉴스가 있습니다: stockProductId = {}, hour = {}",
+				stockProductId, hour);
+			throw new BusinessException(ErrorCode.DUPLICATE_NEWS);
+		}
+
 		try {
+
 			// stockProductId로 stockProduct 객체 조회
 			StockProduct stockProduct = stockProductRepository.findById(stockProductId)
 				.orElseThrow(() -> new BusinessException(ErrorCode.INVESTMENT_PRODUCT_NOT_FOUND));
 
 			// TODO: 생성형 AI API를 활용해 공시 정보 생성 후 newsContent에 대입
 			String newsContent = "테스트용트스테";
+
+			log.info("AI 공시 정보 생성 요청: newsContent = {}", newsContent);
+
+			if (newsContent == null) {
+				throw new BusinessException(ErrorCode.GENERATE_FAILED);
+			}
+
 			// 생성형 AI가 제공해준 정보를 request Dto로 가공
 			StockNewsRequestDto.NewsInfoDto request = new StockNewsRequestDto.NewsInfoDto(newsContent);
 

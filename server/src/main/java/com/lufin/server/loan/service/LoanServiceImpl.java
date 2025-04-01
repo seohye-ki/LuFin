@@ -17,6 +17,7 @@ import com.lufin.server.loan.domain.LoanApplicationStatus;
 import com.lufin.server.loan.domain.LoanProduct;
 import com.lufin.server.loan.dto.LoanApplicationRequestDto;
 import com.lufin.server.loan.dto.LoanApplicationDetailDto;
+import com.lufin.server.loan.dto.LoanProductResponseDto;
 import com.lufin.server.loan.dto.MyLoanApplicationDto;
 import com.lufin.server.loan.dto.LoanApplicationListDto;
 import com.lufin.server.loan.repository.LoanApplicationRepository;
@@ -48,6 +49,14 @@ public class LoanServiceImpl implements LoanService {
 		} else {
 			return 4;
 		}
+	}
+
+	@Override
+	public List<LoanProductResponseDto> getAllProducts() {
+		List<LoanProduct> result = loanProductRepository.findAll();
+		return result.stream()
+			.map(LoanProductResponseDto::from)
+			.collect(Collectors.toList());
 	}
 
 	// 대출 신청

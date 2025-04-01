@@ -15,6 +15,7 @@ import com.lufin.server.common.dto.ApiResponse;
 import com.lufin.server.loan.dto.LoanApplicationListDto;
 import com.lufin.server.loan.dto.LoanApplicationRequestDto;
 import com.lufin.server.loan.dto.LoanApplicationDetailDto;
+import com.lufin.server.loan.dto.LoanProductResponseDto;
 import com.lufin.server.loan.dto.MyLoanApplicationDto;
 import com.lufin.server.loan.service.LoanService;
 import com.lufin.server.member.domain.Member;
@@ -31,6 +32,13 @@ public class LoanController {
 	private static final String CLASS_ID = "classId";
 
 	private final LoanService loanService;
+
+	// 대출 상품 목록 조회
+	@GetMapping("/products")
+	public ResponseEntity<ApiResponse<List<LoanProductResponseDto>>> getAllProducts(HttpServletRequest httpRequest) {
+		List<LoanProductResponseDto> result = loanService.getAllProducts();
+		return ResponseEntity.ok(ApiResponse.success(result));
+	}
 
 	// 대출 신청
 	@PostMapping("/applications")

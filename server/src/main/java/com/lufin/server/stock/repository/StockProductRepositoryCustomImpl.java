@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import com.lufin.server.stock.domain.QStockProduct;
 import com.lufin.server.stock.dto.QStockResponseDto_StockInfoDto;
 import com.lufin.server.stock.dto.StockResponseDto;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -44,10 +43,6 @@ public class StockProductRepositoryCustomImpl implements StockProductRepositoryC
 	public StockResponseDto.StockInfoDto getStock(Integer stockProductId) {
 		QStockProduct stockProduct = QStockProduct.stockProduct;
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		builder.and(stockProduct.id.eq(stockProductId));
-
 		StockResponseDto.StockInfoDto result = queryFactory
 			.select(new QStockResponseDto_StockInfoDto(
 				stockProduct.id,
@@ -59,7 +54,7 @@ public class StockProductRepositoryCustomImpl implements StockProductRepositoryC
 				stockProduct.updatedAt
 			))
 			.from(stockProduct)
-			.where(builder)
+			.where(stockProduct.id.eq(stockProductId))
 			.fetchOne();
 
 		return result;

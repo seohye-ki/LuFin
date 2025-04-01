@@ -30,4 +30,7 @@ public interface ClassroomService {
 
 	// [교사] 클래스 수정
 	ClassResponse updateClassroom(Member member, UpdateClassRequest request);
+
+	// [교사] 클래스 삭제
+	void deleteClassroom(Member member, int classId);
 }

@@ -200,6 +200,36 @@ public class ClassroomServiceImpl implements ClassroomService {
 		);
 	}
 
+	@Transactional
+	@Override
+	public void deleteClassroom(Member member, int classId) {
+
+		Member teacher = memberAuthorization(member);
+
+		// 교사가 해당 클래스에 소속되어 있는지 확인
+		boolean existsClassroom = memberClassroomRepository
+			.existsByMember_IdAndClassroom_Id(teacher.getId(), classId);
+		if (!existsClassroom) {
+			throw new BusinessException(CLASS_NOT_FOUND);
+		}
+
+		// 교사가 만든 클래스인지 확인
+		Classroom classroom = classroomRepository.findByIdAndTeacher_Id(classId, teacher.getId())
+			.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
+
+		// 다른 멤버가 존재하면 삭제 불가 (본인 포함 2명이면 1명만 존재)
+		int memberCount = memberClassroomRepository.countByClassroom_Id(classroom.getId());
+		if (memberCount > 2) {
+			throw new BusinessException(CLASS_HAS_STUDENTS);
+		}
+
+		// 연관 관계 먼저 삭제 (MemberClassroom)
+		memberClassroomRepository.deleteAllByClassroom(classroom);
+
+		classroomRepository.delete(classroom);
+	}
+
+
 	private void checkDuplicateClassroom(String school, int grade, int classGroup, Member teacher) {
 		int year = LocalDate.now().getYear();
 		boolean exist = classroomRepository.existsDuplicateClassroom(school, grade,

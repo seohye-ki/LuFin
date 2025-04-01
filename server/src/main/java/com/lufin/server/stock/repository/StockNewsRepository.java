@@ -1,14 +1,8 @@
 package com.lufin.server.stock.repository;
 
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.lufin.server.stock.dto.StockNewsResponseDto;
+import com.lufin.server.stock.domain.StockNews;
 
-public interface StockNewsRepository {
-	// 공시 정보 목록 조회
-	List<StockNewsResponseDto.NewsInfoDto> getAllNews(Integer stockProductId);
-
-	// 공시 정보 상세 조회
-	StockNewsResponseDto.NewsInfoDto getNewsByNewsId(Integer stockProductId, Integer newsId);
-
+public interface StockNewsRepository extends JpaRepository<StockNews, Integer>, StockNewsRepositoryCustom {
 }

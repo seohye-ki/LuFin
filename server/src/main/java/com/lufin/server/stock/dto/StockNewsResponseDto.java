@@ -16,4 +16,13 @@ public class StockNewsResponseDto {
 
 		}
 	}
+
+	public record NewsCreateUpdateDto(
+		Integer stockNewsId
+	) {
+		@QueryProjection
+		public NewsCreateUpdateDto {
+
+		}
+	}
 }

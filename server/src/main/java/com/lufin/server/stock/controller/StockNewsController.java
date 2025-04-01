@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,5 +53,14 @@ public class StockNewsController {
 		}
 
 		return ResponseEntity.status(200).body(ApiResponse.success(result));
+	}
+
+	/**
+	 * 특정 주식 공시 정보 생성
+	 */
+	@PostMapping
+	public ResponseEntity<ApiResponse<StockNewsResponseDto.NewsCreateUpdateDto>> createNews() {
+		// TODO: null -> dto
+		return ResponseEntity.status(201).body(ApiResponse.success(null));
 	}
 }

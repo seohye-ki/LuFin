@@ -86,7 +86,7 @@ public class Classroom {
 	// 학급 생성 -> 이미지 없을 시 기본 썸네일 저장
 	public static Classroom create(Member teacher, String code, String school, Integer grade,
 		Integer classGroup, String name, String thumbnailKey) {
-		validateCreateClassroom(teacher, code, grade);
+		validateCreateClassroom(code, grade);
 		if (thumbnailKey != null) {
 			validateThumbnailFileName(thumbnailKey);
 		} else {

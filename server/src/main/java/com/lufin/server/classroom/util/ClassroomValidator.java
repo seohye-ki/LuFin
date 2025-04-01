@@ -7,12 +7,7 @@ import java.util.regex.Pattern;
 import org.springframework.util.StringUtils;
 
 import com.lufin.server.common.exception.BusinessException;
-import com.lufin.server.member.domain.Member;
-import com.lufin.server.member.domain.MemberRole;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class ClassroomValidator {
 
 	private static final Pattern CLASS_CODE_PATTERN = Pattern.compile("^[a-zA-Z0-9]{5}$");
@@ -39,8 +34,7 @@ public class ClassroomValidator {
 		}
 	}
 
-	public static void validateCreateClassroom(Member teacher, String inputCode, Integer inputGrade) {
-		validateTeacherRole(teacher);
+	public static void validateCreateClassroom(String inputCode, Integer inputGrade) {
 		validateClassCode(inputCode);
 		validateGrade(inputGrade);
 	}
@@ -52,18 +46,5 @@ public class ClassroomValidator {
 		if (inputGrade < 4 || inputGrade > 6) {
 			throw new BusinessException(INVALID_INPUT_VALUE); // 잘못된 입력값
 		}
-	}
-
-	public static Member validateTeacherRole(Member teacher) {
-		if (teacher == null) {
-			log.warn("🏫[권한 확인 실패] 요청한 사용자 정보 없음 (null)");
-			throw new BusinessException(UNAUTHORIZED_ACCESS);
-		}
-		if (teacher.getMemberRole() != MemberRole.TEACHER) {
-			log.warn("🏫[권한 확인 실패] 교사가 아님 - memberId: {}, role: {}", teacher.getId(),
-				teacher.getMemberRole());
-			throw new BusinessException(REQUEST_DENIED);
-		}
-		return teacher;
 	}
 }

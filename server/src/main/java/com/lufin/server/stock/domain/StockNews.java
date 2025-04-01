@@ -57,6 +57,10 @@ public class StockNews {
 		this.updatedAt = LocalDateTime.now();
 	}
 
+	public void modifyContent(String content) {
+		this.content = content;
+	}
+
 	/**
 	 * 주식 공시 정보 객체를 생성하는 팩토리 메서드
 	 */

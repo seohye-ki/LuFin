@@ -7,11 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.dto.ApiResponse;
+import com.lufin.server.stock.dto.StockNewsRequestDto;
 import com.lufin.server.stock.dto.StockNewsResponseDto;
 import com.lufin.server.stock.service.StockNewsService;
 
@@ -50,7 +53,7 @@ public class StockNewsController {
 		StockNewsResponseDto.NewsInfoDto result = stockNewsService.getNewsByNewsId(productId, newsId);
 
 		if (result == null) {
-			return ResponseEntity.status(404).body(ApiResponse.failure(ErrorCode.INVESTMENT_PRODUCT_NOT_FOUND));
+			return ResponseEntity.status(500).body(ApiResponse.failure(ErrorCode.SERVER_ERROR));
 		}
 
 		return ResponseEntity.status(200).body(ApiResponse.success(result));
@@ -70,4 +73,23 @@ public class StockNewsController {
 
 		return ResponseEntity.status(201).body(ApiResponse.success(result));
 	}
+
+	/**
+	 * 특정 주식 공시 정보 수정
+	 */
+	@PutMapping("/{newsId}")
+	public ResponseEntity<ApiResponse<StockNewsResponseDto.NewsCreateUpdateDto>> updateNews(
+		@PathVariable @Positive Integer productId,
+		@PathVariable @Positive Integer newsId,
+		@RequestBody StockNewsRequestDto.NewsInfoDto request
+	) {
+		StockNewsResponseDto.NewsCreateUpdateDto result = stockNewsService.updateNews(request, productId, newsId);
+
+		if (result == null) {
+			return ResponseEntity.status(500).body(ApiResponse.failure(ErrorCode.SERVER_ERROR));
+		}
+
+		return ResponseEntity.status(200).body(ApiResponse.success(result));
+	}
+
 }

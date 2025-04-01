@@ -63,6 +63,10 @@ public class StockNewsServiceImpl implements StockNewsService {
 		try {
 			StockNewsResponseDto.NewsInfoDto result = stockNewsRepository.getNewsByNewsId(stockProductId, newsId);
 
+			if (result == null) {
+				throw new BusinessException(ErrorCode.INVESTMENT_PRODUCT_NOT_FOUND);
+			}
+
 			return result;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
@@ -199,6 +203,30 @@ public class StockNewsServiceImpl implements StockNewsService {
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
 		}
 
+	}
+
+	@Transactional
+	@Override
+	public StockNewsResponseDto.NewsCreateUpdateDto updateNews(StockNewsRequestDto.NewsInfoDto request,
+		Integer stockProductId, Integer newsId) {
+		log.info("특정 공시 정보 수정 요청: requestDto = {}, stockProductId = {}, newsId = {}", request, stockProductId, newsId);
+
+		if (stockProductId == null || newsId == null || request == null) {
+			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
+		}
+
+		try {
+			StockNews news = stockNewsRepository.findById(newsId)
+				.orElseThrow(() -> new BusinessException(ErrorCode.INVESTMENT_PRODUCT_NOT_FOUND));
+
+			/* JPA 더티 체킹으로 객체에 먼저 변경 사항이 캐시된 후, transaction이 끝날 때 자동으로 쿼리를 통해 DB를 업데이트 */
+			news.modifyContent(request.content());
+
+			return StockNewsResponseDto.NewsCreateUpdateDto.stockNewsEntityToNewsCreateUpdateDto(news);
+		} catch (Exception e) {
+			log.error("An error occurred: {}", e.getMessage(), e);
+			throw new BusinessException(ErrorCode.SERVER_ERROR);
+		}
 	}
 
 }

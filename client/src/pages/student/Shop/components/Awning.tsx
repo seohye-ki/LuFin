@@ -5,7 +5,7 @@ const Awning = () => {
         <div
           key={index}
           className={`w-5 h-14 rounded-b-full flex-shrink-0 ${index % 2 === 0 ? 'bg-light-cyan' : 'bg-yellow'}`}
-        ></div>
+        />
       ))}
     </div>
   );

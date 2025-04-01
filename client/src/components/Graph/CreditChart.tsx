@@ -1,16 +1,6 @@
 import { Doughnut } from 'react-chartjs-2';
-import {
-  Chart,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  CategoryScale,
-  LinearScale,
-} from 'chart.js';
-import type {
-  Plugin,
-} from 'chart.js';
+import { Chart, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js';
+import type { Plugin } from 'chart.js';
 
 Chart.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
 

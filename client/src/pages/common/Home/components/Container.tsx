@@ -7,11 +7,8 @@ interface ContainerProps {
 
 export function Container({ className, children, ...props }: ContainerProps) {
   return (
-    <div
-      className={`mx-auto max-w-7xl px-6 lg:px-8 ${className}`}
-      {...props}
-    >
+    <div className={`mx-auto max-w-7xl px-6 lg:px-8 ${className}`} {...props}>
       {children}
     </div>
   );
-} 
+}

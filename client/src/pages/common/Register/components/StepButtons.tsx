@@ -14,21 +14,16 @@ export default function StepButtons({
   showPrev = true,
 }: StepButtonsProps) {
   return (
-    <div className="flex justify-between mt-4">
+    <div className='flex justify-between mt-4'>
       {showPrev && onPrev && (
-        <Button
-          type="button"
-          color="neutral"
-          size="lg"
-          onClick={onPrev}
-        >
+        <Button type='button' color='neutral' size='lg' onClick={onPrev}>
           이전
         </Button>
       )}
       <Button
-        type="button"
-        color="primary"
-        size="lg"
+        type='button'
+        color='primary'
+        size='lg'
         disabled={isNextDisabled}
         onClick={onNext}
         className={!showPrev ? 'w-full' : ''}
@@ -37,4 +32,4 @@ export default function StepButtons({
       </Button>
     </div>
   );
-} 
+}

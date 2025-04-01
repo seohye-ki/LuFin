@@ -2,13 +2,12 @@ import Card from '../../../components/Card/Card';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
 import { dateUtil } from '../../../libs/utils/date-util';
 import Awning from './components/Awning';
-import Item from './components/Item';
-import { ReactNode, useState } from 'react';
+import Item, { ItemProps } from './components/Item';
+import { useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import useAlertStore from '../../../libs/store/alertStore'; // zustand store
-import Alert from '../../../components/Alert/Alert';
 
 const itemsData = [
   { expired: dateUtil('2025-03-28T10:21:12'), name: '안마권1', price: 1000, quantity: 1 },
@@ -36,7 +35,7 @@ const StudentShop = () => {
     autoSlide: true,
   };
 
-  const handleItemClick = (item) => {
+  const handleItemClick = (item: ItemProps) => {
     showAlert(
       '아래 아이템을 구매하시겠습니까?',
       <Item expired={item.expired} name={item.name} price={item.price} quantity={item.quantity} />,

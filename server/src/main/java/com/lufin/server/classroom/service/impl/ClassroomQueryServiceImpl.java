@@ -1,6 +1,5 @@
 package com.lufin.server.classroom.service.impl;
 
-import static com.lufin.server.classroom.util.ClassroomValidator.*;
 import static com.lufin.server.common.constants.ErrorCode.*;
 
 import java.util.List;
@@ -16,6 +15,7 @@ import com.lufin.server.classroom.dto.ClassCodeResponse;
 import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.classroom.service.ClassroomQueryService;
+import com.lufin.server.common.annotation.TeacherOnly;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.Member;
 
@@ -60,13 +60,12 @@ public class ClassroomQueryServiceImpl implements ClassroomQueryService {
 	}
 
 	@Transactional(readOnly = true)
+	@TeacherOnly
 	@Override
 	public ClassCodeResponse findClassCode(Member teacher) {
 		log.info("[클래스 코드 조회] teacher: {}", teacher);
 
-		Member validTeacher = validateTeacherRole(teacher);
-
-		String code = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(validTeacher.getId())
+		String code = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(teacher.getId())
 			.map(mc -> mc.getClassroom().getCode())
 			.orElseThrow(() -> {
 				log.warn("🏫[현재 클래스 없음] teacher: {}", teacher);

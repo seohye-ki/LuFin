@@ -6,6 +6,8 @@ interface CodeInputProps {
   onChange?: (value: string) => void;
   size?: 'sm' | 'md' | 'lg';
   error?: string;
+  description?: string;
+  isError?: boolean;
   isDisabled?: boolean;
   className?: string;
 }
@@ -16,6 +18,8 @@ const CodeInput = ({
   onChange,
   size = 'md',
   error,
+  description,
+  isError = false,
   isDisabled = false,
   className = '',
 }: CodeInputProps) => {
@@ -74,7 +78,7 @@ const CodeInput = ({
     const pastedData = e.clipboardData.getData('text').toUpperCase();
     const validChars = pastedData.match(/[0-9A-Z]/g) || [];
     const newCode = [...code];
-    
+
     validChars.forEach((char, index) => {
       if (index < length) {
         newCode[index] = char;
@@ -83,45 +87,57 @@ const CodeInput = ({
 
     setCode(newCode);
     onChange?.(newCode.join(''));
-    
+
     // 붙여넣기 후 마지막 입력으로 포커스 이동
     const focusIndex = Math.min(validChars.length, length - 1);
     inputRefs.current[focusIndex]?.focus();
   };
 
+  // 에러 상태 확인: error가 있거나 isError가 true인 경우
+  const hasError = !!error || isError;
+
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
-      <div className="flex gap-2">
-        {Array(length).fill(0).map((_, index) => (
-          <input
-            key={index}
-            ref={(el: HTMLInputElement | null) => {
-              inputRefs.current[index] = el;
-            }}
-            type="text"
-            maxLength={1}
-            value={code[index]}
-            onChange={e => handleChange(index, e.target.value)}
-            onKeyDown={e => handleKeyDown(index, e)}
-            onPaste={handlePaste}
-            disabled={isDisabled}
-            className={`
+      <div className='flex gap-2'>
+        {Array(length)
+          .fill(0)
+          .map((_, index) => (
+            <input
+              key={index}
+              ref={(el: HTMLInputElement | null) => {
+                inputRefs.current[index] = el;
+              }}
+              type='text'
+              maxLength={1}
+              value={code[index]}
+              onChange={(e) => handleChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              onPaste={handlePaste}
+              disabled={isDisabled}
+              className={`
               ${sizeStyles[size]}
               text-center rounded-lg font-semibold
-              ${error 
-                ? 'border-2 border-danger focus:border-danger focus:ring-danger/30' 
-                : 'border-2 border-info focus:border-info focus:ring-info/30'}
-              ${isDisabled 
-                ? 'bg-broken-white text-grey cursor-not-allowed' 
-                : 'bg-white text-info hover:border-info/80'}
+              ${
+                hasError
+                  ? 'border-2 border-danger focus:border-danger focus:ring-danger/30'
+                  : 'border-2 border-info focus:border-info focus:ring-info/30'
+              }
+              ${
+                isDisabled
+                  ? 'bg-broken-white text-grey cursor-not-allowed'
+                  : 'bg-white text-info hover:border-info/80'
+              }
               outline-none
               focus:ring-4 transition-all
             `}
-          />
-        ))}
+            />
+          ))}
       </div>
-      {error && (
-        <p className="text-p2 text-danger">{error}</p>
+      {error && <p className='text-p2 text-danger text-center'>{error}</p>}
+      {!error && description && (
+        <p className={`text-p2 text-center ${isError ? 'text-danger' : 'text-dark-grey'}`}>
+          {description}
+        </p>
       )}
     </div>
   );

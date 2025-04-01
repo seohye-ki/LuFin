@@ -9,17 +9,22 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lufin.server.account.domain.Account;
+import com.lufin.server.account.service.AccountService;
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.classroom.dto.ClassCodeResponse;
 import com.lufin.server.classroom.dto.ClassRequest;
 import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.dto.FindClassesResponse;
+import com.lufin.server.classroom.dto.LoginWithClassResponse;
+import com.lufin.server.classroom.dto.TokenResponse;
 import com.lufin.server.classroom.repository.ClassroomRepository;
 import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.classroom.service.ClassroomService;
 import com.lufin.server.classroom.util.ClassCodeGenerator;
 import com.lufin.server.common.exception.BusinessException;
+import com.lufin.server.common.utils.TokenUtils;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
 
@@ -31,10 +36,12 @@ public class ClassroomServiceImpl implements ClassroomService {
 
 	private final ClassroomRepository classroomRepository;
 	private final MemberClassroomRepository memberClassroomRepository;
+	private final AccountService accountService;
+	private final TokenUtils tokenUtils;
 
 	@Transactional
 	@Override
-	public ClassResponse createClassroom(ClassRequest request, Member currentMember) {
+	public LoginWithClassResponse createClassroom(ClassRequest request, Member currentMember) {
 		Member teacher = memberAuthorization(currentMember);
 
 		// 동일한 교사가 같은 해, 같은 학교, 같은 학년, 같은 반 번호로 클래스 생성 시 중복
@@ -61,6 +68,10 @@ public class ClassroomServiceImpl implements ClassroomService {
 		);
 
 		classroomRepository.save(newClass);
+
+		// 클래스 계좌 생성
+		Account account = accountService.createAccountForClassroom(newClass);
+
 		Optional<MemberClassroom> hasCurrentClassroom = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(
 			currentMember.getId());
 
@@ -72,15 +83,26 @@ public class ClassroomServiceImpl implements ClassroomService {
 		MemberClassroom addTeacher = MemberClassroom.enroll(teacher, newClass);
 		memberClassroomRepository.save(addTeacher);
 
-		return new ClassResponse(
+		ClassResponse classInfo = new ClassResponse(
 			newClass.getId(),
 			newClass.getName(),
 			newClass.getSchool(),
 			newClass.getCreatedAt().getYear(),
 			newClass.getGrade(),
 			newClass.getClassGroup(),
-			newClass.getCode()
+			newClass.getCode(),
+			account.getBalance()
 		);
+
+		// 토큰 생성
+		String accessToken = tokenUtils.createAccessToken(teacher.getId(), teacher.getMemberRole(), newClass.getId());
+		String refreshToken = tokenUtils.createRefreshToken(teacher.getId(), teacher.getMemberRole(), newClass.getId());
+
+		TokenResponse token = new TokenResponse(accessToken, refreshToken, teacher.getMemberRole().name(),
+			newClass.getId(), account.getAccountNumber());
+
+		return new LoginWithClassResponse(token, classInfo);
+
 	}
 
 	@Transactional(readOnly = true)
@@ -97,6 +119,8 @@ public class ClassroomServiceImpl implements ClassroomService {
 
 				// 현재 학급에 속한 전체 인원 수 조회
 				int memberCount = memberClassroomRepository.countByClassroom_Id(classroom.getId());
+
+				// 현재 학급
 
 				return new FindClassesResponse(
 					classroom.getName(),
@@ -135,6 +159,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 		throw new BusinessException(CLASS_NOT_FOUND);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public ClassCodeResponse findClassCode(Member teacher) {
 
@@ -143,7 +168,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 		return memberClassroomRepository
 			.findByMember_IdAndIsCurrentTrue(currentMember.getId())
 			.map(memberClassroom -> new ClassCodeResponse(memberClassroom.getClassroom().getCode()))
-			.orElseThrow(()->new BusinessException(CLASS_NOT_FOUND));
+			.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
 	}
 
 	private Member memberAuthorization(Member currentMember) {

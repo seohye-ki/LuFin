@@ -18,12 +18,13 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AccountServiceimpl implements AccountService {
+public class AccountServiceImpl implements AccountService {
 
 	final AccountRepository accountRepository;
 	final MemberRepository memberRepository;
 
 	@Transactional
+	@Override
 	public Account createAccountForMember(int memberId) {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
@@ -35,6 +36,7 @@ public class AccountServiceimpl implements AccountService {
 	}
 
 	@Transactional
+	@Override
 	public Account createAccountForClassroom(Classroom classroom) {
 		String accountNumber = generateUniqueAccountNumber();
 		Account account = Account.createClassAccount(accountNumber, classroom);

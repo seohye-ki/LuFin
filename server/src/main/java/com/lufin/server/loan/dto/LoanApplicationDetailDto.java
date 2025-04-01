@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import com.lufin.server.loan.domain.LoanApplication;
 import com.lufin.server.loan.domain.LoanApplicationStatus;
 
-public record LoanApplicationResponseDto(
+public record LoanApplicationDetailDto(
 	Integer loanApplicationId,
 	Integer memberId,
 	Integer classroomId,
@@ -20,8 +20,9 @@ public record LoanApplicationResponseDto(
 	LocalDateTime startedAt,
 	LocalDateTime dueDate
 ) {
-	public static LoanApplicationResponseDto from(LoanApplication loanApplication) {
-		return new LoanApplicationResponseDto(
+
+	public static LoanApplicationDetailDto from(LoanApplication loanApplication) {
+		return new LoanApplicationDetailDto(
 			loanApplication.getId(),
 			loanApplication.getMember().getId(),
 			loanApplication.getClassroom().getId(),

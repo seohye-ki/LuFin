@@ -9,12 +9,15 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lufin.server.account.domain.Account;
+import com.lufin.server.account.service.AccountService;
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.classroom.dto.ClassCodeResponse;
 import com.lufin.server.classroom.dto.ClassRequest;
-import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.dto.FindClassesResponse;
+import com.lufin.server.classroom.dto.LoginWithClassResponse;
+import com.lufin.server.classroom.factory.ResponseFactory;
 import com.lufin.server.classroom.repository.ClassroomRepository;
 import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.classroom.service.ClassroomService;
@@ -31,10 +34,12 @@ public class ClassroomServiceImpl implements ClassroomService {
 
 	private final ClassroomRepository classroomRepository;
 	private final MemberClassroomRepository memberClassroomRepository;
+	private final AccountService accountService;
+	private final ResponseFactory responseFactory;
 
 	@Transactional
 	@Override
-	public ClassResponse createClassroom(ClassRequest request, Member currentMember) {
+	public LoginWithClassResponse createClassroom(ClassRequest request, Member currentMember) {
 		Member teacher = memberAuthorization(currentMember);
 
 		// 동일한 교사가 같은 해, 같은 학교, 같은 학년, 같은 반 번호로 클래스 생성 시 중복
@@ -61,26 +66,23 @@ public class ClassroomServiceImpl implements ClassroomService {
 		);
 
 		classroomRepository.save(newClass);
+
+		// 클래스 계좌 생성
+		Account account = accountService.createAccountForClassroom(newClass);
+
 		Optional<MemberClassroom> hasCurrentClassroom = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(
 			currentMember.getId());
 
 		// 기존에 소속된 클래스(isCurrent=true)가 있다면 deactivate() → save() 없는 이유 : 더티 체킹에 의존
 		if (hasCurrentClassroom.isPresent()) {
 			hasCurrentClassroom.get().deactivate();
+			memberClassroomRepository.save(hasCurrentClassroom.get());
 		}
 		// 교사를 클래스에 매핑
 		MemberClassroom addTeacher = MemberClassroom.enroll(teacher, newClass);
 		memberClassroomRepository.save(addTeacher);
 
-		return new ClassResponse(
-			newClass.getId(),
-			newClass.getName(),
-			newClass.getSchool(),
-			newClass.getCreatedAt().getYear(),
-			newClass.getGrade(),
-			newClass.getClassGroup(),
-			newClass.getCode()
-		);
+		return responseFactory.createLoginWithClassResponse(teacher, newClass, account);
 	}
 
 	@Transactional(readOnly = true)
@@ -97,6 +99,8 @@ public class ClassroomServiceImpl implements ClassroomService {
 
 				// 현재 학급에 속한 전체 인원 수 조회
 				int memberCount = memberClassroomRepository.countByClassroom_Id(classroom.getId());
+
+				// 현재 학급
 
 				return new FindClassesResponse(
 					classroom.getName(),
@@ -135,6 +139,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 		throw new BusinessException(CLASS_NOT_FOUND);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public ClassCodeResponse findClassCode(Member teacher) {
 
@@ -143,7 +148,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 		return memberClassroomRepository
 			.findByMember_IdAndIsCurrentTrue(currentMember.getId())
 			.map(memberClassroom -> new ClassCodeResponse(memberClassroom.getClassroom().getCode()))
-			.orElseThrow(()->new BusinessException(CLASS_NOT_FOUND));
+			.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
 	}
 
 	private Member memberAuthorization(Member currentMember) {

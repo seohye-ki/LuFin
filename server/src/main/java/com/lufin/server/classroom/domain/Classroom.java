@@ -87,12 +87,28 @@ public class Classroom {
 	public static Classroom create(Member teacher, String code, String school, Integer grade,
 		Integer classGroup, String name, String thumbnailKey) {
 		validateCreateClassroom(code, grade);
+		thumbnailKey = prepareThumbnailKey(thumbnailKey);
+		return new Classroom(teacher, code, school, grade, classGroup, name, thumbnailKey);
+	}
+
+	public void updateInfo(String school, int grade, int classGroup, String name, String key) {
+		this.school = school;
+		this.grade = grade;
+		this.classGroup = classGroup;
+		this.name = name;
+
+		if (key != null) {
+			this.thumbnailKey = prepareThumbnailKey(key);
+		}
+	}
+
+	private static String prepareThumbnailKey(String thumbnailKey) {
 		if (thumbnailKey != null) {
 			validateThumbnailFileName(thumbnailKey);
 		} else {
 			thumbnailKey = "classrooms/302e3f79-083c-4e7c-adf7-a788d9b9c891.jpg";
 		}
-		return new Classroom(teacher, code, school, grade, classGroup, name, thumbnailKey);
+		return thumbnailKey;
 	}
 
 	// 학급에 구성원 추가
@@ -163,13 +179,5 @@ public class Classroom {
 	@Override
 	public int hashCode() {
 		return id != null ? id.hashCode() : 0;
-	}
-
-	public void updateInfo(String school, int grade, int classGroup, String name, String key) {
-		this.school = school;
-		this.grade = grade;
-		this.classGroup = classGroup;
-		this.name = name;
-		this.thumbnailKey = key;
 	}
 }

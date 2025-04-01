@@ -47,7 +47,7 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 	@Override
 	public LoginWithClassResponse createClassroom(ClassRequest request, Member currentMember) {
 
-		log.info("[클래스 생성 시도] 요청자: {}", currentMember);
+		log.info("[클래스 생성 시도] 요청자 ID: {}", currentMember.getId());
 
 		// 동일한 교사가 같은 해, 같은 학교, 같은 학년, 같은 반 번호로 클래스 생성 시 중복
 		checkDuplicateClassroom(request.school(), request.grade(), request.classGroup(), currentMember);
@@ -83,7 +83,7 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 		newClass.addMemberClass(addTeacher);
 
 		memberClassroomRepository.save(addTeacher);
-		log.info("[교사 클래스 매핑 완료] 교사: {}, 클래스: {}", currentMember.getName(), newClass.getName());
+		log.info("[교사 클래스 매핑 완료] 교사ID: {}, 클래스: {}", currentMember.getId(), newClass.getName());
 
 		return responseFactory.createLoginWithClassResponse(currentMember, newClass, account);
 	}
@@ -124,7 +124,7 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 	@TeacherOnly
 	@Override
 	public ClassResponse updateClassroom(Member member, UpdateClassRequest request) {
-		log.info("[클래스 정보 수정 요청] 요청자: {}", member);
+		log.info("[클래스 정보 수정 요청] 요청자 ID: {}", member.getId());
 
 		// 현재 소속 클래스 조회
 		MemberClassroom current = memberClassroomRepository

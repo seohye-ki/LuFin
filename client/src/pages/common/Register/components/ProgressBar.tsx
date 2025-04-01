@@ -8,8 +8,8 @@ export default function ProgressBar({ currentStep, totalSteps, stepTitles }: Pro
   const progress = (currentStep / totalSteps) * 100;
 
   return (
-    <div className="mb-10">
-      <div className="flex justify-between mb-3">
+    <div className='mb-10'>
+      <div className='flex justify-between mb-3'>
         {stepTitles.map((title, index) => (
           <div
             key={title}
@@ -21,12 +21,12 @@ export default function ProgressBar({ currentStep, totalSteps, stepTitles }: Pro
           </div>
         ))}
       </div>
-      <div className="h-2.5 bg-grey-30 rounded-full">
+      <div className='h-2.5 bg-grey-30 rounded-full'>
         <div
-          className="h-full bg-info rounded-full transition-all duration-300"
+          className='h-full bg-info rounded-full transition-all duration-300'
           style={{ width: `${progress}%` }}
         />
       </div>
     </div>
   );
-} 
+}

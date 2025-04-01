@@ -39,17 +39,24 @@ const StyledCheckbox = styled(MuiCheckbox)({
   },
   '& .MuiSvgIcon-root': {
     fontSize: '1.2rem', // 체크박스 크기 조정
-  }
+  },
 });
 
-const Checkbox = ({ id, disabled = false, indeterminate = false, className = '', onChange, ...props }: CheckboxProps) => {
+const Checkbox = ({
+  id,
+  disabled = false,
+  indeterminate = false,
+  className = '',
+  onChange,
+  ...props
+}: CheckboxProps) => {
   return (
     <StyledCheckbox
       id={id}
       disabled={disabled}
       indeterminate={indeterminate}
       className={className}
-      size="small"
+      size='small'
       onChange={onChange}
       {...props}
     />

@@ -7,5 +7,6 @@ export const paths = {
   TEACHER_MISSION: '/mission/teacher',
   STUDENT_MISSION: '/mission',
   DESIGN_SYSTEM: '/design-system',
-
+  TEACHER_CLASSROOM: '/classroom/teacher',
+  STUDENT_CLASSROOM: '/classroom',
 } as const;

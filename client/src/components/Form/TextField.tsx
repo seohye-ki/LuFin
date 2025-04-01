@@ -14,7 +14,18 @@ interface TextFieldProps extends Omit<React.InputHTMLAttributes<HTMLInputElement
 }
 
 const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
-  ({ label, description, variant = 'normal', isDisabled, inputSize = 'md', className = '', ...props }, ref) => {
+  (
+    {
+      label,
+      description,
+      variant = 'normal',
+      isDisabled,
+      inputSize = 'md',
+      className = '',
+      ...props
+    },
+    ref,
+  ) => {
     const getVariantStyles = (variant: TextFieldVariant) => {
       switch (variant) {
         case 'success':
@@ -48,63 +59,85 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       }
     };
 
-    const baseInputClasses = "block w-full rounded-md bg-broken-white outline-1 -outline-offset-1 placeholder:text-grey-25 focus:outline-2 focus:-outline-offset-2";
+    const baseInputClasses =
+      'block w-full rounded-md bg-broken-white outline-1 -outline-offset-1 placeholder:text-grey-25 focus:outline-2 focus:-outline-offset-2';
     const sizeClasses = getSizeStyles(inputSize);
-    
+
     const inputClasses = `${baseInputClasses} ${sizeClasses} ${getVariantStyles(variant)}`;
 
     const disabledClasses = isDisabled
-      ? "disabled:cursor-not-allowed disabled:bg-broken-white disabled:text-grey disabled:outline-grey-30"
-      : "";
+      ? 'disabled:cursor-not-allowed disabled:bg-broken-white disabled:text-grey disabled:outline-grey-30'
+      : '';
 
     return (
       <div className='flex flex-col gap-1'>
         {label && (
-          <label htmlFor={props.id} className={`font-medium text-dark-grey ${
-            inputSize === 'xl' ? 'text-[1.25rem]' : inputSize === 'lg' ? 'text-[1.125rem]' : 'text-p2'
-          }`}>
+          <label
+            htmlFor={props.id}
+            className={`font-medium text-dark-grey ${
+              inputSize === 'xl'
+                ? 'text-[1.25rem]'
+                : inputSize === 'lg'
+                  ? 'text-[1.125rem]'
+                  : 'text-p2'
+            }`}
+          >
             {label}
           </label>
         )}
-        <div className="mt-2 relative">
+        <div className='mt-2 relative'>
           <input
             ref={ref}
             disabled={isDisabled}
             className={`${inputClasses} ${disabledClasses} ${className}`}
-            aria-invalid={variant === 'error' ? "true" : undefined}
-            aria-describedby={variant === 'error' ? `${props.id}-error` : description ? `${props.id}-description` : undefined}
+            aria-invalid={variant === 'error' ? 'true' : undefined}
+            aria-describedby={
+              variant === 'error'
+                ? `${props.id}-error`
+                : description
+                  ? `${props.id}-description`
+                  : undefined
+            }
             {...props}
           />
           {variant === 'error' && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-              <Icon
-                name="InfoCircle"
-                size={20}
-                color="danger"
-                className="pointer-events-none"
-              />
+            <div className='absolute right-3 top-1/2 -translate-y-1/2'>
+              <Icon name='InfoCircle' size={20} color='danger' className='pointer-events-none' />
             </div>
           )}
         </div>
         {variant === 'error' && (
-          <p id={`${props.id}-error`} className={`mt-2 text-danger ${
-            inputSize === 'xl' ? 'text-[1.125rem]' : inputSize === 'lg' ? 'text-[1rem]' : 'text-p2'
-          }`}>
+          <p
+            id={`${props.id}-error`}
+            className={`mt-2 text-danger ${
+              inputSize === 'xl'
+                ? 'text-[1.125rem]'
+                : inputSize === 'lg'
+                  ? 'text-[1rem]'
+                  : 'text-p2'
+            }`}
+          >
             {description}
           </p>
         )}
         {description && variant !== 'error' && (
-          <span className={`${getDescriptionColor(variant)} ${
-            inputSize === 'xl' ? 'text-[1.125rem]' : inputSize === 'lg' ? 'text-[1rem]' : 'text-p2'
-          }`}>
+          <span
+            className={`${getDescriptionColor(variant)} ${
+              inputSize === 'xl'
+                ? 'text-[1.125rem]'
+                : inputSize === 'lg'
+                  ? 'text-[1rem]'
+                  : 'text-p2'
+            }`}
+          >
             {description}
           </span>
         )}
       </div>
     );
-  }
+  },
 );
 
 TextField.displayName = 'TextField';
 
-export default TextField; 
+export default TextField;

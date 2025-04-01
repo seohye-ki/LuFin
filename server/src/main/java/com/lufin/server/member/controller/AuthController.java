@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lufin.server.classroom.dto.ClassCodeRequest;
 import com.lufin.server.classroom.dto.LoginWithClassResponse;
-import com.lufin.server.classroom.service.ClassroomService;
+import com.lufin.server.classroom.service.ClassroomCommandService;
 import com.lufin.server.common.dto.ApiResponse;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.dto.LoginRequest;
@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
 	private final LoginService loginService;
-	private final ClassroomService classroomService;
+	private final ClassroomCommandService classroomService;
 
 	@PostMapping("/login")
 	public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {

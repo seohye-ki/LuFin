@@ -15,6 +15,8 @@ import com.lufin.server.classroom.dto.ClassRequest;
 import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.dto.FindClassesResponse;
 import com.lufin.server.classroom.dto.LoginWithClassResponse;
+import com.lufin.server.classroom.dto.UpdateClassRequest;
+import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.classroom.service.ClassroomService;
 import com.lufin.server.common.dto.ApiResponse;
 import com.lufin.server.member.domain.Member;
@@ -64,7 +66,7 @@ public class ClassroomController {
 
 	// [교사] 클래스 수정
 	@PatchMapping("/current")
-	ResponseEntity<ApiResponse<ClassResponse>> updateClassroom(@RequestBody @Valid ClassRequest request) {
+	ResponseEntity<ApiResponse<ClassResponse>> updateClassroom(@RequestBody @Valid UpdateClassRequest request) {
 		Member currentMember = UserContext.get();
 		ClassResponse response = classroomService.updateClassroom(currentMember, request);
 		return ResponseEntity.status(200).body(ApiResponse.success(response));

@@ -22,6 +22,7 @@ import CreditChart from '../../../components/Graph/CreditChart';
 import StockChart from '../../../components/Graph/StockChart';
 import StockGraph from '../../../components/Graph/StockGraph';
 import { dateUtil } from '../../../libs/utils/date-util';
+import useAlertStore from '../../../libs/store/alertStore';
 
 const CommonComponents = () => {
   const navigationIcons: IconsaxIconName[] = [
@@ -68,6 +69,7 @@ const CommonComponents = () => {
     'HambergerMenu',
     'MoreCircle',
     'Add',
+    'Minus',
     'More',
     'Close',
     'CircleEdit',
@@ -194,7 +196,7 @@ const CommonComponents = () => {
           <div className='w-full bg-grey-30 p-4 rounded-2xl flex flex-col gap-4'>
             <div className='flex flex-row w-full gap-4'>
               <div className='bg-white p-4 rounded-2xl w-full'>
-                <CreditChart creditRating='A+'></CreditChart>
+                <CreditChart creditRating='A+' />
               </div>
 
               <div className='bg-white p-4 rounded-2xl w-full'>
@@ -204,7 +206,7 @@ const CommonComponents = () => {
                     { stock: 'LG', amount: 30000 },
                     { stock: '메리츠', amount: 52000 },
                   ]}
-                ></StockChart>
+                />
               </div>
             </div>
 
@@ -260,7 +262,7 @@ const CommonComponents = () => {
                     price: 11350,
                   },
                 ]}
-              ></StockGraph>
+              />
             </div>
           </div>
         </section>
@@ -276,68 +278,124 @@ const CommonComponents = () => {
           <h2 className='text-h2 font-medium text-black mb-4'>Alert</h2>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 bg-grey-30 p-4 rounded-2xl'>
             {/* Info Alert - Row buttons */}
-            <Alert
-              title='새로운 미션이 등록됐어요'
-              description='미션 수행하고 루핀을 모아보세요!'
-              status='info'
-              buttonDirection='row'
-              primaryButton={{
-                label: '확인하러 가기',
-                onClick: () => alert('확인하러 가기 클릭'),
-              }}
-              secondaryButton={{
-                label: '취소',
-                onClick: () => alert('취소 클릭'),
-              }}
-            />
+            <div className='bg-white p-4 rounded-lg'>
+              <h3 className='text-p1 font-medium text-black mb-2'>Info Alert</h3>
+              <Button
+                variant='solid'
+                color='info'
+                onClick={() =>
+                  useAlertStore.getState().showAlert(
+                    '새로운 미션이 등록됐어요',
+                    null,
+                    '미션 수행하고 루핀을 모아보세요!',
+                    'info',
+                    {
+                      label: '확인하러 가기',
+                      onClick: () => alert('확인하러 가기 클릭'),
+                    },
+                    {
+                      label: '취소',
+                      onClick: () => useAlertStore.getState().hideAlert(),
+                    },
+                  )
+                }
+              >
+                Info Alert 열기
+              </Button>
+            </div>
 
             {/* Warning Alert - Column buttons */}
-            <Alert
-              title='지금은 매매할 수 없어요'
-              description='매매 가능 시간은 매일 오시장 14시까지입니다.'
-              status='warning'
-              buttonDirection='column'
-              primaryButton={{
-                label: '확인했습니다',
-                onClick: () => alert('확인 클릭'),
-                color: 'primary',
-              }}
-              secondaryButton={{
-                label: '이유 보기',
-                onClick: () => alert('이유 보기 클릭'),
-              }}
-            />
+            <div className='bg-white p-4 rounded-lg'>
+              <h3 className='text-p1 font-medium text-black mb-2'>Warning Alert</h3>
+              <Button
+                variant='solid'
+                color='neutral'
+                onClick={() =>
+                  useAlertStore.getState().showAlert(
+                    '지금은 매매할 수 없어요',
+                    null,
+                    '매매 가능 시간은 매일 오시장 14시까지입니다.',
+                    'warning',
+                    {
+                      label: '확인했습니다',
+                      onClick: () => {
+                        alert('확인 클릭');
+                        useAlertStore.getState().hideAlert();
+                      },
+                      color: 'primary',
+                    },
+                    {
+                      label: '이유 보기',
+                      onClick: () => {
+                        alert('이유 보기 클릭');
+                        useAlertStore.getState().hideAlert();
+                      },
+                    },
+                  )
+                }
+              >
+                Warning Alert 열기
+              </Button>
+            </div>
 
             {/* Danger Alert - Single button */}
-            <Alert
-              title='네트워크 오류'
-              description='빠른 시간 내에 조치하겠습니다.'
-              status='danger'
-              primaryButton={{
-                label: '확인했습니다',
-                onClick: () => alert('확인 클릭'),
-                color: 'danger',
-              }}
-            />
+            <div className='bg-white p-4 rounded-lg'>
+              <h3 className='text-p1 font-medium text-black mb-2'>Danger Alert</h3>
+              <Button
+                variant='solid'
+                color='danger'
+                onClick={() =>
+                  useAlertStore
+                    .getState()
+                    .showAlert('네트워크 오류', null, '빠른 시간 내에 조치하겠습니다.', 'danger', {
+                      label: '확인했습니다',
+                      onClick: () => {
+                        alert('확인 클릭');
+                        useAlertStore.getState().hideAlert();
+                      },
+                      color: 'danger',
+                    })
+                }
+              >
+                Danger Alert 열기
+              </Button>
+            </div>
 
             {/* Success Alert - Row buttons */}
-            <Alert
-              title='삭제가 완료됐어요'
-              description='삭제된 데이터는 복구할 수 없어요.'
-              status='success'
-              buttonDirection='row'
-              primaryButton={{
-                label: '확인',
-                onClick: () => alert('확인 클릭'),
-                color: 'primary',
-              }}
-              secondaryButton={{
-                label: '되돌리기',
-                onClick: () => alert('되돌리기 클릭'),
-              }}
-            />
+            <div className='bg-white p-4 rounded-lg'>
+              <h3 className='text-p1 font-medium text-black mb-2'>Success Alert</h3>
+              <Button
+                variant='solid'
+                color='primary'
+                onClick={() =>
+                  useAlertStore.getState().showAlert(
+                    '삭제가 완료됐어요',
+                    null,
+                    '삭제된 데이터는 복구할 수 없어요.',
+                    'success',
+                    {
+                      label: '확인',
+                      onClick: () => {
+                        alert('확인 클릭');
+                        useAlertStore.getState().hideAlert();
+                      },
+                      color: 'primary',
+                    },
+                    {
+                      label: '되돌리기',
+                      onClick: () => useAlertStore.getState().hideAlert(),
+                    },
+                  )
+                }
+              >
+                Success Alert 열기
+              </Button>
+            </div>
           </div>
         </section>
+
+        {/* Include a single Alert component that will be controlled by the store */}
+        <Alert />
 
         {/* Icon Section */}
         <section>

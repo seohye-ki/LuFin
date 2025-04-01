@@ -196,4 +196,4 @@ const DesignSystem = () => {
   );
 };
 
-export default DesignSystem; 
+export default DesignSystem;

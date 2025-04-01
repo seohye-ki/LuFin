@@ -8,7 +8,7 @@ import Button from '../../../../components/Button/Button';
 import { useState } from 'react';
 import Profile from '../../../../components/Profile/Profile';
 import MissionEditModal from './MissionEditModal';
-import Alert from '../../../../components/Alert/Alert';
+import useAlertStore from '../../../../libs/store/alertStore';
 
 interface MissionReadModalProps {
   mission: MissionDetail;
@@ -68,73 +68,65 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
   }
 
   if (isDeleteMode) {
-    return (
-      <div className='fixed inset-0 flex items-center justify-center z-50'>
-        <Alert
-          title='미션을 삭제하시겠습니까?'
-          description='삭제된 미션은 복구할 수 없습니다.'
-          status='danger'
-          primaryButton={{
-            label: '취소',
-            onClick: () => {
-              // TODO: 미션 삭제 API 호출
-              onClose();
-            },
-            color: 'neutral',
-          }}
-          secondaryButton={{
-            label: '삭제하기',
-            onClick: () => setIsDeleteMode(false),
-            color: 'danger',
-          }}
-          buttonDirection='row'
-        />
-      </div>
+    useAlertStore.getState().showAlert(
+      '미션을 삭제하시겠습니까?',
+      null,
+      '삭제된 미션은 복구할 수 없습니다.',
+      'danger',
+      {
+        label: '취소',
+        onClick: () => {
+          setIsDeleteMode(false);
+        },
+        color: 'neutral',
+      },
+      {
+        label: '삭제하기',
+        onClick: () => {
+          // TODO: 미션 삭제 API 호출
+          onClose();
+        },
+        color: 'danger',
+      },
     );
+    return null;
   }
 
   if (isApproveMode) {
-    return (
-      <div className='fixed inset-0 flex items-center justify-center z-50'>
-        <Alert
-          title='미션을 승인하시겠습니까?'
-          description={
-            <div className='flex flex-col gap-2'>
-              <Profile
-                name={
-                  members.find((m) => m.memberId === selectedParticipation)?.name || '알 수 없음'
-                }
-                profileImage={
-                  members.find((m) => m.memberId === selectedParticipation)?.profileImage ||
-                  'https://picsum.photos/200/300?random=1'
-                }
-                variant='row'
-              />
-              <span className='text-c1'>승인하면 보상이 지급됩니다.</span>
-            </div>
+    useAlertStore.getState().showAlert(
+      '미션을 승인하시겠습니까?',
+      <div className='flex flex-col gap-2'>
+        <Profile
+          name={members.find((m) => m.memberId === selectedParticipation)?.name || '알 수 없음'}
+          profileImage={
+            members.find((m) => m.memberId === selectedParticipation)?.profileImage ||
+            'https://picsum.photos/200/300?random=1'
           }
-          status='success'
-          primaryButton={{
-            label: '취소',
-            onClick: () => {
-              setIsApproveMode(false);
-              setSelectedParticipation(null);
-            },
-            color: 'neutral',
-          }}
-          secondaryButton={{
-            label: '승인하기',
-            onClick: () => {
-              // TODO: 미션 승인 API 호출
-              setIsApproveMode(true);
-              setSelectedParticipation(null);
-            },
-            color: 'primary',
-          }}
-          buttonDirection='row'
+          variant='row'
         />
-      </div>
+        <span className='text-c1'>승인하면 보상이 지급됩니다.</span>
+      </div>,
+      '',
+      'success',
+      {
+        label: '취소',
+        onClick: () => {
+          setIsApproveMode(false);
+          setSelectedParticipation(null);
+        },
+        color: 'neutral',
+      },
+      {
+        label: '승인하기',
+        onClick: () => {
+          // TODO: 미션 승인 API 호출
+          setIsApproveMode(false);
+          setSelectedParticipation(null);
+        },
+        color: 'primary',
+      },
     );
+    return null;
   }
 
   return (

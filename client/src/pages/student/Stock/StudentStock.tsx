@@ -9,10 +9,17 @@ import MyStockChart from './components/MyStockChart';
 import { useState } from 'react';
 import { Icon } from '../../../components/Icon/Icon';
 import SpecifiedStockGraph from './components/SpecifiedStockGraph';
-
+import { useStockStore } from '../../../libs/store/stockStore';
+import StockInfoNotice from './components/StockInfoNotice';
 const StudentStock = () => {
-  const handleRowClick = (row: any) => {
-    setSelectedStock(stockProducts.find((stock) => stock.stockProductId === row.id) || null);
+  type TableRow = {
+    [key: string]: React.ReactNode;
+  };
+
+  const handleRowClick = (row: TableRow) => {
+    const id = Number(row.id);
+    const stock = stockProducts.find((s) => s.stockProductId === id);
+    setSelectedStock(stock || null);
   };
 
   const columns = [
@@ -23,12 +30,15 @@ const StudentStock = () => {
   ];
 
   const rows = stockProducts.map((stock) => ({
-    id: stock.stockProductId,
+    id: stock.stockProductId.toString(),
     name: stock.name,
     currentPrice: <Lufin size='s' count={stock.currentPrice} />,
     changeRate: (
       <span className={stock.currentPrice - stock.initialPrice > 0 ? 'text-red-500' : 'text-info'}>
-        {`${stock.currentPrice - stock.initialPrice > 0 ? '+' : ''}${stock.currentPrice - stock.initialPrice}루핀 (${((stock.currentPrice - stock.initialPrice) / stock.initialPrice) * 100}%)`}
+        {`${stock.currentPrice - stock.initialPrice > 0 ? '+' : ''}${stock.currentPrice - stock.initialPrice}루핀 (${(
+          ((stock.currentPrice - stock.initialPrice) / stock.initialPrice) *
+          100
+        ).toFixed(2)}%)`}
       </span>
     ),
   }));
@@ -40,12 +50,14 @@ const StudentStock = () => {
     <SidebarLayout>
       <div className='flex flex-col h-full gap-3'>
         {selectedStock ? (
-          <div className='flex flex-col basis-45/100 min-h-0 gap-2'>
+          <div className='flex flex-col basis-45/100 min-h-0 gap-3'>
             <div className='flex items-center gap-2 text-p3 text-gray-500'>
               <Icon name='InfoCircle' size={16} color='info' />
               <span className='text-info'>주식 가격은 09:00와 13:00마다 변경됩니다.</span>
             </div>
-            <SpecifiedStockGraph stock={selectedStock} onBack={() => setSelectedStock(null)} />
+            <div className='flex-1 min-h-0'>
+              <SpecifiedStockGraph stock={selectedStock} onBack={() => setSelectedStock(null)} />
+            </div>
           </div>
         ) : (
           <>

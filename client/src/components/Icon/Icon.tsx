@@ -49,8 +49,9 @@ import {
   HambergerMenu,
   Add,
   More,
+  Minus,
 } from 'iconsax-react';
-import { HiStar } from "react-icons/hi2";
+import { HiStar } from 'react-icons/hi2';
 
 type CustomColor =
   | 'white'
@@ -131,6 +132,7 @@ const ICONSAX_ICONS = {
   HambergerMenu,
   Star: HiStar,
   Add,
+  Minus,
   More,
   Close: Add,
   CircleEdit: Add,
@@ -165,7 +167,7 @@ export const Icon = ({
 
   if (isCircleIcon) {
     return (
-      <div className="relative inline-flex items-center justify-center">
+      <div className='relative inline-flex items-center justify-center'>
         <div
           className={`${className} rounded-full`}
           style={{
@@ -179,21 +181,21 @@ export const Icon = ({
             size={size * 0.6}
             color={color === 'currentColor' ? color : getColor(color)}
             variant={variant}
-            className="absolute"
+            className='absolute'
           />
         ) : name === 'CircleTrash' ? (
           <Trash
             size={size * 0.65}
             color={color === 'currentColor' ? color : getColor(color)}
             variant={variant}
-            className="absolute"
+            className='absolute'
           />
         ) : (
           <Add
             size={size * 0.8}
             color={color === 'currentColor' ? color : getColor(color)}
             variant={variant}
-            className="absolute"
+            className='absolute'
           />
         )}
       </div>

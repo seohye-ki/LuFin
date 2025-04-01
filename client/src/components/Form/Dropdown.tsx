@@ -36,14 +36,21 @@ const Dropdown = ({
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   // 현재 선택된 아이템 찾기
-  const selectedItem = items.find(item => {
-    if (typeof item.value === 'object' && item.value !== null && 'type' in item.value && item.value.type === 'star') {
-      return value !== undefined && 
-             value !== null &&
-             typeof value === 'object' && 
-             'type' in value && 
-             value.type === 'star' && 
-             (value as StarValue).count === (item.value as StarValue).count;
+  const selectedItem = items.find((item) => {
+    if (
+      typeof item.value === 'object' &&
+      item.value !== null &&
+      'type' in item.value &&
+      item.value.type === 'star'
+    ) {
+      return (
+        value !== undefined &&
+        value !== null &&
+        typeof value === 'object' &&
+        'type' in value &&
+        value.type === 'star' &&
+        (value as StarValue).count === (item.value as StarValue).count
+      );
     }
     return item.value === value;
   });
@@ -52,12 +59,12 @@ const Dropdown = ({
   useEffect(() => {
     const calculatePosition = () => {
       if (!buttonRef.current) return;
-      
+
       const buttonRect = buttonRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       const spaceBelow = windowHeight - buttonRect.bottom;
       const spaceAbove = buttonRect.top;
-      
+
       // 아래 공간이 200px보다 작고 위 공간이 더 큰 경우 위로 표시
       setPosition(spaceBelow < 200 && spaceAbove > spaceBelow ? 'top' : 'bottom');
     };
@@ -74,23 +81,28 @@ const Dropdown = ({
 
   // 별점 렌더링 함수
   const renderStars = (count: number) => {
-    return Array(count).fill(0).map((_, index) => (
-      <Icon key={index} name="Star" size={16} />
-    ));
+    return Array(count)
+      .fill(0)
+      .map((_, index) => <Icon key={index} name='Star' size={16} />);
   };
 
   // 아이템 값 렌더링 함수
   const renderValue = (item: DropdownItem) => {
-    if (typeof item.value === 'object' && item.value !== null && 'type' in item.value && item.value.type === 'star') {
+    if (
+      typeof item.value === 'object' &&
+      item.value !== null &&
+      'type' in item.value &&
+      item.value.type === 'star'
+    ) {
       return (
-        <div className="flex items-center gap-1">
+        <div className='flex items-center gap-1'>
           {renderStars((item.value as StarValue).count)}
-          <span className="ml-2">{item.label}</span>
+          <span className='ml-2'>{item.label}</span>
         </div>
       );
     }
     return (
-      <div className="flex items-center gap-2">
+      <div className='flex items-center gap-2'>
         {item.icon}
         <span>{item.label}</span>
       </div>
@@ -99,11 +111,7 @@ const Dropdown = ({
 
   return (
     <div className={`relative inline-block ${className}`}>
-      {label && (
-        <label className="block text-p2 font-medium text-dark-grey mb-2">
-          {label}
-        </label>
-      )}
+      {label && <label className='block text-p2 font-medium text-dark-grey mb-2'>{label}</label>}
       <Menu>
         {({ open }: { open: boolean }) => (
           <>
@@ -112,20 +120,24 @@ const Dropdown = ({
               disabled={isDisabled}
               className={`
                 inline-flex w-full items-center justify-between gap-x-1.5 rounded-lg px-3 py-2 text-p1
-                ${isDisabled 
-                  ? 'bg-broken-white text-grey cursor-not-allowed' 
-                  : 'bg-white text-black hover:bg-broken-white'}
+                ${
+                  isDisabled
+                    ? 'bg-broken-white text-grey cursor-not-allowed'
+                    : 'bg-white text-black hover:bg-broken-white'
+                }
                 border border-grey-30 transition-colors
               `}
             >
-              {selectedItem ? renderValue(selectedItem) : (
-                <span className="text-grey text-p2">{placeholder}</span>
+              {selectedItem ? (
+                renderValue(selectedItem)
+              ) : (
+                <span className='text-grey text-p2'>{placeholder}</span>
               )}
-              <Icon 
-                name={open ? "ArrowUp2" : "ArrowDown2"} 
+              <Icon
+                name={open ? 'ArrowUp2' : 'ArrowDown2'}
                 size={20}
-                color="grey"
-                className="transition-transform"
+                color='grey'
+                className='transition-transform'
               />
             </Menu.Button>
 
@@ -137,12 +149,12 @@ const Dropdown = ({
                 transition-all duration-200 ease-out
               `}
             >
-              <div className="py-1">
+              <div className='py-1'>
                 {items.map((item, index) => (
                   <Menu.Item key={index}>
                     {({ active }: { active: boolean }) => (
                       <button
-                        type="button"
+                        type='button'
                         className={`
                           w-full px-4 py-2 text-left text-p2
                           ${active ? 'bg-broken-white text-black' : 'text-dark-grey'}
@@ -166,4 +178,4 @@ const Dropdown = ({
 };
 
 export type { DropdownProps, DropdownItem, DropdownValue };
-export default Dropdown; 
+export default Dropdown;

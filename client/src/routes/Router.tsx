@@ -12,6 +12,8 @@ import StudentShop from '../pages/student/Shop/StudentShop';
 import Login from '../pages/common/Login/Login';
 import Register from '../pages/common/Register/Register';
 import TeacherShop from '../pages/teacher/Shop/TeacherShop';
+import TeacherClassroom from '../pages/teacher/Classroom/TeacherClassroom';
+import StudentClassroom from '../pages/student/Classroom/StudentClassroom';
 
 const Router = () => {
   return (
@@ -26,6 +28,8 @@ const Router = () => {
         <Route path={paths.TEACHER_SHOP} element={<TeacherShop />} />
         <Route path={paths.TEACHER_MISSION} element={<TeacherMission />} />
         <Route path={paths.STUDENT_MISSION} element={<StudentMission />} />
+        <Route path={paths.TEACHER_CLASSROOM} element={<TeacherClassroom />} />
+        <Route path={paths.STUDENT_CLASSROOM} element={<StudentClassroom />} />
         {/* 인증이 필요한 라우트들은 PrivateRoute로 감싸기 */}
         <Route element={<PrivateRoute />}>{/* 여기에 인증이 필요한 라우트들 추가 */}</Route>
       </Routes>

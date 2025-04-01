@@ -4,15 +4,16 @@ import static com.lufin.server.classroom.util.ClassroomValidator.*;
 import static com.lufin.server.common.constants.ErrorCode.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lufin.server.account.domain.Account;
+import com.lufin.server.account.repository.AccountRepository;
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.classroom.dto.ClassCodeResponse;
-import com.lufin.server.classroom.dto.FindClassesResponse;
+import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.classroom.service.ClassroomQueryService;
 import com.lufin.server.common.exception.BusinessException;
@@ -27,80 +28,70 @@ import lombok.extern.slf4j.Slf4j;
 public class ClassroomQueryServiceImpl implements ClassroomQueryService {
 
 	private final MemberClassroomRepository memberClassroomRepository;
+	private final AccountRepository accountRepository;
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<FindClassesResponse> findClasses(int memberId) {
-		log.info("[클래스 이력 조회 요청] memberId: {}", memberId);
+	public List<ClassResponse> findClasses(int memberId) {
+		log.info("[클래스 이력 조회] memberId: {}", memberId);
 
-		// 특정 회원이 소속된 모든 학급 이력 조회
 		List<MemberClassroom> memberClassrooms = memberClassroomRepository.findByMember_Id(memberId);
 		log.debug("[조회된 클래스 수] {}", memberClassrooms.size());
 
-		// 각 학급 정보를 DTO로 변환하여 반환
 		return memberClassrooms.stream()
-			.map(mc -> {
-				Classroom classroom = mc.getClassroom();
-
-				// 현재 학급에 속한 전체 인원 수 조회
-				int memberCount = memberClassroomRepository.countByClassroom_Id(classroom.getId());
-
-				// 현재 학급
-
-				return new FindClassesResponse(
-					classroom.getName(),
-					classroom.getSchool(),
-					classroom.getCreatedAt().getYear(),
-					classroom.getGrade(),
-					classroom.getClassGroup(),
-					memberCount,
-					classroom.getThumbnailKey()
-				);
-			})
-			.toList(); // 스트림을 리스트로 변환하여 반환
+			.map(mc -> toClassResponse(mc.getClassroom()))
+			.toList();
 	}
 
 	@Transactional(readOnly = true)
 	@Override
-	public FindClassesResponse findCurrentClass(int memberId) {
-		log.info("[현재 소속 클래스 조회 요청] memberId: {}", memberId);
+	public ClassResponse findCurrentClass(int memberId) {
+		log.info("[현재 클래스 조회] memberId: {}", memberId);
 
-		Optional<MemberClassroom> currentClassroom =
-			memberClassroomRepository.findByMember_IdAndIsCurrentTrue(memberId);
+		Classroom classroom = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(memberId)
+			.map(MemberClassroom::getClassroom)
+			.orElseThrow(() -> {
+				log.warn("🏫[현재 소속 클래스 없음] memberId: {}", memberId);
+				return new BusinessException(CLASS_NOT_FOUND);
+			});
 
-		if (currentClassroom.isPresent()) {
-			Classroom classroom = currentClassroom.get().getClassroom();
-			int memberCount = memberClassroomRepository.countByClassroom_Id(classroom.getId());
-
-			log.info("[현재 클래스 조회 성공] classId: {}, className: {}", classroom.getId(), classroom.getName());
-
-			return new FindClassesResponse(
-				classroom.getName(),
-				classroom.getSchool(),
-				classroom.getCreatedAt().getYear(),
-				classroom.getGrade(),
-				classroom.getClassGroup(),
-				memberCount,
-				classroom.getThumbnailKey()
-			);
-		}
-		log.warn("🏫[현재 소속 클래스 없음] memberId: {}", memberId);
-		throw new BusinessException(CLASS_NOT_FOUND);
+		log.info("[조회 성공] classId: {}, className: {}", classroom.getId(), classroom.getName());
+		return toClassResponse(classroom);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public ClassCodeResponse findClassCode(Member teacher) {
-		log.info("[클래스 코드 조회 요청] teacher: {}", teacher);
+		log.info("[클래스 코드 조회] teacher: {}", teacher);
 
-		Member currentMember = validateTeacherRole(teacher);
+		Member validTeacher = validateTeacherRole(teacher);
 
-		return memberClassroomRepository
-			.findByMember_IdAndIsCurrentTrue(currentMember.getId())
-			.map(memberClassroom -> new ClassCodeResponse(memberClassroom.getClassroom().getCode()))
+		String code = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(validTeacher.getId())
+			.map(mc -> mc.getClassroom().getCode())
 			.orElseThrow(() -> {
-				log.warn("🏫[현재 소속된 클래스 없음]: {}", teacher);
+				log.warn("🏫[현재 클래스 없음] teacher: {}", teacher);
 				return new BusinessException(CLASS_NOT_FOUND);
 			});
+
+		return new ClassCodeResponse(code);
+	}
+
+	private ClassResponse toClassResponse(Classroom classroom) {
+		Integer balance = accountRepository.findByClassroomId(classroom.getId())
+			.map(Account::getBalance)
+			.orElse(0);
+
+		return new ClassResponse(
+			classroom.getId(),
+			classroom.getName(),
+			classroom.getSchool(),
+			classroom.getCreatedAt().getYear(),
+			classroom.getGrade(),
+			classroom.getClassGroup(),
+			classroom.getCode(),
+			classroom.getMemberCount(),
+			balance,
+			classroom.getThumbnailKey()
+		);
 	}
 }

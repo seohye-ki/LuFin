@@ -27,7 +27,9 @@ public class ResponseFactory {
 			classroom.getGrade(),
 			classroom.getClassGroup(),
 			classroom.getCode(),
-			account.getBalance()
+			classroom.getMemberCount(),
+			account.getBalance(),
+			classroom.getThumbnailKey()
 		);
 
 		String accessToken = tokenUtils.createAccessToken(teacher.getId(), teacher.getMemberRole(), classroom.getId());

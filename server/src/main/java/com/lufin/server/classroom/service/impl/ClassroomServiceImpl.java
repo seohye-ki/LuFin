@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.domain.MemberClassroom;
+import com.lufin.server.classroom.dto.ClassCodeResponse;
 import com.lufin.server.classroom.dto.ClassRequest;
 import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.dto.FindClassesResponse;
@@ -132,6 +133,17 @@ public class ClassroomServiceImpl implements ClassroomService {
 			);
 		}
 		throw new BusinessException(CLASS_NOT_FOUND);
+	}
+
+	@Override
+	public ClassCodeResponse findClassCode(Member teacher) {
+
+		Member currentMember = memberAuthorization(teacher);
+
+		return memberClassroomRepository
+			.findByMember_IdAndIsCurrentTrue(currentMember.getId())
+			.map(memberClassroom -> new ClassCodeResponse(memberClassroom.getClassroom().getCode()))
+			.orElseThrow(()->new BusinessException(CLASS_NOT_FOUND));
 	}
 
 	private Member memberAuthorization(Member currentMember) {

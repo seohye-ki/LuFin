@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lufin.server.classroom.dto.ClassCodeResponse;
 import com.lufin.server.classroom.dto.ClassRequest;
 import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.dto.FindClassesResponse;
@@ -27,7 +28,7 @@ public class ClassroomController {
 
 	private final ClassroomService classroomService;
 
-	// 클래스 생성
+	// [교사] 클래스 생성
 	@PostMapping
 	ResponseEntity<ApiResponse<ClassResponse>> createClassroom(@RequestBody @Valid ClassRequest classRequest) {
 		Member currentMember = UserContext.get();
@@ -43,10 +44,19 @@ public class ClassroomController {
 		return ResponseEntity.status(200).body(ApiResponse.success(result));
 	}
 
+	// 	본인이 현재 소속된 클래스 조회
 	@GetMapping("/current")
 	ResponseEntity<ApiResponse<FindClassesResponse>> getCurrentClassroom() {
 		Member currentMember = UserContext.get();
 		FindClassesResponse response = classroomService.findCurrentClass(currentMember.getId());
+		return ResponseEntity.status(200).body(ApiResponse.success(response));
+	}
+
+	// [교사] 클래스 코드 공유
+	@GetMapping("/current/code")
+	ResponseEntity<ApiResponse<ClassCodeResponse>> getClassroomCode() {
+		Member currentMember = UserContext.get();
+		ClassCodeResponse response = classroomService.findClassCode(currentMember);
 		return ResponseEntity.status(200).body(ApiResponse.success(response));
 	}
 }

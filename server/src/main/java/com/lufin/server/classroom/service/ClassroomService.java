@@ -2,6 +2,7 @@ package com.lufin.server.classroom.service;
 
 import java.util.List;
 
+import com.lufin.server.classroom.dto.ClassCodeResponse;
 import com.lufin.server.classroom.dto.ClassRequest;
 import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.dto.FindClassesResponse;
@@ -17,4 +18,7 @@ public interface ClassroomService {
 
 	// 현재 속한 클래스 조회
 	FindClassesResponse findCurrentClass(int memberId);
+
+	// 클래스 코드 조회
+	ClassCodeResponse findClassCode(Member teacher);
 }

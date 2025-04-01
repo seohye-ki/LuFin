@@ -165,4 +165,11 @@ public class Classroom {
 		return id != null ? id.hashCode() : 0;
 	}
 
+	public void updateInfo(String school, int grade, int classGroup, String name, String key) {
+		this.school = school;
+		this.grade = grade;
+		this.classGroup = classGroup;
+		this.name = name;
+		this.thumbnailKey = key;
+	}
 }

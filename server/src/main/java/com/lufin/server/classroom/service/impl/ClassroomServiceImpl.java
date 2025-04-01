@@ -16,6 +16,7 @@ import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.classroom.dto.ClassCodeRequest;
 import com.lufin.server.classroom.dto.ClassCodeResponse;
 import com.lufin.server.classroom.dto.ClassRequest;
+import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.dto.FindClassesResponse;
 import com.lufin.server.classroom.dto.LoginWithClassResponse;
 import com.lufin.server.classroom.factory.ResponseFactory;
@@ -157,6 +158,45 @@ public class ClassroomServiceImpl implements ClassroomService {
 
 		// 토큰 발급
 		return responseFactory.createLoginWithClassResponse(member, classroom, account);
+	}
+
+	@Transactional
+	@Override
+	public ClassResponse updateClassroom(Member member, ClassRequest request) {
+
+		Member teacher = memberAuthorization(member);
+
+		// 현재 소속 클래스 조회
+		MemberClassroom current = memberClassroomRepository
+			.findByMember_IdAndIsCurrentTrue(teacher.getId())
+			.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
+
+		Classroom classroom = current.getClassroom();
+
+		// 수정하려는 정보로 중복 체크 (학교, 학년, 반 번호 + 연도 + 교사)
+		checkDuplicateClassroom(request, teacher);
+
+		// 엔티티 내부에서 수정 메서드 호출
+		classroom.updateInfo(
+			request.school(),
+			request.grade(),
+			request.classGroup(),
+			request.name(),
+			request.key()
+		);
+
+		Account account = accountService.createAccountForMember(member.getId());
+
+		return new ClassResponse(
+			classroom.getId(),
+			classroom.getName(),
+			classroom.getSchool(),
+			classroom.getCreatedAt().getYear(),
+			classroom.getGrade(),
+			classroom.getClassGroup(),
+			classroom.getCode(),
+			account.getBalance()
+		);
 	}
 
 	private void checkDuplicateClassroom(ClassRequest request, Member teacher) {

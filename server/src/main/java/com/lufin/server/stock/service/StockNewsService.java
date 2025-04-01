@@ -11,9 +11,9 @@ public interface StockNewsService {
 	// 특정 주식 공시 정보 상세 조회
 	StockNewsResponseDto.NewsInfoDto getNewsByNewsId(Integer stockProductId, Integer newsId);
 
-	StockNewsResponseDto.NewsCreateUpdateDto createMorningNews(Integer stockProductId);
+	void createMorningNews();
 
-	StockNewsResponseDto.NewsCreateUpdateDto createAfternoonNews(Integer stockProductId);
+	void createAfternoonNews();
 
 	// 특정 주식 공시 정보 생성
 	StockNewsResponseDto.NewsCreateUpdateDto createNews(Integer stockProductId, Integer hour

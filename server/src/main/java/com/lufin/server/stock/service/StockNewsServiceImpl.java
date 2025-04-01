@@ -70,23 +70,67 @@ public class StockNewsServiceImpl implements StockNewsService {
 		}
 	}
 
+	/* 만약 주식의 종류가 많아진다면 병렬 처리를 도입해 성능 향상 도모 가능 */
+
 	/**
-	 * 특정 주식 공시 정보 생성
-	 * 공시되는 시각에 생성
-	 * @param stockProductId
+	 * 9시에 모든 주식에 대한 공시 정보 자동 생성 메서드
+	 * schedule은 파라미터를 가질 수 없음
 	 */
 	@Scheduled(cron = "0 0 9 * * Mon-Fri")
+	@Transactional
 	@Override
-	public StockNewsResponseDto.NewsCreateUpdateDto createMorningNews(Integer stockProductId) {
-		return createNews(stockProductId, 9);
+	public void createMorningNews() {
+		log.info("09:00 주식 공시 정보 생성 스케줄 작업 시작, hour: {}", LocalDateTime.now().getHour());
+
+		try {
+			List<StockProduct> stockProducts = stockProductRepository.findAll();
+			for (StockProduct stockProduct : stockProducts) {
+				try {
+					createNews(stockProduct.getId(), 9);
+					log.info("주식 ID: {}에 대한 오전 공시 정보 성공적으로 생성됨", stockProduct.getId());
+				} catch (Exception e) {
+					log.warn("주식 ID: {}에 대한 오전 공시 정보 생성 실패: {}", stockProduct.getId(), e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			log.error("An error occurred: {}", e.getMessage(), e);
+		} finally {
+			log.info("09:00 주식 공시 정보 생성 스케줄 작업 종료, hour: {}", LocalDateTime.now().getHour());
+		}
+
 	}
 
+	/**
+	 * 13시에 모든 주식에 대한 공시 정보 자동 생성 메서드
+	 * schedule은 파라미터를 가질 수 없음
+	 */
 	@Scheduled(cron = "0 0 13 * * Mon-Fri")
+	@Transactional
 	@Override
-	public StockNewsResponseDto.NewsCreateUpdateDto createAfternoonNews(Integer stockProductId) {
-		return createNews(stockProductId, 13);
+	public void createAfternoonNews() {
+		log.info("13:00 주식 공시 정보 생성 스케줄 작업 시작, hour: {}", LocalDateTime.now().getHour());
+		try {
+			List<StockProduct> stockProducts = stockProductRepository.findAll();
+			for (StockProduct stockProduct : stockProducts) {
+				try {
+					createNews(stockProduct.getId(), 13);
+					log.info("주식 ID: {}에 대한 오후 공시 정보 성공적으로 생성됨", stockProduct.getId());
+				} catch (Exception e) {
+					log.warn("주식 ID: {}에 대한 오후 공시 정보 생성 실패: {}", stockProduct.getId(), e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			log.error("An error occurred: {}", e.getMessage(), e);
+		} finally {
+			log.info("13:00 주식 공시 정보 생성 스케줄 작업 종료, hour: {}", LocalDateTime.now().getHour());
+		}
 	}
 
+	/**
+	 * 수동으로 주식 공시 정보를 생성하는 메서드
+	 * @param stockProductId
+	 * @param hour
+	 */
 	@Transactional
 	@Override
 	public StockNewsResponseDto.NewsCreateUpdateDto createNews(

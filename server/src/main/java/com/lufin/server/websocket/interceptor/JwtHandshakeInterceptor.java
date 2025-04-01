@@ -35,7 +35,28 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 					Claims claims = tokenUtils.extractClaims(token);
 					attributes.put("userId", Integer.parseInt(claims.getSubject()));
 					attributes.put("role", claims.get("role"));
-					attributes.put("classId", claims.get("classId"));
+
+					// classId 값이 있는 경우에만 Integer로 변환하여 저장
+					Object classIdObj = claims.get("classId");
+					if (classIdObj != null) {
+						try {
+							Integer classId = null;
+							if (classIdObj instanceof Integer) {
+								classId = (Integer)classIdObj;
+							} else if (classIdObj instanceof String) {
+								classId = Integer.parseInt((String)classIdObj);
+							} else if (classIdObj instanceof Number) {
+								classId = ((Number)classIdObj).intValue();
+							}
+
+							if (classId != null) {
+								attributes.put("classId", classId);
+							}
+						} catch (Exception e) {
+							log.warn("💡 ClassId 변환 실패: {}", e.getMessage());
+						}
+					}
+
 					return true;
 				} catch (Exception e) {
 					log.warn("💡 WebSocket JWT 인증 실패: {}", e.getMessage());

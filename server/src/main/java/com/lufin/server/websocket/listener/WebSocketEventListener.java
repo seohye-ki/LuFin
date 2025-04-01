@@ -22,7 +22,8 @@ public class WebSocketEventListener {
 	@EventListener
 	public void handleWebSocketConnectListener(SessionConnectedEvent event) {
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-		log.info("💡Received a new web socket connection: {}", headerAccessor.getSessionId());
+		Integer userId = (Integer) headerAccessor.getSessionAttributes().get("userId");
+		log.info("💡Received a new web socket connection: {}, User ID: {}", headerAccessor.getSessionId(), userId);
 	}
 
 	/**
@@ -33,8 +34,10 @@ public class WebSocketEventListener {
 	@EventListener
 	public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
 		StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-		log.info("💡User disconnected: {}", headerAccessor.getSessionId());
+		Integer userId = (Integer) headerAccessor.getSessionAttributes().get("userId");
+		log.info("💡User disconnected: {}, User ID: {}", headerAccessor.getSessionId(), userId);
 
 		// 추후 필요시 사용자 연결 해제에 따른 추가 처리 구현
+		// 예: 사용자가 구독한 모든 클래스에서 구독 해제
 	}
 }

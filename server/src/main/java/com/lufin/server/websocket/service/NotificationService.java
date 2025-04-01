@@ -27,7 +27,7 @@ public class NotificationService {
 
 		// 사용자별 큐로 알림 전송 (/user/{userId}/queue/notifications)
 		messagingTemplate.convertAndSendToUser(
-			message.getUserId(),
+			message.getUserId().toString(),  // String으로 변환
 			"/queue/notifications",
 			message
 		);
@@ -63,52 +63,32 @@ public class NotificationService {
 
 	/**
 	 * 거래 관련 알림을 생성하고 전송합니다.
-	 *
-	 * @param userId 수신자 ID
-	 * @param title 알림 제목
-	 * @param message 알림 내용
-	 * @param transactionData 거래 관련 데이터
 	 */
-	public void sendTransactionNotification(String userId, String title, String message, Object transactionData) {
+	public void sendTransactionNotification(Integer userId, String title, String message, Object transactionData) {
 		NotificationMessage notification = NotificationMessage.transaction(userId, title, message, transactionData);
 		sendNotification(notification);
 	}
 
 	/**
 	 * 신용 관련 알림을 생성하고 전송합니다.
-	 *
-	 * @param userId 수신자 ID
-	 * @param title 알림 제목
-	 * @param message 알림 내용
-	 * @param creditData 신용 관련 데이터
 	 */
-	public void sendCreditNotification(String userId, String title, String message, Object creditData) {
+	public void sendCreditNotification(Integer userId, String title, String message, Object creditData) {
 		NotificationMessage notification = NotificationMessage.credit(userId, title, message, creditData);
 		sendNotification(notification);
 	}
 
 	/**
 	 * 미션 관련 알림을 생성하고 전송합니다.
-	 *
-	 * @param userId 수신자 ID
-	 * @param title 알림 제목
-	 * @param message 알림 내용
-	 * @param missionData 미션 관련 데이터
 	 */
-	public void sendMissionNotification(String userId, String title, String message, Object missionData) {
+	public void sendMissionNotification(Integer userId, String title, String message, Object missionData) {
 		NotificationMessage notification = NotificationMessage.mission(userId, title, message, missionData);
 		sendNotification(notification);
 	}
 
 	/**
 	 * 급여 관련 알림을 생성하고 전송합니다.
-	 *
-	 * @param userId 수신자 ID
-	 * @param title 알림 제목
-	 * @param message 알림 내용
-	 * @param wageData 급여 관련 데이터
 	 */
-	public void sendWageNotification(String userId, String title, String message, Object wageData) {
+	public void sendWageNotification(Integer userId, String title, String message, Object wageData) {
 		NotificationMessage notification = NotificationMessage.of(
 			userId,
 			NotificationType.WAGE,
@@ -121,13 +101,8 @@ public class NotificationService {
 
 	/**
 	 * 투자 관련 알림을 생성하고 전송합니다.
-	 *
-	 * @param userId 수신자 ID
-	 * @param title 알림 제목
-	 * @param message 알림 내용
-	 * @param investmentData 투자 관련 데이터
 	 */
-	public void sendInvestmentNotification(String userId, String title, String message, Object investmentData) {
+	public void sendInvestmentNotification(Integer userId, String title, String message, Object investmentData) {
 		NotificationMessage notification = NotificationMessage.of(
 			userId,
 			NotificationType.INVESTMENT,
@@ -140,13 +115,8 @@ public class NotificationService {
 
 	/**
 	 * 오류 관련 알림을 생성하고 전송합니다.
-	 *
-	 * @param userId 수신자 ID
-	 * @param title 알림 제목
-	 * @param message 알림 내용
-	 * @param errorData 오류 관련 데이터
 	 */
-	public void sendErrorNotification(String userId, String title, String message, Object errorData) {
+	public void sendErrorNotification(Integer userId, String title, String message, Object errorData) {
 		NotificationMessage notification = NotificationMessage.error(
 			userId,
 			NotificationType.ERROR,
@@ -159,13 +129,8 @@ public class NotificationService {
 
 	/**
 	 * 대출 관련 알림을 생성하고 전송합니다.
-	 *
-	 * @param userId 수신자 ID
-	 * @param title 알림 제목
-	 * @param message 알림 내용
-	 * @param loanData 대출 관련 데이터
 	 */
-	public void sendLoanNotification(String userId, String title, String message, Object loanData) {
+	public void sendLoanNotification(Integer userId, String title, String message, Object loanData) {
 		NotificationMessage notification = NotificationMessage.loan(
 			userId,
 			title,

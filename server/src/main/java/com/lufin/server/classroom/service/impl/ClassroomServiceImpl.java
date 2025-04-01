@@ -19,6 +19,7 @@ import com.lufin.server.classroom.dto.ClassRequest;
 import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.dto.FindClassesResponse;
 import com.lufin.server.classroom.dto.LoginWithClassResponse;
+import com.lufin.server.classroom.dto.UpdateClassRequest;
 import com.lufin.server.classroom.factory.ResponseFactory;
 import com.lufin.server.classroom.repository.ClassroomRepository;
 import com.lufin.server.classroom.repository.MemberClassroomRepository;
@@ -45,7 +46,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 		Member teacher = memberAuthorization(currentMember);
 
 		// 동일한 교사가 같은 해, 같은 학교, 같은 학년, 같은 반 번호로 클래스 생성 시 중복
-		checkDuplicateClassroom(request, teacher);
+		checkDuplicateClassroom(request.school(), request.grade(), request.classGroup(), teacher);
 
 		// 클래스 코드 생성
 		String classCode = generateUniqueClassCode();
@@ -162,7 +163,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
 	@Transactional
 	@Override
-	public ClassResponse updateClassroom(Member member, ClassRequest request) {
+	public ClassResponse updateClassroom(Member member, UpdateClassRequest request) {
 
 		Member teacher = memberAuthorization(member);
 
@@ -174,7 +175,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 		Classroom classroom = current.getClassroom();
 
 		// 수정하려는 정보로 중복 체크 (학교, 학년, 반 번호 + 연도 + 교사)
-		checkDuplicateClassroom(request, teacher);
+		checkDuplicateClassroom(request.school(), request.grade(), request.classGroup(), teacher);
 
 		// 엔티티 내부에서 수정 메서드 호출
 		classroom.updateInfo(
@@ -199,10 +200,10 @@ public class ClassroomServiceImpl implements ClassroomService {
 		);
 	}
 
-	private void checkDuplicateClassroom(ClassRequest request, Member teacher) {
+	private void checkDuplicateClassroom(String school, int grade, int classGroup, Member teacher) {
 		int year = LocalDate.now().getYear();
-		boolean exist = classroomRepository.existsDuplicateClassroom(request.school(), request.grade(),
-			request.classGroup(), year, teacher.getId());
+		boolean exist = classroomRepository.existsDuplicateClassroom(school, grade,
+			classGroup, year, teacher.getId());
 		if (exist) {
 			throw new BusinessException(DUPLICATE_CLASSROOM);
 		}

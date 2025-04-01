@@ -144,4 +144,25 @@ public class LoanServiceImpl implements LoanService {
 			.map(MyLoanApplicationDto::from)
 			.orElse(null);
 	}
+
+	@Override
+	public LoanApplicationDetailDto getLoanApplicationDetail(Integer loanApplicationId, Member member, Integer classId) {
+		LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.LOAN_APPLICATION_NOT_FOUND));
+
+		Classroom classroom = classroomRepository.findById(classId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
+
+		if (member.getMemberRole() == MemberRole.TEACHER) {
+			if (!application.getClassroom().equals(classroom)) {
+				throw new BusinessException(ErrorCode.FORBIDDEN_REQUEST);
+			}
+		} else {
+			if (!application.getMember().equals(member) || !application.getClassroom().equals(classroom)) {
+				throw new BusinessException(ErrorCode.FORBIDDEN_REQUEST);
+			}
+		}
+
+		return LoanApplicationDetailDto.from(application);
+	}
 }

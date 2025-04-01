@@ -20,4 +20,6 @@ public interface LoanService {
 	List<LoanApplicationListDto> getLoanApplications(Member member, Integer classId);
 
 	MyLoanApplicationDto getActiveLoanApplication(Member member, Integer classId);
+
+	LoanApplicationDetailDto getLoanApplicationDetail(Integer loanApplicationId, Member member, Integer classId);
 }

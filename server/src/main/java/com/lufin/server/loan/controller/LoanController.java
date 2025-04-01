@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,4 +71,12 @@ public class LoanController {
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
+	@GetMapping("/applications/{loanApplicationId}")
+	public ResponseEntity<ApiResponse<LoanApplicationDetailDto>> getLoanApplicationDetail(@PathVariable Integer loanApplicationId, HttpServletRequest httpRequest) {
+		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		validateClassId(classId);
+		Member member = UserContext.get();
+		LoanApplicationDetailDto result = loanService.getLoanApplicationDetail(loanApplicationId, member, classId);
+		return ResponseEntity.ok(ApiResponse.success(result));
+	}
 }

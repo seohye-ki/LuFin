@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.domain.MemberClassroom;
 
 public interface MemberClassroomRepository extends JpaRepository<MemberClassroom, Long> {
@@ -30,4 +31,7 @@ public interface MemberClassroomRepository extends JpaRepository<MemberClassroom
 
 	// 특정 회원이 소속된 학급 조회
 	List<MemberClassroom> findByMember_Id(int memberId);
+
+	// 클래스에 속한 멤버 매핑 모두 삭제
+	void deleteAllByClassroom(Classroom classroom);
 }

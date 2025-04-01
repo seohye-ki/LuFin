@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.member.domain.Member;
@@ -113,5 +114,37 @@ public class LoanApplication {
 
 	public void close() {
 		this.status = LoanApplicationStatus.CLOSED;
+	}
+
+	// 원금 연체 여부
+	public boolean isPrincipalOverdue() {
+		return this.status == LoanApplicationStatus.OVERDUED;
+	}
+
+	// 원금 납부액 계산
+	public Integer calculateNextPrincipalAmount() {
+		// 다음 이자 납부일과 만기일이 같을 경우 원금
+		if (nextPaymentDate != null && nextPaymentDate.equals(dueDate)) {
+			return requiredAmount;
+		}
+		return 0;
+	}
+
+	// 이자 납부액 계산
+	public Integer calculateNextInterestAmount() {
+		int overdueInterest = interestAmount * overdueCount;
+		return interestAmount + overdueInterest;
+	}
+
+	// 현재 회차
+	public Integer calculateCurrentCount() {
+		long daysElapsed = ChronoUnit.DAYS.between(startedAt, LocalDateTime.now());
+		return (int) (daysElapsed / 7) + 1;
+	}
+
+	// 전체 회차
+	public Integer calculateTotalCount() {
+		int periodInDays = (loanProduct.getPeriod() != null) ? loanProduct.getPeriod() : 365; // 기간이 일수로 제공됨
+		return periodInDays / 7;
 	}
 }

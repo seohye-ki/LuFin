@@ -91,10 +91,10 @@ public class StockPortfolio {
 			.quantity(quantity)
 			.totalPurchaseAmount(totalPurchaseAmount)
 			.totalSellAmount(totalSellAmount)
+			.member(member)
 			.build();
 
 		stockProduct.addPortfolio(portfolio);
-		member.addStockPortfolio(portfolio);
 
 		return portfolio;
 	}

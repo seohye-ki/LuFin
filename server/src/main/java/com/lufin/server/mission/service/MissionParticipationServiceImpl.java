@@ -65,8 +65,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			// MissionParticipation 엔티티 생성
 			MissionParticipation newParticipation = MissionParticipation.create(
 				mission,
-				currentMember,
-				currentMember.getId()
+				currentMember
 			);
 
 			MissionParticipation savedParticipation = missionParticipationRepository.save(newParticipation);

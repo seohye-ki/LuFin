@@ -94,10 +94,10 @@ public class StockTransactionHistories {
 			.quantity(quantity)
 			.price(price)
 			.totalPrice(totalPrice)
+			.member(member)
 			.build();
 
 		stockProduct.addTransactionHistories(history);
-		member.addStockTransactionHistories(history);
 		return history;
 	}
 

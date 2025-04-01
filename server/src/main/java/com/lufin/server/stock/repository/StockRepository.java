@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.lufin.server.stock.domain.StockProduct;
 
 @Repository
-public interface StockProductRepository extends JpaRepository<StockProduct, Integer> {
+public interface StockRepository extends JpaRepository<StockProduct, Integer>, StockProductRepositoryCustom {
 }

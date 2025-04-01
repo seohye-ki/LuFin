@@ -8,6 +8,7 @@ import com.lufin.server.loan.domain.LoanApplicationStatus;
 public record LoanApplicationDetailDto(
 	Integer loanApplicationId,
 	Integer memberId,
+	String memberName,
 	Integer classroomId,
 	Integer loanProductId,
 	String description,
@@ -25,6 +26,7 @@ public record LoanApplicationDetailDto(
 		return new LoanApplicationDetailDto(
 			loanApplication.getId(),
 			loanApplication.getMember().getId(),
+			loanApplication.getMember().getName(),
 			loanApplication.getClassroom().getId(),
 			loanApplication.getLoanProduct().getId(),
 			loanApplication.getDescription(),

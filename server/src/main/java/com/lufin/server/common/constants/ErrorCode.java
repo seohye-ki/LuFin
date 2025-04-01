@@ -55,6 +55,7 @@ public enum ErrorCode {
 	ACCOUNT_TEMPORARILY_LOCKED("E422003", "해당 계정은 5분간 로그인할 수 없습니다."),
 	INVALID_EXTENSION("E422004", "허용되지 않은 확장자입니다."),
 	LOAN_AMOUNT_EXCEEDS_MAX("E422005", "요청 금액이 대출 상품의 최대 한도를 초과합니다."),
+	CLASS_HAS_STUDENTS("E422006", "사용자가 남아있어 클래스를 삭제할 수 없습니다."),
 
 	SERVER_ERROR("E500001", "요청을 처리할 수 없습니다. 다시 시도해 주세요."),
 	SERVICE_UNAVAILABLE("E503001", "현재 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해 주세요."),

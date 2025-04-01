@@ -3,6 +3,7 @@ package com.lufin.server.loan.service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +16,13 @@ import com.lufin.server.loan.domain.LoanApplication;
 import com.lufin.server.loan.domain.LoanApplicationStatus;
 import com.lufin.server.loan.domain.LoanProduct;
 import com.lufin.server.loan.dto.LoanApplicationRequestDto;
-import com.lufin.server.loan.dto.LoanApplicationResponseDto;
+import com.lufin.server.loan.dto.LoanApplicationDetailDto;
+import com.lufin.server.loan.dto.MyLoanApplicationDto;
+import com.lufin.server.loan.dto.LoanApplicationListDto;
 import com.lufin.server.loan.repository.LoanApplicationRepository;
 import com.lufin.server.loan.repository.LoanProductRepository;
 import com.lufin.server.member.domain.Member;
+import com.lufin.server.member.domain.MemberRole;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,9 +50,10 @@ public class LoanServiceImpl implements LoanService {
 		}
 	}
 
+	// 대출 신청
 	@Override
 	@Transactional
-	public LoanApplicationResponseDto createLoanApplication(LoanApplicationRequestDto request, Member member,
+	public LoanApplicationDetailDto createLoanApplication(LoanApplicationRequestDto request, Member member,
 		Integer classId) {
 		Classroom classroom = classroomRepository.findById(classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
@@ -96,6 +101,38 @@ public class LoanServiceImpl implements LoanService {
 			interestAmount);
 		loanApplicationRepository.save(application);
 
-		return LoanApplicationResponseDto.from(application);
+		return LoanApplicationDetailDto.from(application);
+	}
+
+	// 대출 신청 내역 목록 조회
+	@Override
+	public List<LoanApplicationListDto> getLoanApplications(Member member, Integer classId) {
+		Classroom classroom = classroomRepository.findById(classId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
+
+		List<LoanApplication> applications;
+		if (member.getMemberRole() == MemberRole.TEACHER) {
+			applications = loanApplicationRepository.findByClassroom(classroom);
+		} else {
+			applications = loanApplicationRepository.findByMemberAndClassroom(member, classroom);
+		}
+
+		return applications.stream()
+			.map(LoanApplicationListDto::from)
+			.collect(Collectors.toList());
+	}
+
+	// 현재 활성화 된 대출 내역 조회
+	@Override
+	public MyLoanApplicationDto getActiveLoanApplication(Member member, Integer classId) {
+		Classroom classroom = classroomRepository.findById(classId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
+
+		return loanApplicationRepository.findByMemberAndClassroom(member, classroom)
+			.stream()
+			.filter(a -> a.getStatus() == LoanApplicationStatus.OPEN)
+			.findFirst()
+			.map(MyLoanApplicationDto::from)
+			.orElse(null);
 	}
 }

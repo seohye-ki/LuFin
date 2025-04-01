@@ -5,8 +5,10 @@ import java.util.List;
 import com.lufin.server.classroom.dto.ClassCodeRequest;
 import com.lufin.server.classroom.dto.ClassCodeResponse;
 import com.lufin.server.classroom.dto.ClassRequest;
+import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.dto.FindClassesResponse;
 import com.lufin.server.classroom.dto.LoginWithClassResponse;
+import com.lufin.server.classroom.dto.UpdateClassRequest;
 import com.lufin.server.member.domain.Member;
 
 public interface ClassroomService {
@@ -25,4 +27,10 @@ public interface ClassroomService {
 
 	// [학생] 클래스 코드로 클래스 입장
 	LoginWithClassResponse enrollClass(Member member, ClassCodeRequest request);
+
+	// [교사] 클래스 수정
+	ClassResponse updateClassroom(Member member, UpdateClassRequest request);
+
+	// [교사] 클래스 삭제
+	void deleteClassroom(Member member, int classId);
 }

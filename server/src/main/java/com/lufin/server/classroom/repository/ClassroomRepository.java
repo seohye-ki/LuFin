@@ -30,4 +30,6 @@ public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
 		@Param("year") int year,
 		@Param("teacherId") int teacherId);
 
+	// 클래스 ID와 교사 ID로 클래스 찾기
+	Optional<Classroom> findByIdAndTeacher_Id(int classId, int teacherId);
 }

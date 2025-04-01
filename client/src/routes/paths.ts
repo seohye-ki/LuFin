@@ -6,6 +6,6 @@ export const paths = {
   SHOP: '/shop',
   TEACHER_MISSION: '/mission/teacher',
   STUDENT_MISSION: '/mission',
+  STUDENT_STOCK: '/stock',
   DESIGN_SYSTEM: '/design-system',
-
 } as const;

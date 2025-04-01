@@ -1,0 +1,43 @@
+import StockGraph from '../../../../components/Graph/StockGraph';
+import Button from '../../../../components/Button/Button';
+import StockOrder from './StockOrder';
+import { dateUtil } from '../../../../libs/utils/date-util';
+import { stockPriceHistories, StockProduct } from '../../../../types/Stock/stock';
+
+interface SpecifiedStockGraphProps {
+  stock: StockProduct;
+  onBack: () => void;
+}
+
+const SpecifiedStockGraph = ({ stock, onBack }: SpecifiedStockGraphProps) => {
+  const stockPriceInfos = stockPriceHistories
+    .filter((history) => history.stockProductId === stock.stockProductId)
+    .map((h) => ({
+      date: dateUtil(h.createdAt),
+      price: h.unitPrice,
+    }));
+
+  return (
+    <div className='flex h-full gap-3'>
+      {/* 차트 영역 */}
+      <div className='flex flex-col bg-white rounded-xl p-4 w-[65%]'>
+        <div className='flex justify-between items-center mb-3'>
+          <h2 className='text-xl font-bold'>{stock.name}</h2>
+          <Button size='sm' variant='solid' onClick={onBack}>
+            뒤로가기
+          </Button>
+        </div>
+        <div className='flex-1'>
+          <StockGraph stockPriceInfos={stockPriceInfos} />
+        </div>
+      </div>
+
+      {/* 주문 영역 */}
+      <div className='bg-white rounded-xl p-4 w-[35%] min-w-[260px]'>
+        <StockOrder stock={stock} />
+      </div>
+    </div>
+  );
+};
+
+export default SpecifiedStockGraph;

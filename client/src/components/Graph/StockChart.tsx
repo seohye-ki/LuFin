@@ -9,6 +9,7 @@ import {
   CategoryScale,
   LinearScale,
 } from 'chart.js';
+import cn from 'classnames';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale);
 
@@ -19,9 +20,10 @@ interface StockInfo {
 
 interface stockChartProps {
   stocks: StockInfo[];
+  className?: string;
 }
 
-const StockChart: React.FC<stockChartProps> = ({ stocks }) => {
+const StockChart: React.FC<stockChartProps> = ({ stocks, className }) => {
   const data = {
     labels: stocks.map((stock) => stock.stock),
     datasets: [
@@ -35,7 +37,8 @@ const StockChart: React.FC<stockChartProps> = ({ stocks }) => {
 
   const options = {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
+    aspectRatio: 3 / 2,
     cutout: '60%',
     plugins: {
       legend: {
@@ -54,7 +57,7 @@ const StockChart: React.FC<stockChartProps> = ({ stocks }) => {
   };
 
   return (
-    <div className='w-full h-full px-48'>
+    <div className={cn('', className)}>
       <Doughnut data={data} options={options} />
     </div>
   );

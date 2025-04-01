@@ -20,12 +20,12 @@ const StudentMission = () => {
 
   // 내가 참여한 미션 데이터
   const myParticipations = missionParticipations.filter(
-    (participation) => participation.member_id === myMemberId,
+    (participation) => participation.memberId === myMemberId,
   );
 
   const myMissionRows = myParticipations
     .map((participation) => {
-      const mission = missionDetails.find((m) => m.mission_id === participation.mission_id);
+      const mission = missionDetails.find((m) => m.missionId === participation.missionId);
       if (!mission) return null;
 
       return {
@@ -87,7 +87,7 @@ const StudentMission = () => {
     (mission) =>
       mission.status === 'RECRUITING' &&
       mission.currentParticipant < mission.maxParticipant &&
-      !myParticipations.some((p) => p.mission_id === mission.mission_id),
+      !myParticipations.some((p) => p.missionId === mission.missionId),
   );
 
   const availableMissionRows = availableMissions.map((mission) => ({
@@ -146,9 +146,7 @@ const StudentMission = () => {
           <MyMissionModal
             onClose={() => setIsModalOpen(false)}
             mission={selectedMission}
-            participation={myParticipations.find(
-              (p) => p.mission_id === selectedMission.mission_id,
-            )}
+            participation={myParticipations.find((p) => p.missionId === selectedMission.missionId)}
           />
         </div>
       )}

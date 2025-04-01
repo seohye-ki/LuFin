@@ -8,7 +8,7 @@ export const useMissionsByDate = () => {
   }, []);
 
   const getMissionsByDate = useCallback((dateKey: string) => {
-    return missions.filter((mission) => mission.mission_date === dateKey);
+    return missions.filter((mission) => mission.missionDate === dateKey);
   }, []);
 
   return {

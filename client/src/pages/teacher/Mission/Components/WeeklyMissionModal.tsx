@@ -28,7 +28,7 @@ export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMission
   ];
 
   const dateKey = moment(selectedDate).format('YYYY-MM-DD');
-  const dayMissions = missionDetails.filter((mission) => mission.mission_date === dateKey);
+  const dayMissions = missionDetails.filter((mission) => mission.missionDate === dateKey);
 
   const rows = dayMissions.map((mission) => ({
     title: mission.title,

@@ -1,5 +1,5 @@
 import { MissionDetail } from '../../../../types/Mission/mission';
-import { members } from '../../../../types/member/member';
+import { members } from '../../../../types/Member/member';
 import Card from '../../../../components/Card/Card';
 import { Icon } from '../../../../components/Icon/Icon';
 import Badge from '../../../../components/Badge/Badge';
@@ -23,18 +23,18 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
   const [selectedParticipation, setSelectedParticipation] = useState<number | null>(null);
 
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? mission.mission_images.length - 2 : prev - 2));
+    setCurrentImageIndex((prev) => (prev === 0 ? mission.missionImages.length - 2 : prev - 2));
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev >= mission.mission_images.length - 2 ? 0 : prev + 2));
+    setCurrentImageIndex((prev) => (prev >= mission.missionImages.length - 2 ? 0 : prev + 2));
   };
 
   const getVisibleImages = () => {
     const images = [];
     for (let i = 0; i < 2; i++) {
-      const index = (currentImageIndex + i) % mission.mission_images.length;
-      images.push(mission.mission_images[index]);
+      const index = (currentImageIndex + i) % mission.missionImages.length;
+      images.push(mission.missionImages[index]);
     }
     return images;
   };
@@ -102,10 +102,10 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
             <div className='flex flex-col gap-2'>
               <Profile
                 name={
-                  members.find((m) => m.member_id === selectedParticipation)?.name || '알 수 없음'
+                  members.find((m) => m.memberId === selectedParticipation)?.name || '알 수 없음'
                 }
                 profileImage={
-                  members.find((m) => m.member_id === selectedParticipation)?.profile_image ||
+                  members.find((m) => m.memberId === selectedParticipation)?.profileImage ||
                   'https://picsum.photos/200/300?random=1'
                 }
                 variant='row'
@@ -172,25 +172,25 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
           <div className='flex flex-col gap-2'>
             <span className='text-c1 text-grey'>참여 인원</span>
             <div className='flex flex-col gap-2'>
-              {mission.mission_participations.map((participation) => {
-                const member = members.find((m) => m.member_id === participation.member_id);
+              {mission.missionParticipations.map((participation) => {
+                const member = members.find((m) => m.memberId === participation.memberId);
                 return (
                   <div
-                    key={participation.participation_id}
+                    key={participation.participationId}
                     className={`flex items-center gap-2 ${
                       participation.status === 'CHECKING'
                         ? 'cursor-pointer hover:bg-grey-50 p-2 rounded-lg'
                         : ''
                     }`}
                     onClick={() =>
-                      handleParticipationClick(participation.participation_id, participation.status)
+                      handleParticipationClick(participation.participationId, participation.status)
                     }
                   >
                     <Profile
                       name={member?.name || '알 수 없음'}
                       variant='row'
                       profileImage={
-                        member?.profile_image || 'https://picsum.photos/200/300?random=1'
+                        member?.profileImage || 'https://picsum.photos/200/300?random=1'
                       }
                     />
                     {getStatusBadge(participation.status)}
@@ -207,20 +207,20 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
             <span className='text-c1 text-grey'>설명</span>
             <span className='text-p1 font-semibold'>{mission.content}</span>
           </div>
-          {mission.mission_images.length > 0 && (
+          {mission.missionImages.length > 0 && (
             <div className='mt-2 relative'>
               <div className='grid grid-cols-2 gap-2'>
                 {getVisibleImages().map((image) => (
-                  <div key={image.mission_image_id} className='relative aspect-square'>
+                  <div key={image.missionImageId} className='relative aspect-square'>
                     <img
-                      src={image.image_url}
+                      src={image.imageUrl}
                       alt='미션 인증 이미지'
                       className='w-full h-full object-cover rounded-lg'
                     />
                   </div>
                 ))}
               </div>
-              {mission.mission_images.length > 2 && (
+              {mission.missionImages.length > 2 && (
                 <>
                   <button
                     onClick={handlePrevImage}
@@ -235,7 +235,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
                     <Icon name='ArrowRight2' size={20} />
                   </button>
                   <div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1'>
-                    {Array.from({ length: Math.ceil(mission.mission_images.length / 2) }).map(
+                    {Array.from({ length: Math.ceil(mission.missionImages.length / 2) }).map(
                       (_, index) => (
                         <div
                           key={index}

@@ -6,7 +6,7 @@ import com.querydsl.core.annotations.QueryProjection;
 
 public class StockNewsResponseDto {
 	public record NewsInfoDto(
-		Integer stockProductId,
+		Integer stockNewsId,
 		String content,
 		LocalDateTime createdAt,
 		LocalDateTime updatedAt

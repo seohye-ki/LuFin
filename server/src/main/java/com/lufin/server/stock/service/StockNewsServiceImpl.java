@@ -34,7 +34,7 @@ public class StockNewsServiceImpl implements StockNewsService {
 		try {
 			List<StockNewsResponseDto.NewsInfoDto> result = stockRepository.getAllNews(stockProductId);
 
-			return null;
+			return result;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(ErrorCode.SERVER_ERROR);

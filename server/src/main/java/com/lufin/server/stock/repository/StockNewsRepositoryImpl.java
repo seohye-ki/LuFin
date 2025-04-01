@@ -37,6 +37,7 @@ public class StockNewsRepositoryImpl implements StockNewsRepository {
 				stockNews.updatedAt
 			))
 			.from(stockNews)
+			.join(stockNews.stockProduct, stockProduct).fetchJoin()
 			.where(stockProduct.id.eq(stockProductId))
 			.fetch();
 
@@ -69,6 +70,7 @@ public class StockNewsRepositoryImpl implements StockNewsRepository {
 				stockNews.updatedAt
 			))
 			.from(stockNews)
+			.join(stockNews.stockProduct, stockProduct).fetchJoin()
 			.where(builder)
 			.fetchOne();
 

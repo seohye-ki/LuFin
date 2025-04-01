@@ -15,16 +15,14 @@ import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.classroom.dto.ClassCodeResponse;
 import com.lufin.server.classroom.dto.ClassRequest;
-import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.dto.FindClassesResponse;
 import com.lufin.server.classroom.dto.LoginWithClassResponse;
-import com.lufin.server.classroom.dto.TokenResponse;
+import com.lufin.server.classroom.factory.ResponseFactory;
 import com.lufin.server.classroom.repository.ClassroomRepository;
 import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.classroom.service.ClassroomService;
 import com.lufin.server.classroom.util.ClassCodeGenerator;
 import com.lufin.server.common.exception.BusinessException;
-import com.lufin.server.common.utils.TokenUtils;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
 
@@ -37,7 +35,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 	private final ClassroomRepository classroomRepository;
 	private final MemberClassroomRepository memberClassroomRepository;
 	private final AccountService accountService;
-	private final TokenUtils tokenUtils;
+	private final ResponseFactory responseFactory;
 
 	@Transactional
 	@Override
@@ -78,31 +76,13 @@ public class ClassroomServiceImpl implements ClassroomService {
 		// 기존에 소속된 클래스(isCurrent=true)가 있다면 deactivate() → save() 없는 이유 : 더티 체킹에 의존
 		if (hasCurrentClassroom.isPresent()) {
 			hasCurrentClassroom.get().deactivate();
+			memberClassroomRepository.save(hasCurrentClassroom.get());
 		}
 		// 교사를 클래스에 매핑
 		MemberClassroom addTeacher = MemberClassroom.enroll(teacher, newClass);
 		memberClassroomRepository.save(addTeacher);
 
-		ClassResponse classInfo = new ClassResponse(
-			newClass.getId(),
-			newClass.getName(),
-			newClass.getSchool(),
-			newClass.getCreatedAt().getYear(),
-			newClass.getGrade(),
-			newClass.getClassGroup(),
-			newClass.getCode(),
-			account.getBalance()
-		);
-
-		// 토큰 생성
-		String accessToken = tokenUtils.createAccessToken(teacher.getId(), teacher.getMemberRole(), newClass.getId());
-		String refreshToken = tokenUtils.createRefreshToken(teacher.getId(), teacher.getMemberRole(), newClass.getId());
-
-		TokenResponse token = new TokenResponse(accessToken, refreshToken, teacher.getMemberRole().name(),
-			newClass.getId(), account.getAccountNumber());
-
-		return new LoginWithClassResponse(token, classInfo);
-
+		return responseFactory.createLoginWithClassResponse(teacher, newClass, account);
 	}
 
 	@Transactional(readOnly = true)

@@ -35,13 +35,14 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       }
     };
 
-    const baseInputClasses = "block w-full rounded-md bg-broken-white px-3 py-1.5 text-p1 text-black outline-1 -outline-offset-1 placeholder:text-p2 placeholder:text-grey-25 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6";
-    
-    const inputClasses = getVariantStyles(variant) + " " + baseInputClasses;
+    const baseInputClasses =
+      'block w-full rounded-md bg-broken-white px-3 py-1.5 text-p1 text-black outline-1 -outline-offset-1 placeholder:text-p2 placeholder:text-grey-25 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6';
+
+    const inputClasses = getVariantStyles(variant) + ' ' + baseInputClasses;
 
     const disabledClasses = isDisabled
-      ? "disabled:cursor-not-allowed disabled:bg-broken-white disabled:text-grey disabled:outline-grey-30"
-      : "";
+      ? 'disabled:cursor-not-allowed disabled:bg-broken-white disabled:text-grey disabled:outline-grey-30'
+      : '';
 
     return (
       <div className='flex flex-col gap-1'>
@@ -50,41 +51,35 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             {label}
           </label>
         )}
-        <div className="mt-2 relative">
+        <div className='mt-2 relative'>
           <input
             ref={ref}
             disabled={isDisabled}
             className={`${inputClasses} ${disabledClasses} ${className}`}
-            aria-invalid={variant === 'error' ? "true" : undefined}
-            aria-describedby={variant === 'error' ? `${props.id}-error` : description ? `${props.id}-description` : undefined}
+            aria-invalid={variant === 'error' ? 'true' : undefined}
+            aria-describedby={
+              variant === 'error'
+                ? `${props.id}-error`
+                : description
+                  ? `${props.id}-description`
+                  : undefined
+            }
             {...props}
           />
-          {variant === 'error' && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-              <Icon
-                name="InfoCircle"
-                size={20}
-                color="danger"
-                className="pointer-events-none"
-              />
-            </div>
-          )}
         </div>
         {variant === 'error' && (
-          <p id={`${props.id}-error`} className="mt-2 text-p2 text-danger">
+          <p id={`${props.id}-error`} className='mt-2 text-p2 text-danger'>
             {description}
           </p>
         )}
         {description && variant !== 'error' && (
-          <span className={`text-sm ${getDescriptionColor(variant)}`}>
-            {description}
-          </span>
+          <span className={`text-sm ${getDescriptionColor(variant)}`}>{description}</span>
         )}
       </div>
     );
-  }
+  },
 );
 
 TextField.displayName = 'TextField';
 
-export default TextField; 
+export default TextField;

@@ -44,6 +44,7 @@ public enum ErrorCode {
 	LOAN_PRODUCT_NOT_FOUND("E404008", "해당 대출 상품을 찾을 수 없습니다."),
 	ACCOUNT_NOT_FOUND("E404009", "계좌를 찾을 수 없습니다."),
 	ITEM_REQUEST_NOT_FOUND("E404010", "해당 아이템 사용 요청을 찾을 수 없습니다."),
+	TRANSACTION_NOT_FOUND("E404011", "거래 내역을 찾을 수 없습니다."),
 
 	EMAIL_ALREADY_REGISTERED("E409001", "이미 가입된 이메일입니다."),
 	DUPLICATE_COUPON_USAGE("E409002", "이미 등록된 교번/학번 입니다."),
@@ -57,6 +58,7 @@ public enum ErrorCode {
 	INVALID_EXTENSION("E422004", "허용되지 않은 확장자입니다."),
 	LOAN_AMOUNT_EXCEEDS_MAX("E422005", "요청 금액이 대출 상품의 최대 한도를 초과합니다."),
 	CLASS_HAS_STUDENTS("E422006", "사용자가 남아있어 클래스를 삭제할 수 없습니다."),
+	INSUFFICIENT_STOCK_AMOUNT("E422007", "주식 개수가 부족합니다."),
 
 	SERVER_ERROR("E500001", "요청을 처리할 수 없습니다. 다시 시도해 주세요."),
 	SERVICE_UNAVAILABLE("E503001", "현재 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해 주세요."),

@@ -7,4 +7,5 @@ import com.lufin.server.stock.domain.StockTransactionHistory;
 
 @Repository
 public interface StockTransactionRepository extends JpaRepository<StockTransactionHistory, Integer> {
+	
 }

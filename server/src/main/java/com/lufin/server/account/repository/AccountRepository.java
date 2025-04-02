@@ -20,6 +20,9 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 	// 특정 클래스 계좌 조회
 	Optional<Account> findByClassroomId(Integer classroomId);
 
+	// 특정 클래스의 특정 멤버 계좌 조회
+	Optional<Account> findByClassroomIdAndMemberId(Integer classroomId, Integer memberId);
+
 	// 교사 역할을 가진 멤버의 계좌들 조회
 	@Query("SELECT a FROM Account a WHERE a.member.memberRole = 'TEACHER'")
 	List<Account> findAllTeacherAccounts();

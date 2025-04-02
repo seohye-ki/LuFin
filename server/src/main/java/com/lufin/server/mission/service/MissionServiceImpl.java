@@ -2,6 +2,7 @@ package com.lufin.server.mission.service;
 
 import static com.lufin.server.common.constants.ErrorCode.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,13 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.repository.ClassroomRepository;
+import com.lufin.server.common.annotation.TeacherOnly;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
 import com.lufin.server.member.support.UserContext;
 import com.lufin.server.mission.domain.Mission;
+import com.lufin.server.mission.domain.MissionImage;
 import com.lufin.server.mission.dto.MissionRequestDto;
 import com.lufin.server.mission.dto.MissionResponseDto;
+import com.lufin.server.mission.repository.MissionImageRepository;
 import com.lufin.server.mission.repository.MissionRepository;
 import com.lufin.server.mission.repository.MissionUtilRepository;
 
@@ -31,6 +35,7 @@ public class MissionServiceImpl implements MissionService {
 
 	private final MissionUtilRepository missionUtilRepository;
 	private final MissionRepository missionRepository;
+	private final MissionImageRepository missionImageRepository;
 	private final ClassroomRepository classroomRepository;
 
 	// TODO: 추후 캐시 추가로 조회 성능 향상 도모
@@ -84,6 +89,7 @@ public class MissionServiceImpl implements MissionService {
 		}
 	}
 
+	@TeacherOnly
 	@Transactional
 	@Override
 	public MissionResponseDto.MissionPostResponseDto postMission(MissionRequestDto.MissionRequestInfoDto requestDto,
@@ -100,11 +106,6 @@ public class MissionServiceImpl implements MissionService {
 		}
 
 		try {
-
-			if (currentMember.getMemberRole() != MemberRole.TEACHER) {
-				throw new BusinessException(FORBIDDEN_REQUEST);
-			}
-
 			// classId로 Classroom 객체 조회
 			Classroom classroom = classroomRepository.findById(classId)
 				.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
@@ -120,6 +121,20 @@ public class MissionServiceImpl implements MissionService {
 				requestDto.wage(),
 				requestDto.missionDate()
 			);
+
+			// image가 있다면 MissionImage 엔티티 생성 후 저장
+			if (requestDto.s3Keys() != null && !requestDto.s3Keys().isEmpty()) {
+				List<MissionImage> images = new ArrayList<>();
+				for (String s3Key : requestDto.s3Keys()) {
+					MissionImage newMissionImage = MissionImage.create(
+						newMission,
+						s3Key
+					);
+					images.add(newMissionImage);
+				}
+
+				missionImageRepository.saveAll(images);
+			}
 
 			// JPA repository save() 활용해서 저장한 엔티티 조회
 			Mission savedMission = missionRepository.save(newMission);

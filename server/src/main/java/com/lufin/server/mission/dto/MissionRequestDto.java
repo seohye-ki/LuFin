@@ -1,7 +1,9 @@
 package com.lufin.server.mission.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -31,6 +33,9 @@ public class MissionRequestDto {
 		@NotNull(message = "보상은 필수 입력값입니다.")
 		@PositiveOrZero(message = "보상은 0 이상이어야 합니다.")
 		Integer wage,
+
+		@Nullable
+		List<String> s3Keys,
 
 		@NotNull(message = "미션 날짜는 필수 입력값입니다.")
 		@Future(message = "미션 날짜는 현재보다 미래여야 합니다.")

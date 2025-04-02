@@ -1,10 +1,11 @@
 import { DateUtil } from '../../libs/utils/date-util';
+import { LoanProductProps } from '../../pages/student/Loan/components/LoanProduct';
 
 export type LoanProductDTO = {
   loanProductId: number;
   name: string;
   maxAmount: number;
-  interestRate: DoubleRange;
+  interestRate: number;
   period: number;
 };
 
@@ -36,3 +37,30 @@ export type LoanApplicationDetailDTO = {
   createdAt: DateUtil;
   dueDate: DateUtil;
 };
+
+export const sampleLoanProducts: LoanProductProps[] = [
+  {
+    type: 'PENGUIN',
+    loanProductId: 1,
+    name: '펭귄 대출',
+    period: 30,
+    interestRate: 4,
+    maxAmount: 500000,
+  },
+  {
+    type: 'CAT',
+    loanProductId: 2,
+    name: '고양이 대출',
+    period: 60,
+    interestRate: 8,
+    maxAmount: 1000000,
+  },
+  {
+    type: 'TIGER',
+    loanProductId: 3,
+    name: '호랑이 대출',
+    period: 90,
+    interestRate: 12,
+    maxAmount: 2000000,
+  },
+];

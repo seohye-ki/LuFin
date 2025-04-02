@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.lufin.server.stock.domain.StockTransactionHistory;
 
 @Repository
-public interface StockTransactionRepository extends JpaRepository<StockTransactionHistory, Integer> {
-	
+public interface StockTransactionRepository
+	extends JpaRepository<StockTransactionHistory, Integer>, StockTransactionRepositoryCustom {
+
 }

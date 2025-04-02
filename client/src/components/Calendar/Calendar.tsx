@@ -76,7 +76,7 @@ function CalendarView({ onDateSelect }: CalendarViewProps) {
             return (
               <div className={styles.todoList}>
                 {displayItems.map((mission) => (
-                  <div key={mission.mission_id} className={styles.todoItem}>
+                  <div key={mission.missionId} className={styles.todoItem}>
                     {mission.title}
                   </div>
                 ))}

@@ -69,6 +69,7 @@ const CommonComponents = () => {
     'HambergerMenu',
     'MoreCircle',
     'Add',
+    'Minus',
     'More',
     'Close',
     'CircleEdit',

@@ -1,11 +1,11 @@
 import Card from '../../../../components/Card/Card';
 import Badge from '../../../../components/Badge/Badge';
 import Button from '../../../../components/Button/Button';
-import { MissionDetail, MissionParticipation } from '../../../../types/Mission/mission';
+import { MissionDetail, MissionParticipation } from '../../../../types/mission/mission';
 import { Icon } from '../../../../components/Icon/Icon';
 import Lufin from '../../../../components/Lufin/Lufin';
 import { useState } from 'react';
-
+import { getStatusBadge } from '../../../../libs/utils/mission-util';
 interface MyMissionModalProps {
   onClose: () => void;
   mission: MissionDetail;
@@ -15,44 +15,21 @@ interface MyMissionModalProps {
 const MyMissionModal = ({ onClose, mission, participation }: MyMissionModalProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const getStatusBadge = (): {
-    status: 'ready' | 'done' | 'ing' | 'review' | 'fail' | 'reject';
-    text: string;
-  } => {
-    if (!participation) {
-      return { status: 'ready', text: '모집 중' };
-    }
-    switch (participation.status) {
-      case 'SUCCESS':
-        return { status: 'done', text: '성공' };
-      case 'IN_PROGRESS':
-        return { status: 'ing', text: '수행 중' };
-      case 'CHECKING':
-        return { status: 'review', text: '검토 중' };
-      case 'FAILED':
-        return { status: 'fail', text: '실패' };
-      case 'REJECTED':
-        return { status: 'reject', text: '거절' };
-      default:
-        return { status: 'ready', text: '모집 중' };
-    }
-  };
-
-  const status = getStatusBadge();
+  const status = getStatusBadge(participation);
 
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? mission.mission_images.length - 2 : prev - 2));
+    setCurrentImageIndex((prev) => (prev === 0 ? mission.missionImages.length - 2 : prev - 2));
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev >= mission.mission_images.length - 2 ? 0 : prev + 2));
+    setCurrentImageIndex((prev) => (prev >= mission.missionImages.length - 2 ? 0 : prev + 2));
   };
 
   const getVisibleImages = () => {
     const images = [];
     for (let i = 0; i < 2; i++) {
-      const index = (currentImageIndex + i) % mission.mission_images.length;
-      images.push(mission.mission_images[index]);
+      const index = (currentImageIndex + i) % mission.missionImages.length;
+      images.push(mission.missionImages[index]);
     }
     return images;
   };
@@ -95,20 +72,20 @@ const MyMissionModal = ({ onClose, mission, participation }: MyMissionModalProps
         </div>
         <div className='flex flex-col gap-2'>
           <span className='text-c1 text-grey'>사진</span>
-          {mission.mission_images.length > 0 && (
+          {mission.missionImages.length > 0 && (
             <div className='mt-2 relative'>
               <div className='grid grid-cols-2 gap-2'>
                 {getVisibleImages().map((image) => (
-                  <div key={image.mission_image_id} className='relative aspect-square'>
+                  <div key={image.missionImageId} className='relative aspect-square'>
                     <img
-                      src={image.image_url}
+                      src={image.imageUrl}
                       alt='미션 인증 이미지'
                       className='w-full h-full object-cover rounded-lg'
                     />
                   </div>
                 ))}
               </div>
-              {mission.mission_images.length > 2 && (
+              {mission.missionImages.length > 2 && (
                 <>
                   <button
                     onClick={handlePrevImage}
@@ -123,7 +100,7 @@ const MyMissionModal = ({ onClose, mission, participation }: MyMissionModalProps
                     <Icon name='ArrowRight2' size={20} />
                   </button>
                   <div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1'>
-                    {Array.from({ length: Math.ceil(mission.mission_images.length / 2) }).map(
+                    {Array.from({ length: Math.ceil(mission.missionImages.length / 2) }).map(
                       (_, index) => (
                         <div
                           key={index}

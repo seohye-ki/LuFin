@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -52,8 +53,10 @@ public class CreditScore {
 	@Column(name = "credit_status_description", columnDefinition = "TEXT")
 	private String creditStatusDescription;
 
+	@Column(name = "created_at", nullable = false, updatable = false)
+	private LocalDateTime createdAt;
 
-	@Column(name = "updated_at", nullable = false)
+	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
 	public CreditScoreHistory applyChange(int delta, CreditEventType eventType) {
@@ -74,6 +77,11 @@ public class CreditScore {
 
 	public static CreditScore init(Member member) {
 		return new CreditScore(member);
+	}
+
+	@PrePersist
+	protected void setCreatedAt() {
+		this.createdAt = LocalDateTime.now();
 	}
 
 	@PreUpdate

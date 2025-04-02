@@ -8,13 +8,13 @@ import com.lufin.server.member.domain.Member;
 
 public interface ItemPurchaseService {
 
-	List<ItemPurchaseResponseDto> purchaseItem(ItemPurchaseRequestDto request, Member student);
+	List<ItemPurchaseResponseDto> purchaseItem(ItemPurchaseRequestDto request, Member student, Integer classId);
 
-	List<ItemPurchaseResponseDto> getInventory(Member student);
+	List<ItemPurchaseResponseDto> getInventory(Member student, Integer classId);
 
-	List<ItemPurchaseResponseDto> getItemPurchaseHistory(Integer itemId, Member teacher);
+	List<ItemPurchaseResponseDto> getItemPurchaseHistory(Integer itemId, Integer classId);
 
-	ItemPurchaseResponseDto refundItem(Integer purchaseId, Member student);
+	ItemPurchaseResponseDto refundItem(Integer purchaseId, Member student, Integer classId);
 
 	void expireItemPurchases();
 }

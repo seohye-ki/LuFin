@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.lufin.server.account.domain.Account;
 import com.lufin.server.common.constants.HistoryStatus;
 import com.lufin.server.member.domain.Member;
+import com.lufin.server.member.domain.MemberRole;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +13,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -30,6 +32,7 @@ public class TransactionHistory {
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "from_account_id", nullable = true)
 	private Account fromAccount;
 
 	private String toAccountNumber;
@@ -49,6 +52,9 @@ public class TransactionHistory {
 
 	@Enumerated(EnumType.STRING)
 	private HistoryStatus status;
+
+	@Enumerated(EnumType.STRING)
+	private MemberRole executorRole;
 
 	private String description;
 
@@ -74,6 +80,7 @@ public class TransactionHistory {
 		this.status = status;
 		this.description = description;
 		this.sourceType = sourceType;
+		this.executorRole = executor.getMemberRole();
 	}
 
 	public static TransactionHistory create(

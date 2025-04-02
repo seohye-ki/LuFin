@@ -18,12 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lufin.server.common.annotation.TeacherOnly;
 import com.lufin.server.common.dto.ApiResponse;
 import com.lufin.server.item.dto.ItemDto;
-import com.lufin.server.item.dto.ItemPurchaseRequestDto;
-import com.lufin.server.item.dto.ItemPurchaseResponseDto;
 import com.lufin.server.item.dto.ItemRequestApprovalDto;
 import com.lufin.server.item.dto.ItemRequestResponseDto;
 import com.lufin.server.item.dto.ItemResponseDto;
-import com.lufin.server.item.service.ItemPurchaseService;
 import com.lufin.server.item.service.ItemRequestService;
 import com.lufin.server.item.service.ItemService;
 import com.lufin.server.member.domain.Member;
@@ -40,7 +37,6 @@ public class ItemController {
 	private static final String CLASS_ID = "classId";
 
 	private final ItemService itemService;
-	private final ItemPurchaseService itemPurchaseService;
 	private final ItemRequestService itemRequestService;
 
 	// 아이템 생성
@@ -89,40 +85,12 @@ public class ItemController {
 	// 아이템 삭제
 	@TeacherOnly
 	@DeleteMapping("/{itemId}")
-	public ResponseEntity<ApiResponse<Void>> deleteItem(HttpServletRequest httpRequest,
+	public ResponseEntity<Void> deleteItem(HttpServletRequest httpRequest,
 		@PathVariable Integer itemId) {
 		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);
 		itemService.deleteItem(itemId, classId);
 		return ResponseEntity.noContent().build();
-	}
-
-	// 아이템 구매
-	@PostMapping("/purchase")
-	public ResponseEntity<ApiResponse<List<ItemPurchaseResponseDto>>> purchaseItem(@RequestBody @Valid ItemPurchaseRequestDto request) {
-		List<ItemPurchaseResponseDto> result = itemPurchaseService.purchaseItem(request, UserContext.get());
-		return ResponseEntity.ok(ApiResponse.success(result));
-	}
-
-	// 나의 구매 아이템 조회
-	@GetMapping("/inventory")
-	public ResponseEntity<ApiResponse<List<ItemPurchaseResponseDto>>> getInventory() {
-		List<ItemPurchaseResponseDto> result = itemPurchaseService.getInventory(UserContext.get());
-		return ResponseEntity.ok(ApiResponse.success(result));
-	}
-
-	// 특정 아이템의 구매 내역 조회
-	@GetMapping("/{itemId}/purchases")
-	public ResponseEntity<ApiResponse<List<ItemPurchaseResponseDto>>> getItemPurchaseHistory(@PathVariable Integer itemId) {
-		List<ItemPurchaseResponseDto> result = itemPurchaseService.getItemPurchaseHistory(itemId, UserContext.get());
-		return ResponseEntity.ok(ApiResponse.success(result));
-	}
-
-	// 아이템 환불
-	@PatchMapping("purchases/{purchaseId}/refund")
-	ResponseEntity<ApiResponse<ItemPurchaseResponseDto>> refundItem(@PathVariable Integer purchaseId) {
-		ItemPurchaseResponseDto result = itemPurchaseService.refundItem(purchaseId, UserContext.get());
-		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
 	// 아이템 사용

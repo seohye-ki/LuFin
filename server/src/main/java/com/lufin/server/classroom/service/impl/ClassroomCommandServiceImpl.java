@@ -229,8 +229,18 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 			teacher.getId());
 
 		if (hasCurrentClassroom.isPresent()) {
-			hasCurrentClassroom.get().deactivate();
-			memberClassroomRepository.save(hasCurrentClassroom.get());
+			MemberClassroom current = hasCurrentClassroom.get();
+
+			// 기존 클래스 계좌 해지
+			Optional<Account> optionalAccount = accountRepository.findByClassroomId(current.getClassroom().getId());
+			if (optionalAccount.isPresent()) {
+				Account account = optionalAccount.get();
+				account.close();
+				accountRepository.save(account);
+			}
+
+			current.deactivate();
+			memberClassroomRepository.save(current);
 		}
 	}
 }

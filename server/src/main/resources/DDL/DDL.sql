@@ -81,6 +81,7 @@ CREATE TABLE `accounts`
     `account_id`     INT         NOT NULL AUTO_INCREMENT COMMENT '학년이 변경 될 때마다 새 계좌 지급',
     `member_id`      INT         NULL COMMENT '계좌 주인',
     `classroom_id`   INT         NULL COMMENT '소속 학급 ID',
+    `account_type`   VARCHAR(15) NOT NULL COMMENT '계좌 유형: DEPOSIT(예금), LOAN(대출), CLASSROOM(클래스)',
     `account_number` VARCHAR(15) NOT NULL UNIQUE,
     `balance`        INT         NOT NULL DEFAULT 0,
     `created_at`     TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -150,7 +151,8 @@ CREATE TABLE credit_scores
     grade                     VARCHAR(10) NOT NULL,
     credit_status             TINYINT     NOT NULL DEFAULT 0 COMMENT '0: 정상/ 1: 신용불량자',
     credit_status_description TEXT        NULL COMMENT '신용불량자에서 회생할 경우 교사가 사유를 입력 함',
-    updated_at                DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at                DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at                DATETIME    DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_creditscore_member FOREIGN KEY (member_id)
         REFERENCES members (member_id) ON DELETE CASCADE
 ) ENGINE = InnoDB

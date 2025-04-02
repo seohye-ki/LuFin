@@ -1,4 +1,4 @@
-import { missionDetails } from '../../../../types/Mission/mission';
+import { missionDetails } from '../../../../types/mission/mission';
 import moment from 'moment';
 import { Icon } from '../../../../components/Icon/Icon';
 import MissionTable from './MissionTable';

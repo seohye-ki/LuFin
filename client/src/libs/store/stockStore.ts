@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { StockProduct } from '../../types/Stock/stock';
+import { StockProduct } from '../../types/stock/stock';
 
 type ChartType = 'realTime' | 'portfolio';
 

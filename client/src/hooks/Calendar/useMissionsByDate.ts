@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import moment from 'moment';
-import { missions } from '../../types/Mission/mission';
+import { missions } from '../../types/mission/mission';
 
 export const useMissionsByDate = () => {
   const getFormattedKey = useCallback((date: Date) => {

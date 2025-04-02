@@ -1,4 +1,4 @@
-import { MissionDetail } from '../../../../types/Mission/mission';
+import { MissionDetail } from '../../../../types/mission/mission';
 import MissionForm from './MissionForm';
 
 interface MissionEditModalProps {

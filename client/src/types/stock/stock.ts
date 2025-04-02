@@ -1,4 +1,4 @@
-// 투자 상품 (주식)
+// 투자 상품
 export interface StockProduct {
   stockProductId: number;
   name: string; // 투자 상품명

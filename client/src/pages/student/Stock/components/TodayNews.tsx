@@ -1,5 +1,5 @@
 import Card from '../../../../components/Card/Card';
-import { stockNews } from '../../../../types/Stock/stock';
+import { stockNews } from '../../../../types/stock/stock';
 import moment from 'moment';
 
 const TodayNews = () => {

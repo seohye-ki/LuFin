@@ -5,7 +5,7 @@ import TextArea from '../../../../components/Form/TextArea';
 import ImageUpload from '../../../../components/Form/ImageUpload';
 import Button from '../../../../components/Button/Button';
 import { Icon } from '../../../../components/Icon/Icon';
-import { MissionDetail } from '../../../../types/Mission/mission';
+import { MissionDetail } from '../../../../types/mission/mission';
 import Card from '../../../../components/Card/Card';
 
 interface MissionFormProps {

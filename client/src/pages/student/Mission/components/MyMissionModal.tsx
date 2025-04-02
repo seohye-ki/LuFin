@@ -1,7 +1,7 @@
 import Card from '../../../../components/Card/Card';
 import Badge from '../../../../components/Badge/Badge';
 import Button from '../../../../components/Button/Button';
-import { MissionDetail, MissionParticipation } from '../../../../types/Mission/mission';
+import { MissionDetail, MissionParticipation } from '../../../../types/mission/mission';
 import { Icon } from '../../../../components/Icon/Icon';
 import Lufin from '../../../../components/Lufin/Lufin';
 import { useState } from 'react';

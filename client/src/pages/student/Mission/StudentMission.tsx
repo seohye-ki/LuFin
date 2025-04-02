@@ -5,7 +5,7 @@ import {
   missionDetails,
   missionParticipations,
   MissionDetail,
-} from '../../../types/Mission/mission';
+} from '../../../types/mission/mission';
 import { useState } from 'react';
 import MyMissionModal from './components/MyMissionModal';
 import { useStudentMissions } from './hooks/useStudentMissions';

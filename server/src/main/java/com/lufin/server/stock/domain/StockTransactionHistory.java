@@ -28,7 +28,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StockTransactionHistories {
+public class StockTransactionHistory {
 	/* 연관관계 */
 	@Setter
 	@ManyToOne
@@ -82,14 +82,14 @@ public class StockTransactionHistories {
 	/**
 	 * 주식 투자 내역 객체를 생성하는 팩토리 메서드
 	 */
-	public static StockTransactionHistories create(int type,
+	public static StockTransactionHistory create(int type,
 		int quantity,
 		int price,
 		int totalPrice,
 		StockProduct stockProduct,
 		Member member
 	) {
-		StockTransactionHistories history = StockTransactionHistories.builder()
+		StockTransactionHistory history = StockTransactionHistory.builder()
 			.type(type)
 			.quantity(quantity)
 			.price(price)
@@ -111,7 +111,7 @@ public class StockTransactionHistories {
 			return false;
 		}
 
-		StockTransactionHistories that = (StockTransactionHistories)o;
+		StockTransactionHistory that = (StockTransactionHistory)o;
 		return id == that.id;
 	}
 

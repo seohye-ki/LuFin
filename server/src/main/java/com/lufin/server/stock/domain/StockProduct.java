@@ -43,7 +43,7 @@ public class StockProduct {
 
 	@Builder.Default
 	@OneToMany(mappedBy = "stockProduct", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<StockTransactionHistories> transactionHistories = new ArrayList<>();
+	private List<StockTransactionHistory> transactionHistories = new ArrayList<>();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -148,7 +148,7 @@ public class StockProduct {
 	 * @param transactionHistories
 	 * @return
 	 */
-	public void addTransactionHistories(StockTransactionHistories transactionHistories) {
+	public void addTransactionHistories(StockTransactionHistory transactionHistories) {
 		if (!this.transactionHistories.contains(transactionHistories)) {
 			this.transactionHistories.add(transactionHistories);
 		}

@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import com.lufin.server.stock.domain.StockNews;
 
+@Repository
 public interface StockNewsRepository extends JpaRepository<StockNews, Integer>, StockNewsRepositoryCustom {
 	// 공시 정보 중복 여부 체크
 

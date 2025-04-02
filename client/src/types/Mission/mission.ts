@@ -101,6 +101,7 @@ export const missionImages: MissionImage[] = [
   { missionImageId: 4, missionId: 2, imageUrl: 'https://picsum.photos/200/300?random=4' },
   { missionImageId: 5, missionId: 2, imageUrl: 'https://picsum.photos/200/300?random=5' },
   { missionImageId: 6, missionId: 2, imageUrl: 'https://picsum.photos/200/300?random=6' },
+  { missionImageId: 7, missionId: 3, imageUrl: 'https://picsum.photos/200/300?random=7' },
 ];
 
 export const missionParticipations: MissionParticipation[] = [

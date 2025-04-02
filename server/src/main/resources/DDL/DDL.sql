@@ -135,29 +135,26 @@ CREATE TABLE `auto_transfers` (
     CONSTRAINT `fk_autotransfer_account` FOREIGN KEY (`from_account_id`) REFERENCES `accounts` (`account_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='자동이체 정보';
 
--- Credit change reasons
-CREATE TABLE `credit_change_reasons` (
-    `reason_id` INT NOT NULL AUTO_INCREMENT,
-    `reason_name` VARCHAR(50) NOT NULL UNIQUE COMMENT 'UNIQUE',
-    PRIMARY KEY (`reason_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='신용점수 변경 사유';
+-- credit_scores
+CREATE TABLE credit_scores (
+    member_id INT PRIMARY KEY,
+    score TINYINT NOT NULL DEFAULT 50,
+    grade VARCHAR(10) NOT NULL,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_creditscore_member FOREIGN KEY (member_id)
+        REFERENCES members(member_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='신용 등급 현재 상태';
 
 -- Credit score histories
-CREATE TABLE `credit_score_histories` (
-    `history_id` INT NOT NULL AUTO_INCREMENT,
-    `member_id` INT NOT NULL COMMENT 'FK',
-    `reason_id` INT NOT NULL COMMENT 'FK',
-    `score_change` TINYINT NOT NULL,
-    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `processed` BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY (`history_id`),
-    INDEX `idx_creditscore_member` (`member_id`),
-    INDEX `idx_creditscore_reason` (`reason_id`),
-    INDEX `idx_creditscore_processed` (`processed`),
-    INDEX `idx_score_created` (`score_change`, `created_at`),
-    CONSTRAINT `fk_creditscore_member` FOREIGN KEY (`member_id`) REFERENCES `members` (`member_id`) ON DELETE CASCADE,
-    CONSTRAINT `fk_creditscore_reason` FOREIGN KEY (`reason_id`) REFERENCES `credit_change_reasons` (`reason_id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='신용점수 변경 내역';
+CREATE TABLE credit_score_histories (
+    history_id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT NOT NULL,
+    score_change TINYINT NOT NULL,
+    reason VARCHAR(100) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_credithistory_member FOREIGN KEY (member_id)
+        REFERENCES members(member_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='신용 점수 이력';
 
 -- Savings products
 CREATE TABLE `savings_products` (

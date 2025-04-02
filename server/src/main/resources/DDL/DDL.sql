@@ -81,6 +81,7 @@ CREATE TABLE `accounts`
     `account_id`     INT         NOT NULL AUTO_INCREMENT COMMENT '학년이 변경 될 때마다 새 계좌 지급',
     `member_id`      INT         NULL COMMENT '계좌 주인',
     `classroom_id`   INT         NULL COMMENT '소속 학급 ID',
+    `account_type`   VARCHAR(15) NOT NULL COMMENT '계좌 유형: DEPOSIT(예금), LOAN(대출), CLASSROOM(클래스)',
     `account_number` VARCHAR(15) NOT NULL UNIQUE,
     `balance`        INT         NOT NULL DEFAULT 0,
     `created_at`     TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -102,7 +102,8 @@ public class ItemServiceImpl implements ItemService {
 	public void deleteItem(Integer itemId, Integer classId) {
 		validateClassroomExists(classId);
 		Item item = validateItemOwnership(itemId, classId);
-		itemRepository.delete(item);
+		item.disable();
+		itemRepository.save(item);
 		log.info("✅[아이템 삭제 성공] itemId: {}, classroomId: {}", item.getId(), classId);
 	}
 

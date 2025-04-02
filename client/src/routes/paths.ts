@@ -10,4 +10,5 @@ export const paths = {
   DESIGN_SYSTEM: '/design-system',
   TEACHER_CLASSROOM: '/classroom/teacher',
   STUDENT_CLASSROOM: '/classroom',
+  STUDENT_DASHBOARD: '/dashboard',
 } as const;

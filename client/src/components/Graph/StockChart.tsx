@@ -54,7 +54,7 @@ const StockChart: React.FC<stockChartProps> = ({ stocks }) => {
   };
 
   return (
-    <div className='w-full h-full px-48'>
+    <div className='w-full h-full flex items-center px-4'>
       <Doughnut data={data} options={options} />
     </div>
   );

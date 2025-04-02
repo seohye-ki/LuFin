@@ -85,7 +85,7 @@ public class ItemController {
 	// 아이템 삭제
 	@TeacherOnly
 	@DeleteMapping("/{itemId}")
-	public ResponseEntity<ApiResponse<Void>> deleteItem(HttpServletRequest httpRequest,
+	public ResponseEntity<Void> deleteItem(HttpServletRequest httpRequest,
 		@PathVariable Integer itemId) {
 		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);

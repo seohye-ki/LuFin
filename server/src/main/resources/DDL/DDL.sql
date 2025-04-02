@@ -325,6 +325,7 @@ CREATE TABLE `stock_portfolios`
 (
     `stock_portfolio_id`    INT       NOT NULL AUTO_INCREMENT COMMENT '포트폴리오 고유 번호',
     `stock_product_id`      INT       NOT NULL COMMENT '투자 상품 고유 번호',
+    `classroom_id`          INT       NOT NULL COMMENT '',
     `member_id`             INT       NOT NULL COMMENT '학생 고유 번호',
     `quantity`              INT       NOT NULL COMMENT '한 투자 상품에 대한 총 보유 수량',
     `total_purchase_amount` INT       NOT NULL COMMENT '한 투자 상품에 대한 총 매수 금액',
@@ -336,7 +337,8 @@ CREATE TABLE `stock_portfolios`
     INDEX `idx_portfolio_product` (`stock_product_id`),
     INDEX `idx_portfolio_member` (`member_id`),
     CONSTRAINT `fk_portfolio_product` FOREIGN KEY (`stock_product_id`) REFERENCES `stock_products` (`stock_product_id`) ON DELETE CASCADE,
-    CONSTRAINT `fk_portfolio_member` FOREIGN KEY (`member_id`) REFERENCES `members` (`member_id`) ON DELETE CASCADE
+    CONSTRAINT `fk_portfolio_member` FOREIGN KEY (`member_id`) REFERENCES `members` (`member_id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_portfolio_classroom` FOREIGN KEY (`classroom_id`) REFERENCES `classrooms` (`classroom_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='주식 포트폴리오';
 

@@ -10,7 +10,7 @@ public class StockPortfolioResponseDto {
 		Integer quantity,
 		Integer totalPurchaseAmount,
 		Integer totalSellAmount,
-		Integer totalReturn,
+		Double totalReturn,
 		Double totalReturnRate,
 		LocalDateTime createdAt,
 		LocalDateTime updatedAt

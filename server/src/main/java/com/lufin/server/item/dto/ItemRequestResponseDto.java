@@ -8,7 +8,10 @@ import com.lufin.server.item.domain.ItemRequestStatus;
 public record ItemRequestResponseDto(
 	Integer requestId,
 	Integer purchaseId,
-	Integer requesterId,
+	Integer memberId,
+	String memberName,
+	String memberProfileImage,
+	String itemName,
 	ItemRequestStatus status,
 	LocalDateTime createdAt,
 	LocalDateTime updatedAt
@@ -18,6 +21,9 @@ public record ItemRequestResponseDto(
 			request.getId(),
 			request.getPurchase().getId(),
 			request.getRequester().getId(),
+			request.getRequester().getName(),
+			request.getRequester().getProfileImage(),
+			request.getPurchase().getItem().getName(),
 			request.getStatus(),
 			request.getCreatedAt(),
 			request.getUpdatedAt()

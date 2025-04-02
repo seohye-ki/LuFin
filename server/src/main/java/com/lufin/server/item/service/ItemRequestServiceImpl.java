@@ -31,59 +31,55 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 	@Override
 	@Transactional
 	public ItemRequestResponseDto requestItemUse(Integer purchaseId, Member student, Integer classroomId) {
-		// 구매 내역 조회
+		log.info("🔍[아이템 사용 요청] - purchaseId: {}, memberId: {}, classroomId: {}", purchaseId, student.getId(), classroomId);
 		ItemPurchase purchase = itemPurchaseRepository.findById(purchaseId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.PURCHASE_RECORD_NOT_FOUND));
 
-		// 본인 구매인지 확인
 		if (!purchase.isPurchasedBy(student)) {
+			log.warn("🧺[권한 확인 실패] 구매자 아님 - memberId: {}", student.getId());
 			throw new BusinessException(ErrorCode.REQUEST_DENIED);
 		}
 
-		// 구매 상태가 BUY인지 확인
 		if (purchase.getStatus() != ItemPurchaseStatus.BUY) {
+			log.warn("🚫[구매 상태 오류] 사용 요청 불가 상태 - purchaseId: {}, status: {}", purchaseId, purchase.getStatus());
 			throw new BusinessException(ErrorCode.PURCHASE_STATUS_NOT_BUY);
 		}
 
-		// 해당반의 아이템인지 확인
 		if (!purchase.getItem().getClassroom().getId().equals(classroomId)) {
+			log.warn("🔐[클래스 확인 오류] 아이템의 반과 다름 - purchaseId: {}, classroomId: {}", purchaseId, classroomId);
 			throw new BusinessException(ErrorCode.REQUEST_DENIED);
 		}
 
-		// 요청 생성 및 저장
 		ItemRequest request = ItemRequest.create(purchase, student);
 		itemRequestRepository.save(request);
-
-		// 구매 상태 변경: BUY → PENDING
 		purchase.pending();
-
+		log.info("✅[아이템 사용 요청 생성 완료] - requestId: {}, memberId: {}", request.getId(), student.getId());
 		return ItemRequestResponseDto.from(request);
 	}
 
 	@Override
 	public List<ItemRequestResponseDto> getItemRequests(Integer classroomId) {
-		// 해당반의 요청 PENDING 목록 조회
-		List<ItemRequest> pendingRequests = itemRequestRepository
-			.findByClassroomIdAndStatus(classroomId, ItemRequestStatus.PENDING);
-
-		return pendingRequests.stream()
-			.map(ItemRequestResponseDto::from)
-			.toList();
+		log.info("🔄[아이템 요청 목록 조회] - classroomId: {}", classroomId);
+		List<ItemRequest> pendingRequests = itemRequestRepository.findByClassroomIdAndStatus(classroomId, ItemRequestStatus.PENDING);
+		log.info("✅[아이템 요청 목록 조회 성공] - classroomId: {}, count: {}", classroomId, pendingRequests.size());
+		return pendingRequests.stream().map(ItemRequestResponseDto::from).toList();
 	}
 
 	@Override
 	@Transactional
-	public ItemRequestResponseDto updateItemRequestStatus(Integer requestId, ItemRequestApprovalDto requestDto, Member member, Integer classroomId) {
+	public ItemRequestResponseDto updateItemRequestStatus(Integer requestId, ItemRequestApprovalDto requestDto,
+		Member member, Integer classroomId) {
+		log.info("🔧[아이템 요청 상태 변경] - requestId: {}, memberId: {}", requestId, member.getId());
 		ItemRequest request = itemRequestRepository.findById(requestId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 
-		// 요청이 해당 교사의 반에 속한 요청인지 검증
 		if (!request.getPurchase().getItem().getClassroom().getId().equals(classroomId)) {
+			log.warn("🔐[클래스 확인 오류] 요청의 반과 다름 - requestId: {}, classroomId: {}", requestId, classroomId);
 			throw new BusinessException(ErrorCode.REQUEST_DENIED);
 		}
 
-		// 상태가 PENDING이 아니면 수정 불가
 		if (request.getStatus() != ItemRequestStatus.PENDING) {
+			log.warn("🚫[요청 상태 오류] 수정 불가 상태 - requestId: {}, status: {}", requestId, request.getStatus());
 			throw new BusinessException(ErrorCode.REQUEST_DENIED);
 		}
 
@@ -91,13 +87,15 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 		if (ItemRequestStatus.APPROVED.equals(status)) {
 			request.approve(member);
 			request.getPurchase().used();
+			log.info("✅[아이템 사용 승인 완료] - requestId: {}, memberId: {}", requestId, member.getId());
 		} else if (ItemRequestStatus.REJECTED.equals(status)) {
 			request.reject(member);
 			request.getPurchase().buy();
+			log.info("🚫[아이템 사용 거절] - requestId: {}, memberId: {}", requestId, member.getId());
 		} else {
+			log.error("❗[잘못된 요청 상태] - requestId: {}, status: {}", requestId, status);
 			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
 		}
-
 		return ItemRequestResponseDto.from(request);
 	}
 }

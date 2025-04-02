@@ -13,7 +13,8 @@ import io.lettuce.core.dynamic.annotation.Param;
 import jakarta.persistence.LockModeType;
 
 @Repository
-public interface StockPortfolioRepository extends JpaRepository<StockPortfolio, Integer> {
+public interface StockPortfolioRepository
+	extends JpaRepository<StockPortfolio, Integer>, StockPortfolioRepositoryCustom {
 	// 특정 유저의 특정 상품 포트폴리오 조회
 
 	/**

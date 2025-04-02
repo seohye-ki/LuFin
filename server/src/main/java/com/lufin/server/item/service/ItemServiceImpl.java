@@ -6,8 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.classroom.domain.Classroom;
-import com.lufin.server.classroom.domain.MemberClassroom;
-import com.lufin.server.classroom.repository.MemberClassroomRepository;
+import com.lufin.server.classroom.repository.ClassroomRepository;
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.item.domain.Item;
@@ -26,32 +25,27 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
 	private final ItemRepository itemRepository;
-	private final MemberClassroomRepository memberClassroomRepository;
+	private final ClassroomRepository classroomRepository;
 
-	// 현재 활성화된 클래스 찾기
-	private Classroom getActiveClassroom(Member member) {
-		MemberClassroom memberClassroom = memberClassroomRepository
-			.findByMember_IdAndIsCurrentTrue(member.getId())
-			.orElseThrow(() -> new BusinessException(ErrorCode.REQUEST_DENIED));
-		return memberClassroom.getClassroom();
+	private Classroom validateClassroomExists(Integer classId) {
+		return classroomRepository.findById(classId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
 	}
 
-	// item id로 item 찾기(아이템이 없으면 에러, 다른반 아이템이면 에러)
-	private Item validateItemOwnership(Integer itemId, Classroom classroom) {
+	private Item validateItemOwnership(Integer itemId, Integer classId) {
 		Item item = itemRepository.findById(itemId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
-		if (!item.getClassroom().getId().equals(classroom.getId())) {
+		if (!item.getClassroom().getId().equals(classId)) {
 			throw new BusinessException(ErrorCode.REQUEST_DENIED);
 		}
 		return item;
 	}
 
-	// item 생성
 	@Override
 	@Transactional
-	public ItemResponseDto createItem(ItemDto request, Member teacher) {
-		Classroom classroom = getActiveClassroom(teacher);
-		Item response = Item.create(
+	public ItemResponseDto createItem(ItemDto request, Integer classId) {
+		Classroom classroom = validateClassroomExists(classId);
+		Item item = Item.create(
 			classroom,
 			request.name(),
 			request.type(),
@@ -59,72 +53,70 @@ public class ItemServiceImpl implements ItemService {
 			request.quantityAvailable(),
 			request.expirationDate()
 		);
-		return ItemResponseDto.from(itemRepository.save(response));
+		Item savedItem = itemRepository.save(item);
+		log.info("✅[아이템 생성 성공] itemId: {}, classroomId: {}", savedItem.getId(), classroom.getId());
+		return ItemResponseDto.from(savedItem);
 	}
 
-	// 아이템 조회
 	@Override
-	public List<ItemResponseDto> getItems(Member member) {
-		Classroom classroom = getActiveClassroom(member);
-
+	public List<ItemResponseDto> getItems(Member member, Integer classId) {
+		validateClassroomExists(classId);
 		List<Item> items;
 		if (member.getMemberRole() == MemberRole.TEACHER) {
-			items = itemRepository.findByClassroomId(classroom.getId());
+			items = itemRepository.findByClassroomId(classId);
 		} else {
-			items = itemRepository.findByClassroomIdAndStatusTrue(classroom.getId());
+			items = itemRepository.findByClassroomIdAndStatusTrue(classId);
 		}
-
 		return items.stream()
 			.map(ItemResponseDto::from)
 			.toList();
 	}
 
-	// 아이템 조회(단일)
 	@Override
-	public ItemResponseDto getItemDetail(Integer itemId, Member teacher) {
-		Classroom classroom = getActiveClassroom(teacher);
-		Item response = validateItemOwnership(itemId, classroom);
-
-		return ItemResponseDto.from(response);
+	public ItemResponseDto getItemDetail(Integer itemId, Integer classId) {
+		validateClassroomExists(classId);
+		Item item = validateItemOwnership(itemId, classId);
+		return ItemResponseDto.from(item);
 	}
 
-	// 아이템 수정
 	@Override
 	@Transactional
-	public ItemResponseDto updateItem(Integer itemId, ItemDto request, Member teacher) {
-		Classroom classroom = getActiveClassroom(teacher);
-		Item response = validateItemOwnership(itemId, classroom);
-
-		if (request.quantityAvailable() < response.getQuantitySold()) {
+	public ItemResponseDto updateItem(Integer itemId, ItemDto request, Integer classId) {
+		validateClassroomExists(classId);
+		Item item = validateItemOwnership(itemId, classId);
+		if (request.quantityAvailable() < item.getQuantitySold()) {
 			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
 		}
 
-		response.changeName(request.name());
-		response.changePrice(request.price());
-		response.changeQuantityAvailable(request.quantityAvailable());
-		response.changeExpirationDate(request.expirationDate());
-		return ItemResponseDto.from(itemRepository.save(response));
+		item.changeName(request.name());
+		item.changePrice(request.price());
+		item.changeQuantityAvailable(request.quantityAvailable());
+		item.changeExpirationDate(request.expirationDate());
+		Item savedItem = itemRepository.save(item);
+		log.info("✅[아이템 수정 성공] itemId: {}, classroomId: {}", savedItem.getId(), classId);
+		return ItemResponseDto.from(savedItem);
 	}
 
-	// 아이템 삭제
 	@Override
 	@Transactional
-	public void deleteItem(Integer itemId, Member teacher) {
-		Classroom classroom = getActiveClassroom(teacher);
-		Item response = validateItemOwnership(itemId, classroom);
-		itemRepository.delete(response);
+	public void deleteItem(Integer itemId, Integer classId) {
+		validateClassroomExists(classId);
+		Item item = validateItemOwnership(itemId, classId);
+		itemRepository.delete(item);
+		log.info("✅[아이템 삭제 성공] itemId: {}, classroomId: {}", item.getId(), classId);
 	}
 
-	// 아이템 기간만료
 	@Override
 	@Transactional
 	public void expireItems() {
+		log.info("🔔[만료 아이템 검사 시작]");
 		List<Item> activeItems = itemRepository.findByStatusTrue();
-
 		for (Item item : activeItems) {
 			if (item.isExpired()) {
 				item.disable();
+				log.info("⌛[아이템 만료 처리] itemId: {}, classroomId: {}", item.getId(), item.getClassroom().getId());
 			}
 		}
+		log.info("✅[만료 아이템 검사 종료]");
 	}
 }

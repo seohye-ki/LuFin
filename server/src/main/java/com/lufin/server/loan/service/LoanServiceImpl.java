@@ -12,14 +12,16 @@ import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.repository.ClassroomRepository;
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.exception.BusinessException;
+import com.lufin.server.credit.domain.CreditScore;
+import com.lufin.server.credit.repository.CreditScoreRepository;
 import com.lufin.server.loan.domain.LoanApplication;
 import com.lufin.server.loan.domain.LoanApplicationStatus;
 import com.lufin.server.loan.domain.LoanProduct;
-import com.lufin.server.loan.dto.LoanApplicationRequestDto;
 import com.lufin.server.loan.dto.LoanApplicationDetailDto;
+import com.lufin.server.loan.dto.LoanApplicationListDto;
+import com.lufin.server.loan.dto.LoanApplicationRequestDto;
 import com.lufin.server.loan.dto.LoanProductResponseDto;
 import com.lufin.server.loan.dto.MyLoanApplicationDto;
-import com.lufin.server.loan.dto.LoanApplicationListDto;
 import com.lufin.server.loan.repository.LoanApplicationRepository;
 import com.lufin.server.loan.repository.LoanProductRepository;
 import com.lufin.server.member.domain.Member;
@@ -36,6 +38,7 @@ public class LoanServiceImpl implements LoanService {
 	private final LoanApplicationRepository loanApplicationRepository;
 	private final LoanProductRepository loanProductRepository;
 	private final ClassroomRepository classroomRepository;
+	private final CreditScoreRepository creditScoreRepository;
 
 	private Integer convertRatingToRank(Integer rating) {
 		if (rating >= 85) {
@@ -82,7 +85,11 @@ public class LoanServiceImpl implements LoanService {
 			.orElseThrow(() -> new BusinessException(ErrorCode.LOAN_PRODUCT_NOT_FOUND));
 
 		// F등급 확인
-		Integer rank = convertRatingToRank(member.getStatus().getCreditRating());
+		CreditScore creditScore = creditScoreRepository.findById(member.getId())
+			.orElseThrow(() -> new IllegalStateException("해당 회원의 신용점수가 없습니다."));
+
+		Integer rank = convertRatingToRank(Integer.valueOf(creditScore.getScore()));
+
 		if (rank == 4)
 			throw new BusinessException(ErrorCode.INSUFFICIENT_CREDIT_SCORE);
 
@@ -146,7 +153,8 @@ public class LoanServiceImpl implements LoanService {
 	}
 
 	@Override
-	public LoanApplicationDetailDto getLoanApplicationDetail(Integer loanApplicationId, Member member, Integer classId) {
+	public LoanApplicationDetailDto getLoanApplicationDetail(Integer loanApplicationId, Member member,
+		Integer classId) {
 		LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.LOAN_APPLICATION_NOT_FOUND));
 

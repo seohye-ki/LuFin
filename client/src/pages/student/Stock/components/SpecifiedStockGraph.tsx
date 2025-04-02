@@ -23,11 +23,11 @@ const SpecifiedStockGraph = ({ stock, onBack }: SpecifiedStockGraphProps) => {
   return (
     <div className='flex h-full gap-3'>
       {/* 차트 영역 */}
-      <div className='flex flex-col bg-white rounded-xl p-4 w-[65%]'>
+      <div className='flex flex-col bg-white rounded-xl p-4 w-[70%]'>
         <div className='flex justify-between items-center mb-3'>
           <h2 className='text-h3 font-semibold text-black'>{stock.name}</h2>
           <Button size='sm' variant='solid' onClick={onBack}>
-            뒤로가기
+            실시간 차트
           </Button>
         </div>
         <div className='flex-1 min-h-0'>
@@ -42,7 +42,7 @@ const SpecifiedStockGraph = ({ stock, onBack }: SpecifiedStockGraphProps) => {
       </div>
 
       {/* 주문 영역 */}
-      <div className='bg-white rounded-xl w-[35%] min-w-[260px] min-h-0'>
+      <div className='bg-white rounded-xl w-[30%] min-w-[260px] min-h-0'>
         <StockOrder stock={stock} />
       </div>
     </div>

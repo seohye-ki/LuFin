@@ -5,8 +5,8 @@ import Lufin from '../../../../components/Lufin/Lufin';
 import { useStockStore } from '../../../../libs/store/stockStore';
 import { stockProducts } from '../../../../types/Stock/stock';
 import MyStockChart from './MyStockChart';
-import StockChangeText from './StockChangeText';
 import { calcStockChangeRate } from '../../../../libs/utils/stock-util';
+import StockChangeText from './stockChangeText';
 
 const StockOverview = () => {
   const { chartType, toggleChartType, setSelectedStock } = useStockStore();
@@ -35,25 +35,23 @@ const StockOverview = () => {
     if (stock) setSelectedStock(stock);
   };
 
-  return (
+  return chartType === 'portfolio' ? (
+    <MyStockChart />
+  ) : (
     <Card
-      titleLeft={chartType === 'portfolio' ? '나의 투자 현황' : '실시간 차트'}
+      titleLeft='실시간 차트'
       titleRight={
         <div className='flex items-center gap-2'>
           <div className='text-c1 text-grey'>2025.03.31 13:00 기준</div>
           <Button variant='solid' size='sm' color='primary' onClick={toggleChartType}>
-            {chartType === 'portfolio' ? '실시간 차트' : '나의 투자 현황'}
+            나의 투자 현황
           </Button>
         </div>
       }
       className='flex flex-col basis-45/100 min-h-0'
     >
       <div className='flex-1 overflow-auto [&::-webkit-scrollbar]:hidden'>
-        {chartType === 'portfolio' ? (
-          <MyStockChart />
-        ) : (
-          <TableView columns={columns} rows={rows} onRowClick={handleRowClick} />
-        )}
+        <TableView columns={columns} rows={rows} onRowClick={handleRowClick} />
       </div>
     </Card>
   );

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.credit.domain.CreditScore;
+import com.lufin.server.credit.repository.CreditScoreRepository;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
 import com.lufin.server.member.dto.RegisterRequest;
@@ -28,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RegisterServiceImpl implements RegisterService {
 
 	private final MemberRepository memberRepository;
+	private final CreditScoreRepository creditScoreRepository;
 	private final RedisTemplate<String, String> redisTemplate;
 
 	@Transactional
@@ -42,7 +44,7 @@ public class RegisterServiceImpl implements RegisterService {
 			throw new BusinessException(UNAUTHORIZED_ACCESS);
 		}
 
-		redisTemplate.delete(redisEmail);
+		redisTemplate.delete("email:" + request.email());
 
 		// 비밀번호 유효성 검증
 		isValidPassword(request.password());
@@ -59,7 +61,8 @@ public class RegisterServiceImpl implements RegisterService {
 				request.password(),
 				request.secondaryPassword());
 			// 학생의 경우 신용 등급 설정
-			CreditScore.init(member);
+			CreditScore creditScore = CreditScore.init(member);
+			creditScoreRepository.save(creditScore);
 		} else if (request.role().equals(MemberRole.TEACHER)) {
 			member = Member.createTeacher(
 				request.email(),

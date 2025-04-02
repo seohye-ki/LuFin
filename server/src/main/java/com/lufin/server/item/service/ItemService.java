@@ -3,24 +3,20 @@ package com.lufin.server.item.service;
 import java.util.List;
 
 import com.lufin.server.item.dto.ItemDto;
-import com.lufin.server.item.dto.ItemPurchaseRequestDto;
-import com.lufin.server.item.dto.ItemPurchaseResponseDto;
 import com.lufin.server.item.dto.ItemResponseDto;
 import com.lufin.server.member.domain.Member;
 
-import jakarta.validation.Valid;
-
 public interface ItemService {
 
-	ItemResponseDto  createItem(ItemDto request, Member teacher);
+	ItemResponseDto createItem(ItemDto request, Integer classId);
 
-	List<ItemResponseDto> getItems(Member member);
+	List<ItemResponseDto> getItems(Member member, Integer classId);
 
-	ItemResponseDto getItemDetail(Integer itemId, Member teacher);
+	ItemResponseDto getItemDetail(Integer itemId, Integer classId);
 
-	ItemResponseDto updateItem(Integer itemId, ItemDto request, Member teacher);
+	ItemResponseDto updateItem(Integer itemId, ItemDto request, Integer classId);
 
-	void deleteItem(Integer itemId, Member teacher);
+	void deleteItem(Integer itemId, Integer classId);
 
 	void expireItems();
 }

@@ -2,8 +2,6 @@ package com.lufin.server.item.domain;
 
 import java.time.LocalDateTime;
 
-import javax.net.ssl.SSLSession;
-
 import com.lufin.server.classroom.domain.Classroom;
 
 import jakarta.persistence.Column;
@@ -35,7 +33,7 @@ public class Item {
 	@JoinColumn(name = "classroom_id", nullable = false)
 	private Classroom classroom;
 
-	@Column(name = "name", nullable = false, length = 50)
+	@Column(name = "name", nullable = false, length = 30)
 	private String name;
 
 	@Column(name = "type", nullable = false)

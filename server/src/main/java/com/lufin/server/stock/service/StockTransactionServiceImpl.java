@@ -61,11 +61,18 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 		try {
 			/* 접근 순서 일관화 + 비관적 락을 통해 데드락 방지 */
 			// 1. 해당 주식 상품이 있는지 체크
-			StockProduct stockProduct = stockProductRepository.findById(stockProductId)
-				.orElseThrow(() -> new BusinessException(ErrorCode.INVESTMENT_PRODUCT_NOT_FOUND));
+			Optional<StockProduct> stock = stockProductRepository.findByIdWithPessimisticLock(stockProductId);
+
+			if (!stock.isPresent()) {
+				log.warn("주식 구매에 필요한 주식 상품을 찾을 수 없습니다. classId = {}, currentMember = {}", classId, currentMember);
+				throw new BusinessException(ErrorCode.INVESTMENT_PRODUCT_NOT_FOUND);
+			}
+
+			StockProduct stockProduct = stock.get();
 
 			// 2. 계좌 조회
-			Optional<Account> account = accountRepository.findByClassroomIdAndMemberId(classId, currentMember.getId());
+			Optional<Account> account = accountRepository.findByClassroomIdAndMemberIdWithPessimisticLock(classId,
+				currentMember.getId());
 
 			if (!account.isPresent()) {
 				log.warn("주식 구매에 필요한 개인 계좌를 찾을 수 없습니다. classId = {}, currentMember = {}", classId, currentMember);
@@ -73,13 +80,16 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			}
 
 			// 3. 포트폴리오 조회
-			StockPortfolio portfolio = stockPortfolioRepository.findByStockProductIdAndMemberId(stockProduct.getId(),
+			Optional<StockPortfolio> portfolioOptional = stockPortfolioRepository.findByStockProductIdAndMemberIdWithPessimisticLock(
+				stockProduct.getId(),
 				currentMember.getId());
 
-			if (portfolio == null) {
+			if (!portfolioOptional.isPresent()) {
 				log.warn("주식 판매에 필요한 구매 내역을 찾을 수 없습니다.");
 				throw new BusinessException(ErrorCode.TRANSACTION_NOT_FOUND);
 			}
+
+			StockPortfolio portfolio = portfolioOptional.get();
 
 			StockTransactionResponseDto.TransactionInfoDto result = null;
 
@@ -126,7 +136,7 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 		rollbackFor = BusinessException.class,
 		timeout = 30 // 30초 안에 거래가 완료되지 않으면 타임아웃
 	)
-	public StockTransactionResponseDto.TransactionInfoDto buyStock(
+	protected StockTransactionResponseDto.TransactionInfoDto buyStock(
 		StockTransactionRequestDto.TransactionInfoDto request,
 		Member currentMember,
 		StockProduct stockProduct,
@@ -193,7 +203,7 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 		rollbackFor = BusinessException.class,
 		timeout = 30 // 30초 안에 거래가 완료되지 않으면 타임아웃
 	)
-	public StockTransactionResponseDto.TransactionInfoDto sellStock(
+	protected StockTransactionResponseDto.TransactionInfoDto sellStock(
 		StockTransactionRequestDto.TransactionInfoDto request,
 		Member currentMember,
 		StockProduct stockProduct,

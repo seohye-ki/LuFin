@@ -1,6 +1,7 @@
 package com.lufin.server.stock.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import com.lufin.server.stock.dto.StockTransactionResponseDto;
 import com.lufin.server.stock.service.StockTransactionService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
@@ -29,15 +31,18 @@ public class StockTransactionController {
 	@PostMapping("/{productId}")
 	public ResponseEntity<ApiResponse<StockTransactionResponseDto.TransactionInfoDto>> transactStock(
 		@PathVariable @Positive Integer productId,
-		@RequestBody StockTransactionRequestDto.TransactionInfoDto request,
-		HttpServletRequest httpRequest
+		@RequestBody @Valid StockTransactionRequestDto.TransactionInfoDto request,
+		HttpServletRequest httpRequest,
+		BindingResult bindingResult
 	) {
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.status(400).body(ApiResponse.failure(ErrorCode.INVALID_INPUT_VALUE));
+		}
+
 		Integer classId = (Integer)httpRequest.getAttribute("classId");
 		ValidationUtils.validateClassId(classId);
 
 		Member currentMember = UserContext.get();
-
-		//TODO: 2차 비밀번호 검증 로직 필요
 
 		StockTransactionResponseDto.TransactionInfoDto result = stockTransactionService.transactStock(
 			request,

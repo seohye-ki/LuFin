@@ -36,7 +36,21 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 	private final StockPortfolioRepository stockPortfolioRepository;
 
 	/**
-	 * 주식 구매
+	 * 특정 유저의 주식 거래 내역 전체 조회
+	 * @param currentMember
+	 */
+	@Override
+	public StockTransactionResponseDto.TransactionDetailDto getAllTransactionByMemberId(Member currentMember) {
+		//TODO: null -> dto
+		return null;
+	}
+
+	/**
+	 * 주식 거래
+	 * @param request
+	 * @param currentMember
+	 * @param stockProductId
+	 * @param classId
 	 */
 	@Transactional(
 		isolation = Isolation.REPEATABLE_READ,

@@ -1,7 +1,10 @@
 package com.lufin.server.stock.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +31,14 @@ import lombok.RequiredArgsConstructor;
 public class StockTransactionController {
 	private final StockTransactionService stockTransactionService;
 
+	/**
+	 * 주식 거래
+	 * @param productId
+	 * @param request
+	 * @param httpRequest
+	 * @param bindingResult
+	 * @return
+	 */
 	@PostMapping("/{productId}")
 	public ResponseEntity<ApiResponse<StockTransactionResponseDto.TransactionInfoDto>> transactStock(
 		@PathVariable @Positive Integer productId,
@@ -58,4 +69,12 @@ public class StockTransactionController {
 		return ResponseEntity.status(201).body(ApiResponse.success(result));
 	}
 
+	// 특정 유저의 전체 주식 내역 조회
+	@GetMapping
+	public ResponseEntity<ApiResponse<List>> getAllTransactionByMemberId(
+		HttpServletRequest httpRequest
+	) {
+		//TODO null -> dto
+		return null;
+	}
 }

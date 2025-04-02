@@ -12,4 +12,9 @@ public interface StockTransactionService {
 		Integer stockProductId,
 		Integer classId
 	);
+
+	// 특정 유저의 전체 주식 내역 조회
+	StockTransactionResponseDto.TransactionDetailDto getAllTransactionByMemberId(
+		Member currentMember
+	);
 }

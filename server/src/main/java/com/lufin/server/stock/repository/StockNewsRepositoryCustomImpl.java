@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-public class StockNewsRepositoryImpl implements StockNewsRepository {
+public class StockNewsRepositoryCustomImpl implements StockNewsRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
 	/**
@@ -76,4 +76,5 @@ public class StockNewsRepositoryImpl implements StockNewsRepository {
 
 		return result;
 	}
+
 }

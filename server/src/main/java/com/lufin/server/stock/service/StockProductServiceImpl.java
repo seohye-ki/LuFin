@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.stock.dto.StockResponseDto;
-import com.lufin.server.stock.repository.StockRepository;
+import com.lufin.server.stock.repository.StockProductRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StockProductServiceImpl implements StockProductService {
-	private final StockRepository stockRepository;
+	private final StockProductRepository stockProductRepository;
 
 	/**
 	 * 주식 상품 목록 조회
@@ -29,7 +29,7 @@ public class StockProductServiceImpl implements StockProductService {
 		log.info("주식 상품 전체 조회 요청: ");
 
 		try {
-			List<StockResponseDto.StockInfoDto> result = stockRepository.getAllStocks();
+			List<StockResponseDto.StockInfoDto> result = stockProductRepository.getAllStocks();
 
 			return result;
 
@@ -52,7 +52,7 @@ public class StockProductServiceImpl implements StockProductService {
 		}
 
 		try {
-			StockResponseDto.StockInfoDto result = stockRepository.getStock(stockProductId);
+			StockResponseDto.StockInfoDto result = stockProductRepository.getStock(stockProductId);
 
 			return result;
 		} catch (Exception e) {

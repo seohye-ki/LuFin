@@ -1,14 +1,26 @@
 package com.lufin.server.stock.repository;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
-import com.lufin.server.stock.dto.StockNewsResponseDto;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-public interface StockNewsRepository {
-	// 공시 정보 목록 조회
-	List<StockNewsResponseDto.NewsInfoDto> getAllNews(Integer stockProductId);
+import com.lufin.server.stock.domain.StockNews;
 
-	// 공시 정보 상세 조회
-	StockNewsResponseDto.NewsInfoDto getNewsByNewsId(Integer stockProductId, Integer newsId);
+public interface StockNewsRepository extends JpaRepository<StockNews, Integer>, StockNewsRepositoryCustom {
+	// 공시 정보 중복 여부 체크
 
+	/**
+	 * 특정 주식 상품에 대해 지정된 시간 범위 내에 생성된 뉴스가 존재하는지 확인
+	 * COUNT 대신 EXISTS 사용으로 성능 향상
+	 */
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM stock_news sn "
+		+ "WHERE sn.stock_product_id = :productId "
+		+ "AND sn.created_at BETWEEN :startDate AND :endDate)",
+		nativeQuery = true)
+	boolean existsByStockProductIdAndCreatedAtBetween(
+		Integer stockProductId,
+		LocalDateTime startTime,
+		LocalDateTime endTime
+	);
 }

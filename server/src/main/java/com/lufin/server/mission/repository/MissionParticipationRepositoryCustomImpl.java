@@ -27,6 +27,7 @@ public class MissionParticipationRepositoryCustomImpl implements MissionParticip
 	) {
 		QMissionParticipation missionParticipation = QMissionParticipation.missionParticipation;
 		QMember member = QMember.member;
+		QCreditScore creditScore = QCreditScore.creditScore;
 
 		BooleanBuilder builder = new BooleanBuilder();
 
@@ -41,12 +42,13 @@ public class MissionParticipationRepositoryCustomImpl implements MissionParticip
 			.select(new QMissionParticipationResponseDto_MissionParticipationSummaryResponseDto(
 					member.name,
 					member.profileImage,
-					member.status.creditRating,
+					creditScore.grade,
 					missionParticipation.status
 				)
 			)
 			.from(missionParticipation)
 			.leftJoin(missionParticipation.member, member).fetchJoin()
+			.leftJoin(creditScore).on(creditScore.memberId.eq(member.id))
 			.where(builder)
 			.fetch();
 

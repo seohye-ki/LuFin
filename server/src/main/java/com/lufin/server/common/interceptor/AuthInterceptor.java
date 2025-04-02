@@ -46,7 +46,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 		Member member = memberRepository.findById(userId)
 			.orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
 
-		if (member.getStatus().getActivationStatus() != 1) {
+		if (member.getActivationStatus() != 1) {
 			throw new BusinessException(MEMBER_ALREADY_DELETED);
 		}
 

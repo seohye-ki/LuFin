@@ -59,8 +59,8 @@ public class Member {
 	@Embedded
 	private MemberAuth auth;
 
-	@Embedded
-	private MemberStatus status;
+	@Column(name = "activation_status", nullable = false)
+	private byte activationStatus;
 
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
@@ -84,13 +84,13 @@ public class Member {
 		member.name = name;
 		member.memberRole = role;
 		member.auth = new MemberAuth(password, secondaryPassword);
-		member.status = new MemberStatus();
 		return member;
 	}
 
 	@PrePersist
-	private void setCreatedAt() {
+	private void setCreatedAtAndActivationStatus() {
 		this.createdAt = LocalDateTime.now();
+		this.activationStatus = 1;
 	}
 
 	@PreUpdate
@@ -102,4 +102,8 @@ public class Member {
 		this.auth.updateLastLogin();
 	}
 
+	// 회원 탈퇴 시 호출
+	public void updateActivationStatus() {
+		this.activationStatus = 0;
+	}
 }

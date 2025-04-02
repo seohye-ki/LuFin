@@ -150,7 +150,8 @@ CREATE TABLE credit_scores
     grade                     VARCHAR(10) NOT NULL,
     credit_status             TINYINT     NOT NULL DEFAULT 0 COMMENT '0: 정상/ 1: 신용불량자',
     credit_status_description TEXT        NULL COMMENT '신용불량자에서 회생할 경우 교사가 사유를 입력 함',
-    updated_at                DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at                DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at                DATETIME    DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_creditscore_member FOREIGN KEY (member_id)
         REFERENCES members (member_id) ON DELETE CASCADE
 ) ENGINE = InnoDB

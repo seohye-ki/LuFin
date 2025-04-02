@@ -27,9 +27,6 @@ CREATE TABLE `members` (
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
     `last_login` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `credit_rating` TINYINT UNSIGNED NOT NULL DEFAULT 60 COMMENT '0~100 (추후 신용 관련 event 발생 시 변동되게 트리거 걸어야 함)',
-    `credit_status` TINYINT NOT NULL DEFAULT 0 COMMENT '0: 정상/ 1: 신용불량자',
-    `credit_status_description` TEXT NULL COMMENT '신용불량자에서 회생할 경우 교사가 사유를 입력 함',
     `activation_status` TINYINT NOT NULL DEFAULT 1 COMMENT '0: 탈퇴/ 1: 활성',
     PRIMARY KEY (`member_id`),
     INDEX `idx_member_email` (`email`),
@@ -140,6 +137,8 @@ CREATE TABLE credit_scores (
     member_id INT PRIMARY KEY,
     score TINYINT NOT NULL DEFAULT 50,
     grade VARCHAR(10) NOT NULL,
+    credit_status TINYINT NOT NULL DEFAULT 0 COMMENT '0: 정상/ 1: 신용불량자',
+    credit_status_description TEXT NULL COMMENT '신용불량자에서 회생할 경우 교사가 사유를 입력 함',
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_creditscore_member FOREIGN KEY (member_id)
         REFERENCES members(member_id) ON DELETE CASCADE

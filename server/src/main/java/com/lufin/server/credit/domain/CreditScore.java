@@ -42,13 +42,34 @@ public class CreditScore {
 	@Column(name = "grade", nullable = false)
 	private CreditGrade grade;
 
+	/**
+	 * 신용 상태
+	 * 0: 정상, 1: 신용 불량자
+	 */
+	@Column(name = "credit_status", nullable = false)
+	private Byte creditStatus;
+
+	@Column(name = "credit_status_description", columnDefinition = "TEXT")
+	private String creditStatusDescription;
+
+
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
+
+	public CreditScoreHistory applyChange(int delta, CreditEventType eventType) {
+		int newScore = Math.max(0, Math.min(100, this.score + delta));
+		this.score = (byte) newScore;
+		this.grade = CreditGrade.fromScore(newScore);
+		this.creditStatus = (byte) (newScore <= 30 ? 1 : 0);
+
+		return CreditScoreHistory.of(this.member, (byte) delta, eventType.getDisplayName());
+	}
 
 	private CreditScore(Member member) {
 		this.member = member;
 		this.score = 60;
 		this.grade = CreditGrade.fromScore(score);
+		this.creditStatus = (byte)0;
 	}
 
 	public static CreditScore init(Member member) {
@@ -58,5 +79,9 @@ public class CreditScore {
 	@PreUpdate
 	private void setUpdatedAt() {
 		this.updatedAt = LocalDateTime.now();
+	}
+
+	public void updateCreditStatusDescription(String description) {
+		this.creditStatusDescription = description;
 	}
 }

@@ -31,9 +31,7 @@ CREATE TABLE `members`
     `activation_status`    TINYINT                     NOT NULL DEFAULT 1 COMMENT '0: 탈퇴/ 1: 활성',
     PRIMARY KEY (`member_id`),
     INDEX `idx_member_email` (`email`),
-    INDEX `idx_member_name` (`name`),
-    INDEX `idx_member_credit_status` (`credit_status`),
-    CONSTRAINT `chk_credit_rating` CHECK (credit_rating BETWEEN 0 AND 100)
+    INDEX `idx_member_name` (`name`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='회원 정보';
 
@@ -366,6 +364,7 @@ CREATE TABLE `stock_histories`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='주식 거래 내역';
 
+
 -- Item templates
 CREATE TABLE `item_templates`
 (
@@ -585,29 +584,6 @@ CREATE TABLE `mission_participations`
 -- =================================
 
 DELIMITER //
-
--- 신용 점수 내역이 추가될 때 회원의 신용 등급을 업데이트하는 트리거
--- 여러 곳에서 발생할 수 있는 신용 점수 변경을 일관성 있게 관리하기 위해 필수적인 트리거
-CREATE TRIGGER after_credit_score_history_insert
-    AFTER INSERT
-    ON credit_score_histories
-    FOR EACH ROW
-BEGIN
-    -- 회원의 신용 등급을 점수 변화량에 따라 업데이트 (0~100 범위 내에서)
-    UPDATE members
-    SET credit_rating = GREATEST(0, LEAST(100, credit_rating + NEW.score_change))
-    WHERE member_id = NEW.member_id;
-
-    -- 처리 완료 플래그 업데이트
-    UPDATE credit_score_histories
-    SET processed = TRUE
-    WHERE history_id = NEW.history_id;
-
-    -- 회원의 신용 등급이 20 미만인 경우 신용 상태를 불량(1)으로 표시
-    IF ((SELECT credit_rating FROM members WHERE member_id = NEW.member_id) < 20) THEN
-        UPDATE members SET credit_status = 1 WHERE member_id = NEW.member_id;
-    END IF;
-END //
 
 -- 미션 참여가 추가될 때 참가자 수를 업데이트하고 초과 신청을 관리하는 트리거
 -- 선착순 미션 참가에서 동시성 제어와 최대 참가자 수 제한을 위해 필수적인 트리거

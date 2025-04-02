@@ -1,4 +1,4 @@
-import Card from '../../../../components/Card/Card';
+import DashboardCard from './DashboardCard';
 import StudentRankCard, { StudentRanking } from './StudentRankCard';
 
 const ClassAssetRanking = () => {
@@ -23,7 +23,7 @@ const ClassAssetRanking = () => {
   const currentUser = '최민주';
 
   return (
-    <Card titleLeft='우리반 자산 랭킹' className='flex-1'>
+    <DashboardCard titleLeft='우리반 자산 랭킹' className='flex-1'>
       <div className='flex min-w-full justify-center px-4 h-fit'>
         <div className='flex flex-wrap justify-center gap-8'>
           {studentRankings.map((student) => (
@@ -36,7 +36,7 @@ const ClassAssetRanking = () => {
           ))}
         </div>
       </div>
-    </Card>
+    </DashboardCard>
   );
 };
 

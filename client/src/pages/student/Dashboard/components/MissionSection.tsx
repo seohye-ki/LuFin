@@ -1,4 +1,4 @@
-import Card from '../../../../components/Card/Card';
+import DashboardCard from './DashboardCard';
 import LufinCoin from '../../../../assets/svgs/lufin-coin-24.svg';
 
 interface MissionInfo {
@@ -15,7 +15,7 @@ interface MissionSectionProps {
 
 const MissionSection = ({ completedCount, currentMission, totalReward }: MissionSectionProps) => {
   return (
-    <Card
+    <DashboardCard
       titleLeft='미션'
       // titleRight={<button className="text-c2 text-grey hover:text-dark-grey">자세히 보기</button>}
       className='flex-1'
@@ -67,7 +67,7 @@ const MissionSection = ({ completedCount, currentMission, totalReward }: Mission
           </div>
         </div>
       </div>
-    </Card>
+    </DashboardCard>
   );
 };
 

@@ -1,4 +1,4 @@
-import Card from '../../../../components/Card/Card';
+import DashboardCard from './DashboardCard';
 import LufinCoin from '../../../../assets/svgs/lufin-coin-24.svg';
 
 interface StatCardProps {
@@ -12,7 +12,7 @@ interface StatCardProps {
 
 const StatCard = ({ title, amount, trend }: StatCardProps) => {
   return (
-    <Card className='flex-1 h-fit'>
+    <DashboardCard className='flex-1 h-fit'>
       <div className='h-full flex items-center justify-between'>
         <div className='flex flex-col gap-1 w-full px-3'>
           <div className='flex items-center justify-between'>
@@ -29,7 +29,7 @@ const StatCard = ({ title, amount, trend }: StatCardProps) => {
           </div>
         </div>
       </div>
-    </Card>
+    </DashboardCard>
   );
 };
 

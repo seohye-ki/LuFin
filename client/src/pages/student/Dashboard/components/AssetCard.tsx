@@ -1,5 +1,5 @@
-import Card from '../../../../components/Card/Card';
-import StockChart from '../../../../components/Graph/StockChart';
+import DashboardCard from './DashboardCard';
+import DashboardPieChart from './DashboardPieChart';
 
 type AssetCardProps = {
   currency?: string;
@@ -16,12 +16,12 @@ const AssetCard = ({ currency = '루핀' }: AssetCardProps) => {
   const totalAsset = ASSET_DATA.reduce((sum, item) => sum + item.amount, 0);
 
   return (
-    <Card titleLeft='자산' className='flex-1 h-full'>
+    <DashboardCard titleLeft='자산' className='flex-1 h-full'>
       <div className='h-full flex items-center justify-center'>
         {/* Main content */}
         <div className='flex flex-col items-center'>
           <div className='relative mb-4 h-[140px] w-full'>
-            <StockChart
+            <DashboardPieChart
               stocks={ASSET_DATA.map((item) => ({
                 stock: item.stock,
                 amount: Math.abs(item.amount),
@@ -42,7 +42,7 @@ const AssetCard = ({ currency = '루핀' }: AssetCardProps) => {
           </div>
         </div>
       </div>
-    </Card>
+    </DashboardCard>
   );
 };
 

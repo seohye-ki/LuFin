@@ -1,4 +1,4 @@
-import Card from '../../../../components/Card/Card';
+import DashboardCard from './DashboardCard';
 import { Icon } from '../../../../components/Icon/Icon';
 
 export interface CreditActivity {
@@ -14,7 +14,7 @@ interface CreditScoreBackProps {
 }
 
 const CreditScoreBack = ({ recentActivities = [], onFlip }: CreditScoreBackProps) => (
-  <Card
+  <DashboardCard
     titleLeft='신용도 변경 기록'
     titleRight={
       <button className='text-p2 px-1 text-grey hover:text-dark-grey' onClick={onFlip}>
@@ -55,7 +55,7 @@ const CreditScoreBack = ({ recentActivities = [], onFlip }: CreditScoreBackProps
         </div>
       </div>
     </div>
-  </Card>
+  </DashboardCard>
 );
 
 export default CreditScoreBack;

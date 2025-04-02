@@ -1,4 +1,4 @@
-import Card from '../../../../components/Card/Card';
+import DashboardCard from './DashboardCard';
 
 interface ItemInfo {
   name: string;
@@ -12,7 +12,7 @@ interface ItemListProps {
 
 const ItemList = ({ items }: ItemListProps) => {
   return (
-    <Card titleLeft='아이템' className='flex-1'>
+    <DashboardCard titleLeft='아이템' className='flex-1'>
       <div className='h-full flex flex-col'>
         <div className='flex-1 min-h-0 max-h-[calc(100%-3rem)] overflow-y-auto scrollbar-hide'>
           <div className='flex flex-col gap-3 px-1 py-1'>
@@ -33,7 +33,7 @@ const ItemList = ({ items }: ItemListProps) => {
           </div>
         </div>
       </div>
-    </Card>
+    </DashboardCard>
   );
 };
 

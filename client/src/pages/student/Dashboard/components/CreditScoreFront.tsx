@@ -1,4 +1,4 @@
-import Card from '../../../../components/Card/Card';
+import DashboardCard from './DashboardCard';
 import CreditChart from '../../../../components/Graph/CreditChart';
 
 interface CreditScoreFrontProps {
@@ -14,7 +14,7 @@ const CreditScoreFront = ({
   creditRating,
   onFlip,
 }: CreditScoreFrontProps) => (
-  <Card
+  <DashboardCard
     titleLeft='신용점수'
     titleRight={
       <button className='text-p2 px-1 text-grey hover:text-dark-grey' onClick={onFlip}>
@@ -41,7 +41,7 @@ const CreditScoreFront = ({
         </div>
       </div>
     </div>
-  </Card>
+  </DashboardCard>
 );
 
 export default CreditScoreFront;

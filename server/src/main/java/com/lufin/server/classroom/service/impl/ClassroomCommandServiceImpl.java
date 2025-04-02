@@ -104,7 +104,14 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 		// 기존에 소속된 클래스(isCurrent=true)가 있다면 deactivate()
 		deactivateIfInActiveClass(member);
 
-		// 클래스에 멤버 저장 후 계좌 개설
+		// 기존 계좌 해지
+		accountRepository.findByMemberIdAndClosedAtIsNull(member.getId())
+			.ifPresent(account -> {
+				account.close();
+				log.info("[기존 계좌 해지 완료] accountId: {}", account.getId());
+			});
+
+		// 새로운 class 계좌 생성
 		MemberClassroom addStudent = MemberClassroom.enroll(member, classroom);
 
 		// memberCount++

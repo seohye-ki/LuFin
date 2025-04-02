@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StockTransactionHistories {
+public class StockTransactionHistory {
 	/* 연관관계 */
 	@Setter
 	@ManyToOne
@@ -43,23 +44,27 @@ public class StockTransactionHistories {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "stock_history_id", nullable = false)
-	private int id;
+	private Integer id;
 
 	@PositiveOrZero
+	@NotNull
 	@Column(name = "type", nullable = false)
-	private int type;
+	private Integer type;
 
 	@PositiveOrZero
+	@NotNull
 	@Column(name = "quantity", nullable = false)
-	private int quantity;
+	private Integer quantity;
 
 	@PositiveOrZero
+	@NotNull
 	@Column(name = "unit_price", nullable = false)
-	private int price;
+	private Integer price;
 
 	@PositiveOrZero
+	@NotNull
 	@Column(name = "total_value", nullable = false)
-	private int totalPrice;
+	private Integer totalPrice;
 
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
@@ -82,14 +87,15 @@ public class StockTransactionHistories {
 	/**
 	 * 주식 투자 내역 객체를 생성하는 팩토리 메서드
 	 */
-	public static StockTransactionHistories create(int type,
+	public static StockTransactionHistory create(
+		int type,
 		int quantity,
 		int price,
 		int totalPrice,
 		StockProduct stockProduct,
 		Member member
 	) {
-		StockTransactionHistories history = StockTransactionHistories.builder()
+		StockTransactionHistory history = StockTransactionHistory.builder()
 			.type(type)
 			.quantity(quantity)
 			.price(price)
@@ -111,7 +117,7 @@ public class StockTransactionHistories {
 			return false;
 		}
 
-		StockTransactionHistories that = (StockTransactionHistories)o;
+		StockTransactionHistory that = (StockTransactionHistory)o;
 		return id == that.id;
 	}
 

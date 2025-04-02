@@ -14,7 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -45,19 +45,22 @@ public class StockPortfolio {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "stock_portfolio_id", nullable = false)
-	private int id;
+	private Integer id;
 
-	@Positive
+	@PositiveOrZero
+	@NotNull
 	@Column(name = "quantity", nullable = false)
-	private int quantity;
+	private Integer quantity;
 
 	@PositiveOrZero
+	@NotNull
 	@Column(name = "total_purchase_amount", nullable = false)
-	private int totalPurchaseAmount;
+	private Integer totalPurchaseAmount;
 
 	@PositiveOrZero
+	@NotNull
 	@Column(name = "total_sell_amount", nullable = false)
-	private int totalSellAmount;
+	private Integer totalSellAmount;
 
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
@@ -81,9 +84,9 @@ public class StockPortfolio {
 	 * 포트폴리오 객체를 생성하는 팩토리 메서드
 	 */
 	public static StockPortfolio create(
-		int quantity,
-		int totalPurchaseAmount,
-		int totalSellAmount,
+		Integer quantity,
+		Integer totalPurchaseAmount,
+		Integer totalSellAmount,
 		StockProduct stockProduct,
 		Member member
 	) {

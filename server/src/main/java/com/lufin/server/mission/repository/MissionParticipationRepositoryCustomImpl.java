@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.lufin.server.credit.domain.QCreditScore;
 import com.lufin.server.member.domain.QMember;
 import com.lufin.server.mission.domain.QMissionParticipation;
 import com.lufin.server.mission.dto.MissionParticipationResponseDto;

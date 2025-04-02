@@ -2,7 +2,7 @@ import StockChart from '../../../../components/Graph/StockChart';
 import Lufin from '../../../../components/Lufin/Lufin';
 import { calcProfitRate } from '../../../../libs/utils/stock-util';
 import { members } from '../../../../types/member/member';
-import { stockPortfolios, stockProducts } from '../../../../types/Stock/stock';
+import { stockPortfolios, stockProducts } from '../../../../types/stock/stock';
 
 const MyStockChartCard = () => {
   const memberId = 2; // ToDo: 회원 아이디 받아오기

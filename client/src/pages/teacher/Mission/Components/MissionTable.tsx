@@ -2,7 +2,7 @@ import TableView from '../../../../components/Frame/TableView';
 import { Icon } from '../../../../components/Icon/Icon';
 import Lufin from '../../../../components/Lufin/Lufin';
 import Badge from '../../../../components/Badge/Badge';
-import { MissionDetail } from '../../../../types/Mission/mission';
+import { MissionDetail } from '../../../../types/mission/mission';
 
 interface MissionTableProps {
   missions: MissionDetail[];

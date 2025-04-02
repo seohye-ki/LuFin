@@ -1,7 +1,7 @@
 import Lufin from '../../../../components/Lufin/Lufin';
 import Button from '../../../../components/Button/Button';
 import { calcProfitRate } from '../../../../libs/utils/stock-util';
-import { stockPortfolios, stockProducts } from '../../../../types/Stock/stock';
+import { stockPortfolios, stockProducts } from '../../../../types/stock/stock';
 import Card from '../../../../components/Card/Card';
 import { useStockStore } from '../../../../libs/store/stockStore';
 

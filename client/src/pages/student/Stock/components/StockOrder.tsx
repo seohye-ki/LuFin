@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Button from '../../../../components/Button/Button';
 import Lufin from '../../../../components/Lufin/Lufin';
 import { Icon } from '../../../../components/Icon/Icon';
-import { StockProduct } from '../../../../types/Stock/stock';
+import { StockProduct } from '../../../../types/stock/stock';
 import useAlertStore from '../../../../libs/store/alertStore';
 
 interface StockOrderProps {

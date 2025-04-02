@@ -1,4 +1,4 @@
-import { MissionDetail, MissionParticipation } from '../../types/Mission/mission';
+import { MissionDetail, MissionParticipation } from '../../types/mission/mission';
 import { Icon } from '../../components/Icon/Icon';
 import Badge from '../../components/Badge/Badge';
 import Button from '../../components/Button/Button';

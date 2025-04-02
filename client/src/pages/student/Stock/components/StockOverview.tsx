@@ -3,7 +3,7 @@ import Card from '../../../../components/Card/Card';
 import TableView from '../../../../components/Frame/TableView';
 import Lufin from '../../../../components/Lufin/Lufin';
 import { useStockStore } from '../../../../libs/store/stockStore';
-import { stockProducts } from '../../../../types/Stock/stock';
+import { stockProducts } from '../../../../types/stock/stock';
 import MyStockChart from './MyStockChart';
 import { calcStockChangeRate } from '../../../../libs/utils/stock-util';
 import StockChangeText from './stockChangeText';

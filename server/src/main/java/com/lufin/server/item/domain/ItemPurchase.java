@@ -14,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -89,7 +88,7 @@ public class ItemPurchase {
 	}
 
 	public boolean isPurchasedBy(Member member) {
-		return this.member.equals(member);
+		return this.member.getId().equals(member.getId());
 	}
 
 	@PreUpdate

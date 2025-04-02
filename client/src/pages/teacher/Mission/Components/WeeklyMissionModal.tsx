@@ -1,49 +1,24 @@
-import TableView from '../../../../components/Frame/TableView';
-import { MissionDetail, missionDetails } from '../../../../types/Mission/mission';
+import { missionDetails } from '../../../../types/Mission/mission';
 import moment from 'moment';
 import { Icon } from '../../../../components/Icon/Icon';
-import Badge from '../../../../components/Badge/Badge';
-import Lufin from '../../../../components/Lufin/Lufin';
+import MissionTable from './MissionTable';
 import MissionCreateModal from './MissionCreateModal';
 import MissionReadModal from './MissionReadModal';
-import { useState } from 'react';
-
+import { useWeeklyMissionModal } from '../hooks/useWeeklyMissionModal';
 interface WeeklyMissionModalProps {
   selectedDate: Date;
   onDateChange: (date: Date | null) => void;
 }
 
 export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMissionModalProps) {
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedMission, setSelectedMission] = useState<MissionDetail | null>(null);
+  const { showCreateModal, selectedMission, onSelectMission, onCloseModal, setShowCreateModal } =
+    useWeeklyMissionModal();
+
   const startOfWeek = moment(selectedDate).startOf('week');
   const weekDays = Array.from({ length: 7 }, (_, i) => moment(startOfWeek).add(i, 'days'));
 
-  const columns = [
-    { key: 'title', label: '이름' },
-    { key: 'wage', label: '보상' },
-    { key: 'difficulty', label: '난이도' },
-    { key: 'participant', label: '인원' },
-    { key: 'status', label: '상태' },
-  ];
-
   const dateKey = moment(selectedDate).format('YYYY-MM-DD');
-  const dayMissions = missionDetails.filter((mission) => mission.mission_date === dateKey);
-
-  const rows = dayMissions.map((mission) => ({
-    title: mission.title,
-    wage: <Lufin size='s' count={mission.wage} />,
-    difficulty: Array(mission.difficulty)
-      .fill(0)
-      .map((_, i) => <Icon key={i} name='Star' />),
-    participant: `${mission.currentParticipant}/${mission.maxParticipant}`,
-    status:
-      mission.status === 'RECRUITING' ? (
-        <Badge status='ing'>모집중</Badge>
-      ) : (
-        <Badge status='done'>모집완료</Badge>
-      ),
-  }));
+  const dayMissions = missionDetails.filter((mission) => mission.missionDate === dateKey);
 
   return (
     <div className='w-full h-[calc(100vh-32px)] rounded-lg p-4 bg-white'>
@@ -86,20 +61,9 @@ export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMission
             <Icon name='CircleAdd' size={32} />
           </button>
         </div>
-        <TableView
-          columns={columns}
-          rows={rows}
-          onRowClick={(row) => {
-            const mission = dayMissions.find((m) => m.title === row.title);
-            if (mission) {
-              setSelectedMission(mission);
-            }
-          }}
-        />
+        <MissionTable missions={dayMissions} onMissionClick={onSelectMission} />
         {showCreateModal && <MissionCreateModal onClose={() => setShowCreateModal(false)} />}
-        {selectedMission && (
-          <MissionReadModal mission={selectedMission} onClose={() => setSelectedMission(null)} />
-        )}
+        {selectedMission && <MissionReadModal mission={selectedMission} onClose={onCloseModal} />}
       </div>
     </div>
   );

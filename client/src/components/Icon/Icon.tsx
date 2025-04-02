@@ -49,6 +49,7 @@ import {
   HambergerMenu,
   Add,
   More,
+  Minus,
 } from 'iconsax-react';
 import { HiStar } from 'react-icons/hi2';
 
@@ -131,6 +132,7 @@ const ICONSAX_ICONS = {
   HambergerMenu,
   Star: HiStar,
   Add,
+  Minus,
   More,
   Close: Add,
   CircleEdit: Add,

@@ -8,6 +8,7 @@ import PrivateRoute from './PrivateRoute';
 import CommonComponents from '../pages/common/DesignSystem/CommonComponents';
 import TeacherMission from '../pages/teacher/Mission/TeacherMission';
 import StudentMission from '../pages/student/Mission/StudentMission';
+import StudentStock from '../pages/student/Stock/StudentStock';
 import StudentShop from '../pages/student/Shop/StudentShop';
 import Login from '../pages/common/Login/Login';
 import Register from '../pages/common/Register/Register';
@@ -28,6 +29,7 @@ const Router = () => {
         <Route path={paths.TEACHER_SHOP} element={<TeacherShop />} />
         <Route path={paths.TEACHER_MISSION} element={<TeacherMission />} />
         <Route path={paths.STUDENT_MISSION} element={<StudentMission />} />
+        <Route path={paths.STUDENT_STOCK} element={<StudentStock />} />
         <Route path={paths.TEACHER_CLASSROOM} element={<TeacherClassroom />} />
         <Route path={paths.STUDENT_CLASSROOM} element={<StudentClassroom />} />
         {/* 인증이 필요한 라우트들은 PrivateRoute로 감싸기 */}

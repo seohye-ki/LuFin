@@ -1,6 +1,8 @@
+import { ReactNode } from 'react';
+
 export type TableColumn = {
   key: string;
-  label: string;
+  label: string | ReactNode;
 };
 
 export type TableRow = {

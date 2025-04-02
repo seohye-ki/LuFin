@@ -2,6 +2,7 @@ package com.lufin.server.stock.domain;
 
 import java.time.LocalDateTime;
 
+import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.member.domain.Member;
 
 import jakarta.persistence.Column;
@@ -40,6 +41,11 @@ public class StockTransactionHistory {
 	@ManyToOne
 	@JoinColumn(name = "stock_product_id", nullable = false)
 	private StockProduct stockProduct;
+
+	@Setter
+	@ManyToOne
+	@JoinColumn(name = "class_id", nullable = false)
+	private Classroom classroom;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

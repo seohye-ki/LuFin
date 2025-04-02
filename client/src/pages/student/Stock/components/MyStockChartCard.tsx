@@ -1,7 +1,7 @@
 import StockChart from '../../../../components/Graph/StockChart';
 import Lufin from '../../../../components/Lufin/Lufin';
 import { calcProfitRate } from '../../../../libs/utils/stock-util';
-import { members } from '../../../../types/Member/member';
+import { members } from '../../../../types/member/member';
 import { stockPortfolios, stockProducts } from '../../../../types/Stock/stock';
 
 const MyStockChartCard = () => {

@@ -1,5 +1,5 @@
 import { MissionDetail } from '../../../../types/Mission/mission';
-import { members } from '../../../../types/Member/member';
+import { members } from '../../../../types/member/member';
 import Card from '../../../../components/Card/Card';
 import { Icon } from '../../../../components/Icon/Icon';
 import Badge from '../../../../components/Badge/Badge';

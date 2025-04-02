@@ -2,7 +2,7 @@ import StockGraph from '../../../../components/Graph/StockGraph';
 import Button from '../../../../components/Button/Button';
 import StockOrder from './StockOrder';
 import { dateUtil } from '../../../../libs/utils/date-util';
-import { stockPriceHistories, StockProduct } from '../../../../types/Stock/stock';
+import { stockPriceHistories, StockProduct } from '../../../../types/stock/stock';
 import { useMemo } from 'react';
 
 interface SpecifiedStockGraphProps {

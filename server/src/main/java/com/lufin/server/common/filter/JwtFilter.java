@@ -78,7 +78,7 @@ public class JwtFilter implements Filter {
 			throw new BusinessException(INVALID_TOKEN_TYPE);
 		}
 
-		String classId = claims.get("classId", String.class);
+		String classId = claims.get(TokenClaimName.CLASS_ID, String.class);
 		if (classId != null) {
 			validateIntegerId(classId);
 			request.setAttribute("classId", Integer.parseInt(classId));

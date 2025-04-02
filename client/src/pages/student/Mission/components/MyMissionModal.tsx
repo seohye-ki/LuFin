@@ -5,7 +5,7 @@ import { MissionDetail, MissionParticipation } from '../../../../types/Mission/m
 import { Icon } from '../../../../components/Icon/Icon';
 import Lufin from '../../../../components/Lufin/Lufin';
 import { useState } from 'react';
-
+import { getStatusBadge } from '../../../../libs/utils/mission-util';
 interface MyMissionModalProps {
   onClose: () => void;
   mission: MissionDetail;
@@ -15,30 +15,7 @@ interface MyMissionModalProps {
 const MyMissionModal = ({ onClose, mission, participation }: MyMissionModalProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const getStatusBadge = (): {
-    status: 'ready' | 'done' | 'ing' | 'review' | 'fail' | 'reject';
-    text: string;
-  } => {
-    if (!participation) {
-      return { status: 'ready', text: '모집 중' };
-    }
-    switch (participation.status) {
-      case 'SUCCESS':
-        return { status: 'done', text: '성공' };
-      case 'IN_PROGRESS':
-        return { status: 'ing', text: '수행 중' };
-      case 'CHECKING':
-        return { status: 'review', text: '검토 중' };
-      case 'FAILED':
-        return { status: 'fail', text: '실패' };
-      case 'REJECTED':
-        return { status: 'reject', text: '거절' };
-      default:
-        return { status: 'ready', text: '모집 중' };
-    }
-  };
-
-  const status = getStatusBadge();
+  const status = getStatusBadge(participation);
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? mission.missionImages.length - 2 : prev - 2));

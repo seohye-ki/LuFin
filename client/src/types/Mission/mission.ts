@@ -138,7 +138,7 @@ export const missionParticipations: MissionParticipation[] = [
     participationId: 4,
     missionId: 4,
     memberId: 1,
-    status: 'SUCCESS',
+    status: 'IN_PROGRESS',
     wageStatus: true,
     rejectCount: 0,
     createdAt: '2025-04-21',

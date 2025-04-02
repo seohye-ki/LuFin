@@ -3,6 +3,7 @@ import Button from '../../../../components/Button/Button';
 import StockOrder from './StockOrder';
 import { dateUtil } from '../../../../libs/utils/date-util';
 import { stockPriceHistories, StockProduct } from '../../../../types/Stock/stock';
+import { useMemo } from 'react';
 
 interface SpecifiedStockGraphProps {
   stock: StockProduct;
@@ -10,12 +11,14 @@ interface SpecifiedStockGraphProps {
 }
 
 const SpecifiedStockGraph = ({ stock, onBack }: SpecifiedStockGraphProps) => {
-  const stockPriceInfos = stockPriceHistories
-    .filter((history) => history.stockProductId === stock.stockProductId)
-    .map((h) => ({
-      date: dateUtil(h.createdAt),
-      price: h.unitPrice,
-    }));
+  const stockPriceInfos = useMemo(() => {
+    return stockPriceHistories
+      .filter((history) => history.stockProductId === stock.stockProductId)
+      .map((h) => ({
+        date: dateUtil(h.createdAt),
+        price: h.unitPrice,
+      }));
+  }, [stock]);
 
   return (
     <div className='flex h-full gap-3'>
@@ -28,7 +31,13 @@ const SpecifiedStockGraph = ({ stock, onBack }: SpecifiedStockGraphProps) => {
           </Button>
         </div>
         <div className='flex-1 min-h-0'>
-          <StockGraph stockPriceInfos={stockPriceInfos} />
+          {stockPriceInfos.length === 0 ? (
+            <div className='flex items-center justify-center h-full'>
+              <span className='text-p2 text-grey'>거래 내역이 없습니다.</span>
+            </div>
+          ) : (
+            <StockGraph stockPriceInfos={stockPriceInfos} />
+          )}
         </div>
       </div>
 

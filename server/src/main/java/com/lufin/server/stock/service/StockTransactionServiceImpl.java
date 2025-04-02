@@ -1,5 +1,6 @@
 package com.lufin.server.stock.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -40,9 +41,25 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 	 * @param currentMember
 	 */
 	@Override
-	public StockTransactionResponseDto.TransactionDetailDto getAllTransactionByMemberId(Member currentMember) {
-		//TODO: null -> dto
-		return null;
+	public List<StockTransactionResponseDto.TransactionDetailDto> getAllTransactionByMemberId(Member currentMember) {
+		log.info("특정 유저의 주식 거래 내역 전체 조회 요청: currentMember = {}", currentMember);
+
+		if (currentMember == null) {
+			log.warn("특정 유저의 주식 거래 내역 전체 조회를 요청한 멤버가 없습니다.");
+			throw new BusinessException(ErrorCode.MEMBER_NOT_FOUND);
+		}
+
+		try {
+			List<StockTransactionResponseDto.TransactionDetailDto> transactions = stockTransactionRepository.findAllByMemberId(
+				currentMember.getId());
+
+			return transactions;
+
+		} catch (Exception e) {
+			log.error("An error occurred: {}", e.getMessage(), e);
+			throw new BusinessException(ErrorCode.SERVER_ERROR);
+		}
+
 	}
 
 	/**

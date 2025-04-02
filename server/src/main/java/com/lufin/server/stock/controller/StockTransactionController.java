@@ -32,6 +32,18 @@ public class StockTransactionController {
 	private final StockTransactionService stockTransactionService;
 
 	/**
+	 * 특정 유저의 전체 주식 내역 조회
+	 * @param httpRequest
+	 */
+	@GetMapping
+	public ResponseEntity<ApiResponse<List>> getAllTransactionByMemberId(
+		HttpServletRequest httpRequest
+	) {
+		//TODO null -> dto
+		return null;
+	}
+
+	/**
 	 * 주식 거래
 	 * @param productId
 	 * @param request
@@ -69,12 +81,4 @@ public class StockTransactionController {
 		return ResponseEntity.status(201).body(ApiResponse.success(result));
 	}
 
-	// 특정 유저의 전체 주식 내역 조회
-	@GetMapping
-	public ResponseEntity<ApiResponse<List>> getAllTransactionByMemberId(
-		HttpServletRequest httpRequest
-	) {
-		//TODO null -> dto
-		return null;
-	}
 }

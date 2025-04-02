@@ -24,11 +24,10 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 	// 특정 클래스 계좌 조회
 	Optional<Account> findByClassroomId(Integer classroomId);
 
-	// 특정 클래스의 특정 멤버 계좌 조회 (비관적 락 사용)
+	// 현재 클래스의 특정 멤버 계좌 조회 (비관적 락 사용)
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	@Query("SELECT a FROM Account a WHERE a.classroom.id = :classroomId AND a.member.id = :memberId")
-	Optional<Account> findByClassroomIdAndMemberIdWithPessimisticLock(
-		@Param("classroomId") Integer classroomId,
+	@Query("SELECT a FROM Account a WHERE a.closedAt = null AND a.member.id = :memberId")
+	Optional<Account> findOpenAccountByMemberIdWithPessimisticLock(
 		@Param("memberId") Integer memberId);
 
 	// 교사 역할을 가진 멤버의 계좌들 조회

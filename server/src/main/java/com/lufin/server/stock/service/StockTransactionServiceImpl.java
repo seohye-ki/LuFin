@@ -71,7 +71,7 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			StockProduct stockProduct = stock.get();
 
 			// 2. 계좌 조회
-			Optional<Account> account = accountRepository.findByClassroomIdAndMemberIdWithPessimisticLock(classId,
+			Optional<Account> account = accountRepository.findOpenAccountByMemberIdWithPessimisticLock(
 				currentMember.getId());
 
 			if (!account.isPresent()) {

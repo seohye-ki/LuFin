@@ -34,7 +34,7 @@ public class StockNews {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "stock_news_id", nullable = false)
-	private int id;
+	private Integer id;
 
 	@Column(name = "content", nullable = false)
 	private String content;

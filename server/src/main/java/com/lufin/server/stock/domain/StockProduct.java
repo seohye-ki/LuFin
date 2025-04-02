@@ -16,6 +16,8 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,7 +50,7 @@ public class StockProduct {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "stock_product_id", nullable = false)
-	private int id;
+	private Integer id;
 
 	@Column(name = "name", nullable = false)
 	@Max(value = 50)
@@ -59,11 +61,15 @@ public class StockProduct {
 	@NotBlank
 	private String description;
 
+	@PositiveOrZero
+	@NotNull
 	@Column(name = "initial_price", nullable = false)
-	private int initialPrice;
+	private Integer initialPrice;
 
+	@PositiveOrZero
+	@NotNull
 	@Column(name = "current_price", nullable = false)
-	private int currentPrice;
+	private Integer currentPrice;
 
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;

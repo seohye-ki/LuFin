@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -43,23 +44,27 @@ public class StockTransactionHistory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "stock_history_id", nullable = false)
-	private int id;
+	private Integer id;
 
 	@PositiveOrZero
+	@NotNull
 	@Column(name = "type", nullable = false)
-	private int type;
+	private Integer type;
 
 	@PositiveOrZero
+	@NotNull
 	@Column(name = "quantity", nullable = false)
-	private int quantity;
+	private Integer quantity;
 
 	@PositiveOrZero
+	@NotNull
 	@Column(name = "unit_price", nullable = false)
-	private int price;
+	private Integer price;
 
 	@PositiveOrZero
+	@NotNull
 	@Column(name = "total_value", nullable = false)
-	private int totalPrice;
+	private Integer totalPrice;
 
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
@@ -82,7 +87,8 @@ public class StockTransactionHistory {
 	/**
 	 * 주식 투자 내역 객체를 생성하는 팩토리 메서드
 	 */
-	public static StockTransactionHistory create(int type,
+	public static StockTransactionHistory create(
+		int type,
 		int quantity,
 		int price,
 		int totalPrice,

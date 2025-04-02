@@ -36,11 +36,23 @@ public class StockTransactionController {
 	 * @param httpRequest
 	 */
 	@GetMapping
-	public ResponseEntity<ApiResponse<List>> getAllTransactionByMemberId(
+	public ResponseEntity<ApiResponse<List<StockTransactionResponseDto.TransactionDetailDto>>> getAllTransactionByMemberId(
 		HttpServletRequest httpRequest
 	) {
-		//TODO null -> dto
-		return null;
+		Integer classId = (Integer)httpRequest.getAttribute("classId");
+		ValidationUtils.validateClassId(classId);
+
+		Member currentMember = UserContext.get();
+
+		try {
+			List<StockTransactionResponseDto.TransactionDetailDto> response = stockTransactionService.getAllTransactionByMemberId(
+				currentMember, classId);
+
+			return ResponseEntity.status(200).body(ApiResponse.success(response));
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body(ApiResponse.failure(ErrorCode.SERVER_ERROR));
+		}
+
 	}
 
 	/**

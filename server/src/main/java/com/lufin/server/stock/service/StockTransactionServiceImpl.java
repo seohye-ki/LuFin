@@ -41,7 +41,8 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 	 * @param currentMember
 	 */
 	@Override
-	public List<StockTransactionResponseDto.TransactionDetailDto> getAllTransactionByMemberId(Member currentMember) {
+	public List<StockTransactionResponseDto.TransactionDetailDto> getAllTransactionByMemberId(Member currentMember,
+		Integer classId) {
 		log.info("특정 유저의 주식 거래 내역 전체 조회 요청: currentMember = {}", currentMember);
 
 		if (currentMember == null) {
@@ -51,7 +52,8 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 
 		try {
 			List<StockTransactionResponseDto.TransactionDetailDto> transactions = stockTransactionRepository.findAllByMemberId(
-				currentMember.getId());
+				currentMember.getId(),
+				classId);
 
 			return transactions;
 

@@ -111,4 +111,12 @@ public class Account {
 	public boolean isClosed() {
 		return closedAt != null;
 	}
+
+	public void close() {
+		if (isClosed()) {
+			throw new BusinessException(ALREADY_CLOSED_ACCOUNT);
+		}
+		this.closedAt = LocalDateTime.now();
+	}
+
 }

@@ -526,28 +526,6 @@ CREATE TABLE `mission_participations` (
 
 DELIMITER //
 
--- 신용 점수 내역이 추가될 때 회원의 신용 등급을 업데이트하는 트리거
--- 여러 곳에서 발생할 수 있는 신용 점수 변경을 일관성 있게 관리하기 위해 필수적인 트리거
-CREATE TRIGGER after_credit_score_history_insert
-AFTER INSERT ON credit_score_histories
-FOR EACH ROW
-BEGIN
-    -- 회원의 신용 등급을 점수 변화량에 따라 업데이트 (0~100 범위 내에서)
-    UPDATE members
-    SET credit_rating = GREATEST(0, LEAST(100, credit_rating + NEW.score_change))
-    WHERE member_id = NEW.member_id;
-    
-    -- 처리 완료 플래그 업데이트
-    UPDATE credit_score_histories 
-    SET processed = TRUE 
-    WHERE history_id = NEW.history_id;
-    
-    -- 회원의 신용 등급이 20 미만인 경우 신용 상태를 불량(1)으로 표시
-    IF ((SELECT credit_rating FROM members WHERE member_id = NEW.member_id) < 20) THEN
-        UPDATE members SET credit_status = 1 WHERE member_id = NEW.member_id;
-    END IF;
-END //
-
 -- 미션 참여가 추가될 때 참가자 수를 업데이트하고 초과 신청을 관리하는 트리거
 -- 선착순 미션 참가에서 동시성 제어와 최대 참가자 수 제한을 위해 필수적인 트리거
 CREATE TRIGGER after_mission_participation_insert
@@ -558,9 +536,9 @@ BEGIN
     UPDATE missions
     SET current_participants = current_participants + 1
     WHERE mission_id = NEW.mission_id;
-    
+
     -- 참가자 수가 초과되었는지 확인하고 처리
-    IF ((SELECT current_participants FROM missions WHERE mission_id = NEW.mission_id) > 
+    IF ((SELECT current_participants FROM missions WHERE mission_id = NEW.mission_id) >
         (SELECT max_participants FROM missions WHERE mission_id = NEW.mission_id)) THEN
         -- 초과된 경우 상태를 거부로 변경
         UPDATE mission_participations
@@ -575,12 +553,12 @@ AFTER INSERT ON stock_histories
 FOR EACH ROW
 BEGIN
     DECLARE portfolio_exists INT;
-    
+
     -- 해당 회원의 해당 주식 포트폴리오가 존재하는지 확인
     SELECT COUNT(*) INTO portfolio_exists
     FROM stock_portfolios
     WHERE member_id = NEW.member_id AND stock_product_id = NEW.stock_product_id;
-    
+
     IF portfolio_exists = 0 THEN
         -- 포트폴리오가 없을 경우 새로 생성
         IF NEW.type = 1 THEN -- 구매인 경우
@@ -604,21 +582,21 @@ BEGIN
         -- 포트폴리오가 있을 경우 업데이트
         IF NEW.type = 1 THEN -- 구매인 경우
             UPDATE stock_portfolios
-            SET 
+            SET
                 quantity = quantity + NEW.quantity,
                 total_purchase_amount = total_purchase_amount + NEW.total_value,
                 updated_at = NOW()
-            WHERE 
-                stock_product_id = NEW.stock_product_id AND 
+            WHERE
+                stock_product_id = NEW.stock_product_id AND
                 member_id = NEW.member_id;
         ELSE -- 판매인 경우
             UPDATE stock_portfolios
-            SET 
+            SET
                 quantity = quantity - NEW.quantity,
                 total_sell_amount = total_sell_amount + NEW.total_value,
                 updated_at = NOW()
-            WHERE 
-                stock_product_id = NEW.stock_product_id AND 
+            WHERE
+                stock_product_id = NEW.stock_product_id AND
                 member_id = NEW.member_id;
         END IF;
     END IF;

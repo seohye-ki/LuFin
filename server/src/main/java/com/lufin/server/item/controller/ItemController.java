@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lufin.server.classroom.domain.Classroom;
+import com.lufin.server.common.annotation.TeacherOnly;
 import com.lufin.server.common.dto.ApiResponse;
-import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.item.dto.ItemDto;
 import com.lufin.server.item.dto.ItemPurchaseRequestDto;
 import com.lufin.server.item.dto.ItemPurchaseResponseDto;
@@ -27,7 +26,7 @@ import com.lufin.server.item.dto.ItemResponseDto;
 import com.lufin.server.item.service.ItemPurchaseService;
 import com.lufin.server.item.service.ItemRequestService;
 import com.lufin.server.item.service.ItemService;
-
+import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.support.UserContext;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,41 +43,57 @@ public class ItemController {
 	private final ItemPurchaseService itemPurchaseService;
 	private final ItemRequestService itemRequestService;
 
-	// TODO: 선생님 AOP넣기 (@TeacherOnly)
-
 	// 아이템 생성
+	@TeacherOnly
 	@PostMapping
-	public ResponseEntity<ApiResponse<ItemResponseDto>> createItem(@RequestBody @Valid ItemDto request) {
-		ItemResponseDto result = itemService.createItem(request, UserContext.get());
+	public ResponseEntity<ApiResponse<ItemResponseDto>> createItem(HttpServletRequest httpRequest,
+		@RequestBody @Valid ItemDto request) {
+		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		validateClassId(classId);
+		ItemResponseDto result = itemService.createItem(request, classId);
 		return ResponseEntity.status(201).body(ApiResponse.success(result));
 	}
 
 	// 아이템 전체 조회
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<ItemResponseDto>>> getItems() {
-		List<ItemResponseDto> result = itemService.getItems(UserContext.get());
+	public ResponseEntity<ApiResponse<List<ItemResponseDto>>> getItems(HttpServletRequest httpRequest) {
+		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		validateClassId(classId);
+		Member member = UserContext.get();
+		List<ItemResponseDto> result = itemService.getItems(member, classId);
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
 	// 아이템 단일 조회
+	@TeacherOnly
 	@GetMapping("/{itemId}")
-	ResponseEntity<ApiResponse<ItemResponseDto>> getItemDetail(@PathVariable Integer itemId) {
-		ItemResponseDto result = itemService.getItemDetail(itemId, UserContext.get());
+	public ResponseEntity<ApiResponse<ItemResponseDto>> getItemDetail(HttpServletRequest httpRequest,
+		@PathVariable Integer itemId) {
+		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		validateClassId(classId);
+		ItemResponseDto result = itemService.getItemDetail(itemId, classId);
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
 	// 아이템 수정
+	@TeacherOnly
 	@PutMapping("/{itemId}")
-	public ResponseEntity<ApiResponse<ItemResponseDto>> updateItem(@PathVariable Integer itemId,
-		@RequestBody @Valid ItemDto request) {
-		ItemResponseDto result = itemService.updateItem(itemId, request, UserContext.get());
+	public ResponseEntity<ApiResponse<ItemResponseDto>> updateItem(HttpServletRequest httpRequest,
+		@PathVariable Integer itemId, @RequestBody @Valid ItemDto request) {
+		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		validateClassId(classId);
+		ItemResponseDto result = itemService.updateItem(itemId, request, classId);
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
 	// 아이템 삭제
+	@TeacherOnly
 	@DeleteMapping("/{itemId}")
-	public ResponseEntity<ApiResponse<Void>> deleteItem(@PathVariable Integer itemId) {
-		itemService.deleteItem(itemId, UserContext.get());
+	public ResponseEntity<ApiResponse<Void>> deleteItem(HttpServletRequest httpRequest,
+		@PathVariable Integer itemId) {
+		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		validateClassId(classId);
+		itemService.deleteItem(itemId, classId);
 		return ResponseEntity.noContent().build();
 	}
 

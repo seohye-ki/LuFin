@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
 import com.lufin.server.account.domain.Account;
+import com.lufin.server.account.domain.AccountType;
 
 import io.lettuce.core.dynamic.annotation.Param;
 import jakarta.persistence.LockModeType;
@@ -34,4 +35,6 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 
 	// 특정 멤버 ID의 활성 계좌 (closedAt == null) 조회
 	Optional<Account> findByMemberIdAndClosedAtIsNull(Integer memberId);
+
+	Optional<Account> findByMemberIdAndType(int memberId, AccountType accountType);
 }

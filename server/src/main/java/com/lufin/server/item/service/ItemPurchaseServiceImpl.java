@@ -1,6 +1,8 @@
 package com.lufin.server.item.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.item.domain.Item;
 import com.lufin.server.item.domain.ItemPurchase;
 import com.lufin.server.item.domain.ItemPurchaseStatus;
+import com.lufin.server.item.dto.ItemDashboardDto;
 import com.lufin.server.item.dto.ItemPurchaseRequestDto;
 import com.lufin.server.item.dto.ItemPurchaseResponseDto;
 import com.lufin.server.item.repository.ItemPurchaseRepository;
@@ -117,7 +120,8 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 	@Override
 	public List<ItemPurchaseResponseDto> getInventory(Member student, Integer classId) {
 		validateClassroomExists(classId);
-		List<ItemPurchase> inventory = itemPurchaseRepository.findInventory(student.getId(), ItemPurchaseStatus.BUY, classId);
+		List<ItemPurchase> inventory = itemPurchaseRepository.findInventory(student.getId(), ItemPurchaseStatus.BUY,
+			classId);
 
 		return inventory.stream()
 			.map(ItemPurchaseResponseDto::from)
@@ -187,5 +191,24 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 				purchase.expired();
 			}
 		}
+	}
+
+	@Override
+	public List<ItemDashboardDto> getMyItems(int memberId, int classroomId) {
+		log.info("[내 아이템 조회] memberId: {} classroomId: {}", memberId, classroomId);
+		return itemPurchaseRepository.findInventory(memberId, ItemPurchaseStatus.BUY, classroomId)
+			.stream()
+			.map(ip -> {
+				String name = ip.getItem().getName();
+				int quantity = ip.getItemCount();
+				int expireInDays = (int)ChronoUnit.DAYS.between(LocalDate.now(), ip.getItem().getExpirationDate());
+
+				return ItemDashboardDto.builder()
+					.name(name)
+					.quantity(quantity)
+					.expireInDays(expireInDays)
+					.build();
+			})
+			.toList();
 	}
 }

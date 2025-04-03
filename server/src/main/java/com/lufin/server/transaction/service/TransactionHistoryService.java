@@ -33,4 +33,10 @@ public interface TransactionHistoryService {
 		String description,
 		TransactionSourceType sourceType
 	);
+
+	// 이번 주(월요일 ~ 오늘)까지의 소비 총액을 반환
+	int getTotalConsumptionThisWeek(int memberId);
+
+	// 지난주 대비 소비 증감량을 반환 (이번 주 - 지난 주)
+	int getConsumptionChangeSinceLastWeek(int memberId);
 }

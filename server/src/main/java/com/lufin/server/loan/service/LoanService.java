@@ -15,11 +15,16 @@ public interface LoanService {
 
 	List<LoanProductResponseDto> getLoanProducts(Member member);
 
-	LoanApplicationDetailDto createLoanApplication(@Valid LoanApplicationRequestDto request, Member member, Integer classId);
+	LoanApplicationDetailDto createLoanApplication(@Valid LoanApplicationRequestDto request, Member member,
+		Integer classId);
 
 	List<LoanApplicationListDto> getLoanApplications(Member member, Integer classId);
 
 	LoanApplicationDetailDto getLoanApplicationDetail(Integer loanApplicationId, Member member, Integer classId);
 
-	LoanApplicationDetailDto approveOrRejectLoanApplication(@Valid LoanApplicationApprovalDto requestDto, Integer loanApplicationId, Member member, Integer classId);
+	LoanApplicationDetailDto approveOrRejectLoanApplication(@Valid LoanApplicationApprovalDto requestDto,
+		Integer loanApplicationId, Member member, Integer classId);
+
+	// 해당 학생이 특정 반에서 진행 중인 대출 원금을 반환 (없으면 0)
+	int getLoanPrincipal(int memberId, int classroomId);
 }

@@ -183,9 +183,6 @@ public class LoanServiceImpl implements LoanService {
 
 		if (requestDto.status() == LoanApplicationStatus.APPROVED) {
 			application.open();
-			application.changeNextPaymentDate(LocalDateTime.now().plusDays(7));
-			application.changeStartedAt(LocalDateTime.now());
-			application.changeDueDate(LocalDateTime.now().plusMonths(application.getLoanProduct().getPeriod()));
 			log.info("✅[대출 승인 완료] - applicationId: {}", application.getId());
 		} else if (requestDto.status() == LoanApplicationStatus.REJECTED) {
 			application.reject();

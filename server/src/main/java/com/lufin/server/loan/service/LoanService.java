@@ -3,9 +3,9 @@ package com.lufin.server.loan.service;
 import java.util.List;
 
 import com.lufin.server.loan.dto.LoanApplicationApprovalDto;
+import com.lufin.server.loan.dto.LoanApplicationDetailDto;
 import com.lufin.server.loan.dto.LoanApplicationListDto;
 import com.lufin.server.loan.dto.LoanApplicationRequestDto;
-import com.lufin.server.loan.dto.LoanApplicationDetailDto;
 import com.lufin.server.loan.dto.LoanProductResponseDto;
 import com.lufin.server.member.domain.Member;
 

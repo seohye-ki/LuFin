@@ -1,5 +1,7 @@
 package com.lufin.server.loan.domain;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,14 +10,13 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.JoinColumn;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.member.domain.Member;
@@ -94,9 +95,6 @@ public class LoanApplication {
 
 	public void approve() {
 		this.status = LoanApplicationStatus.APPROVED;
-		this.startedAt = LocalDateTime.now();
-		int periodInMonths = (loanProduct.getPeriod() != null) ? loanProduct.getPeriod() : 12;
-		this.dueDate = this.startedAt.plusMonths(periodInMonths);
 	}
 
 	public void reject() {
@@ -105,6 +103,9 @@ public class LoanApplication {
 
 	public void open() {
 		this.status = LoanApplicationStatus.OPEN;
+		this.startedAt = LocalDateTime.now();
+		this.nextPaymentDate = this.startedAt.plusDays(7);
+		this.dueDate = this.startedAt.plusDays(this.loanProduct.getPeriod());
 	}
 
 	public void overdued() {
@@ -113,18 +114,6 @@ public class LoanApplication {
 
 	public void close() {
 		this.status = LoanApplicationStatus.CLOSED;
-	}
-
-	public void changeNextPaymentDate(LocalDateTime date) {
-		this.nextPaymentDate = date;
-	}
-
-	public void changeStartedAt(LocalDateTime date) {
-		this.startedAt = date;
-	}
-
-	public void changeDueDate(LocalDateTime date) {
-		this.dueDate = date;
 	}
 
 	// 이자 납부액 계산

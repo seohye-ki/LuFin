@@ -101,7 +101,7 @@ const TeacherShop = () => {
   }));
 
   return (
-    <SidebarLayout>
+    <SidebarLayout userRole='teacher'>
       <Card
         titleRight={
           <div className='flex flex-row items-center gap-2'>

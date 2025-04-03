@@ -78,15 +78,25 @@ export const createMissionRow = (
       </Badge>
     ),
     action: (
-      <Button
-        variant='ghost'
-        color='info'
-        size='md'
-        disabled={status === 'SUCCESS' || status === 'FAILED' || status === 'REJECTED'}
-        onClick={() => onClick(mission)}
-      >
-        {isJoined ? '리뷰 요청하기' : '신청하기'}
-      </Button>
+      <div className='h-10 w-[128px] flex items-center justify-center'>
+        {isJoined ? (
+          status === 'IN_PROGRESS' ? (
+            <Button variant='ghost' color='info' size='md' onClick={() => onClick(mission)}>
+              리뷰 요청하기
+            </Button>
+          ) : null
+        ) : (
+          <Button
+            variant='ghost'
+            color='info'
+            size='md'
+            disabled={status === 'SUCCESS' || status === 'FAILED' || status === 'REJECTED'}
+            onClick={() => onClick(mission)}
+          >
+            신청하기
+          </Button>
+        )}
+      </div>
     ),
   };
 };

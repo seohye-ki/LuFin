@@ -101,6 +101,13 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 				return new BusinessException(CLASS_NOT_FOUND);
 			});
 
+		// 동일한 반에 다시 들어오려한다면? -> 이미 등록된 클래스임을 안내
+		boolean isExist = memberClassroomRepository.existsByMember_IdAndClassroom_Id(member.getId(), classroom.getId());
+		if(isExist) {
+			log.warn("🏫[동일한 클래스에 접근 요청 시도] memberId: {}, classId: {}", member.getId(), classroom.getId());
+			throw new BusinessException(DUPLICATE_CLASSROOM);
+		}
+
 		// 기존에 소속된 클래스(isCurrent=true)가 있다면 deactivate()
 		deactivateIfInActiveClass(member);
 

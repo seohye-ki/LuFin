@@ -15,19 +15,24 @@ import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
-	final AccountRepository accountRepository;
-	final MemberRepository memberRepository;
+	private final AccountRepository accountRepository;
+	private final MemberRepository memberRepository;
 
 	@Transactional
 	@Override
 	public Account createAccountForMember(int memberId) {
 		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+			.orElseThrow(() -> {
+				log.warn("🏦[회원 정보 없음] memberId: {}", memberId);
+				return new BusinessException(MEMBER_NOT_FOUND);
+			});
 
 		String accountNumber = generateUniqueAccountNumber();
 

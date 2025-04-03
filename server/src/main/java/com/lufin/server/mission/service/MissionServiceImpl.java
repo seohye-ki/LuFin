@@ -50,6 +50,8 @@ public class MissionServiceImpl implements MissionService {
 
 			List<MissionResponseDto.MissionSummaryResponseDto> result = missionRepository.getAllMissions(classId);
 			return result;
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
@@ -85,6 +87,8 @@ public class MissionServiceImpl implements MissionService {
 
 			return result;
 
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
@@ -142,6 +146,8 @@ public class MissionServiceImpl implements MissionService {
 			Mission savedMission = missionRepository.save(newMission);
 
 			return new MissionResponseDto.MissionPostResponseDto(savedMission.getId());
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
@@ -168,6 +174,8 @@ public class MissionServiceImpl implements MissionService {
 
 			missionUtilRepository.deleteMission(classId, missionId);
 
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
@@ -207,6 +215,8 @@ public class MissionServiceImpl implements MissionService {
 			// Mission 엔티티를 dto로 변환
 			return MissionResponseDto.MissionDetailResponseDto.missionEntityToMissionDetailResponseDto(
 				mission);
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred during mission modification: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);

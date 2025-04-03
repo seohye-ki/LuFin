@@ -86,6 +86,8 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 
 			return new MissionParticipationResponseDto.MissionApplicationResponseDto(
 				savedParticipation.getParticipationId());
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
@@ -118,7 +120,9 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			);
 
 			return missionParticipants;
-		} catch (RuntimeException e) {
+		} catch (BusinessException e) {
+			throw e;
+		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
 		}
@@ -211,6 +215,8 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 
 			return response;
 
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
@@ -281,6 +287,8 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 		} catch (TransactionTimedOutException tte) {
 			log.error("주식 구매 중 타임 아웃 발생: {}", tte.getMessage());
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);

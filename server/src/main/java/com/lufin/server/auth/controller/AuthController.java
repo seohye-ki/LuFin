@@ -1,16 +1,24 @@
-package com.lufin.server.member.controller;
+package com.lufin.server.auth.controller;
+
+import static com.lufin.server.common.constants.ErrorCode.*;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lufin.server.auth.dto.TokenResponse;
+import com.lufin.server.auth.service.RefreshTokenService;
 import com.lufin.server.classroom.dto.ClassCodeRequest;
 import com.lufin.server.classroom.dto.LoginWithClassResponse;
 import com.lufin.server.classroom.service.ClassroomCommandService;
 import com.lufin.server.common.dto.ApiResponse;
+import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.dto.LoginRequest;
 import com.lufin.server.member.dto.LoginResponse;
@@ -27,6 +35,7 @@ public class AuthController {
 
 	private final LoginService loginService;
 	private final ClassroomCommandService classroomService;
+	private final RefreshTokenService refreshTokenService;
 
 	@PostMapping("/login")
 	public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
@@ -53,5 +62,27 @@ public class AuthController {
 		headers.add("Pragma", "no-cache");
 
 		return ResponseEntity.ok().headers(headers).body(ApiResponse.success(response));
+	}
+
+	@PostMapping("/refresh-token")
+	public ResponseEntity<ApiResponse<TokenResponse>> refreshAccessToken(
+		@RequestHeader("Authorization") String bearerToken) {
+
+		if (!StringUtils.hasText(bearerToken) || !bearerToken.startsWith("Bearer ")) {
+			return ResponseEntity.badRequest().body(ApiResponse.failure(INVALID_AUTH_HEADER));
+		}
+
+		try {
+			TokenResponse response = refreshTokenService.reissueAccessToken(bearerToken);
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Cache-Control", "no-store");
+			headers.add("Pragma", "no-cache");
+
+			return ResponseEntity.ok().headers(headers).body(ApiResponse.success(response));
+		} catch (BusinessException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(ApiResponse.failure(INVALID_TOKEN));
+		}
 	}
 }

@@ -20,8 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(authInterceptor)
 			.addPathPatterns("/**") // 모든 요청에 적용
-			.excludePathPatterns("/api/v1/lufin/auth/login", "/api/v1/lufin/register/**", "/css/**", "/js/**",
-				"/favicon.ico",
+			.excludePathPatterns("/api/v1/lufin/auth/login", "/api/v1/lufin/register/**",
+				"/api/v1/lufin/auth/refresh-token",
+				"/css/**", "/js/**", "/favicon.ico",
 				"/api/test-login", "/app/**", "/ws/**"); // 예외 경로
 	}
 

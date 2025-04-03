@@ -20,7 +20,7 @@ export const dateUtil = (dateString: string): DateUtil => {
   const second = date.getSeconds();
   const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
   const dayOfWeek = daysOfWeek[date.getDay()];
-  const formattedDate = `${year}년 ${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 ${String(hour).padStart(2, '0')}시`;
+  const formattedDate = `${year}년 ${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일`;
 
   return {
     formattedDate,

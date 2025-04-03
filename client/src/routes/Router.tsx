@@ -16,7 +16,6 @@ import Register from '../pages/common/Auth/Register';
 import TeacherShop from '../pages/teacher/Shop/TeacherShop';
 import TeacherClassroom from '../pages/teacher/Classroom/TeacherClassroom';
 import StudentClassroom from '../pages/student/Classroom/StudentClassroom';
-import LoanProduct from '../pages/student/Loan/components/LoanProduct';
 import StudentLoan from '../pages/student/Loan/StudentLoan';
 import Dashboard from '../pages/student/Dashboard/StudentDashboard';
 

@@ -6,9 +6,11 @@ import axios from 'axios';
  * - timeout: 요청 제한 시간을 설정합니다 (30초).
  * - headers: 기본 헤더를 설정합니다.
  */
+
 export const axiosInstance = axios.create({
   // 환경변수에서 API URL을 가져옵니다.
-  baseURL: `${import.meta.env.VITE_API_URL}/api/v1/lufin`,
+  // @ts-ignore
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
@@ -16,6 +18,7 @@ export const axiosInstance = axios.create({
 });
 
 // 토큰 저장소 결정 (sessionStorage 또는 localStorage)
+// @ts-ignore
 const TOKEN_STORAGE = import.meta.env.VITE_TOKEN_STORAGE || 'sessionStorage';
 
 /**

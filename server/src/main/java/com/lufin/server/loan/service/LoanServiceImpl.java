@@ -2,6 +2,7 @@ package com.lufin.server.loan.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import com.lufin.server.credit.repository.CreditScoreRepository;
 import com.lufin.server.loan.domain.LoanApplication;
 import com.lufin.server.loan.domain.LoanApplicationStatus;
 import com.lufin.server.loan.domain.LoanProduct;
+import com.lufin.server.loan.dto.LoanApplicationApprovalDto;
 import com.lufin.server.loan.dto.LoanApplicationDetailDto;
 import com.lufin.server.loan.dto.LoanApplicationListDto;
 import com.lufin.server.loan.dto.LoanApplicationRequestDto;
@@ -163,6 +165,33 @@ public class LoanServiceImpl implements LoanService {
 			}
 		}
 		log.info("✅[대출 신청 상세 조회 완료] - loanApplicationId: {}", loanApplicationId);
+		return LoanApplicationDetailDto.from(application);
+	}
+
+	@Override
+	public LoanApplicationDetailDto approveOrRejectLoanApplication(LoanApplicationApprovalDto requestDto,
+		Integer loanApplicationId, Member member, Integer classId) {
+		log.info("📝[대출 신청 승인/거절] - loanApplicationId: {}, memberId: {}, classId: {}", loanApplicationId, member.getId(), classId);
+		LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.LOAN_APPLICATION_NOT_FOUND));
+		classroomRepository.findById(classId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
+		if (!application.getClassroom().getId().equals(classId)) {
+			log.warn("🚫[대출 신청 승인 거절 오류] - 요청 반과 일치하지 않음. applicationClassId: {}, requestClassId: {}", application.getClassroom().getId(), classId);
+			throw new BusinessException(ErrorCode.FORBIDDEN_REQUEST);
+		}
+
+		if (requestDto.status() == LoanApplicationStatus.APPROVED) {
+			application.open();
+			log.info("✅[대출 승인 완료] - applicationId: {}", application.getId());
+		} else if (requestDto.status() == LoanApplicationStatus.REJECTED) {
+			application.reject();
+			log.info("❌[대출 거절 완료] - applicationId: {}", application.getId());
+		} else {
+			throw new BusinessException(ErrorCode.INVALID_ENUM);
+		}
+
+		loanApplicationRepository.save(application);
 		return LoanApplicationDetailDto.from(application);
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lufin.server.common.annotation.StudentOnly;
+import com.lufin.server.common.annotation.TeacherOnly;
 import com.lufin.server.common.dto.ApiResponse;
+import com.lufin.server.loan.dto.LoanApplicationApprovalDto;
+import com.lufin.server.loan.dto.LoanApplicationDetailDto;
 import com.lufin.server.loan.dto.LoanApplicationListDto;
 import com.lufin.server.loan.dto.LoanApplicationRequestDto;
-import com.lufin.server.loan.dto.LoanApplicationDetailDto;
 import com.lufin.server.loan.dto.LoanProductResponseDto;
 import com.lufin.server.loan.service.LoanService;
 import com.lufin.server.member.domain.Member;
@@ -70,6 +73,18 @@ public class LoanController {
 		validateClassId(classId);
 		Member member = UserContext.get();
 		LoanApplicationDetailDto result = loanService.getLoanApplicationDetail(loanApplicationId, member, classId);
+		return ResponseEntity.ok(ApiResponse.success(result));
+	}
+
+	// 대출 신청 승인 거절
+	@TeacherOnly
+	@PatchMapping("/applications/{loanApplicationId}")
+	public ResponseEntity<ApiResponse<LoanApplicationDetailDto>> approveOrRejectLoanApplication(@PathVariable Integer loanApplicationId,
+		HttpServletRequest httpRequest, @RequestBody @Valid LoanApplicationApprovalDto request) {
+		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		validateClassId(classId);
+		Member member = UserContext.get();
+		LoanApplicationDetailDto result = loanService.approveOrRejectLoanApplication(request, loanApplicationId, member, classId);
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 }

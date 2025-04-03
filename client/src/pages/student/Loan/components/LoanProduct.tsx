@@ -1,7 +1,7 @@
 import React from 'react';
-import Penguin from '../../../../assets/svgs/Penguin.svg';
-import Cat from '../../../../assets/svgs/Cat.svg';
-import Tiger from '../../../../assets/svgs/Tiger.svg';
+import Penguin from '../../../../assets/svgs/penguin.svg';
+import Cat from '../../../../assets/svgs/cat.svg';
+import Tiger from '../../../../assets/svgs/tiger.svg';
 import { LoanProductDTO } from '../../../../types/Loan/loan';
 import Lufin from '../../../../components/Lufin/Lufin';
 

@@ -8,6 +8,7 @@ import PrivateRoute from './PrivateRoute';
 import CommonComponents from '../pages/common/DesignSystem/CommonComponents';
 import TeacherMission from '../pages/teacher/Mission/TeacherMission';
 import StudentMission from '../pages/student/Mission/StudentMission';
+import TeacherStock from '../pages/teacher/Stock/TeacherStock';
 import StudentStock from '../pages/student/Stock/StudentStock';
 import StudentShop from '../pages/student/Shop/StudentShop';
 import Login from '../pages/common/Auth/Login';
@@ -31,6 +32,7 @@ const Router = () => {
         <Route path={paths.TEACHER_MISSION} element={<TeacherMission />} />
         <Route path={paths.STUDENT_MISSION} element={<StudentMission />} />
         <Route path={paths.STUDENT_STOCK} element={<StudentStock />} />
+        <Route path={paths.TEACHER_STOCK} element={<TeacherStock />} />
         <Route path={paths.TEACHER_CLASSROOM} element={<TeacherClassroom />} />
         <Route path={paths.STUDENT_CLASSROOM} element={<StudentClassroom />} />
         <Route path={paths.STUDENT_DASHBOARD} element={<Dashboard />} />

@@ -57,7 +57,7 @@ const Menu = ({ isActive = false, type, userRole }: MenuProps) => {
     },
     chart: {
       student: paths.STUDENT_STOCK,
-      // teacher: paths.TEACHER_INVEST,
+      teacher: paths.TEACHER_STOCK,
     },
     dollar: {
       // student: paths.STUDENT_LOAN,

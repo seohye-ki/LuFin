@@ -13,7 +13,7 @@ const TeacherMission = () => {
 
   return (
     <div className='relative'>
-      <SidebarLayout mainRef={mainRef}>
+      <SidebarLayout mainRef={mainRef} userRole='teacher'>
         {selectedDate ? (
           <BottomPopup isOpen={true} onClose={() => setSelectedDate(null)}>
             <WeeklyMissionModal selectedDate={selectedDate} onDateChange={handleDateSelect} />

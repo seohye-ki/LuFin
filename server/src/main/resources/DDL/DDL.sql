@@ -386,7 +386,7 @@ CREATE TABLE `items`
     `classroom_id`       INT              NOT NULL,
     `name`               VARCHAR(50)      NOT NULL,
     `type`               TINYINT          NOT NULL DEFAULT 1 COMMENT '0: 바로 사용 가능, 1: 요청 필요',
-    `price`              TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    `price`              INT              NOT NULL DEFAULT 0,
     `quantity_available` TINYINT UNSIGNED NOT NULL DEFAULT 0,
     `quantity_sold`      TINYINT UNSIGNED NOT NULL DEFAULT 0,
     `status`             BOOLEAN          NOT NULL DEFAULT TRUE COMMENT 'T: 판매중 / F: 판매 중단',

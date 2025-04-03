@@ -11,11 +11,19 @@ interface AuthState {
   userRole: string | null;
 
   // 액션
-  login: (credentials: LoginRequest) => Promise<{ success: boolean; message?: string; code?: string; role?: string }>;
+  login: (
+    credentials: LoginRequest,
+  ) => Promise<{ success: boolean; message?: string; code?: string; role?: string }>;
   logout: () => void;
   clearError: () => void;
   // 상태 selector 헬퍼 함수
-  getAuthStatus: () => { isAuthenticated: boolean; isLoading: boolean; error: string | null; errorCode: string | null; userRole: string | null };
+  getAuthStatus: () => {
+    isAuthenticated: boolean;
+    isLoading: boolean;
+    error: string | null;
+    errorCode: string | null;
+    userRole: string | null;
+  };
 }
 
 /**
@@ -42,37 +50,37 @@ const useAuthStore = create<AuthState>((set, get) => ({
     try {
       // AuthService를 통한 로그인 처리
       const result = await AuthService.login(credentials);
-      
+
       if (result.success) {
         // 로그인 성공 시 상태 업데이트
-        set({ 
+        set({
           isAuthenticated: true,
           isLoading: false,
           userRole: result.role || null,
           error: null,
-          errorCode: null
+          errorCode: null,
         });
       } else {
         // 로그인 실패 시 에러 상태 업데이트
-        set({ 
+        set({
           isLoading: false,
           error: result.message || null,
           errorCode: result.code || null,
-          isAuthenticated: false
+          isAuthenticated: false,
         });
       }
-      
+
       return result;
     } catch {
       // 예외 발생 시 에러 처리
       const errorMessage = '로그인 중 오류가 발생했습니다.';
-      set({ 
+      set({
         isLoading: false,
         error: errorMessage,
         errorCode: null,
-        isAuthenticated: false
+        isAuthenticated: false,
       });
-      
+
       return { success: false, message: errorMessage };
     }
   },
@@ -83,13 +91,13 @@ const useAuthStore = create<AuthState>((set, get) => ({
   logout: () => {
     // 서비스를 통한 로그아웃 처리
     AuthService.logout();
-    
+
     // 상태 초기화
     set({
       isAuthenticated: false,
       userRole: null,
       error: null,
-      errorCode: null
+      errorCode: null,
     });
   },
 
@@ -105,7 +113,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
   getAuthStatus: () => {
     const { isAuthenticated, isLoading, error, errorCode, userRole } = get();
     return { isAuthenticated, isLoading, error, errorCode, userRole };
-  }
+  },
 }));
 
-export default useAuthStore; 
+export default useAuthStore;

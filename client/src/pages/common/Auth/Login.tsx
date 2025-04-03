@@ -13,7 +13,7 @@ export default function Login() {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
-  
+
   // Zustand 스토어에서 필요한 상태와 액션 가져오기
   const { login, isLoading, error } = useAuthStore();
 
@@ -34,21 +34,21 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // 유효성 검사
     const isEmailValid = validateEmail(email);
     const isPasswordValid = validatePassword(password);
-    
+
     if (!isEmailValid || !isPasswordValid) {
       return;
     }
-    
+
     console.log('로그인 시도:', { email, password });
-    
+
     const result = await login({ email, password });
-    
+
     console.log('로그인 결과:', result);
-    
+
     if (result.success) {
       console.log('로그인 성공, 역할:', result.role);
       // 역할에 따라 다른 페이지로 이동
@@ -144,18 +144,10 @@ export default function Login() {
                     description={passwordError}
                   />
 
-                  {error && (
-                    <div className='text-error text-p2 mt-2'>{error}</div>
-                  )}
+                  {error && <div className='text-error text-p2 mt-2'>{error}</div>}
 
                   <div className='space-y-3 pt-3'>
-                    <Button 
-                      type='submit' 
-                      color='primary' 
-                      size='lg' 
-                      full
-                      disabled={isLoading}
-                    >
+                    <Button type='submit' color='primary' size='lg' full disabled={isLoading}>
                       {isLoading ? '로그인 중...' : '로그인'}
                     </Button>
 

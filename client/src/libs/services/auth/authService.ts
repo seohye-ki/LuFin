@@ -34,11 +34,8 @@ export const AuthService = {
   login: async (credentials: LoginRequest) => {
     try {
       console.log('API 요청 시작:', credentials);
-      
-      const response = await axiosInstance.post<AuthResponse>(
-        LOGIN_ENDPOINT,
-        credentials
-      );
+
+      const response = await axiosInstance.post<AuthResponse>(LOGIN_ENDPOINT, credentials);
 
       console.log('API 응답:', response.data);
 
@@ -46,7 +43,7 @@ export const AuthService = {
         // 토큰 저장
         const { accessToken, refreshToken, role } = response.data.data;
         console.log('토큰 저장 시도:', { accessToken, refreshToken, role });
-        
+
         tokenUtils.setToken('accessToken', accessToken);
         tokenUtils.setToken('refreshToken', refreshToken);
         tokenUtils.setToken('userRole', role);
@@ -55,33 +52,33 @@ export const AuthService = {
         console.log('저장된 토큰 확인:', {
           accessToken: tokenUtils.getToken('accessToken'),
           refreshToken: tokenUtils.getToken('refreshToken'),
-          role: tokenUtils.getToken('userRole')
+          role: tokenUtils.getToken('userRole'),
         });
 
-        return { 
-          success: true, 
-          role: role 
+        return {
+          success: true,
+          role: role,
         };
       } else {
         console.log('API 응답 실패:', response.data.message);
         // 서버에서 오류 메시지가 온 경우
-        return { 
-          success: false, 
+        return {
+          success: false,
           code: response.data.code,
-          message: response.data.message || '로그인에 실패했습니다.' 
+          message: response.data.message || '로그인에 실패했습니다.',
         };
       }
     } catch (error) {
       console.error('로그인 에러:', error);
       let errorMessage = '로그인 중 오류가 발생했습니다.';
       let errorCode = '';
-      
+
       if (axios.isAxiosError(error) && error.response) {
         const responseData = error.response.data as AuthResponse;
         errorMessage = responseData.message || errorMessage;
         errorCode = responseData.code || '';
       }
-      
+
       return { success: false, code: errorCode, message: errorMessage };
     }
   },
@@ -109,5 +106,5 @@ export const AuthService = {
    */
   getUserRole: () => {
     return tokenUtils.getToken('userRole');
-  }
-}; 
+  },
+};

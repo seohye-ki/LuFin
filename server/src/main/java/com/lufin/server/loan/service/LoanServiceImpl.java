@@ -3,7 +3,6 @@ package com.lufin.server.loan.service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,6 @@ import com.lufin.server.loan.dto.LoanApplicationDetailDto;
 import com.lufin.server.loan.dto.LoanApplicationListDto;
 import com.lufin.server.loan.dto.LoanApplicationRequestDto;
 import com.lufin.server.loan.dto.LoanProductResponseDto;
-import com.lufin.server.loan.dto.MyLoanApplicationDto;
 import com.lufin.server.loan.repository.LoanApplicationRepository;
 import com.lufin.server.loan.repository.LoanProductRepository;
 import com.lufin.server.member.domain.Member;
@@ -41,6 +39,7 @@ public class LoanServiceImpl implements LoanService {
 	private final CreditScoreRepository creditScoreRepository;
 
 	private Integer convertRatingToRank(Integer rating) {
+		log.info("🔧[신용 등급 변환] - rating: {}", rating);
 		if (rating >= 85) {
 			return 0;
 		} else if (rating >= 70) {
@@ -55,59 +54,61 @@ public class LoanServiceImpl implements LoanService {
 	}
 
 	@Override
-	public List<LoanProductResponseDto> getAllProducts() {
-		List<LoanProduct> result = loanProductRepository.findAll();
+	public List<LoanProductResponseDto> getLoanProducts(Member member) {
+		CreditScore creditScore = creditScoreRepository.findById(member.getId())
+			.orElseThrow(() -> new BusinessException(ErrorCode.CREDIT_SCORE_NOT_FOUND));
+		Integer rank = convertRatingToRank(Integer.valueOf(creditScore.getScore()));
+		log.info("🔍[대출 상품 조회]");
+		List<LoanProduct> result = loanProductRepository.findByCreditRank(rank);
+		log.info("✅[대출 상품 조회 성공] - count: {}", result.size());
 		return result.stream()
 			.map(LoanProductResponseDto::from)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
-	// 대출 신청
 	@Override
 	@Transactional
 	public LoanApplicationDetailDto createLoanApplication(LoanApplicationRequestDto request, Member member,
 		Integer classId) {
+		log.info("📝[대출 신청 요청] - memberId: {}, classId: {}, amount: {}", member.getId(), classId, request.requestedAmount());
 		Classroom classroom = classroomRepository.findById(classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
 
-		// 진행중인 대출 여부 확인
 		List<LoanApplicationStatus> activeStatuses = List.of(
 			LoanApplicationStatus.PENDING,
 			LoanApplicationStatus.APPROVED,
 			LoanApplicationStatus.OPEN
 		);
 		if (loanApplicationRepository.existsByMemberAndClassroomAndStatusIn(member, classroom, activeStatuses)) {
+			log.warn("🚫[중복 대출 신청] - memberId: {}, classId: {}", member.getId(), classId);
 			throw new BusinessException(ErrorCode.LOAN_APPLICATION_ALREADY_EXISTS);
 		}
 
-		// 대출 상품 존재 여부 확인
 		LoanProduct loanProduct = loanProductRepository.findById(request.loanProductId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.LOAN_PRODUCT_NOT_FOUND));
 
-		// F등급 확인
 		CreditScore creditScore = creditScoreRepository.findById(member.getId())
-			.orElseThrow(() -> new IllegalStateException("해당 회원의 신용점수가 없습니다."));
-
+			.orElseThrow(() -> new BusinessException(ErrorCode.CREDIT_SCORE_NOT_FOUND));
+		log.info("✅[신용 점수 조회 성공] - memberId: {}, score: {}", member.getId(), creditScore.getScore());
 		Integer rank = convertRatingToRank(Integer.valueOf(creditScore.getScore()));
-
-		if (rank == 4)
-			throw new BusinessException(ErrorCode.INSUFFICIENT_CREDIT_SCORE);
-
-		// 대출 상품 등급과 회원 등급 일치 확인
-		if (!loanProduct.getCreditRank().equals(rank)) {
+		if (rank == 4) {
+			log.warn("🚫[신용 등급 제한] - memberId: {}, rank: {}", member.getId(), rank);
 			throw new BusinessException(ErrorCode.INSUFFICIENT_CREDIT_SCORE);
 		}
 
-		// 대출 한도 초과 여부 확인
+		if (!loanProduct.getCreditRank().equals(rank)) {
+			log.warn("🚫[대출 상품 등급 불일치] - memberId: {}, productRank: {}, memberRank: {}", member.getId(), loanProduct.getCreditRank(), rank);
+			throw new BusinessException(ErrorCode.INSUFFICIENT_CREDIT_SCORE);
+		}
+
 		if (request.requestedAmount() > loanProduct.getMaxAmount()) {
+			log.warn("🚫[대출 한도 초과] - memberId: {}, requested: {}, max: {}", member.getId(), request.requestedAmount(), loanProduct.getMaxAmount());
 			throw new BusinessException(ErrorCode.LOAN_AMOUNT_EXCEEDS_MAX);
 		}
 
-		// 이자액 계산
 		BigDecimal interestRate = loanProduct.getInterestRate();
 		BigDecimal requestedAmount = BigDecimal.valueOf(request.requestedAmount());
 		int interestAmount = requestedAmount.multiply(interestRate).setScale(0, RoundingMode.HALF_UP).intValue();
-
 		LoanApplication application = LoanApplication.create(
 			member,
 			classroom,
@@ -116,61 +117,52 @@ public class LoanServiceImpl implements LoanService {
 			request.requestedAmount(),
 			interestAmount);
 		loanApplicationRepository.save(application);
-
+		log.info("✅[대출 신청 완료] - applicationId: {}, memberId: {}", application.getId(), member.getId());
 		return LoanApplicationDetailDto.from(application);
 	}
 
-	// 대출 신청 내역 목록 조회
 	@Override
 	public List<LoanApplicationListDto> getLoanApplications(Member member, Integer classId) {
+		log.info("🔍[대출 신청 내역 조회] - memberId: {}, classId: {}", member.getId(), classId);
 		Classroom classroom = classroomRepository.findById(classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
-
 		List<LoanApplication> applications;
 		if (member.getMemberRole() == MemberRole.TEACHER) {
 			applications = loanApplicationRepository.findByClassroom(classroom);
 		} else {
 			applications = loanApplicationRepository.findByMemberAndClassroom(member, classroom);
 		}
-
+		log.info("✅[대출 신청 내역 조회 완료] - count: {}", applications.size());
 		return applications.stream()
 			.map(LoanApplicationListDto::from)
-			.collect(Collectors.toList());
-	}
-
-	// 현재 활성화 된 대출 내역 조회
-	@Override
-	public MyLoanApplicationDto getActiveLoanApplication(Member member, Integer classId) {
-		Classroom classroom = classroomRepository.findById(classId)
-			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
-
-		return loanApplicationRepository.findByMemberAndClassroom(member, classroom)
-			.stream()
-			.filter(a -> a.getStatus() == LoanApplicationStatus.OPEN)
-			.findFirst()
-			.map(MyLoanApplicationDto::from)
-			.orElse(null);
+			.toList();
 	}
 
 	@Override
 	public LoanApplicationDetailDto getLoanApplicationDetail(Integer loanApplicationId, Member member,
 		Integer classId) {
+		log.info("🔍[대출 신청 상세 조회] - loanApplicationId: {}, memberId: {}, classId: {}", loanApplicationId, member.getId(), classId);
 		LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.LOAN_APPLICATION_NOT_FOUND));
-
-		Classroom classroom = classroomRepository.findById(classId)
+		classroomRepository.findById(classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
 
 		if (member.getMemberRole() == MemberRole.TEACHER) {
-			if (!application.getClassroom().equals(classroom)) {
+			if (!application.getClassroom().getId().equals(classId)) {
+				log.warn("🚫[대출 신청 조회 오류] - 요청 반과 일치하지 않음");
 				throw new BusinessException(ErrorCode.FORBIDDEN_REQUEST);
 			}
 		} else {
-			if (!application.getMember().equals(member) || !application.getClassroom().equals(classroom)) {
+			if (!application.getMember().getId().equals(member.getId())) {
+				log.warn("🚫[대출 신청 조회 오류 - 학생] - 대출 신청자가 아님. applicationMemberId: {}, requestMemberId: {}", application.getMember().getId(), member.getId());
+				throw new BusinessException(ErrorCode.FORBIDDEN_REQUEST);
+			}
+			if (!application.getClassroom().getId().equals(classId)) {
+				log.warn("🚫[대출 신청 조회 오류 - 학생] - 요청 반과 일치하지 않음. applicationClassId: {}, requestClassId: {}", application.getClassroom().getId(), classId);
 				throw new BusinessException(ErrorCode.FORBIDDEN_REQUEST);
 			}
 		}
-
+		log.info("✅[대출 신청 상세 조회 완료] - loanApplicationId: {}", loanApplicationId);
 		return LoanApplicationDetailDto.from(application);
 	}
 }

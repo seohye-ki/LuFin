@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lufin.server.common.annotation.StudentOnly;
 import com.lufin.server.common.dto.ApiResponse;
 import com.lufin.server.loan.dto.LoanApplicationListDto;
 import com.lufin.server.loan.dto.LoanApplicationRequestDto;
 import com.lufin.server.loan.dto.LoanApplicationDetailDto;
 import com.lufin.server.loan.dto.LoanProductResponseDto;
-import com.lufin.server.loan.dto.MyLoanApplicationDto;
 import com.lufin.server.loan.service.LoanService;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.support.UserContext;
@@ -36,12 +36,14 @@ public class LoanController {
 
 	// 대출 상품 목록 조회
 	@GetMapping("/products")
-	public ResponseEntity<ApiResponse<List<LoanProductResponseDto>>> getAllProducts(HttpServletRequest httpRequest) {
-		List<LoanProductResponseDto> result = loanService.getAllProducts();
+	public ResponseEntity<ApiResponse<List<LoanProductResponseDto>>> getLoanProducts() {
+		Member member = UserContext.get();
+		List<LoanProductResponseDto> result = loanService.getLoanProducts(member);
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
 	// 대출 신청
+	@StudentOnly
 	@PostMapping("/applications")
 	public ResponseEntity<ApiResponse<LoanApplicationDetailDto>> createLoanApplication(HttpServletRequest httpRequest, @RequestBody @Valid LoanApplicationRequestDto request) {
 		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
@@ -61,16 +63,7 @@ public class LoanController {
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
-	// 나의 현재 활성화된 대출 조회
-	@GetMapping("/my-application")
-	public ResponseEntity<ApiResponse<MyLoanApplicationDto>> getActiveLoanApplication(HttpServletRequest httpRequest) {
-		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
-		validateClassId(classId);
-		Member member = UserContext.get();
-		MyLoanApplicationDto result = loanService.getActiveLoanApplication(member, classId);
-		return ResponseEntity.ok(ApiResponse.success(result));
-	}
-
+	// 대출 내역 상세 조회
 	@GetMapping("/applications/{loanApplicationId}")
 	public ResponseEntity<ApiResponse<LoanApplicationDetailDto>> getLoanApplicationDetail(@PathVariable Integer loanApplicationId, HttpServletRequest httpRequest) {
 		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);

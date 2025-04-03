@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import com.lufin.server.loan.domain.LoanProduct;
 
 public record LoanProductResponseDto(
-	Integer id,
+	Integer loanProductId,
 	String name,
 	String description,
 	Integer creditRank,

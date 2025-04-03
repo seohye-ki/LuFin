@@ -23,6 +23,7 @@ public enum ErrorCode {
 	INVALID_ENUM("E400014", "잘못된 입력 값입니다."),
 	MISSION_CAPACITY_FULL("E400015", "미션 참여 인원이 모두 찼습니다."),
 	ALREADY_CLOSED_ACCOUNT("E400016", "이미 해지된 계좌입니다."),
+	INVALID_UPDATE_REQUEST("E400017", "같은 상태로는 업데이트할 수 없습니다."),
 
 	INVALID_CREDENTIALS("E401001", "이메일 또는 패스워드를 확인해주세요."),
 	UNAUTHORIZED_ACCESS("E401002", "인증이 필요합니다."),

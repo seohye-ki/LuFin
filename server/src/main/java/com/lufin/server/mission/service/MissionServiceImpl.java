@@ -2,6 +2,7 @@ package com.lufin.server.mission.service;
 
 import static com.lufin.server.common.constants.ErrorCode.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,13 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.repository.ClassroomRepository;
+import com.lufin.server.common.annotation.TeacherOnly;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
 import com.lufin.server.member.support.UserContext;
 import com.lufin.server.mission.domain.Mission;
+import com.lufin.server.mission.domain.MissionImage;
 import com.lufin.server.mission.dto.MissionRequestDto;
 import com.lufin.server.mission.dto.MissionResponseDto;
+import com.lufin.server.mission.repository.MissionImageRepository;
 import com.lufin.server.mission.repository.MissionRepository;
 import com.lufin.server.mission.repository.MissionUtilRepository;
 
@@ -31,6 +35,7 @@ public class MissionServiceImpl implements MissionService {
 
 	private final MissionUtilRepository missionUtilRepository;
 	private final MissionRepository missionRepository;
+	private final MissionImageRepository missionImageRepository;
 	private final ClassroomRepository classroomRepository;
 
 	// TODO: 추후 캐시 추가로 조회 성능 향상 도모
@@ -45,6 +50,8 @@ public class MissionServiceImpl implements MissionService {
 
 			List<MissionResponseDto.MissionSummaryResponseDto> result = missionRepository.getAllMissions(classId);
 			return result;
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
@@ -65,25 +72,30 @@ public class MissionServiceImpl implements MissionService {
 			MissionResponseDto.MissionDetailResponseDto result;
 
 			// 선생님이면 participations가 있고, 학생이면 없음
-			if (role != MemberRole.TEACHER) {
+			if (role == MemberRole.TEACHER) {
 				result = missionRepository.getMissionByIdForTeacher(classId,
 					missionId);
 
-			} else if (role != MemberRole.STUDENT) {
+				log.info("미션 조회 완료: result = {}", result);
+			} else if (role == MemberRole.STUDENT) {
 				result = missionRepository.getMissionByIdForStudent(classId,
 					missionId);
+				log.info("미션 조회 완료: result = {}", result);
 			} else {
 				throw new BusinessException(INVALID_ROLE_SELECTION);
 			}
 
 			return result;
 
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
 
+	@TeacherOnly
 	@Transactional
 	@Override
 	public MissionResponseDto.MissionPostResponseDto postMission(MissionRequestDto.MissionRequestInfoDto requestDto,
@@ -100,11 +112,6 @@ public class MissionServiceImpl implements MissionService {
 		}
 
 		try {
-
-			if (currentMember.getMemberRole() != MemberRole.TEACHER) {
-				throw new BusinessException(FORBIDDEN_REQUEST);
-			}
-
 			// classId로 Classroom 객체 조회
 			Classroom classroom = classroomRepository.findById(classId)
 				.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
@@ -121,16 +128,34 @@ public class MissionServiceImpl implements MissionService {
 				requestDto.missionDate()
 			);
 
+			// image가 있다면 MissionImage 엔티티 생성 후 저장
+			if (requestDto.s3Keys() != null && !requestDto.s3Keys().isEmpty()) {
+				List<MissionImage> images = new ArrayList<>();
+				for (String s3Key : requestDto.s3Keys()) {
+					MissionImage newMissionImage = MissionImage.create(
+						newMission,
+						s3Key
+					);
+					images.add(newMissionImage);
+				}
+
+				missionImageRepository.saveAll(images);
+			}
+
 			// JPA repository save() 활용해서 저장한 엔티티 조회
 			Mission savedMission = missionRepository.save(newMission);
 
 			return new MissionResponseDto.MissionPostResponseDto(savedMission.getId());
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
 
+	@Transactional
+	@TeacherOnly
 	@Override
 	public void deleteMission(Integer classId, Integer missionId, Enum<MemberRole> role) {
 		log.info("미션 삭제 요청: classId: {}, missionId: {}, role: {}", classId, missionId, role);
@@ -142,11 +167,6 @@ public class MissionServiceImpl implements MissionService {
 		}
 
 		try {
-			// 선생님이 아니면 삭제 불가
-			if (role != MemberRole.TEACHER) {
-				throw new BusinessException(FORBIDDEN_REQUEST);
-			}
-
 			// 해당 클래스의 담당교사가 아닌 경우 삭제 불가
 			if (!Objects.equals(missionUtilRepository.getClassIdByMissionId(missionId), classId)) {
 				throw new BusinessException(FORBIDDEN_REQUEST);
@@ -154,6 +174,8 @@ public class MissionServiceImpl implements MissionService {
 
 			missionUtilRepository.deleteMission(classId, missionId);
 
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
@@ -193,6 +215,8 @@ public class MissionServiceImpl implements MissionService {
 			// Mission 엔티티를 dto로 변환
 			return MissionResponseDto.MissionDetailResponseDto.missionEntityToMissionDetailResponseDto(
 				mission);
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred during mission modification: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);

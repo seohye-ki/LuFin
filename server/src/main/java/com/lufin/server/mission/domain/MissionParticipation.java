@@ -81,19 +81,6 @@ public class MissionParticipation {
 	// 로직
 
 	/**
-	 * 참여 상태를 업데이트
-	 *
-	 * @param status 새로운 참여 상태 (null이 아니어야 함)
-	 * @throws IllegalArgumentException 상태가 null인 경우
-	 */
-	public void updateStatus(MissionParticipationStatus status) {
-		if (status == null) {
-			throw new IllegalArgumentException("Status cannot be null");
-		}
-		this.status = status;
-	}
-
-	/**
 	 * 임금 지급 상태를 지급됨으로 표시
 	 */
 	public void markWagePaid() {

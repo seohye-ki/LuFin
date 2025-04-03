@@ -67,7 +67,7 @@ public class MissionController {
 
 		Member currentMember = UserContext.get();
 		Enum<MemberRole> role = currentMember.getMemberRole();
-
+		
 		MissionResponseDto.MissionDetailResponseDto mission = missionService.getMissionById(
 			classId,
 			missionId,

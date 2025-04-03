@@ -1,6 +1,5 @@
 package com.lufin.server.mission.dto;
 
-import com.lufin.server.credit.domain.CreditGrade;
 import com.lufin.server.mission.domain.MissionParticipationStatus;
 import com.querydsl.core.annotations.QueryProjection;
 
@@ -24,11 +23,21 @@ public class MissionParticipationResponseDto {
 	public record MissionParticipationSummaryResponseDto(
 		String name,
 		String profileImage,
-		CreditGrade creditGrade,
 		MissionParticipationStatus status
 	) {
 		@QueryProjection
 		public MissionParticipationSummaryResponseDto {
+		}
+
+		/**
+		 * MissionParticipation 엔티티를 dto로 변환
+		 */
+		public static MissionParticipationSummaryResponseDto missionParticipationToMissionParticipationSummaryResponseDto(
+			String name,
+			String profileImage,
+			MissionParticipationStatus status
+		) {
+			return new MissionParticipationSummaryResponseDto(name, profileImage, status);
 		}
 	}
 

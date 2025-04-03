@@ -144,8 +144,8 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 		Member currentMember,
 		MissionParticipationStatus status
 	) {
-		log.info("미션 참여 상태 변경 요청: classId: {}, missionId: {}, currentMember: {}, status: {}", classId, missionId,
-			currentMember, status);
+		log.info("미션 참여 상태 변경 요청: classId: {}, missionId: {}, role: {}, status: {}", classId, missionId,
+			currentMember.getMemberRole(), status);
 
 		if (classId == null || missionId == null || currentMember == null || status == null) {
 			throw new BusinessException(MISSING_REQUIRED_VALUE);
@@ -154,6 +154,12 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 		try {
 			MissionParticipation participation = missionParticipationRepository.findById(participationId)
 				.orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+
+			// 같은 요청인지 확인
+			if (participation.getStatus() == status) {
+				log.warn("같은 상태입니다. status = {}", status);
+				throw new BusinessException(INVALID_UPDATE_REQUEST);
+			}
 
 			// 해당 미션 참여가 요청한 미션에 속해 있는지 확인
 			Mission mission = participation.getMission();
@@ -168,13 +174,18 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 
 			// 1. 미션 성공 -> 보상 지급 (선생님만 가능)
 			if (status == MissionParticipationStatus.SUCCESS) {
-				response = updateMissionSuccess(
-					classId,
-					currentMember,
-					mission,
-					status,
-					participation
-				);
+				if (currentMember.getMemberRole() == MemberRole.TEACHER) {
+					response = updateMissionSuccess(
+						classId,
+						currentMember,
+						mission,
+						status,
+						participation
+					);
+				} else {
+					log.warn("권한 없는 상태 변경 시도: status = {}, memberId = {}", status, currentMember.getId());
+					throw new BusinessException(FORBIDDEN_REQUEST);
+				}
 			} else {
 				if (currentMember.getMemberRole() != MemberRole.TEACHER) {
 					// 교사가 아닌 경우
@@ -233,7 +244,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 		try {
 			// 개인 계좌를 보유하고 있는지 체크
 			Optional<Account> account = accountRepository.findOpenAccountByMemberIdWithPessimisticLock(
-				currentMember.getId());
+				participation.getMember().getId());
 
 			if (!account.isPresent()) {
 				log.warn("미션 완료 보상을 받을 계좌가 존재하지 않습니다.");

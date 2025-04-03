@@ -42,6 +42,10 @@ public class MissionParticipationController {
 		@PathVariable @Positive Integer missionId,
 		HttpServletRequest request
 	) {
+		System.out.println(
+			"applyMission: missionId: " + missionId + "classId: " + (Integer)request.getAttribute("classId")
+				+ "currentMember: " + UserContext.get() + "");
+
 		Integer classId = (Integer)request.getAttribute("classId");
 		ValidationUtils.validateClassId(classId);
 

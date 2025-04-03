@@ -1,15 +1,15 @@
 package com.lufin.server.mission.repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
 import com.lufin.server.credit.domain.QCreditScore;
 import com.lufin.server.member.domain.QMember;
+import com.lufin.server.mission.domain.MissionParticipation;
 import com.lufin.server.mission.domain.QMissionParticipation;
 import com.lufin.server.mission.dto.MissionParticipationResponseDto;
-import com.lufin.server.mission.dto.QMissionParticipationResponseDto_MissionParticipationSummaryResponseDto;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -30,30 +30,26 @@ public class MissionParticipationRepositoryCustomImpl implements MissionParticip
 		QMember member = QMember.member;
 		QCreditScore creditScore = QCreditScore.creditScore;
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		// missionId에 일치하는 것만 조회하는 조건
-		builder.and(missionParticipation.mission.id.eq(missionId));
-
-		// classId에 일치하는 것만 조회하는 조건
-		builder.and(missionParticipation.mission.classId.eq(classId));
-
-		// 쿼리문
-		List<MissionParticipationResponseDto.MissionParticipationSummaryResponseDto> result = queryFactory
-			.select(new QMissionParticipationResponseDto_MissionParticipationSummaryResponseDto(
-					member.name,
-					member.profileImage,
-					creditScore.grade,
-					missionParticipation.status
-				)
-			)
-			.from(missionParticipation)
+		/*
+		 * queryDSL의 projection을 사용한 경우 entity 매핑이 정확히 되지 않는 이슈가 있었음
+		 * 그에 따라 먼저 엔티티를 조회하고 DTO로 변환하여 반환하는 로직으로 변경
+		 */
+		List<MissionParticipation> missionParticipationEntityList = queryFactory
+			.selectFrom(missionParticipation)
 			.leftJoin(missionParticipation.member, member).fetchJoin()
-			.leftJoin(creditScore).on(creditScore.memberId.eq(member.id))
-			.where(builder)
+			.leftJoin(creditScore).on(creditScore.memberId.eq(member.id)).fetchJoin()
+			.where(missionParticipation.mission.id.eq(missionId)
+				.and(missionParticipation.mission.classId.eq(classId)))
 			.fetch();
 
-		return result;
+		// 엔티티를 dto로 변경
+		return missionParticipationEntityList.stream()
+			.map(missionParticipationEntity
+				-> MissionParticipationResponseDto.MissionParticipationSummaryResponseDto.missionParticipationToMissionParticipationSummaryResponseDto(
+				missionParticipationEntity.getMember().getName(),
+				missionParticipationEntity.getMember().getProfileImage(),
+				missionParticipationEntity.getStatus()
+			)).collect(Collectors.toList());
 	}
 
 }

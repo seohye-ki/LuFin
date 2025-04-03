@@ -2,6 +2,7 @@ package com.lufin.server.loan.service;
 
 import java.util.List;
 
+import com.lufin.server.loan.dto.LoanApplicationApprovalDto;
 import com.lufin.server.loan.dto.LoanApplicationListDto;
 import com.lufin.server.loan.dto.LoanApplicationRequestDto;
 import com.lufin.server.loan.dto.LoanApplicationDetailDto;
@@ -19,4 +20,6 @@ public interface LoanService {
 	List<LoanApplicationListDto> getLoanApplications(Member member, Integer classId);
 
 	LoanApplicationDetailDto getLoanApplicationDetail(Integer loanApplicationId, Member member, Integer classId);
+
+	LoanApplicationDetailDto approveOrRejectLoanApplication(@Valid LoanApplicationApprovalDto requestDto, Integer loanApplicationId, Member member, Integer classId);
 }

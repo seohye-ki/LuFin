@@ -115,6 +115,18 @@ public class LoanApplication {
 		this.status = LoanApplicationStatus.CLOSED;
 	}
 
+	public void changeNextPaymentDate(LocalDateTime date) {
+		this.nextPaymentDate = date;
+	}
+
+	public void changeStartedAt(LocalDateTime date) {
+		this.startedAt = date;
+	}
+
+	public void changeDueDate(LocalDateTime date) {
+		this.dueDate = date;
+	}
+
 	// 이자 납부액 계산
 	public Integer calculateNextInterestAmount() {
 		int overdueInterest = interestAmount * overdueCount;

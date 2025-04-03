@@ -29,6 +29,12 @@ public class AuthInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
+		String uri = request.getRequestURI();
+
+		if (isExcluded(uri)) {
+			return true;
+		}
+
 		String token = request.getHeader("Authorization");
 		if (token == null || !token.startsWith("Bearer ")) {
 			throw new BusinessException(INVALID_AUTH_HEADER);
@@ -40,9 +46,25 @@ public class AuthInterceptor implements HandlerInterceptor {
 		Member member = memberRepository.findById(userId)
 			.orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
 
-		// TODO: 회원 상태 체크 추가 (탈퇴여부)
+		if (member.getActivationStatus() != 1) {
+			throw new BusinessException(MEMBER_ALREADY_DELETED);
+		}
 
 		UserContext.set(member);
 		return true;
+	}
+
+	private boolean isExcluded(String uri) {
+		return uri.startsWith("/api/v1/lufin/auth/login")
+			|| uri.startsWith("/api/v1/lufin/register")
+			|| uri.startsWith("/api/test-login")
+			|| uri.startsWith("/ws")
+			|| uri.startsWith("/app");
+	}
+
+	@Override
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
+		Exception ex) {
+		UserContext.clear();
 	}
 }

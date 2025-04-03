@@ -4,7 +4,6 @@ import static com.lufin.server.common.constants.ErrorCode.*;
 import static com.lufin.server.common.utils.ValidationUtils.*;
 
 import java.io.IOException;
-import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
@@ -31,9 +30,6 @@ public class JwtFilter implements Filter {
 
 	private final TokenUtils tokenUtils;
 
-	// 필터를 적용하지 않을 경로들 (로그인, 회원가입 등)
-	private final Set<String> excludedPaths = Set.of("/auth/login", "/register");
-
 	public JwtFilter(TokenUtils tokenUtils) {
 		this.tokenUtils = tokenUtils;
 	}
@@ -47,7 +43,7 @@ public class JwtFilter implements Filter {
 		String requestUri = httpRequest.getRequestURI();
 
 		// 필터 예외 경로는 바로 통과
-		if (excludedPaths.contains(requestUri)) {
+		if (isExcluded(requestUri)) {
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -81,5 +77,19 @@ public class JwtFilter implements Filter {
 		if (!TokenType.ACCESS.equals(tokenType) && !TokenType.REFRESH.equals(tokenType)) {
 			throw new BusinessException(INVALID_TOKEN_TYPE);
 		}
+
+		String classId = claims.get(TokenClaimName.CLASS_ID, String.class);
+		if (classId != null) {
+			validateIntegerId(classId);
+			request.setAttribute("classId", Integer.parseInt(classId));
+		}
+	}
+
+	private boolean isExcluded(String uri) {
+		return uri.startsWith("/api/v1/lufin/auth/login")
+			|| uri.startsWith("/api/v1/lufin/register")
+			|| uri.startsWith("/api/test-login")
+			|| uri.startsWith("/ws")
+			|| uri.startsWith("/app");
 	}
 }

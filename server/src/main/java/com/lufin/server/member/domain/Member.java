@@ -1,7 +1,14 @@
 package com.lufin.server.member.domain;
 
-import java.time.LocalDateTime;
+import static com.lufin.server.member.util.MemberValidator.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.lufin.server.mission.domain.MissionParticipation;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -10,19 +17,23 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "member")
+@Table(name = "members")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
+
+	/* 양방향 연관관계 */
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<MissionParticipation> missionParticipations = new ArrayList<>();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,13 +44,13 @@ public class Member {
 	@Column(name = "member_role", nullable = false)
 	private MemberRole memberRole;
 
-	@Column(name = "email", nullable = false, unique = true, length = 255)
+	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 
 	@Column(name = "profile_image")
 	private String profileImage;
 
-	@Column(name = "name", nullable = false, length = 50)
+	@Column(name = "name", nullable = false, length = 10)
 	private String name;
 
 	@Column(name = "certification_number")
@@ -48,8 +59,8 @@ public class Member {
 	@Embedded
 	private MemberAuth auth;
 
-	@Embedded
-	private MemberStatus status;
+	@Column(name = "activation_status", nullable = false)
+	private byte activationStatus;
 
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
@@ -67,18 +78,19 @@ public class Member {
 
 	private static Member create(String email, String name, String password, String secondaryPassword,
 		MemberRole role) {
+		isValidEmail(email);
 		Member member = new Member();
 		member.email = email;
 		member.name = name;
 		member.memberRole = role;
 		member.auth = new MemberAuth(password, secondaryPassword);
-		member.status = new MemberStatus();
 		return member;
 	}
 
 	@PrePersist
-	private void setCreatedAt() {
+	private void setCreatedAtAndActivationStatus() {
 		this.createdAt = LocalDateTime.now();
+		this.activationStatus = 1;
 	}
 
 	@PreUpdate
@@ -86,11 +98,12 @@ public class Member {
 		this.updatedAt = LocalDateTime.now();
 	}
 
-	public void updateStatus(Byte status, String description) {
-		this.status.updateStatus(status, description);
-	}
-
 	public void updateLastLogin() {
 		this.auth.updateLastLogin();
+	}
+
+	// 회원 탈퇴 시 호출
+	public void updateActivationStatus() {
+		this.activationStatus = 0;
 	}
 }

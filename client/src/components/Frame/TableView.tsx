@@ -25,7 +25,7 @@ const TableView = ({ columns, rows, onRowClick }: TableViewProps) => {
               <th
                 key={column.key}
                 className={`
-              px-4 py-3 text-p1 font-semibold border-b border-new-grey text-center
+              px-4 py-5 text-p1 font-medium border-b border-new-grey text-center
               ${idx === 0 ? 'rounded-tl-xl' : ''}
               ${idx === columns.length - 1 ? 'rounded-tr-xl' : ''}
             `}
@@ -45,7 +45,7 @@ const TableView = ({ columns, rows, onRowClick }: TableViewProps) => {
               {columns.map((column) => (
                 <td
                   key={column.key}
-                  className='px-4 py-2 text-p1 font-regular border-b border-new-grey'
+                  className='px-4 py-5 text-p1 font-regular text-black border-b border-new-grey'
                 >
                   <div className='flex justify-center items-center'>{row[column.key]}</div>
                 </td>

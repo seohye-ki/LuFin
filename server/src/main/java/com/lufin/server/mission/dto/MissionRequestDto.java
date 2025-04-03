@@ -23,7 +23,7 @@ public class MissionRequestDto {
 
 		@NotNull(message = "난이도는 필수 입력값입니다.")
 		@Min(value = 1, message = "난이도는 1 이상이어야 합니다.")
-		@Max(value = 5, message = "난이도는 5 이하여야 합니다.")
+		@Max(value = 3, message = "난이도는 3 이하여야 합니다.")
 		Integer difficulty,
 
 		@NotNull(message = "최대 참가자 수는 필수 입력값입니다.")

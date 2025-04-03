@@ -70,13 +70,15 @@ public class MissionServiceImpl implements MissionService {
 			MissionResponseDto.MissionDetailResponseDto result;
 
 			// 선생님이면 participations가 있고, 학생이면 없음
-			if (role != MemberRole.TEACHER) {
+			if (role == MemberRole.TEACHER) {
 				result = missionRepository.getMissionByIdForTeacher(classId,
 					missionId);
 
-			} else if (role != MemberRole.STUDENT) {
+				log.info("미션 조회 완료: result = {}", result);
+			} else if (role == MemberRole.STUDENT) {
 				result = missionRepository.getMissionByIdForStudent(classId,
 					missionId);
+				log.info("미션 조회 완료: result = {}", result);
 			} else {
 				throw new BusinessException(INVALID_ROLE_SELECTION);
 			}
@@ -146,6 +148,8 @@ public class MissionServiceImpl implements MissionService {
 		}
 	}
 
+	@Transactional
+	@TeacherOnly
 	@Override
 	public void deleteMission(Integer classId, Integer missionId, Enum<MemberRole> role) {
 		log.info("미션 삭제 요청: classId: {}, missionId: {}, role: {}", classId, missionId, role);
@@ -157,11 +161,6 @@ public class MissionServiceImpl implements MissionService {
 		}
 
 		try {
-			// 선생님이 아니면 삭제 불가
-			if (role != MemberRole.TEACHER) {
-				throw new BusinessException(FORBIDDEN_REQUEST);
-			}
-
 			// 해당 클래스의 담당교사가 아닌 경우 삭제 불가
 			if (!Objects.equals(missionUtilRepository.getClassIdByMissionId(missionId), classId)) {
 				throw new BusinessException(FORBIDDEN_REQUEST);

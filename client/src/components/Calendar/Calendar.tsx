@@ -4,8 +4,8 @@ import { useState } from 'react';
 import moment from 'moment';
 import styles from './Calendar.module.css';
 import { Icon } from '../Icon/Icon';
-import { useMissionsByDate } from '../../hooks/Calendar/useMissionsByDate';
-import { useCalendarNavigation } from '../../hooks/Calendar/useCalendarNavigation';
+import { useMissionsByDate } from '../../hooks/calendar/useMissionsByDate';
+import { useCalendarNavigation } from '../../hooks/calendar/useCalendarNavigation';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];

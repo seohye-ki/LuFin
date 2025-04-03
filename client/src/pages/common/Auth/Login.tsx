@@ -1,16 +1,66 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/Button/Button';
 import TextField from '../../../components/Form/TextField';
 import logo from '../../../assets/svgs/logo.svg';
 import lufinCoin from '../../../assets/svgs/lufin-coin-200.svg';
+import useAuthStore from '../../../libs/store/authStore';
+import { paths } from '../../../routes/paths';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const navigate = useNavigate();
+  
+  // Zustand 스토어에서 필요한 상태와 액션 가져오기
+  const { login, isLoading, error } = useAuthStore();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // 이메일 유효성 검사
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValid = emailRegex.test(email);
+    setEmailError(isValid ? '' : '유효한 이메일 주소를 입력해주세요');
+    return isValid;
+  };
+
+  // 비밀번호 유효성 검사
+  const validatePassword = (password: string): boolean => {
+    const isValid = password.length >= 1;
+    setPasswordError(isValid ? '' : '비밀번호를 입력해주세요');
+    return isValid;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
+    
+    // 유효성 검사
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+    
+    if (!isEmailValid || !isPasswordValid) {
+      return;
+    }
+    
+    console.log('로그인 시도:', { email, password });
+    
+    const result = await login({ email, password });
+    
+    console.log('로그인 결과:', result);
+    
+    if (result.success) {
+      console.log('로그인 성공, 역할:', result.role);
+      // 역할에 따라 다른 페이지로 이동
+      if (result.role === 'TEACHER') {
+        navigate(paths.TEACHER_CLASSROOM);
+      } else {
+        // 기본적으로 학생(STUDENT) 대시보드로 이동
+        navigate(paths.STUDENT_DASHBOARD);
+      }
+    } else {
+      console.log('로그인 실패:', result.message);
+    }
   };
 
   return (
@@ -64,11 +114,16 @@ export default function Login() {
                     name='email'
                     type='email'
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (emailError) validateEmail(e.target.value);
+                    }}
                     required
                     autoComplete='email'
                     placeholder='이메일을 입력해주세요'
                     inputSize='lg'
+                    variant={emailError ? 'error' : 'normal'}
+                    description={emailError}
                   />
 
                   <TextField
@@ -77,16 +132,31 @@ export default function Login() {
                     name='password'
                     type='password'
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (passwordError) validatePassword(e.target.value);
+                    }}
                     required
                     autoComplete='current-password'
                     placeholder='비밀번호를 입력해주세요'
                     inputSize='lg'
+                    variant={passwordError ? 'error' : 'normal'}
+                    description={passwordError}
                   />
 
+                  {error && (
+                    <div className='text-error text-p2 mt-2'>{error}</div>
+                  )}
+
                   <div className='space-y-3 pt-3'>
-                    <Button type='submit' color='primary' size='lg' full>
-                      로그인
+                    <Button 
+                      type='submit' 
+                      color='primary' 
+                      size='lg' 
+                      full
+                      disabled={isLoading}
+                    >
+                      {isLoading ? '로그인 중...' : '로그인'}
                     </Button>
 
                     <Button
@@ -95,7 +165,7 @@ export default function Login() {
                       variant='solid'
                       size='lg'
                       full
-                      onClick={() => (window.location.href = '/register')}
+                      onClick={() => navigate('/register')}
                     >
                       회원가입
                     </Button>

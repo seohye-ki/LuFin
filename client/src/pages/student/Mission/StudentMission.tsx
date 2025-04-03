@@ -56,7 +56,7 @@ const StudentMission = () => {
             className='fixed inset-0 bg-black z-10'
             style={{ opacity: 0.5 }}
             onClick={() => setIsModalOpen(false)}
-          ></div>
+          />
           <div className='fixed inset-0 flex items-center justify-center z-50'>
             <MyMissionModal
               onClose={() => setIsModalOpen(false)}

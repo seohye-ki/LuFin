@@ -19,7 +19,7 @@ const Sidebar = ({ userRole, className = '친구들의 금융 모임' }: Sidebar
             <p className='text-c1 font-medium'>{className}</p>
             <hr className='w-full border-t border-new-grey' />
             <p className='text-c1 font-regular text-dark-grey'>메뉴</p>
-            <SidebarMenu />
+            <SidebarMenu userRole={userRole} />
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.account.domain.Account;
+import com.lufin.server.account.domain.AccountType;
 import com.lufin.server.account.repository.AccountRepository;
 import com.lufin.server.account.service.AccountService;
 import com.lufin.server.account.util.AccountNumberGenerator;
@@ -28,6 +29,7 @@ public class AccountServiceImpl implements AccountService {
 	@Transactional
 	@Override
 	public Account createAccountForMember(int memberId) {
+		log.info("[계좌 생성] member {}", memberId);
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> {
 				log.warn("🏦[회원 정보 없음] memberId: {}", memberId);
@@ -43,16 +45,31 @@ public class AccountServiceImpl implements AccountService {
 	@Transactional
 	@Override
 	public Account createAccountForClassroom(Classroom classroom) {
+		log.info("[클래스 계좌 생성] member {}", classroom.getId());
 		String accountNumber = generateUniqueAccountNumber();
 		Account account = Account.createClassAccount(accountNumber, classroom);
 		return accountRepository.save(account);
 	}
 
 	private String generateUniqueAccountNumber() {
+		log.debug("[계좌번호 생성]");
 		String newAccountNumber;
 		do {
 			newAccountNumber = AccountNumberGenerator.generateAccountNumber();
 		} while (accountRepository.existsByAccountNumber(newAccountNumber));
 		return newAccountNumber;
+	}
+
+	@Override
+	public int getCashBalance(int memberId) {
+		log.info("[현금 자산 확인] member {}", memberId);
+		return accountRepository.findByMemberIdAndType(memberId, AccountType.DEPOSIT)
+			.map(Account::getBalance)
+			.orElse(0);
+	}
+
+	@Override
+	public int getTotalAsset(int memberId) {
+		return getCashBalance(memberId);
 	}
 }

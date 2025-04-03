@@ -2,7 +2,6 @@ package com.lufin.server.loan.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -72,7 +71,8 @@ public class LoanServiceImpl implements LoanService {
 	@Transactional
 	public LoanApplicationDetailDto createLoanApplication(LoanApplicationRequestDto request, Member member,
 		Integer classId) {
-		log.info("📝[대출 신청 요청] - memberId: {}, classId: {}, amount: {}", member.getId(), classId, request.requestedAmount());
+		log.info("📝[대출 신청 요청] - memberId: {}, classId: {}, amount: {}", member.getId(), classId,
+			request.requestedAmount());
 		Classroom classroom = classroomRepository.findById(classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
 
@@ -99,12 +99,14 @@ public class LoanServiceImpl implements LoanService {
 		}
 
 		if (!loanProduct.getCreditRank().equals(rank)) {
-			log.warn("🚫[대출 상품 등급 불일치] - memberId: {}, productRank: {}, memberRank: {}", member.getId(), loanProduct.getCreditRank(), rank);
+			log.warn("🚫[대출 상품 등급 불일치] - memberId: {}, productRank: {}, memberRank: {}", member.getId(),
+				loanProduct.getCreditRank(), rank);
 			throw new BusinessException(ErrorCode.INSUFFICIENT_CREDIT_SCORE);
 		}
 
 		if (request.requestedAmount() > loanProduct.getMaxAmount()) {
-			log.warn("🚫[대출 한도 초과] - memberId: {}, requested: {}, max: {}", member.getId(), request.requestedAmount(), loanProduct.getMaxAmount());
+			log.warn("🚫[대출 한도 초과] - memberId: {}, requested: {}, max: {}", member.getId(), request.requestedAmount(),
+				loanProduct.getMaxAmount());
 			throw new BusinessException(ErrorCode.LOAN_AMOUNT_EXCEEDS_MAX);
 		}
 
@@ -143,7 +145,8 @@ public class LoanServiceImpl implements LoanService {
 	@Override
 	public LoanApplicationDetailDto getLoanApplicationDetail(Integer loanApplicationId, Member member,
 		Integer classId) {
-		log.info("🔍[대출 신청 상세 조회] - loanApplicationId: {}, memberId: {}, classId: {}", loanApplicationId, member.getId(), classId);
+		log.info("🔍[대출 신청 상세 조회] - loanApplicationId: {}, memberId: {}, classId: {}", loanApplicationId, member.getId(),
+			classId);
 		LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.LOAN_APPLICATION_NOT_FOUND));
 		classroomRepository.findById(classId)
@@ -156,11 +159,13 @@ public class LoanServiceImpl implements LoanService {
 			}
 		} else {
 			if (!application.getMember().getId().equals(member.getId())) {
-				log.warn("🚫[대출 신청 조회 오류 - 학생] - 대출 신청자가 아님. applicationMemberId: {}, requestMemberId: {}", application.getMember().getId(), member.getId());
+				log.warn("🚫[대출 신청 조회 오류 - 학생] - 대출 신청자가 아님. applicationMemberId: {}, requestMemberId: {}",
+					application.getMember().getId(), member.getId());
 				throw new BusinessException(ErrorCode.FORBIDDEN_REQUEST);
 			}
 			if (!application.getClassroom().getId().equals(classId)) {
-				log.warn("🚫[대출 신청 조회 오류 - 학생] - 요청 반과 일치하지 않음. applicationClassId: {}, requestClassId: {}", application.getClassroom().getId(), classId);
+				log.warn("🚫[대출 신청 조회 오류 - 학생] - 요청 반과 일치하지 않음. applicationClassId: {}, requestClassId: {}",
+					application.getClassroom().getId(), classId);
 				throw new BusinessException(ErrorCode.FORBIDDEN_REQUEST);
 			}
 		}
@@ -171,13 +176,15 @@ public class LoanServiceImpl implements LoanService {
 	@Override
 	public LoanApplicationDetailDto approveOrRejectLoanApplication(LoanApplicationApprovalDto requestDto,
 		Integer loanApplicationId, Member member, Integer classId) {
-		log.info("📝[대출 신청 승인/거절] - loanApplicationId: {}, memberId: {}, classId: {}", loanApplicationId, member.getId(), classId);
+		log.info("📝[대출 신청 승인/거절] - loanApplicationId: {}, memberId: {}, classId: {}", loanApplicationId, member.getId(),
+			classId);
 		LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.LOAN_APPLICATION_NOT_FOUND));
 		classroomRepository.findById(classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
 		if (!application.getClassroom().getId().equals(classId)) {
-			log.warn("🚫[대출 신청 승인 거절 오류] - 요청 반과 일치하지 않음. applicationClassId: {}, requestClassId: {}", application.getClassroom().getId(), classId);
+			log.warn("🚫[대출 신청 승인 거절 오류] - 요청 반과 일치하지 않음. applicationClassId: {}, requestClassId: {}",
+				application.getClassroom().getId(), classId);
 			throw new BusinessException(ErrorCode.FORBIDDEN_REQUEST);
 		}
 
@@ -193,5 +200,13 @@ public class LoanServiceImpl implements LoanService {
 
 		loanApplicationRepository.save(application);
 		return LoanApplicationDetailDto.from(application);
+	}
+
+	@Override
+	public int getLoanPrincipal(int memberId, int classroomId) {
+		log.info("[대출 원금 조회] memberId: {}, classroomId: {}", memberId, classroomId);
+		return loanApplicationRepository.findMyLoanApplication(memberId, classroomId)
+			.map(LoanApplication::getRequiredAmount)
+			.orElse(0);
 	}
 }

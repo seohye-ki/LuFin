@@ -95,7 +95,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
   if (isApproveMode) {
     useAlertStore.getState().showAlert(
       '미션을 승인하시겠습니까?',
-      <div className='flex flex-col gap-2'>
+      <div className='flex flex-col justify-center items-center gap-2'>
         <Profile
           name={members.find((m) => m.memberId === selectedParticipation)?.name || '알 수 없음'}
           profileImage={

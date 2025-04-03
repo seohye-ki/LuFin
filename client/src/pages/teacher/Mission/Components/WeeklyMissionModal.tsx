@@ -21,7 +21,7 @@ export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMission
   const dayMissions = missionDetails.filter((mission) => mission.missionDate === dateKey);
 
   return (
-    <div className='w-full h-[calc(100vh-32px)] rounded-lg p-4 bg-white'>
+    <div className='w-full max-h-full overflow-y-auto rounded-lg p-4 bg-white'>
       <div className='flex justify-center mb-4 items-center'>
         <button
           className='flex justify-center items-center gap-2 hover:bg-light-cyan-30 rounded-full p-2'

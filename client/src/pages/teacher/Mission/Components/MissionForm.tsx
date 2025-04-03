@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import TextField from '../../../../components/Form/TextField';
 import Dropdown from '../../../../components/Form/Dropdown';
 import TextArea from '../../../../components/Form/TextArea';
@@ -21,8 +21,6 @@ const MissionForm = ({ defaultValues = {}, onClose, mode }: MissionFormProps) =>
       ? { type: 'star', count: defaultValues.difficulty as 1 | 2 | 3 }
       : null,
   );
-  const [textAreaStatus, setTextAreaStatus] = useState<'normal' | 'success' | 'error'>('normal');
-  const [textAreaMessage, setTextAreaMessage] = useState('');
   const [maxParticipant, setMaxParticipant] = useState(defaultValues?.maxParticipant || '');
   const [wage, setWage] = useState(defaultValues?.wage || '');
   const [content, setContent] = useState(defaultValues?.content || '');
@@ -39,6 +37,40 @@ const MissionForm = ({ defaultValues = {}, onClose, mode }: MissionFormProps) =>
     { label: '2', value: '2' },
     { label: '3', value: '3' },
   ];
+
+  const isValidTitle = title.length >= 2 && title.length <= 30;
+  const isValidDifficulty = difficulty !== null;
+  const isValidMaxParticipant = maxParticipant !== '';
+  const parsedWage = Number(wage);
+  const isValidWage = !isNaN(parsedWage) && parsedWage >= 100 && parsedWage <= 10000000;
+  const isValidContent = content.length <= 500;
+
+  const titleRef = useRef<HTMLInputElement>(null);
+  const wageRef = useRef<HTMLInputElement>(null);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleSubmit = () => {
+    if (!isValidTitle) {
+      titleRef.current?.focus();
+      return;
+    }
+    if (!isValidDifficulty) {
+      document.getElementById('difficulty')?.focus();
+      return;
+    }
+    if (!isValidMaxParticipant) {
+      document.getElementById('maxParticipant')?.focus();
+      return;
+    }
+    if (!isValidWage) {
+      wageRef.current?.focus();
+      return;
+    }
+    if (!isValidContent) {
+      contentRef.current?.focus();
+      return;
+    }
+  };
 
   return (
     <Card
@@ -58,6 +90,9 @@ const MissionForm = ({ defaultValues = {}, onClose, mode }: MissionFormProps) =>
           label='제목'
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          variant={!isValidTitle && title ? 'error' : 'normal'}
+          description={!isValidTitle && title ? '제목은 2자 이상, 30자 이하로 입력해주세요.' : ''}
+          ref={titleRef}
         />
         <Dropdown
           label='난이도'
@@ -77,6 +112,11 @@ const MissionForm = ({ defaultValues = {}, onClose, mode }: MissionFormProps) =>
           label='보상'
           value={wage}
           onChange={(e) => setWage(e.target.value)}
+          variant={!isValidWage && wage ? 'error' : 'normal'}
+          description={
+            !isValidWage && wage ? '100루핀 이상, 10000000루핀 이하로 입력해주세요.' : ''
+          }
+          ref={wageRef}
         />
         <TextArea
           id='content'
@@ -85,22 +125,14 @@ const MissionForm = ({ defaultValues = {}, onClose, mode }: MissionFormProps) =>
           placeholder='최대 500자까지 입력가능합니다.'
           rows={4}
           value={content}
-          onChange={(e) => {
-            const value = e.target.value;
-            setContent(value);
-            if (value.length <= 500) {
-              setTextAreaStatus('success');
-            } else {
-              setTextAreaStatus('error');
-              setTextAreaMessage('최대 500자까지 입력가능합니다.');
-            }
-          }}
-          variant={textAreaStatus}
-          description={textAreaMessage}
+          onChange={(e) => setContent(e.target.value)}
+          variant={!isValidContent && content ? 'error' : 'normal'}
+          description={!isValidContent && content ? '최대 500자까지 입력가능합니다.' : ''}
+          ref={contentRef}
         />
         <ImageUpload
           id='images'
-          label='미션 인증 이미지'
+          label='미션 참고 이미지'
           value={multipleImages}
           onChange={(value) => setMultipleImages(value as File[])}
         />
@@ -108,7 +140,7 @@ const MissionForm = ({ defaultValues = {}, onClose, mode }: MissionFormProps) =>
           <Button variant='solid' color='neutral' size='md' full onClick={onClose}>
             취소
           </Button>
-          <Button variant='solid' color='primary' size='md' full>
+          <Button variant='solid' color='primary' size='md' full onClick={handleSubmit}>
             생성하기
           </Button>
         </div>

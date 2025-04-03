@@ -1,4 +1,4 @@
-package com.lufin.server.classroom.dto;
+package com.lufin.server.auth.dto;
 
 public record TokenResponse(String accessToken,
 							String refreshToken,

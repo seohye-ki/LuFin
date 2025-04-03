@@ -36,7 +36,7 @@ export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMission
             key={day.format('YYYY-MM-DD')}
             onClick={() => onDateChange(day.toDate())}
             className={`text-center p-2 ${
-              day.format('YYYY-MM-DD') === dateKey ? 'bg-light-cyan rounded-full font-bold' : ''
+              day.format('YYYY-MM-DD') === dateKey ? 'bg-light-cyan rounded-lg font-bold' : ''
             }`}
           >
             <div

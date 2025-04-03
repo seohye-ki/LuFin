@@ -51,15 +51,22 @@ const StudentMission = () => {
         </Card>
       </div>
       {isModalOpen && selectedMission && (
-        <div className='fixed inset-0 flex items-center justify-center z-50'>
-          <MyMissionModal
-            onClose={() => setIsModalOpen(false)}
-            mission={selectedMission}
-            participation={missionParticipations.find(
-              (p) => p.missionId === selectedMission.missionId,
-            )}
-          />
-        </div>
+        <>
+          <div
+            className='fixed inset-0 bg-black z-10'
+            style={{ opacity: 0.5 }}
+            onClick={() => setIsModalOpen(false)}
+          ></div>
+          <div className='fixed inset-0 flex items-center justify-center z-50'>
+            <MyMissionModal
+              onClose={() => setIsModalOpen(false)}
+              mission={selectedMission}
+              participation={missionParticipations.find(
+                (p) => p.missionId === selectedMission.missionId,
+              )}
+            />
+          </div>
+        </>
       )}
     </SidebarLayout>
   );

@@ -22,7 +22,7 @@ const sizeMap = {
 };
 
 const fontSizeMap = {
-  s: 'text-p1 font-semibold',
+  s: 'text-p1',
   m: 'text-h3 font-semibold',
   l: 'text-h2 font-semibold',
 };

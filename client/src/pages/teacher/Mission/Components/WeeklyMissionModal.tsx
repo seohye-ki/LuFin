@@ -1,4 +1,4 @@
-import { missionDetails } from '../../../../types/Mission/mission';
+import { missionDetails } from '../../../../types/mission/mission';
 import moment from 'moment';
 import { Icon } from '../../../../components/Icon/Icon';
 import MissionTable from './MissionTable';
@@ -21,7 +21,7 @@ export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMission
   const dayMissions = missionDetails.filter((mission) => mission.missionDate === dateKey);
 
   return (
-    <div className='w-full h-[calc(100vh-32px)] rounded-lg p-4 bg-white'>
+    <div className='w-full max-h-full overflow-y-auto rounded-lg p-4 bg-white'>
       <div className='flex justify-center mb-4 items-center'>
         <button
           className='flex justify-center items-center gap-2 hover:bg-light-cyan-30 rounded-full p-2'
@@ -36,7 +36,7 @@ export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMission
             key={day.format('YYYY-MM-DD')}
             onClick={() => onDateChange(day.toDate())}
             className={`text-center p-2 ${
-              day.format('YYYY-MM-DD') === dateKey ? 'bg-light-cyan rounded-full font-bold' : ''
+              day.format('YYYY-MM-DD') === dateKey ? 'bg-light-cyan rounded-lg font-bold' : ''
             }`}
           >
             <div

@@ -19,7 +19,7 @@ export type ItemPreview = Pick<
   'itemId' | 'name' | 'price' | 'quantitySold' | 'quantityAvailable' | 'expirationDate' | 'status'
 >;
 
-export type StudentPreview = Pick<Member, 'name' | 'member_id' | 'profile_image'>;
+export type StudentPreview = Pick<Member, 'name' | 'memberId' | 'profileImage'>;
 
 export type ItemDetail = ItemPreview & {
   buy: StudentPreview[];
@@ -106,34 +106,34 @@ export const initialItemDetails: ItemDetail[] = [
     buy: [
       {
         name: '김민수',
-        member_id: 1,
-        profile_image: 'https://picsum.photos/200/300?random=3',
+        memberId: 1,
+        profileImage: 'https://picsum.photos/200/300?random=3',
       },
       {
         name: '이영희',
-        member_id: 2,
-        profile_image: 'https://picsum.photos/200/300?random=3',
+        memberId: 2,
+        profileImage: 'https://picsum.photos/200/300?random=3',
       },
     ],
     request: [
       {
         name: '박지훈',
-        member_id: 3,
-        profile_image: 'https://picsum.photos/200/300?random=3',
+        memberId: 3,
+        profileImage: 'https://picsum.photos/200/300?random=3',
       },
     ],
     used: [
       {
         name: '정수빈',
-        member_id: 4,
-        profile_image: 'https://picsum.photos/200/300?random=3',
+        memberId: 4,
+        profileImage: 'https://picsum.photos/200/300?random=3',
       },
     ],
     expired: [
       {
         name: '최민호',
-        member_id: 5,
-        profile_image: 'https://picsum.photos/200/300?random=3',
+        memberId: 5,
+        profileImage: 'https://picsum.photos/200/300?random=3',
       },
     ],
   },
@@ -145,18 +145,14 @@ export const initialItemDetails: ItemDetail[] = [
     quantityAvailable: 45,
     status: true,
     expirationDate: dateUtil('2025-06-15T10:00:00'),
-    buy: [
-      { name: '김지연', member_id: 6, profile_image: 'https://picsum.photos/200/300?random=3' },
-    ],
+    buy: [{ name: '김지연', memberId: 6, profileImage: 'https://picsum.photos/200/300?random=3' }],
     request: [
-      { name: '유준석', member_id: 7, profile_image: 'https://picsum.photos/200/300?random=3' },
-      { name: '조수연', member_id: 8, profile_image: 'https://picsum.photos/200/300?random=3' },
+      { name: '유준석', memberId: 7, profileImage: 'https://picsum.photos/200/300?random=3' },
+      { name: '조수연', memberId: 8, profileImage: 'https://picsum.photos/200/300?random=3' },
     ],
-    used: [
-      { name: '이서준', member_id: 9, profile_image: 'https://picsum.photos/200/300?random=3' },
-    ],
+    used: [{ name: '이서준', memberId: 9, profileImage: 'https://picsum.photos/200/300?random=3' }],
     expired: [
-      { name: '한상훈', member_id: 10, profile_image: 'https://picsum.photos/200/300?random=3' },
+      { name: '한상훈', memberId: 10, profileImage: 'https://picsum.photos/200/300?random=3' },
     ],
   },
   {
@@ -169,7 +165,7 @@ export const initialItemDetails: ItemDetail[] = [
     expirationDate: dateUtil('2025-07-20T10:00:00'),
     buy: [],
     request: [
-      { name: '김하늘', member_id: 11, profile_image: 'https://picsum.photos/200/300?random=3' },
+      { name: '김하늘', memberId: 11, profileImage: 'https://picsum.photos/200/300?random=3' },
     ],
     used: [],
     expired: [],
@@ -182,10 +178,10 @@ export const initialItemDetails: ItemDetail[] = [
     quantityAvailable: 27,
     status: false,
     expirationDate: dateUtil('2025-04-01T10:00:00'),
-    buy: [{ name: '이찬영', member_id: 12, profile_image: 'path/to/image12.jpg' }],
+    buy: [{ name: '이찬영', memberId: 12, profileImage: 'path/to/image12.jpg' }],
     request: [],
     used: [],
-    expired: [{ name: '박주형', member_id: 13, profile_image: 'path/to/image13.jpg' }],
+    expired: [{ name: '박주형', memberId: 13, profileImage: 'path/to/image13.jpg' }],
   },
   {
     itemId: 5,
@@ -195,9 +191,9 @@ export const initialItemDetails: ItemDetail[] = [
     quantityAvailable: 32,
     status: true,
     expirationDate: dateUtil('2025-08-10T10:00:00'),
-    buy: [{ name: '이정훈', member_id: 14, profile_image: 'path/to/image14.jpg' }],
+    buy: [{ name: '이정훈', memberId: 14, profileImage: 'path/to/image14.jpg' }],
     request: [],
-    used: [{ name: '박진수', member_id: 15, profile_image: 'path/to/image15.jpg' }],
+    used: [{ name: '박진수', memberId: 15, profileImage: 'path/to/image15.jpg' }],
     expired: [],
   },
   {
@@ -211,7 +207,7 @@ export const initialItemDetails: ItemDetail[] = [
     buy: [],
     request: [],
     used: [],
-    expired: [{ name: '조현정', member_id: 16, profile_image: 'path/to/image16.jpg' }],
+    expired: [{ name: '조현정', memberId: 16, profileImage: 'path/to/image16.jpg' }],
   },
   {
     itemId: 7,
@@ -222,11 +218,11 @@ export const initialItemDetails: ItemDetail[] = [
     status: true,
     expirationDate: dateUtil('2025-09-01T10:00:00'),
     buy: [
-      { name: '김재훈', member_id: 17, profile_image: 'path/to/image17.jpg' },
-      { name: '황수민', member_id: 18, profile_image: 'path/to/image18.jpg' },
+      { name: '김재훈', memberId: 17, profileImage: 'path/to/image17.jpg' },
+      { name: '황수민', memberId: 18, profileImage: 'path/to/image18.jpg' },
     ],
-    request: [{ name: '손경호', member_id: 19, profile_image: 'path/to/image19.jpg' }],
-    used: [{ name: '강지수', member_id: 20, profile_image: 'path/to/image20.jpg' }],
+    request: [{ name: '손경호', memberId: 19, profileImage: 'path/to/image19.jpg' }],
+    used: [{ name: '강지수', memberId: 20, profileImage: 'path/to/image20.jpg' }],
     expired: [],
   },
 ];

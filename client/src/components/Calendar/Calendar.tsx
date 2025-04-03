@@ -4,8 +4,9 @@ import { useState } from 'react';
 import moment from 'moment';
 import styles from './Calendar.module.css';
 import { Icon } from '../Icon/Icon';
-import { useMissionsByDate } from '../../hooks/Calendar/useMissionsByDate';
-import { useCalendarNavigation } from '../../hooks/Calendar/useCalendarNavigation';
+import { useMissionsByDate } from '../../hooks/calendar/useMissionsByDate';
+import { useCalendarNavigation } from '../../hooks/calendar/useCalendarNavigation';
+import { Mission } from '../../types/mission/mission';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -18,7 +19,7 @@ function CalendarView({ onDateSelect }: CalendarViewProps) {
   const [value, onChange] = useState<Value>(new Date());
   const [expandedDate, setExpandedDate] = useState<string | null>(null);
   const { getFormattedKey, getMissionsByDate } = useMissionsByDate();
-  const { goPrevMonth, goNextMonth } = useCalendarNavigation(value as Date, (date) =>
+  const { goPrevMonth, goNextMonth } = useCalendarNavigation(value as Date, (date: Date) =>
     onChange(date),
   );
 
@@ -65,7 +66,7 @@ function CalendarView({ onDateSelect }: CalendarViewProps) {
         showNavigation={false}
         formatDay={(_, date) => moment(date).format('D')}
         formatShortWeekday={(_, date) => ['일', '월', '화', '수', '목', '금', '토'][date.getDay()]}
-        tileContent={({ date }) => {
+        tileContent={({ date }: { date: Date }) => {
           const dateKey = getFormattedKey(date);
           const dayMissions = getMissionsByDate(dateKey);
           if (dayMissions.length > 0) {
@@ -75,7 +76,7 @@ function CalendarView({ onDateSelect }: CalendarViewProps) {
 
             return (
               <div className={styles.todoList}>
-                {displayItems.map((mission) => (
+                {displayItems.map((mission: Mission) => (
                   <div key={mission.missionId} className={styles.todoItem}>
                     {mission.title}
                   </div>

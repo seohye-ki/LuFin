@@ -123,9 +123,9 @@ const Dropdown = ({
                 ${
                   isDisabled
                     ? 'bg-broken-white text-grey cursor-not-allowed'
-                    : 'bg-white text-black hover:bg-broken-white'
+                    : 'bg-broken-white text-black hover:bg-broken-white'
                 }
-                border border-grey-30 transition-colors
+                border border-broken-white transition-colors
               `}
             >
               {selectedItem ? (

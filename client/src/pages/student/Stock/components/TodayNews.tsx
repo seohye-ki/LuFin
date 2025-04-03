@@ -1,5 +1,5 @@
 import Card from '../../../../components/Card/Card';
-import { stockNews } from '../../../../types/Stock/stock';
+import { stockNews } from '../../../../types/stock/stock';
 import moment from 'moment';
 
 const TodayNews = () => {
@@ -15,7 +15,7 @@ const TodayNews = () => {
       }
       className='flex flex-col basis-55/100 min-h-0'
     >
-      <div className='flex flex-col gap-2 flex-1 overflow-auto [&::-webkit-scrollbar]:hidden'>
+      <div className='flex flex-col gap-2 flex-1 overflow-auto'>
         {stockNews.map((news) => (
           <div
             key={news.stockNewsId}

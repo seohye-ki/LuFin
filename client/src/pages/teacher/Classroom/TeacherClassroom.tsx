@@ -88,7 +88,7 @@ const TeacherClassroom = () => {
   };
 
   return (
-    <SidebarLayout>
+    <SidebarLayout userRole='teacher'>
       <div className='h-full flex flex-col gap-6 overflow-y-auto'>
         <div className='flex justify-between items-center'>
           <h1 className='text-h2 font-semibold'>클래스룸</h1>

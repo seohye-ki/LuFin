@@ -100,9 +100,9 @@ const ProfileList: React.FC<{ students: StudentPreview[]; message: string }> = (
     <div className='flex flex-row gap-4'>
       {students.map((student) => (
         <Profile
-          key={student.member_id}
+          key={student.memberId}
           name={student.name}
-          profileImage={student.profile_image}
+          profileImage={student.profileImage}
           variant='column'
         />
       ))}

@@ -2,7 +2,8 @@ import logo from '../../assets/svgs/logo.svg';
 import Profile from '../Profile/Profile';
 import Lufin from '../Lufin/Lufin';
 import SidebarMenu from './SidebarMenu';
-
+import { paths } from '../../routes/paths';
+import { Link } from 'react-router-dom';
 interface SidebarProps {
   userRole: 'student' | 'teacher';
   className?: string;
@@ -15,11 +16,21 @@ const Sidebar = ({ userRole, className = '친구들의 금융 모임' }: Sidebar
         <div className='flex flex-col items-center gap-2'>
           <div className='flex flex-col gap-3'>
             <img src={logo} alt='루핀' className='h-[48px] py-2 justify-center' />
-            <p className='text-c1 font-regular text-dark-grey'>클래스</p>
-            <p className='text-c1 font-medium'>{className}</p>
+            {userRole === 'student' && (
+              <Link to={paths.STUDENT_CLASSROOM}>
+                <p className='text-c1 font-regular text-dark-grey'>클래스</p>
+                <p className='text-c1 font-medium'>{className}</p>
+              </Link>
+            )}
+            {userRole === 'teacher' && (
+              <Link to={paths.TEACHER_CLASSROOM}>
+                <p className='text-c1 font-regular text-dark-grey'>클래스</p>
+                <p className='text-c1 font-medium'>{className}</p>
+              </Link>
+            )}
             <hr className='w-full border-t border-new-grey' />
             <p className='text-c1 font-regular text-dark-grey'>메뉴</p>
-            <SidebarMenu />
+            <SidebarMenu userRole={userRole} />
           </div>
         </div>
       </div>

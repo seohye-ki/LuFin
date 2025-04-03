@@ -2,8 +2,7 @@ import { useState, useRef } from 'react';
 import CalendarView from '../../../components/Calendar/Calendar';
 import { WeeklyMissionModal } from './Components/WeeklyMissionModal';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
-// import { Icon } from '../../../components/Icon/Icon';
-
+import BottomPopup from './Components/BottomPopup';
 const TeacherMission = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const mainRef = useRef<HTMLDivElement>(null);
@@ -14,15 +13,13 @@ const TeacherMission = () => {
 
   return (
     <div className='relative'>
-      <SidebarLayout mainRef={mainRef}>
+      <SidebarLayout mainRef={mainRef} userRole='teacher'>
         {selectedDate ? (
-          <div>
+          <BottomPopup isOpen={true} onClose={() => setSelectedDate(null)}>
             <WeeklyMissionModal selectedDate={selectedDate} onDateChange={handleDateSelect} />
-          </div>
+          </BottomPopup>
         ) : (
-          <div>
-            <CalendarView onDateSelect={handleDateSelect} />
-          </div>
+          <CalendarView onDateSelect={handleDateSelect} />
         )}
       </SidebarLayout>
     </div>

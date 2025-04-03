@@ -1,4 +1,4 @@
-import { MissionDetail, MissionParticipation } from '../../../../types/Mission/mission';
+import { MissionDetail, MissionParticipation } from '../../../../types/mission/mission';
 import { createMissionRow } from '../../../../libs/utils/mission-util';
 
 export const useStudentMissions = (

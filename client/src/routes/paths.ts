@@ -7,9 +7,11 @@ export const paths = {
   TEACHER_SHOP: '/shop/teacher',
   TEACHER_MISSION: '/mission/teacher',
   STUDENT_MISSION: '/mission',
+  TEACHER_STOCK: '/stock/teacher',
   STUDENT_STOCK: '/stock',
   DESIGN_SYSTEM: '/design-system',
   TEACHER_CLASSROOM: '/classroom/teacher',
   STUDENT_CLASSROOM: '/classroom',
   STUDENT_LOAN: '/loan',
+  STUDENT_DASHBOARD: '/dashboard',
 } as const;

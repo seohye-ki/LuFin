@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MissionDetail } from '../../../../types/Mission/mission';
+import { MissionDetail } from '../../../../types/mission/mission';
 
 export const useWeeklyMissionModal = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);

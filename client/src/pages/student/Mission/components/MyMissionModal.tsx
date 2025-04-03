@@ -1,7 +1,7 @@
 import Card from '../../../../components/Card/Card';
 import Badge from '../../../../components/Badge/Badge';
 import Button from '../../../../components/Button/Button';
-import { MissionDetail, MissionParticipation } from '../../../../types/Mission/mission';
+import { MissionDetail, MissionParticipation } from '../../../../types/mission/mission';
 import { Icon } from '../../../../components/Icon/Icon';
 import Lufin from '../../../../components/Lufin/Lufin';
 import { useState } from 'react';
@@ -70,9 +70,9 @@ const MyMissionModal = ({ onClose, mission, participation }: MyMissionModalProps
           <span className='text-c1 text-grey'>설명</span>
           <span className='text-p1 font-semibold'>{mission.content}</span>
         </div>
-        <div className='flex flex-col gap-2'>
-          <span className='text-c1 text-grey'>사진</span>
-          {mission.missionImages.length > 0 && (
+        {mission.missionImages.length > 0 && (
+          <div className='flex flex-col gap-2'>
+            <span className='text-c1 text-grey'>사진</span>
             <div className='mt-2 relative'>
               <div className='grid grid-cols-2 gap-2'>
                 {getVisibleImages().map((image) => (
@@ -114,8 +114,8 @@ const MyMissionModal = ({ onClose, mission, participation }: MyMissionModalProps
                 </>
               )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
       <div className='flex gap-2 mt-2'>
         <Button variant='solid' color='neutral' size='md' full onClick={onClose}>

@@ -3,6 +3,13 @@
 ex. [S12P11A402-1] feat: Summarize changes in around 50 characters or less
 -->
 
+<!--
+🚨🚨🚨
+⚠️ [중요] develop 브랜치로 Merge 하고 계시진 않나요?
+👉 타겟 브랜치를 다시 한번 확인해주세요!
+🚨🚨🚨
+-->
+
 ## ➕ 연관된 이슈
 
 <!-- GitLab Issues나 Jira 등 관련된 이슈를 작성해주세요.-->

@@ -1,6 +1,11 @@
 package com.lufin.server.config;
 
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -34,5 +39,15 @@ public class WebConfig implements WebMvcConfigurer {
 			.allowCredentials(true) // 쿠키 인증 허용
 			.allowedHeaders("*") // 모든 헤더 허용
 			.maxAge(3600); // preflight 요청 캐싱 시간
+	}
+
+	// JSON 응답의 기본 문자셋을 UTF-8로 강제 설정
+	@Override
+	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+		for (HttpMessageConverter<?> converter : converters) {
+			if (converter instanceof MappingJackson2HttpMessageConverter jacksonConverter) {
+				jacksonConverter.setDefaultCharset(StandardCharsets.UTF_8);
+			}
+		}
 	}
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lufin.server.auth.dto.TokenResponse;
+import com.lufin.server.auth.service.LoginService;
 import com.lufin.server.auth.service.RefreshTokenService;
 import com.lufin.server.classroom.dto.ClassCodeRequest;
 import com.lufin.server.classroom.dto.LoginWithClassResponse;
@@ -22,7 +23,6 @@ import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.dto.LoginRequest;
 import com.lufin.server.member.dto.LoginResponse;
-import com.lufin.server.member.service.LoginService;
 import com.lufin.server.member.support.UserContext;
 
 import jakarta.validation.Valid;

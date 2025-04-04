@@ -57,7 +57,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 	private boolean isExcluded(String uri) {
 		return uri.startsWith("/api/v1/lufin/auth/login")
 			|| uri.startsWith("/api/v1/lufin/register")
-			|| uri.startsWith("/api/test-login")
+			|| uri.startsWith("/api/v1/lufin/refresh-token")
 			|| uri.startsWith("/ws")
 			|| uri.startsWith("/app");
 	}

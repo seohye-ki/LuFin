@@ -3,10 +3,10 @@ package com.lufin.server.classroom.factory;
 import org.springframework.stereotype.Component;
 
 import com.lufin.server.account.domain.Account;
+import com.lufin.server.auth.dto.TokenResponse;
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.dto.ClassResponse;
 import com.lufin.server.classroom.dto.LoginWithClassResponse;
-import com.lufin.server.classroom.dto.TokenResponse;
 import com.lufin.server.common.utils.TokenUtils;
 import com.lufin.server.member.domain.Member;
 

@@ -7,9 +7,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lufin.server.account.domain.Account;
+import com.lufin.server.account.repository.AccountRepository;
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.repository.ClassroomRepository;
 import com.lufin.server.common.constants.ErrorCode;
+import com.lufin.server.common.constants.HistoryStatus;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.credit.domain.CreditScore;
 import com.lufin.server.credit.repository.CreditScoreRepository;
@@ -25,6 +28,9 @@ import com.lufin.server.loan.repository.LoanApplicationRepository;
 import com.lufin.server.loan.repository.LoanProductRepository;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
+import com.lufin.server.transaction.domain.TransactionSourceType;
+import com.lufin.server.transaction.domain.TransactionType;
+import com.lufin.server.transaction.service.TransactionHistoryService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +44,8 @@ public class LoanServiceImpl implements LoanService {
 	private final LoanProductRepository loanProductRepository;
 	private final ClassroomRepository classroomRepository;
 	private final CreditScoreRepository creditScoreRepository;
+	private final AccountRepository accountRepository;
+	private final TransactionHistoryService transactionHistoryService;
 
 	private Integer convertRatingToRank(Integer rating) {
 		log.info("🔧[신용 등급 변환] - rating: {}", rating);
@@ -52,6 +60,16 @@ public class LoanServiceImpl implements LoanService {
 		} else {
 			return 4;
 		}
+	}
+
+	private Account getActiveAccount(Member member) {
+		return accountRepository.findOpenAccountByMemberIdWithPessimisticLock(member.getId())
+			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
+	}
+
+	private Account getClassAccount(Integer classId) {
+		return accountRepository.findByClassroomId(classId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 
 	@Override
@@ -174,9 +192,10 @@ public class LoanServiceImpl implements LoanService {
 	}
 
 	@Override
+	@Transactional
 	public LoanApplicationDetailDto approveOrRejectLoanApplication(LoanApplicationApprovalDto requestDto,
-		Integer loanApplicationId, Member member, Integer classId) {
-		log.info("📝[대출 신청 승인/거절] - loanApplicationId: {}, memberId: {}, classId: {}", loanApplicationId, member.getId(),
+		Integer loanApplicationId, Member teacher, Integer classId) {
+		log.info("📝[대출 신청 승인/거절] - loanApplicationId: {}, memberId: {}, classId: {}", loanApplicationId, teacher.getId(),
 			classId);
 		LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.LOAN_APPLICATION_NOT_FOUND));
@@ -190,6 +209,21 @@ public class LoanServiceImpl implements LoanService {
 
 		if (requestDto.status() == LoanApplicationStatus.APPROVED) {
 			application.open();
+			Account account = getActiveAccount(application.getMember());
+			account.deposit(application.getRequiredAmount());
+			Account classAccount = getClassAccount(classId);
+			log.info("💰[대출 금액 입금 완료] - memberId: {}, amount: {}, balance: {}", application.getMember().getId(), application.getRequiredAmount(), account.getBalance());
+			transactionHistoryService.record(
+				classAccount,
+				account.getAccountNumber(),
+				application.getMember(),
+				application.getRequiredAmount(),
+				account.getBalance(),
+				TransactionType.DEPOSIT,
+				HistoryStatus.SUCCESS,
+				"대출 실행",
+				TransactionSourceType.LOAN_DISBURSEMENT
+			);
 			log.info("✅[대출 승인 완료] - applicationId: {}", application.getId());
 		} else if (requestDto.status() == LoanApplicationStatus.REJECTED) {
 			application.reject();
@@ -197,7 +231,6 @@ public class LoanServiceImpl implements LoanService {
 		} else {
 			throw new BusinessException(ErrorCode.INVALID_ENUM);
 		}
-
 		loanApplicationRepository.save(application);
 		return LoanApplicationDetailDto.from(application);
 	}

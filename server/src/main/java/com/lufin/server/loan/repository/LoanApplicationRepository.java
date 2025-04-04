@@ -25,10 +25,10 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
 	// 특정 학생의 특정 반에서의 대출 신청 조회
 	List<LoanApplication> findByMemberAndClassroom(Member member, Classroom classroom);
 
-	// 특정 학생의 특정 반에서 진행 중인(OPEN 또는 OVERDUED 상태) 대출 내역 조회
+	// 특정 학생의 특정 반에서 진행 중인 대출 내역 조회
 	@Query("""
 		SELECT l FROM LoanApplication l
-		WHERE l.member.id = :memberId AND l.classroom.id = :classroomId AND l.status IN ('OPEN', 'OVERDUED')
+		WHERE l.member.id = :memberId AND l.classroom.id = :classroomId AND l.status = 'OPEN'
 		""")
 	Optional<LoanApplication> findMyLoanApplication(Integer memberId, Integer classroomId);
 

@@ -27,7 +27,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		// 웹소켓 연결 엔드포인트 설정
 		registry.addEndpoint("/ws")
 			// CORS 설정
-			.setAllowedOrigins("https://j12a402.p.ssafy.io:8080")
+			.setAllowedOrigins("https://j12a402.p.ssafy.io")
 			.addInterceptors(jwtHandshakeInterceptor)
 			.withSockJS();  // SockJS 지원 추가
 	}

@@ -1,4 +1,4 @@
-package com.lufin.server.member.service.impl;
+package com.lufin.server.auth.service.impl;
 
 import static com.lufin.server.common.constants.ErrorCode.*;
 import static com.lufin.server.member.util.MaskingUtil.*;
@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lufin.server.auth.service.LoginService;
 import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.common.exception.BusinessException;
@@ -18,7 +19,6 @@ import com.lufin.server.common.utils.TokenUtils;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.dto.LoginResponse;
 import com.lufin.server.member.repository.MemberRepository;
-import com.lufin.server.member.service.LoginService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

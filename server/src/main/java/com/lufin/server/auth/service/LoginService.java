@@ -1,4 +1,4 @@
-package com.lufin.server.member.service;
+package com.lufin.server.auth.service;
 
 import com.lufin.server.member.dto.LoginResponse;
 

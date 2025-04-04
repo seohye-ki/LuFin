@@ -12,7 +12,9 @@ import com.lufin.server.member.domain.MemberRole;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
@@ -22,6 +24,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
 	@Override
 	public TokenResponse reissueAccessToken(String refreshToken) throws BusinessException {
+		log.info("[토큰 재발급 요청]");
 
 		// 새로운 Access Token 발급
 		String newAccessToken = tokenUtils.refreshAccessToken(refreshToken);
@@ -39,6 +42,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 			classId = Integer.parseInt((String)claims.get(TokenClaimName.CLASS_ID));
 		}
 
+		log.info("[토큰 재발급 요청] memberId = {}, role = {}, classId = {}", userId, role, classId);
+
 		// 계좌번호 조회 (없을 경우 빈 문자열)
 		String accountNumber = "";
 		try {
@@ -46,6 +51,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 		} catch (Exception e) {
 			// 계좌번호가 없어도 토큰 재발급은 가능하도록 예외 무시
 		}
+
+		log.info("[토큰 재발급 완료] memberId = {}, role = {}, classId = {}", userId, role, classId);
 
 		// TokenResponse 객체 생성 및 반환
 		return new TokenResponse(

@@ -14,7 +14,9 @@ import com.lufin.server.member.support.UserContext;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
@@ -29,7 +31,16 @@ public class AuthInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
+		String method = request.getMethod();
 		String uri = request.getRequestURI();
+
+		log.debug("[AuthInterceptor] 요청 URI: {} {}", method, uri);
+
+		// OPTIONS 요청은 바로 통과 (CORS preflight)
+		if ("OPTIONS".equalsIgnoreCase(method)) {
+			log.debug("[AuthInterceptor] OPTIONS 요청은 인증 없이 통과");
+			return true;
+		}
 
 		if (isExcluded(uri)) {
 			return true;
@@ -37,19 +48,28 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 		String token = request.getHeader("Authorization");
 		if (token == null || !token.startsWith("Bearer ")) {
+			log.warn("[AuthInterceptor] Authorization 헤더가 유효하지 않음: {}", token);
 			throw new BusinessException(INVALID_AUTH_HEADER);
 		}
 
 		Claims claims = tokenUtils.extractClaims(token);
+		log.debug("[AuthInterceptor] Claims 추출 완료: {}", claims);
+
 		int userId = Integer.parseInt(claims.getSubject());
+		log.debug("[AuthInterceptor] userId 파싱 완료: {}", userId);
 
 		Member member = memberRepository.findById(userId)
-			.orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+			.orElseThrow(() -> {
+				log.warn("[AuthInterceptor] 존재하지 않는 사용자: {}", userId);
+				return new BusinessException(MEMBER_NOT_FOUND);
+			});
 
 		if (member.getActivationStatus() != 1) {
+			log.warn("[AuthInterceptor] 비활성화된 사용자 접근 시도: {}", userId);
 			throw new BusinessException(MEMBER_ALREADY_DELETED);
 		}
 
+		log.debug("[AuthInterceptor] 인증 완료, 사용자 정보 설정: {}", member.getName());
 		UserContext.set(member);
 		return true;
 	}

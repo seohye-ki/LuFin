@@ -2,6 +2,7 @@ package com.lufin.server.mission.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -10,8 +11,6 @@ import com.lufin.server.mission.domain.QMission;
 import com.lufin.server.mission.domain.QMissionImage;
 import com.lufin.server.mission.domain.QMissionParticipation;
 import com.lufin.server.mission.dto.MissionResponseDto;
-import com.lufin.server.mission.dto.QMissionResponseDto_MissionSummaryResponseDto;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -33,30 +32,17 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 	public List<MissionResponseDto.MissionSummaryResponseDto> getAllMissions(Integer classId) {
 		QMission mission = QMission.mission;
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		// classId에 일치하는 것들만 조회하는 조건
-		if (classId != null) {
-			builder.and(mission.classId.eq(classId));
-		}
-
-		// 쿼리문
-		List<MissionResponseDto.MissionSummaryResponseDto> result = queryFactory
-			.select(new QMissionResponseDto_MissionSummaryResponseDto(
-				mission.id,
-				mission.title,
-				mission.difficulty,
-				mission.maxParticipants,
-				mission.currentParticipants,
-				mission.wage,
-				mission.missionDate,
-				mission.status
-			))
-			.from(mission)
-			.where(builder)
+		// 먼저 엔티티를 조회
+		List<Mission> missions = queryFactory
+			.selectFrom(mission)
+			.where(mission.classId.eq(classId))
 			.fetch();
 
-		return result;
+		// 엔티티를 DTO로 변환
+		return missions.stream()
+			.map(MissionResponseDto.MissionSummaryResponseDto
+				::missionEntityToMissionDetailResponseDto)
+			.collect(Collectors.toList());
 	}
 
 	/**
@@ -92,14 +78,11 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 			missionEntity.getClassId(),              // classId
 			missionEntity.getTitle(),                // title
 			missionEntity.getContent(),              // content
-			missionEntity.getImages(),
-			// missionImage: 데이터가 없으면 빈 리스트 반환
+			missionEntity.getImages(),                 // missionImage: 데이터가 없으면 빈 리스트 반환
 			missionEntity.getDifficulty(),           // difficulty
-			missionEntity.getMaxParticipants(),
-			// maxParticipants
+			missionEntity.getMaxParticipants(),    // maxParticipants
 			missionEntity.getCurrentParticipants(),  // currentParticipants
-			missionEntity.getParticipations(),
-			// missionParticipation: 데이터가 없으면 빈 리스트 반환
+			missionEntity.getParticipations(),        // missionParticipation: 데이터가 없으면 빈 리스트 반환
 			missionEntity.getWage(),                 // wage
 			missionEntity.getMissionDate(),          // missionDate
 			missionEntity.getStatus(),               // status

@@ -66,8 +66,8 @@ public class MissionController {
 		ValidationUtils.validateClassId(classId);
 
 		Member currentMember = UserContext.get();
-		Enum<MemberRole> role = currentMember.getMemberRole();
-		
+		MemberRole role = currentMember.getMemberRole();
+
 		MissionResponseDto.MissionDetailResponseDto mission = missionService.getMissionById(
 			classId,
 			missionId,
@@ -111,7 +111,7 @@ public class MissionController {
 		ValidationUtils.validateClassId(classId);
 
 		Member currentMember = UserContext.get();
-		Enum<MemberRole> role = currentMember.getMemberRole();
+		MemberRole role = currentMember.getMemberRole();
 
 		missionService.deleteMission(classId, missionId, role);
 		return ResponseEntity.noContent().build();
@@ -134,7 +134,7 @@ public class MissionController {
 		ValidationUtils.validateClassId(classId);
 
 		Member currentMember = UserContext.get();
-		Enum<MemberRole> role = currentMember.getMemberRole();
+		MemberRole role = currentMember.getMemberRole();
 
 		MissionResponseDto.MissionDetailResponseDto response = missionService.putMission(requestDto, classId, missionId,
 			role);

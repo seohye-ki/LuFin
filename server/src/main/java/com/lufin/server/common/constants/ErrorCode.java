@@ -64,6 +64,7 @@ public enum ErrorCode {
 	INSUFFICIENT_STOCK_AMOUNT("E422007", "주식 개수가 부족합니다."),
 
 	SERVER_ERROR("E500001", "요청을 처리할 수 없습니다. 다시 시도해 주세요."),
+	CREDIT_SCORE_UPDATE_FAILED("E500002", "신용 점수 업데이트에 실패했습니다."),
 	SERVICE_UNAVAILABLE("E503001", "현재 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해 주세요."),
 
 	// 웹소켓 관련 에러 코드 추가

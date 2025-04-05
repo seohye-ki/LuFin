@@ -225,20 +225,26 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 				response = MissionParticipationResponseDto.MissionParticipationStatusResponseDto
 					.missionParticipationToMissionParticipationStatusResponseDto(status);
 
-				// 실패나 거절이면 신뢰도 차감
-				if (status == MissionParticipationStatus.FAILED || status == MissionParticipationStatus.REJECTED) {
-					log.info("신용 등급 작업 개시: member = {}, creditDeltaScore = {}", participation.getMember(),
-						missionFailureCreditScore);
+				// creditScoreService가 별도의 트랜잭션으로 동작할 수 있기 때문에 모든 creditScoreService 예외에 대해 business 예외를 던지도록 로직 강화
+				try {
+					// 실패나 거절이면 신뢰도 차감
+					if (status == MissionParticipationStatus.FAILED || status == MissionParticipationStatus.REJECTED) {
+						log.info("신용 등급 작업 개시: member = {}, creditDeltaScore = {}", participation.getMember(),
+							missionFailureCreditScore);
 
-					creditScoreService.applyScoreChange(
-						participation.getMember(),
-						missionFailureCreditScore,
-						CreditEventType.MISSION_FAILURE
-					);
+						creditScoreService.applyScoreChange(
+							participation.getMember(),
+							missionFailureCreditScore,
+							CreditEventType.MISSION_FAILURE
+						);
 
-					log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
-						creditService.getScore(participation.getMember().getId()));
+						log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
+							creditService.getScore(participation.getMember().getId()));
+					}
+				} catch (Exception e) {
+					throw new BusinessException(CREDIT_SCORE_UPDATE_FAILED);
 				}
+
 			}
 
 			return response;
@@ -301,16 +307,21 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			log.info("계좌 입금 완료: 입금액 ={}, 잔액 = {}", mission.getWage(), personalAccount.getBalance());
 			participation.markWagePaid(); // 입금 완료로 변경
 
-			log.info("신용 등급 작업 개시: member = {}, creditDeltaScore = {}", participation.getMember(),
-				missionSuccessCreditScore);
+			// creditScoreService가 별도의 트랜잭션으로 동작할 수 있기 때문에 모든 creditScoreService 예외에 대해 business 예외를 던지도록 로직 강화
+			try {
+				log.info("신용 등급 작업 개시: member = {}, creditDeltaScore = {}", participation.getMember(),
+					missionSuccessCreditScore);
 
-			creditScoreService.applyScoreChange(
-				participation.getMember(),
-				missionSuccessCreditScore,
-				CreditEventType.MISSION_COMPLETION
-			);
-			log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
-				creditService.getScore(participation.getMember().getId()));
+				creditScoreService.applyScoreChange(
+					participation.getMember(),
+					missionSuccessCreditScore,
+					CreditEventType.MISSION_COMPLETION
+				);
+				log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
+					creditService.getScore(participation.getMember().getId()));
+			} catch (Exception e) {
+				throw new BusinessException(CREDIT_SCORE_UPDATE_FAILED);
+			}
 
 			// 거래 내역 작성
 			transactionHistoryService.record(
@@ -328,7 +339,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			return MissionParticipationResponseDto.MissionParticipationStatusResponseDto
 				.missionParticipationToMissionParticipationStatusResponseDto(status);
 		} catch (TransactionTimedOutException tte) {
-			log.error("주식 구매 중 타임 아웃 발생: {}", tte.getMessage());
+			log.error("미션 성공 작업 중 타임 아웃 발생: {}", tte.getMessage());
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
 		} catch (BusinessException e) {
 			throw e;

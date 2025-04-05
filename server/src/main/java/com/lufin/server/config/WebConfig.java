@@ -1,10 +1,9 @@
 package com.lufin.server.config;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -34,7 +33,8 @@ public class WebConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-			.allowedOrigins("https://j12a402.p.ssafy.io:5173", "http://j12a402.p.ssafy.io:5173", "http://localhost:5173")
+			.allowedOrigins("https://j12a402.p.ssafy.io:5173", "http://j12a402.p.ssafy.io:5173",
+				"http://localhost:5173", "http://127.0.0.1:5173")
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // OPTIONS 포함
 			.allowCredentials(true) // 쿠키 인증 허용
 			.allowedHeaders("*") // 모든 헤더 허용
@@ -42,12 +42,10 @@ public class WebConfig implements WebMvcConfigurer {
 	}
 
 	// JSON 응답의 기본 문자셋을 UTF-8로 강제 설정
-	@Override
-	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-		for (HttpMessageConverter<?> converter : converters) {
-			if (converter instanceof MappingJackson2HttpMessageConverter jacksonConverter) {
-				jacksonConverter.setDefaultCharset(StandardCharsets.UTF_8);
-			}
-		}
+	@Bean
+	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
+		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+		converter.setDefaultCharset(StandardCharsets.UTF_8);
+		return converter;
 	}
 }

@@ -12,6 +12,8 @@ import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.constants.HistoryStatus;
 import com.lufin.server.common.exception.BusinessException;
+import com.lufin.server.credit.domain.CreditEventType;
+import com.lufin.server.credit.service.CreditScoreService;
 import com.lufin.server.loan.domain.LoanApplication;
 import com.lufin.server.loan.repository.LoanApplicationRepository;
 import com.lufin.server.member.domain.Member;
@@ -30,6 +32,7 @@ public class LoanPaymentServiceImpl implements LoanPaymentService {
 	private final LoanApplicationRepository loanApplicationRepository;
 	private final AccountRepository accountRepository;
 	private final TransactionHistoryService transactionHistoryService;
+	private final CreditScoreService creditScoreService;
 
 	private Account getActiveAccount(Member member) {
 		return accountRepository.findOpenAccountByMemberIdWithPessimisticLock(member.getId())
@@ -54,21 +57,21 @@ public class LoanPaymentServiceImpl implements LoanPaymentService {
 				loan.resetOverdueCount();
 				if (attemptInterestPayment(loan, true)) {
 					log.info("대출 [{}]의 이자 납부 성공 (만기일)", loan.getId());
-					// TODO: 신용점수 상승 처리
+					creditScoreService.applyScoreChange(loan.getMember(), 1, CreditEventType.LOAN_INTEREST_REPAYMENT);
 				} else {
 					log.warn("⚠️ 대출 [{}]의 이자 납부 실패 (만기일)", loan.getId());
-					// TODO: 신용점수 감소 처리
+					creditScoreService.applyScoreChange(loan.getMember(), -4 + (-2 * loan.getOverdueCount()), CreditEventType.LOAN_INTEREST_DEFAULT);
 				}
 			} else {
 				log.info("대출 [{}]의 대출 만기일이 아닙니다.", loan.getId());
 				if (attemptInterestPayment(loan, false)) {
 					log.info("대출 [{}]의 이자 납부 성공 (일반일)", loan.getId());
+					creditScoreService.applyScoreChange(loan.getMember(), 1, CreditEventType.LOAN_INTEREST_REPAYMENT);
 					loan.resetOverdueCount();
-					// TODO: 신용점수 상승 처리
 				} else {
 					log.warn("⚠️ 대출 [{}]의 이자 납부 실패 (일반일)", loan.getId());
+					creditScoreService.applyScoreChange(loan.getMember(), -4 + (-2 * loan.getOverdueCount()), CreditEventType.LOAN_INTEREST_DEFAULT);
 					loan.incrementOverdueCount();
-					// TODO: 신용점수 감소 처리
 				}
 				loan.updateNextPaymentDate();
 				loanApplicationRepository.save(loan);
@@ -143,13 +146,13 @@ public class LoanPaymentServiceImpl implements LoanPaymentService {
 	}
 
 	private void handleSuccessPrincipalRepayment(LoanApplication loan) {
-		// TODO: 신용점수 올리기
+		creditScoreService.applyScoreChange(loan.getMember(), 3, CreditEventType.LOAN_PRINCIPLE_REPAYMENT);
 		loan.close();
 		loanApplicationRepository.save(loan);
 	}
 
 	private void handleFailPrincipalRepayment(LoanApplication loan) {
-		// TODO: 신용점수 내리기
+		creditScoreService.applyScoreChange(loan.getMember(), -10, CreditEventType.LOAN_PRINCIPLE_DEFAULT);
 		loan.overdue();
 		loanApplicationRepository.save(loan);
 	}

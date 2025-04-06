@@ -130,14 +130,16 @@ public class LoanServiceImpl implements LoanService {
 
 		BigDecimal interestRate = loanProduct.getInterestRate();
 		BigDecimal requestedAmount = BigDecimal.valueOf(request.requestedAmount());
-		int interestAmount = requestedAmount.multiply(interestRate).setScale(0, RoundingMode.HALF_UP).intValue();
+		int interestAmount = requestedAmount.multiply(interestRate).setScale(0, RoundingMode.FLOOR).intValue();
+		double totalInstallments = loanProduct.getPeriod() / 7.0;
+		int installmentInterestAmount = (int) Math.floor(interestAmount / totalInstallments);
 		LoanApplication application = LoanApplication.create(
 			member,
 			classroom,
 			loanProduct,
 			request.description(),
 			request.requestedAmount(),
-			interestAmount);
+			installmentInterestAmount);
 		loanApplicationRepository.save(application);
 		log.info("✅[대출 신청 완료] - applicationId: {}, memberId: {}", application.getId(), member.getId());
 		return LoanApplicationDetailDto.from(application);

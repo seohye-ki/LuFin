@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lufin.server.mission.domain.Mission;
 import com.lufin.server.mission.domain.MissionImage;
 import com.lufin.server.mission.domain.MissionParticipation;
@@ -59,9 +60,16 @@ public class MissionResponseDto {
 		Integer currentParticipants,
 		List<MissionParticipationDto> participations,  // Changed from List<MissionParticipation>
 		Integer wage,
+
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 		LocalDateTime missionDate,
+
 		MissionStatus status,
+
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 		LocalDateTime createdAt,
+
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 		LocalDateTime updatedAt
 	) {
 		@QueryProjection
@@ -109,6 +117,7 @@ public class MissionResponseDto {
 		Integer maxParticipants,
 		Integer currentParticipants,
 		Integer wage,
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 		LocalDateTime missionDate,
 		MissionStatus status
 	) {

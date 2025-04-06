@@ -152,7 +152,7 @@ CREATE TABLE credit_scores
     credit_status             TINYINT     NOT NULL DEFAULT 0 COMMENT '0: 정상/ 1: 신용불량자',
     credit_status_description TEXT        NULL COMMENT '신용불량자에서 회생할 경우 교사가 사유를 입력 함',
     created_at                DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at                DATETIME    DEFAULT CURRENT_TIMESTAMP,
+    updated_at                DATETIME             DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_creditscore_member FOREIGN KEY (member_id)
         REFERENCES members (member_id) ON DELETE CASCADE
 ) ENGINE = InnoDB
@@ -630,12 +630,14 @@ BEGIN
         -- 포트폴리오가 없을 경우 새로 생성
         IF NEW.type = 1 THEN -- 구매인 경우
             INSERT INTO stock_portfolios (stock_product_id,
+                                          classroom_id,
                                           member_id,
                                           quantity,
                                           total_purchase_amount,
                                           total_sell_amount,
                                           created_at)
             VALUES (NEW.stock_product_id,
+                    NEW.classroom_id,
                     NEW.member_id,
                     NEW.quantity,
                     NEW.total_value,

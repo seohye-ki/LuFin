@@ -12,17 +12,17 @@ public interface MissionService {
 
 	// 미션 상세 조회
 	MissionResponseDto.MissionDetailResponseDto getMissionById(Integer classId, Integer missionId,
-		Enum<MemberRole> role);
+		MemberRole role);
 
 	// 미션 등록
 	MissionResponseDto.MissionPostResponseDto postMission(MissionRequestDto.MissionRequestInfoDto requestDto,
 		Integer classId);
 
 	// 미션 삭제
-	void deleteMission(Integer classId, Integer missionId, Enum<MemberRole> role);
+	void deleteMission(Integer classId, Integer missionId, MemberRole role);
 
 	// 미션 수정
 	MissionResponseDto.MissionDetailResponseDto putMission(MissionRequestDto.MissionRequestInfoDto requestDto,
-		Integer classId, Integer missionId, Enum<MemberRole> role);
+		Integer classId, Integer missionId, MemberRole role);
 
 }

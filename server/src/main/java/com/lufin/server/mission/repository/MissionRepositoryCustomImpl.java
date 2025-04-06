@@ -2,19 +2,15 @@ package com.lufin.server.mission.repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
-import com.lufin.server.classroom.domain.QClassroom;
 import com.lufin.server.mission.domain.Mission;
 import com.lufin.server.mission.domain.QMission;
 import com.lufin.server.mission.domain.QMissionImage;
 import com.lufin.server.mission.domain.QMissionParticipation;
 import com.lufin.server.mission.dto.MissionResponseDto;
-import com.lufin.server.mission.dto.QMissionResponseDto_MissionDetailResponseDto;
-import com.lufin.server.mission.dto.QMissionResponseDto_MissionSummaryResponseDto;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -36,30 +32,17 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 	public List<MissionResponseDto.MissionSummaryResponseDto> getAllMissions(Integer classId) {
 		QMission mission = QMission.mission;
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		// classId에 일치하는 것들만 조회하는 조건
-		if (classId != null) {
-			builder.and(mission.classId.eq(classId));
-		}
-
-		// 쿼리문
-		List<MissionResponseDto.MissionSummaryResponseDto> result = queryFactory
-			.select(new QMissionResponseDto_MissionSummaryResponseDto(
-				mission.id,
-				mission.title,
-				mission.difficulty,
-				mission.maxParticipants,
-				mission.currentParticipants,
-				mission.wage,
-				mission.missionDate,
-				mission.status
-			))
-			.from(mission)
-			.where(builder)
+		// 먼저 엔티티를 조회
+		List<Mission> missions = queryFactory
+			.selectFrom(mission)
+			.where(mission.classId.eq(classId))
 			.fetch();
 
-		return result;
+		// 엔티티를 DTO로 변환
+		return missions.stream()
+			.map(MissionResponseDto.MissionSummaryResponseDto
+				::missionEntityToMissionDetailResponseDto)
+			.collect(Collectors.toList());
 	}
 
 	/**
@@ -72,15 +55,17 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 	public MissionResponseDto.MissionDetailResponseDto getMissionByIdForTeacher(Integer classId, Integer missionId) {
 		QMission mission = QMission.mission;
 		QMissionImage missionImage = QMissionImage.missionImage;
-		QMissionParticipation participation = QMissionParticipation.missionParticipation;
+		QMissionParticipation missionParticipation = QMissionParticipation.missionParticipation;
 
 		/*
 		 * queryDSL의 projection을 사용한 경우 entity 매핑이 정확히 되지 않는 이슈가 있었음
 		 * 그에 따라 먼저 엔티티를 조회하고 DTO로 변환하여 반환하는 로직으로 변경
 		 */
 		Mission missionEntity = queryFactory
-			.selectFrom(mission)
+			.selectFrom(mission).distinct() // distinct()를 통해 카타시안 곱 문제 해결
 			.where(mission.classId.eq(classId).and(mission.id.eq(missionId)))
+			.leftJoin(mission.images, missionImage).fetchJoin()
+			.leftJoin(mission.participations, missionParticipation).fetchJoin()
 			.fetchOne();
 
 		if (missionEntity == null) {
@@ -88,16 +73,22 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 			return null;
 		}
 
+		List<MissionResponseDto.MissionImageDto> images = missionEntity.getImages().stream()
+			.map(MissionResponseDto.MissionImageDto::fromEntity).collect(Collectors.toList());
+
+		List<MissionResponseDto.MissionParticipationDto> participations = missionEntity.getParticipations().stream()
+			.map(MissionResponseDto.MissionParticipationDto::fromEntity).collect(Collectors.toList());
+
 		MissionResponseDto.MissionDetailResponseDto result = new MissionResponseDto.MissionDetailResponseDto(
 			missionEntity.getId(),                   // id
 			missionEntity.getClassId(),              // classId
 			missionEntity.getTitle(),                // title
 			missionEntity.getContent(),              // content
-			missionEntity.getImages(),               // missionImage
+			images,                 // missionImage: 데이터가 없으면 빈 리스트 반환
 			missionEntity.getDifficulty(),           // difficulty
-			missionEntity.getMaxParticipants(),      // maxParticipants
+			missionEntity.getMaxParticipants(),    // maxParticipants
 			missionEntity.getCurrentParticipants(),  // currentParticipants
-			missionEntity.getParticipations(),       // missionParticipation
+			participations,        // missionParticipation: 데이터가 없으면 빈 리스트 반환
 			missionEntity.getWage(),                 // wage
 			missionEntity.getMissionDate(),          // missionDate
 			missionEntity.getStatus(),               // status
@@ -118,42 +109,42 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 	@Override
 	public MissionResponseDto.MissionDetailResponseDto getMissionByIdForStudent(Integer classId, Integer missionId) {
 		QMission mission = QMission.mission;
-		QClassroom classroom = QClassroom.classroom;
 		QMissionImage missionImage = QMissionImage.missionImage;
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		// classId에 일치하는 것들만 조회하는 조건
-		if (classId != null) {
-			builder.and(mission.classroom.id.eq(classId));
-		}
-
-		// missionId와 일치하는 mission만 조회하는 조건 추가
-		if (missionId != null) {
-			builder.and(mission.id.eq(missionId));
-		}
-
-		MissionResponseDto.MissionDetailResponseDto result = queryFactory
-			.select(new QMissionResponseDto_MissionDetailResponseDto(
-				mission.id,
-				mission.classId,
-				mission.title,
-				mission.content,
-				mission.images,
-				mission.difficulty,
-				mission.maxParticipants,
-				mission.currentParticipants,
-				Expressions.constant(new ArrayList<>()),
-				mission.wage,
-				mission.missionDate,
-				mission.status,
-				mission.createdAt,
-				mission.updatedAt
-			))
-			.from(mission)
-			.leftJoin(mission.images, missionImage)
-			.where(builder)
+		/*
+		 * queryDSL의 projection을 사용한 경우 entity 매핑이 정확히 되지 않는 이슈가 있었음
+		 * 그에 따라 먼저 엔티티를 조회하고 DTO로 변환하여 반환하는 로직으로 변경
+		 */
+		Mission missionEntity = queryFactory
+			.selectFrom(mission)
+			.where(mission.classId.eq(classId).and(mission.id.eq(missionId)))
+			.leftJoin(mission.images, missionImage).fetchJoin()
 			.fetchOne();
+
+		if (missionEntity == null) {
+			log.warn("해당 미션을 찾을 수 없습니다. classId: {}, missionId: {}", classId, missionId);
+			return null;
+		}
+
+		List<MissionResponseDto.MissionImageDto> images = missionEntity.getImages().stream()
+			.map(MissionResponseDto.MissionImageDto::fromEntity).collect(Collectors.toList());
+
+		MissionResponseDto.MissionDetailResponseDto result = new MissionResponseDto.MissionDetailResponseDto(
+			missionEntity.getId(),                   // id
+			missionEntity.getClassId(),              // classId
+			missionEntity.getTitle(),                // title
+			missionEntity.getContent(),              // content
+			images,               // missionImage
+			missionEntity.getDifficulty(),           // difficulty
+			missionEntity.getMaxParticipants(),      // maxParticipants
+			missionEntity.getCurrentParticipants(),  // currentParticipants
+			new ArrayList<>(),       // missionParticipation
+			missionEntity.getWage(),                 // wage
+			missionEntity.getMissionDate(),          // missionDate
+			missionEntity.getStatus(),               // status
+			missionEntity.getCreatedAt(),            // createdAt
+			missionEntity.getUpdatedAt()             // updatedAt
+		);
 
 		return result;
 	}

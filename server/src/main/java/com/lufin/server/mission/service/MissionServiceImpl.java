@@ -60,7 +60,7 @@ public class MissionServiceImpl implements MissionService {
 
 	@Override
 	public MissionResponseDto.MissionDetailResponseDto getMissionById(Integer classId, Integer missionId,
-		Enum<MemberRole> role) {
+		MemberRole role) {
 		log.info("미션 상세 조회 요청: classId: {}, missionId: {}, role: {}", classId, missionId, role);
 
 		if (classId == null || missionId == null || role == null) {
@@ -157,7 +157,7 @@ public class MissionServiceImpl implements MissionService {
 	@Transactional
 	@TeacherOnly
 	@Override
-	public void deleteMission(Integer classId, Integer missionId, Enum<MemberRole> role) {
+	public void deleteMission(Integer classId, Integer missionId, MemberRole role) {
 		log.info("미션 삭제 요청: classId: {}, missionId: {}, role: {}", classId, missionId, role);
 
 		if (classId == null || missionId == null || role == null) {
@@ -186,7 +186,7 @@ public class MissionServiceImpl implements MissionService {
 	@Override
 	public MissionResponseDto.MissionDetailResponseDto putMission(
 		MissionRequestDto.MissionRequestInfoDto requestDto,
-		Integer classId, Integer missionId, Enum<MemberRole> role) {
+		Integer classId, Integer missionId, MemberRole role) {
 		log.info("미션 수정 요청: classId: {}, missionId: {}, requestDto: {}", classId, missionId, requestDto);
 
 		if (classId == null || missionId == null || requestDto == null || role == null) {

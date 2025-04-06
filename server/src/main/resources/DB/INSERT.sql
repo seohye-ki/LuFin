@@ -311,14 +311,6 @@ INSERT INTO lufin.mission_images (mission_id, object_key, created_at)
 VALUES (5, 'missions/image5.jpg', NOW());
 INSERT INTO lufin.mission_images (mission_id, object_key, created_at)
 VALUES (6, 'missions/image6.jpg', NOW());
-INSERT INTO lufin.mission_images (mission_id, object_key, created_at)
-VALUES (1, 'missions/image7.jpg', DATE_SUB(NOW(), INTERVAL 1 DAY));
-INSERT INTO lufin.mission_images (mission_id, object_key, created_at)
-VALUES (2, 'missions/image8.jpg', DATE_SUB(NOW(), INTERVAL 1 DAY));
-INSERT INTO lufin.mission_images (mission_id, object_key, created_at)
-VALUES (3, 'missions/image9.jpg', DATE_SUB(NOW(), INTERVAL 2 DAY));
-INSERT INTO lufin.mission_images (mission_id, object_key, created_at)
-VALUES (4, 'missions/image10.jpg', DATE_SUB(NOW(), INTERVAL 2 DAY));
 
 -- 적금 상품(savings_products) 추가
 INSERT INTO lufin.savings_products (name, description, period, interest_rate, min_amount, created_at)

@@ -55,7 +55,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         case 'lg':
           return 'text-[1.25rem] py-2.5 px-3.5';
         default:
-          return 'text-p1 py-1.5 px-3';
+          return 'text-p2 py-1.5 px-3';
       }
     };
 
@@ -70,7 +70,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       : '';
 
     return (
-      <div className='flex flex-col gap-1'>
+      <div className='flex flex-col'>
         {label && (
           <label
             htmlFor={props.id}
@@ -79,7 +79,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
                 ? 'text-[1.25rem]'
                 : inputSize === 'lg'
                   ? 'text-[1.125rem]'
-                  : 'text-p2'
+                  : 'text-c1'
             }`}
           >
             {label}
@@ -100,11 +100,6 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
             }
             {...props}
           />
-          {variant === 'error' && (
-            <div className='absolute right-3 top-1/2 -translate-y-1/2'>
-              <Icon name='InfoCircle' size={20} color='danger' className='pointer-events-none' />
-            </div>
-          )}
         </div>
         {variant === 'error' && (
           <p
@@ -114,7 +109,7 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
                 ? 'text-[1.125rem]'
                 : inputSize === 'lg'
                   ? 'text-[1rem]'
-                  : 'text-p2'
+                  : 'text-c1'
             }`}
           >
             {description}
@@ -122,12 +117,12 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
         )}
         {description && variant !== 'error' && (
           <span
-            className={`${getDescriptionColor(variant)} ${
+            className={`mt-2 ${getDescriptionColor(variant)} ${
               inputSize === 'xl'
                 ? 'text-[1.125rem]'
                 : inputSize === 'lg'
                   ? 'text-[1rem]'
-                  : 'text-p2'
+                  : 'text-c1'
             }`}
           >
             {description}

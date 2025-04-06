@@ -1,5 +1,7 @@
 package com.lufin.server.account.service;
 
+import java.time.LocalDate;
+
 import com.lufin.server.account.domain.Account;
 import com.lufin.server.classroom.domain.Classroom;
 
@@ -16,4 +18,8 @@ public interface AccountService {
 
 	// 랭킹 계산용
 	int getTotalAsset(int memberId);
+
+	long getTotalClassDeposit(int classId);
+
+	long getTotalClassDeposit(int classId, LocalDate date);
 }

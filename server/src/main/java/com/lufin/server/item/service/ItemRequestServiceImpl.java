@@ -1,6 +1,7 @@
 package com.lufin.server.item.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 	@Override
 	@Transactional
 	public ItemRequestResponseDto requestItemUse(Integer purchaseId, Member student, Integer classroomId) {
-		log.info("🔍[아이템 사용 요청] - purchaseId: {}, memberId: {}, classroomId: {}", purchaseId, student.getId(), classroomId);
+		log.info("🔍[아이템 사용 요청] - purchaseId: {}, memberId: {}, classroomId: {}", purchaseId, student.getId(),
+			classroomId);
 		ItemPurchase purchase = itemPurchaseRepository.findById(purchaseId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.PURCHASE_RECORD_NOT_FOUND));
 
@@ -60,7 +62,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 	@Override
 	public List<ItemRequestResponseDto> getItemRequests(Integer classroomId) {
 		log.info("🔄[아이템 요청 목록 조회] - classroomId: {}", classroomId);
-		List<ItemRequest> pendingRequests = itemRequestRepository.findByClassroomIdAndStatus(classroomId, ItemRequestStatus.PENDING);
+		List<ItemRequest> pendingRequests = itemRequestRepository.findByClassroomIdAndStatus(classroomId,
+			ItemRequestStatus.PENDING);
 		log.info("✅[아이템 요청 목록 조회 성공] - classroomId: {}, count: {}", classroomId, pendingRequests.size());
 		return pendingRequests.stream().map(ItemRequestResponseDto::from).toList();
 	}
@@ -97,5 +100,19 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
 		}
 		return ItemRequestResponseDto.from(request);
+	}
+
+	@Override
+	public Optional<ItemRequestStatus> getLatestItemRequestStatus(int memberId, int classId) {
+		log.info("[아이템 요청 상태 조회] memberId={}, classId={}", memberId, classId);
+
+		// 해당 학생이 반(classId)에서 요청한 아이템 중 가장 최근 요청을 조회
+		return itemRequestRepository.findLatestByClassroomIdAndMemberId(classId, memberId).stream()
+			.findFirst()
+			.map(request -> {
+				ItemRequestStatus status = request.getStatus();
+				log.debug(" - 최신 요청 상태: memberId={}, status={}", memberId, status);
+				return status;
+			});
 	}
 }

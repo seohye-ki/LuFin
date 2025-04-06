@@ -20,4 +20,16 @@ public interface ItemRequestRepository extends JpaRepository<ItemRequest, Intege
 		+ "ORDER BY r.createdAt DESC")
 	List<ItemRequest> findByClassroomIdAndStatus(@Param("classroomId") Integer classroomId,
 		@Param("status") ItemRequestStatus status);
+
+	@Query("""
+		SELECT r FROM ItemRequest r
+		JOIN FETCH r.purchase p
+		JOIN FETCH p.item i
+		WHERE i.classroom.id = :classroomId
+		AND p.member.id = :memberId
+		ORDER BY r.createdAt DESC
+		""")
+	List<ItemRequest> findLatestByClassroomIdAndMemberId(@Param("classroomId") Integer classroomId,
+		@Param("memberId") Integer memberId);
+
 }

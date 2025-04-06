@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.classroom.domain.MemberClassroom;
@@ -18,7 +19,9 @@ public interface MemberClassroomRepository extends JpaRepository<MemberClassroom
 	Optional<MemberClassroom> findByMember_IdAndIsCurrentTrue(Integer memberId);
 
 	// 특정 학급에 속한 구성원 전체 조회
-	List<MemberClassroom> findByClassroom_Id(Integer classroomId);
+	@Query("SELECT mc FROM MemberClassroom mc WHERE mc.classroom.id = :classroomId "
+		+ "AND mc.member.memberRole = 'STUDENT'")
+	List<MemberClassroom> findStudentsByClassId(@Param("classroomId") Integer classroomId);
 
 	// 현재 학급 구성원 수 조회
 	@Query("""

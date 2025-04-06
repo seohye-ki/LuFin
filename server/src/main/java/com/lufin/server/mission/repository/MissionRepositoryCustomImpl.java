@@ -73,16 +73,22 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 			return null;
 		}
 
+		List<MissionResponseDto.MissionImageDto> images = missionEntity.getImages().stream()
+			.map(MissionResponseDto.MissionImageDto::fromEntity).collect(Collectors.toList());
+
+		List<MissionResponseDto.MissionParticipationDto> participations = missionEntity.getParticipations().stream()
+			.map(MissionResponseDto.MissionParticipationDto::fromEntity).collect(Collectors.toList());
+
 		MissionResponseDto.MissionDetailResponseDto result = new MissionResponseDto.MissionDetailResponseDto(
 			missionEntity.getId(),                   // id
 			missionEntity.getClassId(),              // classId
 			missionEntity.getTitle(),                // title
 			missionEntity.getContent(),              // content
-			missionEntity.getImages(),                 // missionImage: 데이터가 없으면 빈 리스트 반환
+			images,                 // missionImage: 데이터가 없으면 빈 리스트 반환
 			missionEntity.getDifficulty(),           // difficulty
 			missionEntity.getMaxParticipants(),    // maxParticipants
 			missionEntity.getCurrentParticipants(),  // currentParticipants
-			missionEntity.getParticipations(),        // missionParticipation: 데이터가 없으면 빈 리스트 반환
+			participations,        // missionParticipation: 데이터가 없으면 빈 리스트 반환
 			missionEntity.getWage(),                 // wage
 			missionEntity.getMissionDate(),          // missionDate
 			missionEntity.getStatus(),               // status
@@ -120,12 +126,15 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 			return null;
 		}
 
+		List<MissionResponseDto.MissionImageDto> images = missionEntity.getImages().stream()
+			.map(MissionResponseDto.MissionImageDto::fromEntity).collect(Collectors.toList());
+
 		MissionResponseDto.MissionDetailResponseDto result = new MissionResponseDto.MissionDetailResponseDto(
 			missionEntity.getId(),                   // id
 			missionEntity.getClassId(),              // classId
 			missionEntity.getTitle(),                // title
 			missionEntity.getContent(),              // content
-			missionEntity.getImages(),               // missionImage
+			images,               // missionImage
 			missionEntity.getDifficulty(),           // difficulty
 			missionEntity.getMaxParticipants(),      // maxParticipants
 			missionEntity.getCurrentParticipants(),  // currentParticipants

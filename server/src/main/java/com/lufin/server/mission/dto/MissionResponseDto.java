@@ -2,6 +2,7 @@ package com.lufin.server.mission.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.lufin.server.mission.domain.Mission;
 import com.lufin.server.mission.domain.MissionImage;
@@ -11,6 +12,40 @@ import com.querydsl.core.annotations.QueryProjection;
 
 public class MissionResponseDto {
 	/**
+	 * Image DTO to avoid entity serialization issues
+	 */
+	public record MissionImageDto(
+		Integer id,
+		String objectKey // Include only the necessary fields
+	) {
+		public static MissionImageDto fromEntity(MissionImage image) {
+			return new MissionImageDto(
+				image.getMissionImageId(),
+				image.getObjectKey() // Assuming this field exists
+			);
+		}
+	}
+
+	/**
+	 * Participation DTO to avoid entity serialization issues
+	 */
+	public record MissionParticipationDto(
+		Integer id,
+		Integer memberId,
+		String memberProfileImage,
+		String memberName  // Include only the necessary fields
+	) {
+		public static MissionParticipationDto fromEntity(MissionParticipation participation) {
+			return new MissionParticipationDto(
+				participation.getParticipationId(),
+				participation.getMember() != null ? participation.getMember().getId() : null,
+				participation.getMember() != null ? participation.getMember().getProfileImage() : null,
+				participation.getMember() != null ? participation.getMember().getName() : null
+			);
+		}
+	}
+
+	/**
 	 * 미션 상세 응답 DTO
 	 */
 	public record MissionDetailResponseDto(
@@ -18,11 +53,11 @@ public class MissionResponseDto {
 		Integer classId,
 		String title,
 		String content,
-		List<MissionImage> images,
+		List<MissionImageDto> images,  // Changed from List<MissionImage>
 		Integer difficulty,
 		Integer maxParticipants,
 		Integer currentParticipants,
-		List<MissionParticipation> participations,
+		List<MissionParticipationDto> participations,  // Changed from List<MissionParticipation>
 		Integer wage,
 		LocalDateTime missionDate,
 		MissionStatus status,
@@ -42,11 +77,19 @@ public class MissionResponseDto {
 				mission.getClassId(),
 				mission.getTitle(),
 				mission.getContent(),
-				mission.getImages(),
+				mission.getImages() != null
+					? mission.getImages().stream()
+					.map(MissionImageDto::fromEntity)
+					.collect(Collectors.toList())
+					: List.of(),
 				mission.getDifficulty(),
 				mission.getMaxParticipants(),
 				mission.getCurrentParticipants(),
-				mission.getParticipations(),
+				mission.getParticipations() != null
+					? mission.getParticipations().stream()
+					.map(MissionParticipationDto::fromEntity)
+					.collect(Collectors.toList())
+					: List.of(),
 				mission.getWage(),
 				mission.getMissionDate(),
 				mission.getStatus(),
@@ -101,5 +144,4 @@ public class MissionResponseDto {
 		public MissionPostResponseDto {
 		}
 	}
-
 }

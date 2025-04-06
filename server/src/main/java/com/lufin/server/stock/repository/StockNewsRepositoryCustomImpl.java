@@ -1,14 +1,14 @@
 package com.lufin.server.stock.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
 import com.lufin.server.stock.domain.QStockNews;
 import com.lufin.server.stock.domain.QStockProduct;
-import com.lufin.server.stock.dto.QStockNewsResponseDto_NewsInfoDto;
+import com.lufin.server.stock.domain.StockNews;
 import com.lufin.server.stock.dto.StockNewsResponseDto;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -29,19 +29,19 @@ public class StockNewsRepositoryCustomImpl implements StockNewsRepositoryCustom 
 		QStockNews stockNews = QStockNews.stockNews;
 		QStockProduct stockProduct = QStockProduct.stockProduct;
 
-		List<StockNewsResponseDto.NewsInfoDto> result = queryFactory
-			.select(new QStockNewsResponseDto_NewsInfoDto(
-				stockNews.id,
-				stockNews.content,
-				stockNews.createdAt,
-				stockNews.updatedAt
-			))
-			.from(stockNews)
-			.join(stockNews.stockProduct, stockProduct).fetchJoin()
-			.where(stockProduct.id.eq(stockProductId))
+		List<StockNews> newsEntityList = queryFactory
+			.selectFrom(stockNews)
+			.leftJoin(stockNews.stockProduct, stockProduct).fetchJoin()
+			.where(stockNews.stockProduct.id.eq(stockProductId))
 			.fetch();
 
-		return result;
+		if (newsEntityList.isEmpty()) {
+			return new ArrayList<>();
+		}
+
+		return newsEntityList.stream()
+			.map(StockNewsResponseDto.NewsInfoDto::stockNewsEntityToNewsInfoDto)
+			.toList();
 	}
 
 	/**
@@ -57,24 +57,17 @@ public class StockNewsRepositoryCustomImpl implements StockNewsRepositoryCustom 
 		QStockProduct stockProduct = QStockProduct.stockProduct;
 		QStockNews stockNews = QStockNews.stockNews;
 
-		BooleanBuilder builder = new BooleanBuilder();
-
-		builder.and(stockProduct.id.eq(stockProductId));
-		builder.and(stockNews.id.eq(newsId));
-
-		StockNewsResponseDto.NewsInfoDto result = queryFactory
-			.select(new QStockNewsResponseDto_NewsInfoDto(
-				stockNews.id,
-				stockNews.content,
-				stockNews.createdAt,
-				stockNews.updatedAt
-			))
-			.from(stockNews)
-			.join(stockNews.stockProduct, stockProduct).fetchJoin()
-			.where(builder)
+		StockNews newsEntity = queryFactory
+			.selectFrom(stockNews)
+			.leftJoin(stockNews.stockProduct, stockProduct).fetchJoin()
+			.where(stockNews.id.eq(newsId))
 			.fetchOne();
 
-		return result;
+		if (newsEntity == null) {
+			return null;
+		}
+
+		return StockNewsResponseDto.NewsInfoDto.stockNewsEntityToNewsInfoDto(newsEntity);
 	}
 
 }

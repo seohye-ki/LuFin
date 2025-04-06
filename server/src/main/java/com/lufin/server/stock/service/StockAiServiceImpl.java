@@ -3,7 +3,6 @@ package com.lufin.server.stock.service;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -51,26 +50,25 @@ public class StockAiServiceImpl implements StockAiService {
 		// API 요청 DTO 생성
 		ClaudeRequestDto requestDto = ClaudeRequestDto.builder()
 			.model(claudeApiConfig.getModel())         // 설정된 모델 사용
-			.messages(messages)                         // 대화 메시지 목록
 			.max_tokens(claudeApiConfig.getMaxTokens()) // 최대 토큰 수
-			.temperature(claudeApiConfig.getTemperature()) // 온도 설정
+			.messages(messages)                         // 대화 메시지 목록
 			.build();
 
 		log.debug("Claude API 요청: {}", requestDto);  // 디버그 로깅
 
 		try {
-			// WebClient를 사용하여 API 호출
+			// WebClient를 사용하여 API 호출 - Map으로 응답을 받아 처리
 			ClaudeResponseDto responseDto = claudeWebClient.post()
-				.contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(requestDto)
 				.retrieve()
 				.bodyToMono(ClaudeResponseDto.class)  // 응답을 DTO로 매핑
 				.block();  // 비동기 호출을 동기적으로 처리
 
 			// 응답 확인 및 반환
-			if (responseDto != null && responseDto.getContent() != null) {
+			if (responseDto != null && responseDto.getContent() != null && !responseDto.getContent().isEmpty()) {
 				log.debug("Claude API 응답: {}", responseDto.getId());
-				return responseDto.getContent().getText();  // 응답 텍스트 반환
+				// 배열의 첫 번째 항목에서 텍스트 추출
+				return responseDto.getContent().get(0).getText();
 			} else {
 				log.error("Claude API 응답이 올바르지 않습니다");
 				throw new RuntimeException("Claude API 응답이 올바르지 않습니다");
@@ -80,7 +78,5 @@ public class StockAiServiceImpl implements StockAiService {
 			log.error("Claude API 호출 중 오류 발생", e);
 			throw new RuntimeException("Claude API 호출 중 오류가 발생했습니다: " + e.getMessage(), e);
 		}
-
 	}
-
 }

@@ -168,10 +168,10 @@ public class StockNewsServiceImpl implements StockNewsService {
 		LocalDateTime endTime = startTime.plusHours(1); // 1시간 차이 이내에 있는 지 확인
 
 		// db에서 시작 시간과 끝 시간 사이에 이미 stockProductId에 해당하는 공시 정보가 존재하는 지 확인
-		boolean existsInTimeRange = stockNewsRepository.existsByStockProductIdAndCreatedAtBetween(
+		Integer existsInTimeRange = stockNewsRepository.existsByStockProductIdAndCreatedAtBetween(
 			stockProductId, startTime, endTime);
 
-		if (existsInTimeRange) {
+		if (existsInTimeRange == 1) {
 			log.warn("해당 시간대에 이미 생성된 뉴스가 있습니다: stockProductId = {}, hour = {}",
 				stockProductId, hour);
 			throw new BusinessException(ErrorCode.DUPLICATE_NEWS);
@@ -182,6 +182,8 @@ public class StockNewsServiceImpl implements StockNewsService {
 			// stockProductId로 stockProduct 객체 조회
 			StockProduct stockProduct = stockProductRepository.findById(stockProductId)
 				.orElseThrow(() -> new BusinessException(ErrorCode.INVESTMENT_PRODUCT_NOT_FOUND));
+
+			log.info("stockProduct 조회: {}", stockProduct.toString());
 
 			// product에 대한  <- portfolio에서 productId에 대해 조회한 후 모든 total끼리 합쳐서 계산
 			List<StockPortfolio> portfolios = stockPortfolioRepository.findByStockProductId(stockProductId);
@@ -195,6 +197,9 @@ public class StockNewsServiceImpl implements StockNewsService {
 				totalPurchaseAmount += portfolio.getTotalPurchaseAmount();
 				totalSellAmount += portfolio.getTotalSellAmount();
 			}
+
+			log.info("주식 상품 정보 계산: totalQuantity = {}, totalPurchaseAmount = {}, totalSellAmount = {}", totalQuantity,
+				totalPurchaseAmount, totalSellAmount);
 
 			String prompt = StockAiPrompt.newsPromptTemplate(stockProduct, totalQuantity, totalPurchaseAmount,
 				totalSellAmount);

@@ -663,13 +663,13 @@ INSERT INTO lufin.auto_transfers (member_id, from_account_id, to_account_number,
 VALUES (2, 4, 2, 1500, 4, 1, DATE_ADD(NOW(), INTERVAL 60 DAY), NOW());
 INSERT INTO lufin.auto_transfers (member_id, from_account_id, to_account_number, amount, day_of_week, is_active, end_at,
                                   created_at)
-VALUES (3, 5, 2, 2000, 8, 1, DATE_ADD(NOW(), INTERVAL 45 DAY), NOW());
+VALUES (3, 5, 2, 2000, 3, 1, DATE_ADD(NOW(), INTERVAL 45 DAY), NOW());
 INSERT INTO lufin.auto_transfers (member_id, from_account_id, to_account_number, amount, day_of_week, is_active, end_at,
                                   created_at)
-VALUES (4, 6, 2, 1200, 16, 1, DATE_ADD(NOW(), INTERVAL 90 DAY), NOW());
+VALUES (4, 6, 2, 1200, 5, 1, DATE_ADD(NOW(), INTERVAL 90 DAY), NOW());
 INSERT INTO lufin.auto_transfers (member_id, from_account_id, to_account_number, amount, day_of_week, is_active, end_at,
                                   created_at)
-VALUES (5, 7, 2, 1800, 32, 1, DATE_ADD(NOW(), INTERVAL 120 DAY), NOW());
+VALUES (5, 7, 2, 1800, 6, 1, DATE_ADD(NOW(), INTERVAL 120 DAY), NOW());
 INSERT INTO lufin.auto_transfers (member_id, from_account_id, to_account_number, amount, day_of_week, is_active, end_at,
                                   created_at)
 VALUES (1, 3, 3, 500, 2, 0, DATE_ADD(NOW(), INTERVAL 15 DAY), DATE_SUB(NOW(), INTERVAL 5 DAY));
@@ -678,13 +678,13 @@ INSERT INTO lufin.auto_transfers (member_id, from_account_id, to_account_number,
 VALUES (2, 4, 4, 800, 4, 0, DATE_ADD(NOW(), INTERVAL 20 DAY), DATE_SUB(NOW(), INTERVAL 10 DAY));
 INSERT INTO lufin.auto_transfers (member_id, from_account_id, to_account_number, amount, day_of_week, is_active, end_at,
                                   created_at)
-VALUES (3, 5, 5, 1000, 8, 0, DATE_ADD(NOW(), INTERVAL 25 DAY), DATE_SUB(NOW(), INTERVAL 15 DAY));
+VALUES (3, 5, 5, 1000, 3, 0, DATE_ADD(NOW(), INTERVAL 25 DAY), DATE_SUB(NOW(), INTERVAL 15 DAY));
 INSERT INTO lufin.auto_transfers (member_id, from_account_id, to_account_number, amount, day_of_week, is_active, end_at,
                                   created_at)
-VALUES (4, 6, 6, 1500, 16, 0, DATE_ADD(NOW(), INTERVAL 30 DAY), DATE_SUB(NOW(), INTERVAL 20 DAY));
+VALUES (4, 6, 6, 1500, 6, 0, DATE_ADD(NOW(), INTERVAL 30 DAY), DATE_SUB(NOW(), INTERVAL 20 DAY));
 INSERT INTO lufin.auto_transfers (member_id, from_account_id, to_account_number, amount, day_of_week, is_active, end_at,
                                   created_at)
-VALUES (5, 7, 7, 2000, 32, 0, DATE_ADD(NOW(), INTERVAL 35 DAY), DATE_SUB(NOW(), INTERVAL 25 DAY));
+VALUES (5, 7, 7, 2000, 5, 0, DATE_ADD(NOW(), INTERVAL 35 DAY), DATE_SUB(NOW(), INTERVAL 25 DAY));
 
 -- 거래 내역(transaction_histories) 추가 (총 10개)
 INSERT INTO lufin.transaction_histories (from_account_id, to_account_number, executor_member_id, transaction_type,

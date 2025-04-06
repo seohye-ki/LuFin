@@ -108,7 +108,7 @@ public class LoanApplication {
 		this.dueDate = this.startedAt.plusDays(this.loanProduct.getPeriod());
 	}
 
-	public void overdued() {
+	public void overdue() {
 		this.status = LoanApplicationStatus.OVERDUED;
 	}
 
@@ -120,5 +120,17 @@ public class LoanApplication {
 	public Integer calculateNextInterestAmount() {
 		int overdueInterest = interestAmount * overdueCount;
 		return interestAmount + overdueInterest;
+	}
+
+	public void resetOverdueCount() {
+		this.overdueCount = 0;
+	}
+
+	public void incrementOverdueCount() {
+		this.overdueCount++;
+	}
+
+	public void updateNextPaymentDate() {
+		this.nextPaymentDate = this.nextPaymentDate.plusDays(7);
 	}
 }

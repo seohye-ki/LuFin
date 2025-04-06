@@ -44,35 +44,43 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 	private final TransactionHistoryService transactionHistoryService;
 
 	private void validateClassroomExists(Integer classId) {
+		log.info("🔍[반 확인 시작] - classId: {}", classId);
 		classroomRepository.findById(classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
 	}
 
 	private Item validateItemOwnership(Integer itemId, Integer classId) {
+		log.info("🔍[아이템 소유권 확인 시작] - itemId: {}, classId: {}", itemId, classId);
 		Item item = itemRepository.findById(itemId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 		if (!item.getClassroom().getId().equals(classId)) {
+			log.warn("🚫[아이템 소유권 확인 실패] - itemId: {}, classId: {}", itemId, classId);
 			throw new BusinessException(ErrorCode.REQUEST_DENIED);
 		}
 		return item;
 	}
 
 	private Account getActiveAccount(Member member) {
+		log.info("🔍[계좌 조회 시작] - memberId: {}", member.getId());
 		return accountRepository.findOpenAccountByMemberIdWithPessimisticLock(member.getId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 
 	private Account getClassAccount(Integer classId) {
+		log.info("🔍[반 계좌 조회 시작] - classId: {}", classId);
 		return accountRepository.findByClassroomId(classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 
 	private void validateItemStatus(Item item, int itemCount) {
+		log.info("🔍[아이템 상태 확인] - itemId: {}, 요청 수량: {}", item.getId(), itemCount);
 		if (!Boolean.TRUE.equals(item.getStatus())) {
+			log.warn("🚫[아이템 비활성 상태] - itemId: {}", item.getId());
 			throw new BusinessException(ErrorCode.REQUEST_DENIED);
 		}
 		int availableStock = item.getQuantityAvailable() - item.getQuantitySold();
 		if (availableStock < itemCount) {
+			log.warn("🚫[아이템 재고 부족] - itemId: {}, 남은 수량: {}", item.getId(), availableStock);
 			throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK);
 		}
 	}
@@ -80,8 +88,11 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 	@Override
 	@Transactional
 	public List<ItemPurchaseResponseDto> purchaseItem(ItemPurchaseRequestDto request, Member student, Integer classId) {
+		log.info("🛒[아이템 구매 시작] - memberId: {}, itemId: {}, count: {}", student.getId(), request.itemId(), request.itemCount());
 		validateClassroomExists(classId);
-		Item item = validateItemOwnership(request.itemId(), classId);
+
+		Item item = itemRepository.findByIdWithPessimisticLock(request.itemId())
+			.orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 		validateItemStatus(item, request.itemCount());
 
 		Account account = getActiveAccount(student);
@@ -112,6 +123,7 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 		}
 		itemPurchaseRepository.saveAll(purchases);
 
+		log.info("✅[아이템 구매 완료] - memberId: {}, itemId: {}, count: {}", student.getId(), item.getId(), request.itemCount());
 		return purchases.stream()
 			.map(ItemPurchaseResponseDto::from)
 			.toList();
@@ -142,18 +154,26 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 	@Override
 	@Transactional
 	public ItemPurchaseResponseDto refundItem(Integer purchaseId, Member student, Integer classId) {
+		log.info("🔄[아이템 환불 시작] - purchaseId: {}, memberId: {}", purchaseId, student.getId());
 		ItemPurchase purchase = itemPurchaseRepository.findById(purchaseId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.PURCHASE_RECORD_NOT_FOUND));
 		if (!purchase.isPurchasedBy(student)) {
+			log.warn("🚫[환불 요청자 불일치] - purchaseId: {}, memberId: {}", purchaseId, student.getId());
 			throw new BusinessException(ErrorCode.REQUEST_DENIED);
 		}
 		validateClassroomExists(classId);
 		if (!purchase.getItem().getClassroom().getId().equals(classId)) {
+			log.warn("🚫[환불 교실 불일치] - purchaseId: {}, classId: {}", purchaseId, classId);
 			throw new BusinessException(ErrorCode.REQUEST_DENIED);
 		}
 		if (purchase.getStatus() != ItemPurchaseStatus.BUY) {
+			log.warn("🚫[환불 불가 상태] - purchaseId: {}, status: {}", purchaseId, purchase.getStatus());
 			throw new BusinessException(ErrorCode.PURCHASE_STATUS_NOT_BUY);
 		}
+
+		Item item = itemRepository.findByIdWithPessimisticLock(purchase.getItem().getId())
+			.orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
+
 		purchase.refund();
 
 		Account account = getActiveAccount(student);
@@ -171,12 +191,12 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 			TransactionSourceType.REFUND
 		);
 
-		Item item = purchase.getItem();
 		item.decreaseQuantitySold(1);
 		if (!item.isExpired() && item.getQuantityAvailable() - item.getQuantitySold() > 0) {
 			item.enable();
 		}
 
+		log.info("✅[아이템 환불 완료] - purchaseId: {}, memberId: {}", purchaseId, student.getId());
 		return ItemPurchaseResponseDto.from(purchase);
 	}
 

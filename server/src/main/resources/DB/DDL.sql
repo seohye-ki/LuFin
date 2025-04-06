@@ -143,6 +143,10 @@ CREATE TABLE `auto_transfers`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='자동이체 정보';
 
+-- check 제약 조건 추가 (day_of_week)
+ALTER TABLE lufin.auto_transfers
+    ADD CONSTRAINT chk_day_of_week CHECK (day_of_week BETWEEN 1 AND 7);
+
 -- credit_scores
 CREATE TABLE credit_scores
 (

@@ -1,21 +1,68 @@
-import { useState } from 'react';
-import Card from '../../../components/Card/Card';
+import { useEffect, useState } from 'react';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
-import { sampleLoanApplications, sampleLoanProducts } from '../../../types/Loan/loan';
-import LoanProduct from './components/LoanProduct';
-import LoanApplicationList from './components/LoanApplicationList';
-import ApplyLoan from './components/ApplyLoan';
-import DetailLoanApplication from './components/DetailLoanApplication';
-import { LoanProductDTO } from '../../../types/Loan/loan';
-import Lufin from '../../../components/Lufin/Lufin';
+import LoanApplicationList from './components/loanapplication/LoanApplicationList';
+import ApplyLoan from './components/loanproduct/ApplyLoan';
+import DetailLoanApplication from './components/loanapplication/DetailLoanApplication';
+import LoanApplicationCards from './components/loanapplication/LoanApplicationCards';
+import LoanProductList from './components/loanproduct/LoanProductList';
+
+import {
+  getLoanApplicationList,
+  getLoanProductList,
+  getLoanApplicationDetail,
+} from '../../../libs/services/loan/loan.service';
+
+import {
+  LoanApplicationDetailDTO,
+  LoanApplicationDTO,
+  LoanApplicationListDTO,
+  LoanProductDTO,
+  LoanProductListDTO,
+} from '../../../types/Loan/loan';
 
 const StudentLoan = () => {
+  const [loanApplicationDetail, setLoanApplicationDetail] =
+    useState<LoanApplicationDetailDTO | null>(null);
+  const [loanProductList, setLoanProductList] = useState<LoanProductListDTO>([]);
+  const [loanApplicationList, setLoanApplicationList] = useState<LoanApplicationListDTO>([]);
+
   const [selectedLoanProduct, setSelectedLoanProduct] = useState<LoanProductDTO | null>(null);
-  const [selectedLoanId, setSelectedLoanId] = useState<number | null>(null); // 타입 수정
+  const [selectedLoanApplication, setSelectedLoanApplication] = useState<LoanApplicationDTO | null>(
+    null,
+  );
+
+  useEffect(() => {
+    const fetchLoanProductList = async () => {
+      const products = await getLoanProductList();
+      setLoanProductList(products);
+    };
+
+    const fetchLoanApplicationList = async () => {
+      const applications = await getLoanApplicationList();
+      setLoanApplicationList(applications);
+
+      // ✅ 신청 상태(PENDING)인 대출건을 찾아 상세조회
+      const pending = applications.find((app) => app.status === 'OPEN');
+      if (pending) {
+        try {
+          const detail = await getLoanApplicationDetail(pending.loanApplicationId);
+          console.log(detail);
+          setLoanApplicationDetail(detail);
+        } catch (error) {
+          console.error('대출 상세 정보 조회 실패:', error);
+          setLoanApplicationDetail(null);
+        }
+      } else {
+        setLoanApplicationDetail(null);
+      }
+    };
+
+    fetchLoanProductList();
+    fetchLoanApplicationList();
+  }, []);
 
   return (
     <div>
-      {/* ApplyLoan 모달 (대출 상품이 선택되었을 때 표시) */}
       {selectedLoanProduct && (
         <ApplyLoan
           loanProduct={selectedLoanProduct}
@@ -23,57 +70,32 @@ const StudentLoan = () => {
         />
       )}
 
-      {/* DetailLoanApplication 모달 (대출 내역에서 선택되었을 때 표시) */}
-      {selectedLoanId !== null && ( // 타입 체크 추가
-        <DetailLoanApplication loanId={selectedLoanId} closeModal={() => setSelectedLoanId(null)} />
+      {selectedLoanApplication && (
+        <DetailLoanApplication
+          loanApplication={selectedLoanApplication}
+          closeModal={() => setSelectedLoanApplication(null)}
+        />
       )}
 
       <SidebarLayout>
         <div className='w-full h-full flex flex-col gap-4'>
-          <div className='flex flex-row gap-4'>
-            <Card titleLeft='대출 금액' titleSize='s' className='w-full'>
-              <Lufin size='l' count={20000} />
-            </Card>
-            <Card titleLeft='다음 이자 납부일' titleSize='s' className='w-full'>
-              <p className='text-black text-h2 font-semibold'>2025년 3월 5일</p>
-            </Card>
-            <Card titleLeft='이번주에 낼 이자' titleSize='s' className='w-full'>
-              <Lufin size='l' count={1600} />
-            </Card>
-            <Card titleLeft='만기까지' titleSize='s' className='w-full'>
-              <p className='text-black text-h2 font-semibold'>
-                28 <span className='text-p1 font-regular'>일</span>
-              </p>
-            </Card>
-          </div>
+          {/* 상단 대출 카드 정보 */}
+          <LoanApplicationCards loanApplicationDetail={loanApplicationDetail} />
 
-          <Card
-            titleLeft='대출 상품'
-            titleRight={
-              <p className='font-medium text-c1 text-grey'>
-                *신용등급에 따라 대출 한도와 이자율이 다를 수 있어요.
-              </p>
+          {/* 대출 상품 목록 */}
+          <LoanProductList
+            loanProductList={loanProductList}
+            onClick={(loanProduct: LoanProductDTO) => setSelectedLoanProduct(loanProduct)}
+          />
+
+          {/* 대출 신청 내역 */}
+          <LoanApplicationList
+            loanApplicationList={loanApplicationList}
+            showMemberName={false}
+            onRowClick={(loanApplication: LoanApplicationDTO) =>
+              setSelectedLoanApplication(loanApplication)
             }
-            className='w-full h-fit flex flex-col'
-          >
-            <div className='flex flex-row gap-4'>
-              {sampleLoanProducts.map((product) => (
-                <LoanProduct
-                  key={product.loanProductId}
-                  {...product}
-                  onClick={() => setSelectedLoanProduct(product)}
-                />
-              ))}
-            </div>
-          </Card>
-
-          <Card titleLeft='대출 내역' className='min-h-0 h-full'>
-            <LoanApplicationList
-              loanApplications={sampleLoanApplications}
-              showMemberName={false}
-              onRowClick={(loanApplicationId: number) => setSelectedLoanId(loanApplicationId)} // 타입 명확화
-            />
-          </Card>
+          />
         </div>
       </SidebarLayout>
     </div>

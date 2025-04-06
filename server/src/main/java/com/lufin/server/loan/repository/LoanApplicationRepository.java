@@ -32,4 +32,18 @@ public interface LoanApplicationRepository extends JpaRepository<LoanApplication
 		""")
 	Optional<LoanApplication> findMyLoanApplication(Integer memberId, Integer classroomId);
 
+	// 이자일이 오늘인 대출 내역 조회
+	@Query("""
+		SELECT l FROM LoanApplication l
+		WHERE FUNCTION('DATE', l.nextPaymentDate) = CURRENT_DATE
+		""")
+	List<LoanApplication> findLoansWithNextPaymentDateToday();
+
+	// 대출 상환일이 오늘인 대출 내역 조회
+	@Query("""
+		SELECT l FROM LoanApplication l
+		WHERE FUNCTION('DATE', l.dueDate) = CURRENT_DATE
+		""")
+	List<LoanApplication> findLoansWithDueDateToday();
+
 }

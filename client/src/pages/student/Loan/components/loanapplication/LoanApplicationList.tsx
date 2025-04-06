@@ -1,16 +1,17 @@
 import React from 'react';
-import { LoanApplicationListDTO } from '../../../../types/Loan/loan';
-import TableView, { TableColumn, TableRow } from '../../../../components/Frame/TableView';
-import Badge from '../../../../components/Badge/Badge';
-import Lufin from '../../../../components/Lufin/Lufin';
+import { LoanApplicationDTO, LoanApplicationListDTO } from '../../../../../types/Loan/loan';
+import TableView, { TableColumn, TableRow } from '../../../../../components/Frame/TableView';
+import Badge from '../../../../../components/Badge/Badge';
+import Lufin from '../../../../../components/Lufin/Lufin';
+import Card from '../../../../../components/Card/Card';
+import { dateUtil } from '../../../../../libs/utils/date-util';
 
 type LoanApplicationListProps = {
-  loanApplications: LoanApplicationListDTO;
+  loanApplicationList: LoanApplicationListDTO;
   showMemberName?: boolean;
-  onRowClick?: (loanApplicationId: number) => void;
+  onRowClick: (loanApplication: LoanApplicationDTO) => void;
 };
 
-// 상태 매핑 객체
 const statusMapping: Record<
   'PENDING' | 'APPROVED' | 'REJECTED' | 'OPEN' | 'OVERDUED' | 'CLOSED',
   { badgeStatus: 'ready' | 'ing' | 'reject' | 'fail' | 'done'; label: string }
@@ -24,11 +25,10 @@ const statusMapping: Record<
 };
 
 const LoanApplicationList: React.FC<LoanApplicationListProps> = ({
-  loanApplications,
+  loanApplicationList,
   showMemberName = true,
   onRowClick,
 }) => {
-  // 컬럼 설정 (이름 컬럼 포함 여부에 따라 동적으로 구성)
   const columns: TableColumn[] = [
     ...(showMemberName ? [{ key: 'member', label: '이름' }] : []),
     { key: 'product', label: '상품명' },
@@ -38,33 +38,44 @@ const LoanApplicationList: React.FC<LoanApplicationListProps> = ({
     { key: 'status', label: '상태' },
   ];
 
-  const rows: TableRow[] = loanApplications.map((loanApplication) => {
+  const rows: TableRow[] = (loanApplicationList ?? []).map((loanApplication) => {
     const { badgeStatus, label } = statusMapping[loanApplication.status] || {
       badgeStatus: 'ready',
       label: '알 수 없음',
     };
 
     return {
-      id: loanApplication.loanApplicationId as number, // `id`가 확실히 존재하도록 설정
+      id: loanApplication.loanApplicationId as number,
       ...(showMemberName && { member: loanApplication.memberName }),
-      product: loanApplication.loanProductName,
+      product: loanApplication.productName,
       requiredAmount: <Lufin size='s' count={loanApplication.requiredAmount} />,
-      startDate: loanApplication.createdAt.formattedDate,
-      dueDate: loanApplication.dueDate.formattedDate,
+      startDate:
+        loanApplication.status === 'PENDING'
+          ? '신청 중'
+          : dateUtil(loanApplication.createdAt).formattedDate,
+      dueDate:
+        loanApplication.status === 'PENDING'
+          ? '신청 중'
+          : dateUtil(loanApplication.createdAt).formattedDate,
       status: <Badge status={badgeStatus}>{label}</Badge>,
     };
   });
 
   return (
-    <TableView
-      columns={columns}
-      rows={rows}
-      onRowClick={(row) => {
-        if (onRowClick && row.id !== undefined) {
-          onRowClick(row.id as number); // 명확한 타입 캐스팅 추가
-        }
-      }}
-    />
+    <Card titleLeft='대출 내역' className='min-h-0 h-full'>
+      <TableView
+        columns={columns}
+        rows={rows}
+        onRowClick={(row) => {
+          if (onRowClick && row.id !== undefined) {
+            const selected = loanApplicationList.find((item) => item.loanApplicationId === row.id);
+            if (selected) {
+              onRowClick(selected);
+            }
+          }
+        }}
+      />
+    </Card>
   );
 };
 

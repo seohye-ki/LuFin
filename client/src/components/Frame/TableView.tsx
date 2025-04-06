@@ -18,7 +18,7 @@ interface TableViewProps {
 const TableView = ({ columns, rows, onRowClick }: TableViewProps) => {
   return (
     <div className='w-full h-full'>
-      <table className='w-full h-full border-separate border-spacing-0'>
+      <table className='w-full border-separate border-spacing-0'>
         <thead className='bg-light-cyan text-black'>
           <tr>
             {columns.map((column, idx) => (
@@ -39,7 +39,7 @@ const TableView = ({ columns, rows, onRowClick }: TableViewProps) => {
           {rows.map((row, index) => (
             <tr
               key={index}
-              className={`hover:bg-light-cyan-30 ${onRowClick ? 'cursor-pointer' : ''}`}
+              className={` hover:bg-light-cyan-30 ${onRowClick ? 'cursor-pointer' : ''}`}
               onClick={() => onRowClick?.(row)}
             >
               {columns.map((column) => (

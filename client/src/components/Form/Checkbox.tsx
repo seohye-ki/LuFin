@@ -24,21 +24,22 @@ interface CheckboxProps extends Omit<MuiCheckboxProps, 'indeterminate'> {
 
 // 커스텀 스타일드 체크박스
 const StyledCheckbox = styled(MuiCheckbox)({
-  color: 'var(--color-grey-25)', // unchecked 색상
+  padding: 0, // ✅ 패딩 제거
+  color: 'var(--color-grey-25)',
   '&.Mui-checked': {
-    color: 'var(--color-info)', // checked 색상
+    color: 'var(--color-info)',
   },
   '&.Mui-indeterminate': {
-    color: 'var(--color-info)', // indeterminate 색상
+    color: 'var(--color-info)',
   },
   '&.Mui-disabled': {
-    color: 'var(--color-grey)', // disabled & unchecked 색상
+    color: 'var(--color-grey)',
   },
   '&.Mui-disabled.Mui-checked, &.Mui-disabled.Mui-indeterminate': {
-    color: 'var(--color-grey)', // disabled & checked 색상
+    color: 'var(--color-grey)',
   },
   '& .MuiSvgIcon-root': {
-    fontSize: '1.2rem', // 체크박스 크기 조정
+    fontSize: '1.2rem',
   },
 });
 

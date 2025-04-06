@@ -1,5 +1,3 @@
-import LoanApplicationCards from '../../../pages/student/Loan/components/loanapplication/LoanApplicationCards';
-import LoanApplicationList from '../../../pages/student/Loan/components/loanapplication/LoanApplicationList';
 import {
   ApplyLoanDTO,
   LoanApplicationDetailDTO,

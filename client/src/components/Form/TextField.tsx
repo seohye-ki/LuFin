@@ -1,6 +1,5 @@
 import React from 'react';
 import { forwardRef } from 'react';
-import { Icon } from '../Icon/Icon';
 
 type TextFieldVariant = 'normal' | 'success' | 'error';
 type TextFieldSize = 'md' | 'lg' | 'xl';

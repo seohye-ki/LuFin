@@ -16,6 +16,9 @@ import com.lufin.server.common.annotation.TeacherOnly;
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.constants.HistoryStatus;
 import com.lufin.server.common.exception.BusinessException;
+import com.lufin.server.credit.domain.CreditEventType;
+import com.lufin.server.credit.service.CreditScoreService;
+import com.lufin.server.credit.service.CreditService;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
 import com.lufin.server.mission.domain.Mission;
@@ -42,6 +45,12 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 
 	private final AccountRepository accountRepository;
 	private final TransactionHistoryService transactionHistoryService;
+
+	private final CreditScoreService creditScoreService;
+	private final CreditService creditService;
+
+	public static int missionSuccessCreditScore = 2;
+	public static int missionFailureCreditScore = -2;
 
 	/**
 	 * 미션 참여 신청
@@ -89,7 +98,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {
-			log.error("An error occurred: {}", e.getMessage(), e);
+			log.error("An error occurred: {}", e.getMessage());
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
@@ -123,7 +132,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {
-			log.error("An error occurred: {}", e.getMessage(), e);
+			log.error("An error occurred: {}", e.getMessage());
 			throw new BusinessException(SERVER_ERROR);
 		}
 
@@ -192,18 +201,22 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 				}
 			} else {
 				if (currentMember.getMemberRole() != MemberRole.TEACHER) {
-					// 교사가 아닌 경우
+					// 2. 교사가 아닌 경우
 					if (status != MissionParticipationStatus.CHECKING) {
-						// CHECKING이 아닌 상태 변경은 교사만 가능
+						// 2-1. CHECKING이 아닌 상태 변경은 교사만 가능
 						log.warn("권한 없는 상태 변경 시도: status = {}, memberId = {}", status, currentMember.getId());
 						throw new BusinessException(FORBIDDEN_REQUEST);
 					} else if (!currentMember.getId().equals(participation.getMember().getId())) {
-						// 학생은 자신의 미션 참여만 변경 가능
+						// 2-2. 학생은 자신의 미션 참여만 변경 가능
 						log.warn("타인의 미션 참여 상태 변경 시도: memberId = {}, participationMemberId = {}",
 							currentMember.getId(), participation.getMember().getId());
 						throw new BusinessException(REQUEST_DENIED);
 					}
 				}
+
+				log.info(
+					"미션 상태 변경 작업 시작: classId = {}, currentMember ={}, mission = {}, status = {}, participation = {} ",
+					classId, currentMember.getId(), mission, status, participation);
 
 				/* JPA 더티 체킹으로 객체에 먼저 변경 사항이 캐시된 후, transaction이 끝날 때 자동으로 쿼리를 통해 DB를 업데이트 */
 				participation.changeMissionStatus(status);
@@ -211,6 +224,27 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 				// MissionParticipation 엔티티를 DTO로 변환
 				response = MissionParticipationResponseDto.MissionParticipationStatusResponseDto
 					.missionParticipationToMissionParticipationStatusResponseDto(status);
+
+				// creditScoreService가 별도의 트랜잭션으로 동작할 수 있기 때문에 모든 creditScoreService 예외에 대해 business 예외를 던지도록 로직 강화
+				try {
+					// 실패나 거절이면 신뢰도 차감
+					if (status == MissionParticipationStatus.FAILED || status == MissionParticipationStatus.REJECTED) {
+						log.info("신용 등급 작업 개시: member = {}, creditDeltaScore = {}", participation.getMember(),
+							missionFailureCreditScore);
+
+						creditScoreService.applyScoreChange(
+							participation.getMember(),
+							missionFailureCreditScore,
+							CreditEventType.MISSION_FAILURE
+						);
+
+						log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
+							creditService.getScore(participation.getMember().getId()));
+					}
+				} catch (Exception e) {
+					throw new BusinessException(CREDIT_SCORE_UPDATE_FAILED);
+				}
+
 			}
 
 			return response;
@@ -218,7 +252,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {
-			log.error("An error occurred: {}", e.getMessage(), e);
+			log.error("An error occurred: {}", e.getMessage());
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
@@ -248,7 +282,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			classId, currentMember.getId(), mission, status, participation);
 
 		try {
-			// 개인 계좌를 보유하고 있는지 체크
+			// 참여자가 개인 계좌를 보유하고 있는지 체크
 			Optional<Account> account = accountRepository.findOpenAccountByMemberIdWithPessimisticLock(
 				participation.getMember().getId());
 
@@ -264,10 +298,30 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 				.orElseThrow(() -> new BusinessException(ACCOUNT_NOT_FOUND));
 
 			participation.changeMissionStatus(status); // 상태를 성공으로 변경
-			log.info("상태 변경 완료: participation = {},  계좌 작업 개시", participation);
+			log.info("상태 변경 완료: participation = {}", participation);
+
+			log.info("계좌 작업 개시: classAccount = {}, personalAccount = {}, wage = {}", classAccount, personalAccount,
+				mission.getWage());
 			personalAccount.deposit(mission.getWage());
+
 			log.info("계좌 입금 완료: 입금액 ={}, 잔액 = {}", mission.getWage(), personalAccount.getBalance());
 			participation.markWagePaid(); // 입금 완료로 변경
+
+			// creditScoreService가 별도의 트랜잭션으로 동작할 수 있기 때문에 모든 creditScoreService 예외에 대해 business 예외를 던지도록 로직 강화
+			try {
+				log.info("신용 등급 작업 개시: member = {}, creditDeltaScore = {}", participation.getMember(),
+					missionSuccessCreditScore);
+
+				creditScoreService.applyScoreChange(
+					participation.getMember(),
+					missionSuccessCreditScore,
+					CreditEventType.MISSION_COMPLETION
+				);
+				log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
+					creditService.getScore(participation.getMember().getId()));
+			} catch (Exception e) {
+				throw new BusinessException(CREDIT_SCORE_UPDATE_FAILED);
+			}
 
 			// 거래 내역 작성
 			transactionHistoryService.record(
@@ -285,12 +339,12 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			return MissionParticipationResponseDto.MissionParticipationStatusResponseDto
 				.missionParticipationToMissionParticipationStatusResponseDto(status);
 		} catch (TransactionTimedOutException tte) {
-			log.error("주식 구매 중 타임 아웃 발생: {}", tte.getMessage());
+			log.error("미션 성공 작업 중 타임 아웃 발생: {}", tte.getMessage());
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {
-			log.error("An error occurred: {}", e.getMessage(), e);
+			log.error("An error occurred: {}", e.getMessage());
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}

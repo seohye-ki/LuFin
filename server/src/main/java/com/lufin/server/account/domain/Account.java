@@ -108,6 +108,13 @@ public class Account {
 		this.balance -= amount;
 	}
 
+	public void forceWithdraw(int amount) {
+		if (amount <= 0) {
+			throw new BusinessException(INVALID_WITHDRAWAL_AMOUNT);
+		}
+		this.balance -= amount;
+	}
+
 	public boolean isClosed() {
 		return closedAt != null;
 	}

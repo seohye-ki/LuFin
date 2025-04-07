@@ -67,4 +67,46 @@ const useAlertStore = create<AlertState>((set) => ({
   },
 }));
 
+export const showGlobalAlert = (
+  title: string,
+  item: ReactNode | null,
+  description: string,
+  status: 'info' | 'warning' | 'danger' | 'success',
+  primaryButton: AlertButton,
+  secondaryButton: AlertButton | null = null,
+) => {
+  useAlertStore.setState({
+    isVisible: true,
+    title,
+    item,
+    description,
+    status,
+    primaryButton,
+    secondaryButton,
+  });
+};
+
+export const hideGlobalAlert = () => {
+  useAlertStore.setState({ isOpening: false });
+  const animationDuration = 200;
+
+  setTimeout(() => useAlertStore.setState({ isVisible: false }), animationDuration);
+  setTimeout(
+    () =>
+      useAlertStore.setState({
+        title: '',
+        item: null,
+        description: '',
+        status: 'info',
+        primaryButton: null,
+        secondaryButton: null,
+      }),
+    animationDuration,
+  );
+};
+
+useAlertStore.subscribe((state) => {
+  console.log('[Alert Title Changed]', state.title);
+});
+
 export default useAlertStore;

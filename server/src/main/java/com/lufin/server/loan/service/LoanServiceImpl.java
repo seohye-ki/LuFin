@@ -132,7 +132,7 @@ public class LoanServiceImpl implements LoanService {
 		BigDecimal requestedAmount = BigDecimal.valueOf(request.requestedAmount());
 		int interestAmount = requestedAmount.multiply(interestRate).setScale(0, RoundingMode.FLOOR).intValue();
 		double totalInstallments = loanProduct.getPeriod() / 7.0;
-		int installmentInterestAmount = (int) Math.floor(interestAmount / totalInstallments);
+		int installmentInterestAmount = (int)Math.floor(interestAmount / totalInstallments);
 		LoanApplication application = LoanApplication.create(
 			member,
 			classroom,
@@ -197,7 +197,8 @@ public class LoanServiceImpl implements LoanService {
 	@Transactional
 	public LoanApplicationDetailDto approveOrRejectLoanApplication(LoanApplicationApprovalDto requestDto,
 		Integer loanApplicationId, Member teacher, Integer classId) {
-		log.info("📝[대출 신청 승인/거절] - loanApplicationId: {}, memberId: {}, classId: {}", loanApplicationId, teacher.getId(),
+		log.info("📝[대출 신청 승인/거절] - loanApplicationId: {}, memberId: {}, classId: {}", loanApplicationId,
+			teacher.getId(),
 			classId);
 		LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.LOAN_APPLICATION_NOT_FOUND));
@@ -214,7 +215,8 @@ public class LoanServiceImpl implements LoanService {
 			Account account = getActiveAccount(application.getMember());
 			account.deposit(application.getRequiredAmount());
 			Account classAccount = getClassAccount(classId);
-			log.info("💰[대출 금액 입금 완료] - memberId: {}, amount: {}, balance: {}", application.getMember().getId(), application.getRequiredAmount(), account.getBalance());
+			log.info("💰[대출 금액 입금 완료] - memberId: {}, amount: {}, balance: {}", application.getMember().getId(),
+				application.getRequiredAmount(), account.getBalance());
 			transactionHistoryService.record(
 				classAccount,
 				account.getAccountNumber(),
@@ -235,13 +237,5 @@ public class LoanServiceImpl implements LoanService {
 		}
 		loanApplicationRepository.save(application);
 		return LoanApplicationDetailDto.from(application);
-	}
-
-	@Override
-	public int getLoanPrincipal(int memberId, int classroomId) {
-		log.info("[대출 원금 조회] memberId: {}, classroomId: {}", memberId, classroomId);
-		return loanApplicationRepository.findMyLoanApplication(memberId, classroomId)
-			.map(LoanApplication::getRequiredAmount)
-			.orElse(0);
 	}
 }

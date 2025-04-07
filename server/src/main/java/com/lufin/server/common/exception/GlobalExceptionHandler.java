@@ -3,6 +3,7 @@ package com.lufin.server.common.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -75,7 +76,7 @@ public class GlobalExceptionHandler {
 	// BuisnessException 처리
 	@ExceptionHandler(BusinessException.class)
 	public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException e) {
-		log.warn("BusinessException 발생: {}", e.getErrorCode(), e);
+		log.warn("BusinessException 발생: {}", e.getErrorCode());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.failure(e.getErrorCode()));
 	}
 
@@ -88,7 +89,10 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(
 		MethodArgumentNotValidException e) {
-		log.error("DTO 입력 값 누락 : ", e);
+		log.error("DTO 입력 값 누락: {}", e.getMessage());
+		for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
+			log.warn("검증 실패 - 필드: {}, 메시지: {}", fieldError.getField(), fieldError.getDefaultMessage());
+		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 			.body(ApiResponse.failure(ErrorCode.MISSING_REQUIRED_VALUE));
 	}

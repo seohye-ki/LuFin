@@ -41,6 +41,12 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 
 	private final StockAiService stockAiService;
 
+	/**
+	 * 주식 가격 변동 기록 조회
+	 * @param stockProductId
+	 * @param counts
+	 * @return
+	 */
 	@Override
 	public List<StockPriceHistoryResponseDto.PriceHistoryResponseDto> getStockPriceHistory(Integer stockProductId,
 		Integer counts) {
@@ -190,7 +196,7 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 			);
 			log.info("AI 가격 변동 정보 생성 요청: prompt = {}", prompt.length());
 
-			String priceContent = "";
+			String priceContent;
 
 			try {
 				priceContent = stockAiService.generateResponse(prompt);

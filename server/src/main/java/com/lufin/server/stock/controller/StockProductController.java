@@ -61,13 +61,20 @@ public class StockProductController {
 
 	}
 
+	/**
+	 * 주식 가격 변동 조회
+	 * @param productId
+	 * @param counts
+	 * @return
+	 */
 	@GetMapping("/{productId}/price-history")
 	public ResponseEntity<ApiResponse<List<StockPriceHistoryResponseDto.PriceHistoryResponseDto>>> getPriceHistory(
 		@PathVariable @Positive Integer productId,
 		@RequestParam @Positive Integer counts
 	) {
-		// List<StockPriceHistoryResponseDto.PriceHistoryResponseDto> result = stockPriceHistoryService
-		//TODO null -> dto
-		return ResponseEntity.status(200).body(ApiResponse.success(null));
+		List<StockPriceHistoryResponseDto.PriceHistoryResponseDto> result = stockPriceHistoryService.getStockPriceHistory(
+			productId, counts);
+		
+		return ResponseEntity.status(200).body(ApiResponse.success(result));
 	}
 }

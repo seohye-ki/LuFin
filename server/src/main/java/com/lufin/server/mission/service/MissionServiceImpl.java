@@ -118,7 +118,6 @@ public class MissionServiceImpl implements MissionService {
 
 			// Mission 엔티티 생성
 			Mission newMission = Mission.create(
-				classId,
 				classroom,
 				requestDto.title(),
 				requestDto.content(),

@@ -1,6 +1,7 @@
 package com.lufin.server.dashboard.usecase;
 
 import static com.lufin.server.dashboard.util.AssetStatUtils.*;
+import static com.lufin.server.item.domain.ItemPurchaseStatus.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,8 +16,11 @@ import com.lufin.server.dashboard.dto.AssetDto;
 import com.lufin.server.dashboard.dto.TeacherDashboardDto;
 import com.lufin.server.dashboard.dto.TeacherDashboardDto.StatisticsDto;
 import com.lufin.server.dashboard.dto.TeacherDashboardDto.StudentItemDto;
-import com.lufin.server.item.service.ItemRequestService;
+import com.lufin.server.item.repository.ItemPurchaseRepository;
+import com.lufin.server.loan.domain.LoanApplicationStatus;
+import com.lufin.server.loan.dto.LoanApplicationListDto;
 import com.lufin.server.loan.service.LoanDashboardService;
+import com.lufin.server.loan.service.LoanService;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.mission.dto.MyMissionDto;
 import com.lufin.server.mission.service.MyMissionService;
@@ -33,10 +37,11 @@ public class TeacherDashboardUseCase {
 	private final MemberClassroomRepository memberClassroomRepository;
 	private final AccountService accountService;
 	private final StockService stockService;
-	private final LoanDashboardService loanService;
+	private final LoanDashboardService loanDashboardService;
+	private final LoanService loanService;
 	private final CreditService creditService;
 	private final MyMissionService myMissionService;
-	private final ItemRequestService itemService;
+	private final ItemPurchaseRepository itemService;
 
 	public TeacherDashboardDto getDashboard(int classId) {
 
@@ -60,8 +65,8 @@ public class TeacherDashboardUseCase {
 
 		AssetDto loan = buildAssetDto(
 			"대출",
-			loanService.getTotalClassLoanPrincipal(classId),
-			loanService.getTotalClassLoanPrincipal(classId, LocalDate.now().minusWeeks(1))
+			loanDashboardService.getTotalClassLoanPrincipal(classId),
+			loanDashboardService.getTotalClassLoanPrincipal(classId, LocalDate.now().minusWeeks(1))
 		);
 
 		StatisticsDto statistics = StatisticsDto.builder()
@@ -76,9 +81,9 @@ public class TeacherDashboardUseCase {
 			int studentId = student.getId();
 
 			// 학생 자산 정보
-			int cash = accountService.getCashBalance(studentId);
+			int cash = accountService.getCashBalance(studentId, classId);
 			int stock = stockService.getTotalValuation(studentId);
-			int loanAmount = loanService.getLoanPrincipal(studentId, classId);
+			int loanAmount = loanDashboardService.getLoanPrincipal(studentId, classId);
 
 			// 신용등급
 			String creditGrade = creditService.getGrade(studentId);
@@ -87,14 +92,12 @@ public class TeacherDashboardUseCase {
 			List<MyMissionDto> missions = myMissionService.getMyMissions(classId, studentId);
 			String missionStatus = getMissionStatus(missions);
 
-			// 아이템 보유 여부
-			String itemStatus = itemService.getLatestItemRequestStatus(studentId, classId)
-				.map(status -> switch (status) {
-					case PENDING -> "검토 필요";
-					case APPROVED -> "승인";
-					case REJECTED -> "거절";
-				})
-				.orElse("없음");
+			// 대출 상태 판단
+			List<LoanApplicationListDto> loans = loanService.getLoanApplications(student, classId);
+			String loanStatus = getLoanStatus(loans);
+
+			// 아이템 보유 수량
+			int items = itemService.findInventory(studentId, BUY, classId).size();
 
 			// 학생 대시보드용 DTO 생성
 			return StudentItemDto.builder()
@@ -105,7 +108,8 @@ public class TeacherDashboardUseCase {
 				.loan(loanAmount)
 				.creditGrade(creditGrade)
 				.missionStatus(missionStatus)
-				.itemStatus(itemStatus)
+				.loanStatus(loanStatus)
+				.items(items)
 				.build();
 		}).toList();
 
@@ -120,11 +124,46 @@ public class TeacherDashboardUseCase {
 		boolean hasOngoing = missions.stream().anyMatch(m -> m.status().name().equals("IN_PROGRESS"));
 		boolean hasCompleted = missions.stream().allMatch(m -> m.status().name().equals("CLOSED"));
 		if (hasOngoing) {
-			return "수행중";
+			return "수행 중";
 		}
 		if (hasCompleted) {
-			return "수행완료";
+			return "수행 완료";
 		}
-		return "검토필요";
+		return "검토 필요";
+	}
+
+	private String getLoanStatus(List<LoanApplicationListDto> loans) {
+		if (loans == null || loans.isEmpty()) {
+			return "없음";
+		}
+
+		boolean hasPending = loans.stream().anyMatch(l -> l.status() == LoanApplicationStatus.PENDING);
+		if (hasPending) {
+			return "검토 필요";
+		}
+
+		boolean allRejected = loans.stream().allMatch(l -> l.status() == LoanApplicationStatus.REJECTED);
+		if (allRejected) {
+			return "거절";
+		}
+
+		// 그 외
+		return "승인";
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

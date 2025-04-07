@@ -55,10 +55,10 @@ public class StudentDashboardUseCase {
 		log.debug(" - 신용 점수: {}, 등급: {}, 이력 수: {}", creditScore, creditGrade, creditHistories.size());
 
 		// 자산 구성
-		int cash = accountService.getCashBalance(studentId);
+		int cash = accountService.getCashBalance(studentId, classId);
 		int stock = stockService.getTotalValuation(studentId);
 		int loan = loanService.getLoanPrincipal(studentId, classId);
-		int totalAsset = cash + stock;
+		int totalAsset = cash + stock - loan;
 		log.debug(" - 자산: 현금={}, 주식={}, 대출={}, 총합={}", cash, stock, loan, totalAsset);
 
 		// 소비 통계
@@ -84,8 +84,8 @@ public class StudentDashboardUseCase {
 		// 미션 상태
 		List<MyMissionDto> ongoingMissions = myMissionService.getMyMissions(classId, studentId);
 		int totalCompletedMissions = myMissionService.getCompletedCount(studentId);
-		int totalReward = myMissionService.getTotalWage(studentId);
-		log.debug(" - 미션: 진행중={}, 완료={}, 누적 보상={}", ongoingMissions.size(), totalCompletedMissions, totalReward);
+		int totalWage = myMissionService.getTotalWage(studentId);
+		log.debug(" - 미션: 진행중={}, 완료={}, 누적 보상={}", ongoingMissions.size(), totalCompletedMissions, totalWage);
 
 		log.info("[학생 대시보드 구성 완료] studentId={}", studentId);
 
@@ -100,11 +100,10 @@ public class StudentDashboardUseCase {
 			.totalAsset(totalAsset)
 			.investmentStat(investmentStat)
 			.consumptionStat(consumptionStat)
-			.loanPrincipal(loan)
 			.items(items)
 			.ongoingMissions(ongoingMissions)
 			.totalCompletedMissions(totalCompletedMissions)
-			.totalReward(totalReward)
+			.totalWage(totalWage)
 			.build();
 	}
 }

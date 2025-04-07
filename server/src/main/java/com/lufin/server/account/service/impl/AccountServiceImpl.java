@@ -68,7 +68,7 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public int getCashBalance(int memberId) {
+	public int getCashBalance(int memberId, int classroomId) {
 		log.info("[현금 자산 확인] member {}", memberId);
 		return accountRepository.findByMemberIdAndType(memberId, AccountType.DEPOSIT)
 			.map(Account::getBalance)
@@ -76,8 +76,8 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public int getTotalAsset(int memberId) {
-		return getCashBalance(memberId);
+	public int getTotalAsset(int memberId, int classId) {
+		return getCashBalance(memberId, classId);
 	}
 
 	@Override

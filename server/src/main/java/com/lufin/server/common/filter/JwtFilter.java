@@ -69,7 +69,7 @@ public class JwtFilter implements Filter {
 
 		} catch (BusinessException e) {
 			// 검증 실패 시 401 반환
-			log.warn("⚠️[JwtFilter] JWT 검증 실패: {} → 401 반환", e.getMessage());
+			log.warn("⚠️[JwtFilter] JWT 인증 실패 - 에러코드: {} | 메시지: {}", e.getErrorCode(), e.getMessage());
 			httpResponse.sendError(401, "인증이 필요합니다.");
 		}
 	}
@@ -80,7 +80,7 @@ public class JwtFilter implements Filter {
 		log.debug("[JwtFilter] Authorization 헤더: {}", authorizationHeader);
 
 		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-			log.warn("[JwtFilter] 헤더 확인 필요");
+			log.warn("⚠️[JwtFilter] 잘못된 Authorization 헤더 형식 → 인증 실패");
 			throw new BusinessException(INVALID_AUTH_HEADER);
 		}
 
@@ -93,11 +93,13 @@ public class JwtFilter implements Filter {
 		// tokenType: ACCESS 또는 REFRESH
 		String tokenType = (String)claims.get(TokenClaimName.TYPE);
 		if (!TokenType.ACCESS.equals(tokenType) && !TokenType.REFRESH.equals(tokenType)) {
+			log.warn("⚠️[JwtFilter] 유효하지 않은 tokenType → 인증 실패: {}", tokenType);
 			throw new BusinessException(INVALID_TOKEN_TYPE);
 		}
 
 		String classId = claims.get(TokenClaimName.CLASS_ID, String.class);
 		if (classId != null) {
+			log.debug("[JwtFilter] classId 추출: {}", classId);
 			validateIntegerId(classId);
 			request.setAttribute("classId", Integer.parseInt(classId));
 		}

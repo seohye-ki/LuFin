@@ -48,28 +48,74 @@ export const fileService = {
 
   /**
    * 이미지 다운로드 URL 가져오기
-   * @param key 이미지 키
-   * @returns 다운로드 URL
+   * key 값을 사용하여 서버에서 이미지 다운로드 URL을 요청합니다.
+   * 서버에서 URL을 받아올 수 없는 경우 fallback으로 S3 직접 URL을 구성하거나
+   * 대체 이미지 URL을 반환합니다.
+   * 
+   * @param key 이미지 키 (예: 'classrooms/image-uuid.jpg')
+   * @returns 이미지 다운로드 URL
    */
   getImageUrl: async (key: string | null): Promise<string> => {
     if (!key) return '';
     
     try {
-      const folder = key.split('/')[0] as FolderType;
-      const filename = key.split('/').pop() || '';
+      console.log('[FileService] 이미지 다운로드 URL 요청:', key);
       
-      const response = await axiosInstance.get<ApiResponse<string>>(
-        `/files/download-url?folder=${folder}&filename=${encodeURIComponent(filename)}`
+      // 백엔드 요구사항에 맞게 key 파라미터만 전달
+      const response = await axiosInstance.get(
+        `/files/download-url?key=${encodeURIComponent(key)}`
       );
 
-      if (!response.data.isSuccess || !response.data.data) {
-        throw new Error('Failed to get download URL');
+      console.log('[FileService] 다운로드 URL 응답:', response);
+      
+      // API 응답이 { uploadUrl, key } 형태인 경우
+      if (response.data && response.data.uploadUrl) {
+        console.log('[FileService] uploadUrl 사용:', response.data.uploadUrl);
+        return response.data.uploadUrl;
       }
-
-      return response.data.data;
+      
+      // 이전 형식에 대한 fallback 처리
+      if (typeof response.data === 'string') {
+        return response.data;
+      }
+      
+      if (response.data && response.data.downloadUrl) {
+        return response.data.downloadUrl;
+      }
+      
+      if (response.data && response.data.url) {
+        return response.data.url;
+      }
+      
+      if (response.data && response.data.isSuccess && response.data.data) {
+        if (typeof response.data.data === 'string') {
+          return response.data.data;
+        }
+        
+        if (response.data.data.url) {
+          return response.data.data.url;
+        }
+        
+        if (response.data.data.downloadUrl) {
+          return response.data.data.downloadUrl;
+        }
+        
+        if (response.data.data.uploadUrl) {
+          return response.data.data.uploadUrl;
+        }
+      }
+      
+      // 서버 응답에서 URL을 찾을 수 없는 경우 S3 직접 URL 구성
+      console.log('[FileService] 서버 응답에서 URL을 찾을 수 없어 직접 S3 URL 구성');
+      return `https://lufin-bucket.s3.ap-northeast-2.amazonaws.com/${key}`;
     } catch (error) {
-      console.error('[FileService] Failed to get image URL:', error);
-      return '';
+      console.error('[FileService] 이미지 URL 가져오기 실패:', error);
+      if (error instanceof Error) {
+        console.error('[FileService] 오류 상세 정보:', error.message);
+      }
+      
+      // 오류 발생 시 대체 이미지 URL 반환
+      return `https://picsum.photos/400/200?random=${Math.floor(Math.random() * 1000)}`;
     }
   },
 

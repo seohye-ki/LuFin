@@ -12,7 +12,16 @@ import { useNavigate } from 'react-router-dom';
 const StudentClassroom = () => {
   const navigate = useNavigate();
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
-  const { classrooms, isLoading, error, fetchClassrooms, joinClassroom } = useClassroomStore();
+  const [isCodeEntryModalOpen, setIsCodeEntryModalOpen] = useState(false);
+  const { 
+    classrooms, 
+    isLoading, 
+    error, 
+    fetchClassrooms, 
+    joinClassroom, 
+    enterClassCode, 
+    changeCurrentClass 
+  } = useClassroomStore();
 
   useEffect(() => {
     fetchClassrooms();
@@ -44,9 +53,39 @@ const StudentClassroom = () => {
         });
     }
   };
+  
+  const handleCodeEntrySubmit = async (code: string) => {
+    try {
+      await enterClassCode(code);
+      setIsCodeEntryModalOpen(false);
 
-  const handleClassroomClick = () => {
-    // 클래스룸 클릭 시 학생 대시보드로 이동
+      useAlertStore
+        .getState()
+        .showAlert('클래스 코드 입력 완료', null, '클래스 코드가 성공적으로 적용되었습니다.', 'success', {
+          label: '확인',
+          onClick: () => {
+            useAlertStore.getState().hideAlert();
+          },
+          color: 'primary',
+        });
+    } catch {
+      useAlertStore
+        .getState()
+        .showAlert('클래스 코드 입력 실패', null, '클래스 코드 입력에 실패했습니다.', 'danger', {
+          label: '확인',
+          onClick: () => useAlertStore.getState().hideAlert(),
+          color: 'primary',
+        });
+    }
+  };
+
+  const handleClassroomClick = (classId: number) => {
+    // 클래스룸 선택 시 현재 클래스 정보 저장
+    const selectedClassroom = classrooms.find(classroom => classroom.classId === classId);
+    if (selectedClassroom) {
+      changeCurrentClass(classId, selectedClassroom.name);
+    }
+    // 대시보드로 이동
     navigate('/dashboard');
   };
 
@@ -68,11 +107,11 @@ const StudentClassroom = () => {
               color='info'
               variant='solid'
               size='md'
-              onClick={() => setIsJoinModalOpen(true)}
+              onClick={() => setIsCodeEntryModalOpen(true)}
               className='flex items-center gap-2'
             >
               <Icon name='AddCircle' size={20} color='white' />
-              <span>클래스 참여하기</span>
+              <span>클래스 코드 입력</span>
             </Button>
           </div>
         </div>
@@ -90,7 +129,7 @@ const StudentClassroom = () => {
               students={classroom.memberCount}
               year={classroom.year}
               imageKey={classroom.key}
-              onClick={() => handleClassroomClick()}
+              onClick={() => handleClassroomClick(classroom.classId)}
             />
           ))}
         </div>
@@ -102,6 +141,20 @@ const StudentClassroom = () => {
             }}
             onSubmit={handleJoinSubmit}
             isLoading={isLoading}
+          />
+        )}
+        
+        {isCodeEntryModalOpen && (
+          <JoinClassroomModal
+            onClose={() => {
+              if (!isLoading) setIsCodeEntryModalOpen(false);
+            }}
+            onSubmit={() => {}}
+            onEnterCode={handleCodeEntrySubmit}
+            isLoading={isLoading}
+            mode="enterCode"
+            title="클래스 코드 입력"
+            description="선생님이 제공한 클래스 코드를 입력해주세요"
           />
         )}
 

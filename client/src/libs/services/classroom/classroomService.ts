@@ -53,6 +53,14 @@ export interface JoinClassroomResponse {
   classInfo: Classroom;
 }
 
+export interface ClassCodeResponse {
+  classCode: string;
+}
+
+export interface ClassCodeEntryResponse {
+  accessToken: string;
+}
+
 export interface ApiResponse<T> {
   isSuccess: boolean;
   data: T;
@@ -95,6 +103,31 @@ export const classroomService = {
     const response = await axiosInstance.post<ApiResponse<JoinClassroomResponse>>('/classes/join', {
       code,
     });
+    return response.data;
+  },
+
+  // 활성화된 클래스 변경
+  changeCurrentClass: async (classId: number): Promise<ApiResponse<Classroom>> => {
+    const response = await axiosInstance.post<ApiResponse<Classroom>>('/classes/current/change', {
+      classId,
+    });
+    return response.data;
+  },
+  
+  // 현재 클래스 코드 조회 (교사용)
+  getClassCode: async (): Promise<ApiResponse<ClassCodeResponse>> => {
+    const response = await axiosInstance.get<ApiResponse<ClassCodeResponse>>(
+      '/classes/current/code'
+    );
+    return response.data;
+  },
+  
+  // 학생 클래스 코드 입력
+  enterClassCode: async (code: string): Promise<ApiResponse<ClassCodeEntryResponse>> => {
+    const response = await axiosInstance.post<ApiResponse<ClassCodeEntryResponse>>(
+      '/auth/class',
+      { code }
+    );
     return response.data;
   },
 };

@@ -27,6 +27,7 @@ const TeacherClassroom = () => {
     createClassroom,
     updateClassroom,
     deleteClassroom,
+    changeCurrentClass,
   } = useClassroomStore();
 
   useEffect(() => {
@@ -166,9 +167,21 @@ const TeacherClassroom = () => {
     }
   };
 
-  const handleClassroomClick = () => {
-    // 클래스룸 클릭 시 교사 대시보드로 이동
-    navigate('/dashboard/teacher');
+  const handleClassroomClick = async (classId: number) => {
+    try {
+      // 클래스룸 클릭 시 활성화된 클래스 변경 API 호출
+      await changeCurrentClass(classId);
+      // 클래스 변경 후 교사 대시보드로 이동
+      navigate('/dashboard/teacher');
+    } catch {
+      useAlertStore
+        .getState()
+        .showAlert('클래스 변경 실패', null, '클래스 활성화에 실패했습니다.', 'danger', {
+          label: '확인',
+          onClick: () => useAlertStore.getState().hideAlert(),
+          color: 'primary',
+        });
+    }
   };
 
   return (
@@ -211,7 +224,9 @@ const TeacherClassroom = () => {
               students={classroom.memberCount}
               year={classroom.year}
               imageKey={classroom.key}
-              onClick={() => handleClassroomClick()}
+              isTeacher={true}
+              code={classroom.code}
+              onClick={() => handleClassroomClick(classroom.classId)}
               onEdit={() => handleEdit(classroom.classId)}
               onDelete={() => handleDelete(classroom.classId)}
             />

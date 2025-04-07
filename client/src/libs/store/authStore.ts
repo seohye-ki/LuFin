@@ -20,7 +20,7 @@ interface AuthState {
   }>;
   logout: () => void;
   clearError: () => void;
-  setTokens: (accessToken: string, refreshToken: string) => void;
+  setTokens: (accessToken: string, refreshToken: string, classId?: number) => void;
   // 상태 selector 헬퍼 함수
   getAuthStatus: () => {
     isAuthenticated: boolean;
@@ -121,9 +121,10 @@ const useAuthStore = create<AuthState>((set, get) => ({
    * 토큰 설정
    * @param accessToken 새로운 액세스 토큰
    * @param refreshToken 새로운 리프레시 토큰
+   * @param classId 현재 클래스 ID (선택적)
    */
-  setTokens: (accessToken: string, refreshToken: string) => {
-    AuthService.setTokens(accessToken, refreshToken);
+  setTokens: (accessToken: string, refreshToken: string, classId?: number) => {
+    AuthService.setTokens(accessToken, refreshToken, classId);
     set({
       isAuthenticated: true,
     });

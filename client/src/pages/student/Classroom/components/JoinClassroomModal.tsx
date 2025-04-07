@@ -6,10 +6,22 @@ import CodeInput from '../../../../components/Form/CodeInput';
 interface JoinClassroomModalProps {
   onClose: () => void;
   onSubmit: (code: string) => void;
+  onEnterCode?: (code: string) => void;
   isLoading?: boolean;
+  mode?: 'join' | 'enterCode';
+  title?: string;
+  description?: string;
 }
 
-const JoinClassroomModal = ({ onClose, onSubmit, isLoading = false }: JoinClassroomModalProps) => {
+const JoinClassroomModal = ({ 
+  onClose, 
+  onSubmit, 
+  onEnterCode,
+  isLoading = false,
+  mode = 'join',
+  title = '새로운 반 입장하기',
+  description = '클래스 코드를 입력해주세요'
+}: JoinClassroomModalProps) => {
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | undefined>(undefined);
 
@@ -19,8 +31,11 @@ const JoinClassroomModal = ({ onClose, onSubmit, isLoading = false }: JoinClassr
       return;
     }
 
-    // 부모 컴포넌트에 코드 제출
-    onSubmit(code);
+    if (mode === 'enterCode' && onEnterCode) {
+      onEnterCode(code);
+    } else {
+      onSubmit(code);
+    }
   };
 
   return (
@@ -36,8 +51,8 @@ const JoinClassroomModal = ({ onClose, onSubmit, isLoading = false }: JoinClassr
         <div className='flex flex-col items-center gap-4 mt-2'>
           <Icon name='InfoCircle' variant='Bold' size={42} color='warning' />
           <div className='flex flex-col items-center gap-1'>
-            <h2 className='text-h2 font-semibold'>새로운 반 입장하기</h2>
-            <p className='text-p1 text-dark-grey'>클래스 코드를 입력해주세요</p>
+            <h2 className='text-h2 font-semibold'>{title}</h2>
+            <p className='text-p1 text-dark-grey'>{description}</p>
           </div>
         </div>
 
@@ -66,7 +81,7 @@ const JoinClassroomModal = ({ onClose, onSubmit, isLoading = false }: JoinClassr
             full
             disabled={isLoading}
           >
-            {isLoading ? '처리 중...' : '입장하기'}
+            {isLoading ? '처리 중...' : (mode === 'enterCode' ? '코드 입력하기' : '입장하기')}
           </Button>
         </div>
       </div>

@@ -110,9 +110,15 @@ export const AuthService = {
    * 토큰 설정
    * @param accessToken 새로운 액세스 토큰
    * @param refreshToken 새로운 리프레시 토큰
+   * @param classId 선택된 클래스 ID (선택적)
    */
-  setTokens: (accessToken: string, refreshToken: string) => {
+  setTokens: (accessToken: string, refreshToken: string, classId?: number) => {
     tokenUtils.setToken('accessToken', accessToken);
     tokenUtils.setToken('refreshToken', refreshToken);
+    
+    // classId가 제공된 경우에만 저장
+    if (classId !== undefined) {
+      tokenUtils.setToken('classId', classId.toString());
+    }
   },
 };

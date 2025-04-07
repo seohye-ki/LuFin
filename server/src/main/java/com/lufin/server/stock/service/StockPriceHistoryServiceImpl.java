@@ -17,6 +17,7 @@ import com.lufin.server.stock.domain.StockPortfolio;
 import com.lufin.server.stock.domain.StockPriceHistory;
 import com.lufin.server.stock.domain.StockProduct;
 import com.lufin.server.stock.dto.StockPriceHistoryRequestDto;
+import com.lufin.server.stock.dto.StockPriceHistoryResponseDto;
 import com.lufin.server.stock.dto.StockResponseDto;
 import com.lufin.server.stock.repository.StockNewsRepository;
 import com.lufin.server.stock.repository.StockPortfolioRepository;
@@ -39,6 +40,44 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 	private final StockNewsRepository stockNewsRepository;
 
 	private final StockAiService stockAiService;
+
+	/**
+	 * 주식 가격 변동 기록 조회
+	 * @param stockProductId
+	 * @param counts
+	 * @return
+	 */
+	@Override
+	public List<StockPriceHistoryResponseDto.PriceHistoryResponseDto> getStockPriceHistory(Integer stockProductId,
+		Integer counts) {
+		log.info("주식 가격 변동 조회 요청: stockProductId = {}, days = {}", stockProductId, counts);
+
+		if (stockProductId == null || counts == null) {
+			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
+		}
+
+		try {
+			List<StockPriceHistory> priceHistoryList = stockPriceHistoryRepository.findLatestPriceByStockProductIdAndCount(
+				stockProductId,
+				counts
+			);
+
+			if (priceHistoryList == null || priceHistoryList.isEmpty()) {
+				log.warn("주식 가격 변동 조회 실패");
+				throw new BusinessException(INVESTMENT_PRICE_NOT_FOUND);
+			}
+
+			return priceHistoryList.stream()
+				.map(
+					StockPriceHistoryResponseDto.PriceHistoryResponseDto::stockPriceHistoryEntityToPriceHistoryResponseDto)
+				.toList();
+		} catch (BusinessException e) {
+			throw e;
+		} catch (Exception e) {
+			log.error("An error occurred: {}", e.getMessage());
+			throw new BusinessException(SERVER_ERROR);
+		}
+	}
 
 	@Scheduled(cron = "0 0 10 * * Mon-Fri")
 	@Transactional
@@ -157,11 +196,16 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 			);
 			log.info("AI 가격 변동 정보 생성 요청: prompt = {}", prompt.length());
 
-			String priceContent = stockAiService.generateResponse(prompt);
+			String priceContent;
 
-			log.info("AI 가격 변동 정보 생성 요청: newsContent = {}", priceContent);
+			try {
+				priceContent = stockAiService.generateResponse(prompt);
+				log.info("AI 가격 변동 정보 생성 요청: newsContent = {}", priceContent);
+			} catch (Exception e) {
+				throw new BusinessException(GENERATE_FAILED);
+			}
 
-			if (priceContent == null) {
+			if (priceContent == null || priceContent.isEmpty()) {
 				throw new BusinessException(GENERATE_FAILED);
 			}
 

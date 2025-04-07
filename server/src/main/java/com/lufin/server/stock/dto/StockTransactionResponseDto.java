@@ -14,6 +14,13 @@ public class StockTransactionResponseDto {
 		public TransactionInfoDto {
 
 		}
+
+		// StockTransactionHistory 엔티티를 dto로 변환하는 메서드
+		public static TransactionInfoDto stockTransactionHistoryEntityToTransactionInfoDto(
+			StockTransactionHistory history
+		) {
+			return new TransactionInfoDto(history.getId());
+		}
 	}
 
 	public record TransactionDetailDto(

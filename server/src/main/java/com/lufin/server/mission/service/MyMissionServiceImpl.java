@@ -36,15 +36,17 @@ public class MyMissionServiceImpl implements MyMissionService {
 	}
 
 	@Override
-	public int getCompletedCount(int memberId) {
+	public int getCompletedCount(int memberId, int classId) {
 		log.info("[완료한 미션 수 조회]: memberId={}", memberId);
-		return myMissionRepository.countByMemberIdAndStatus(memberId, MissionParticipationStatus.SUCCESS);
+		return myMissionRepository.countByMemberIdAndClassIdAndStatus(memberId, classId,
+			MissionParticipationStatus.SUCCESS);
 	}
 
 	@Override
-	public int getTotalWage(int memberId) {
+	public int getTotalWage(int memberId, int classId) {
 		log.info("[총 지급받은 보수 조회]: memberId={}", memberId);
-		return myMissionRepository.findAllByMemberIdAndStatus(memberId, MissionParticipationStatus.SUCCESS)
+		return myMissionRepository.findAllByMemberIdAndClassIdAndStatus(memberId, classId,
+				MissionParticipationStatus.SUCCESS)
 			.stream()
 			.mapToInt(p -> p.getMission().getWage())
 			.sum();

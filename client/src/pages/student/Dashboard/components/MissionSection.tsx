@@ -36,7 +36,7 @@ const MissionSection = ({ completedCount, currentMission, totalReward }: Mission
                   </span>
                 </div>
               </div>
-              {currentMission.daysLeft && (
+              {currentMission.daysLeft !== undefined && (
                 <span className='text-p2 text-grey'>{currentMission.daysLeft}일 남음</span>
               )}
             </div>

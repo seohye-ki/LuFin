@@ -5,7 +5,6 @@ import TextField from '../../../components/Form/TextField';
 import logo from '../../../assets/svgs/logo.svg';
 import lufinCoin from '../../../assets/svgs/lufin-coin-200.svg';
 import useAuthStore from '../../../libs/store/authStore';
-import { paths } from '../../../routes/paths';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -43,23 +42,10 @@ export default function Login() {
       return;
     }
 
-    console.log('로그인 시도:', { email, password });
-
     const result = await login({ email, password });
 
-    console.log('로그인 결과:', result);
-
-    if (result.success) {
-      console.log('로그인 성공, 역할:', result.role);
-      // 역할에 따라 다른 페이지로 이동
-      if (result.role === 'TEACHER') {
-        navigate(paths.TEACHER_CLASSROOM);
-      } else {
-        // 기본적으로 학생(STUDENT) 대시보드로 이동
-        navigate(paths.STUDENT_DASHBOARD);
-      }
-    } else {
-      console.log('로그인 실패:', result.message);
+    if (result.success && result.redirectPath) {
+      navigate(result.redirectPath);
     }
   };
 

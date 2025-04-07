@@ -7,6 +7,7 @@ interface ImageUploadProps
   description?: string;
   error?: string;
   isDisabled?: boolean;
+  isLoading?: boolean;
   value?: File[];
   onChange?: (files: File[]) => void;
   maxFiles?: number;
@@ -21,6 +22,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
       description,
       error,
       isDisabled,
+      isLoading = false,
       value = [],
       onChange,
       maxFiles = 1,
@@ -37,7 +39,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
     // 파일 처리 함수
     const handleFiles = useCallback(
       (files: FileList | null) => {
-        if (!files || isDisabled) return;
+        if (!files || isDisabled || isLoading) return;
 
         const newFiles: File[] = [];
         const newPreviews: string[] = [];
@@ -60,7 +62,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
         setPreviews(finalPreviews);
         onChange?.(finalFiles);
       },
-      [isDisabled, maxFiles, maxSize, onChange, previews, value],
+      [isDisabled, isLoading, maxFiles, maxSize, onChange, previews, value],
     );
 
     // 드래그 앤 드롭 핸들러
@@ -68,9 +70,9 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
       (e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        if (!isDisabled) setIsDragging(true);
+        if (!isDisabled && !isLoading) setIsDragging(true);
       },
-      [isDisabled],
+      [isDisabled, isLoading],
     );
 
     const handleDragLeave = useCallback((e: React.DragEvent) => {
@@ -84,21 +86,22 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
         e.preventDefault();
         e.stopPropagation();
         setIsDragging(false);
-        handleFiles(e.dataTransfer.files);
+        if (!isLoading) handleFiles(e.dataTransfer.files);
       },
-      [handleFiles],
+      [handleFiles, isLoading],
     );
 
     // 파일 삭제 핸들러
     const handleRemove = useCallback(
       (index: number) => {
+        if (isLoading) return;
         const newFiles = value.filter((_, i) => i !== index);
         const newPreviews = previews.filter((_, i) => i !== index);
 
         setPreviews(newPreviews);
         onChange?.(newFiles);
       },
-      [onChange, previews, value],
+      [isLoading, onChange, previews, value],
     );
 
     return (
@@ -112,7 +115,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
           className={`mt-2 flex flex-col justify-center rounded-lg border-2 border-dashed
             ${isDragging ? 'border-info bg-info/5' : 'border-grey-30'}
             ${error ? 'border-danger bg-danger/5' : ''} 
-            ${isDisabled ? 'border-grey-30 bg-broken-white cursor-not-allowed' : ''}
+            ${isDisabled || isLoading ? 'border-grey-30 bg-broken-white cursor-not-allowed' : ''}
           `}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -129,7 +132,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
                         alt={`Preview ${index + 1}`}
                         className='w-full h-full object-cover'
                       />
-                      {!isDisabled && (
+                      {!isDisabled && !isLoading && (
                         <div className='absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center justify-center'>
                           <button
                             type='button'
@@ -149,18 +152,26 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
                 {previews.length < maxFiles && (
                   <label
                     htmlFor={props.id}
-                    className='w-[200px] h-[200px] flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-grey-30 
-                      cursor-pointer hover:border-info hover:bg-info/5 transition-colors'
+                    className={`w-[200px] h-[200px] flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-grey-30 
+                      ${isDisabled || isLoading ? 'cursor-not-allowed' : 'cursor-pointer hover:border-info hover:bg-info/5'} transition-colors`}
                   >
-                    <Icon name='GalleryAdd' size={32} color='grey-25' className='mb-2' />
-                    <span className='text-p1 text-grey'>추가하기</span>
+                    {isLoading ? (
+                      <>
+                        <span className='text-p1 text-grey'>업로드 중...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Icon name='GalleryAdd' size={32} color='grey-25' className='mb-2' />
+                        <span className='text-p1 text-grey'>추가하기</span>
+                      </>
+                    )}
                     <input
                       ref={ref}
                       id={props.id}
                       type='file'
                       multiple={maxFiles > 1}
                       accept={accept}
-                      disabled={isDisabled}
+                      disabled={isDisabled || isLoading}
                       className='sr-only'
                       onChange={(e) => handleFiles(e.target.files)}
                       {...props}
@@ -171,39 +182,44 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
             </div>
           ) : (
             <div className='px-6 py-10 text-center'>
-              <Icon
-                name='GalleryAdd'
-                size={48}
-                color={isDisabled ? 'grey-30' : 'grey-25'}
-                className='mx-auto'
-              />
-              <div className='mt-4 flex justify-center text-p1'>
-                <label
-                  htmlFor={props.id}
-                  className={`relative cursor-pointer rounded-md font-semibold
-                    ${error ? 'text-danger' : isDisabled ? 'text-dark-grey cursor-not-allowed' : 'text-info hover:text-info/50'}`}
-                >
-                  <span>파일 선택</span>
-                  <input
-                    ref={ref}
-                    id={props.id}
-                    type='file'
-                    multiple={maxFiles > 1}
-                    accept={accept}
-                    disabled={isDisabled}
-                    className='sr-only'
-                    onChange={(e) => handleFiles(e.target.files)}
-                    {...props}
+              {isLoading ? (
+                <>
+                  <div className='mt-4 text-p1 text-grey'>업로드 중...</div>
+                </>
+              ) : (
+                <>
+                  <Icon
+                    name='GalleryAdd'
+                    size={48}
+                    color={isDisabled ? 'grey-30' : 'grey-25'}
+                    className='mx-auto'
                   />
-                </label>
-                {/* <p className="pl-1 text-grey">또는 드래그 앤 드롭</p> */}
-              </div>
-              <p className='mt-2 text-p2 text-grey'>
-                {description || `PNG, JPG, GIF (최대 ${maxSize}MB)`}
-              </p>
+                  <div className='mt-4 flex justify-center text-p1'>
+                    <label
+                      htmlFor={props.id}
+                      className={`relative cursor-pointer rounded-md font-semibold
+                        ${error ? 'text-danger' : isDisabled ? 'text-dark-grey cursor-not-allowed' : 'text-info hover:text-info/50'}`}
+                    >
+                      <span>파일 선택</span>
+                      <input
+                        ref={ref}
+                        id={props.id}
+                        type='file'
+                        multiple={maxFiles > 1}
+                        accept={accept}
+                        disabled={isDisabled || isLoading}
+                        className='sr-only'
+                        onChange={(e) => handleFiles(e.target.files)}
+                        {...props}
+                      />
+                    </label>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
+        {description && <p className='mt-2 text-p2 text-grey'>{description}</p>}
         {error && <p className='mt-2 text-p2 text-danger'>{error}</p>}
       </div>
     );

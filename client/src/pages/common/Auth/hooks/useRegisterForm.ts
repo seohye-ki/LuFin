@@ -44,10 +44,10 @@ interface ValidationState {
 export function useRegisterForm() {
   // 폼 데이터 상태 관리
   const [formData, setFormData] = useState<FormState>({
-    userType: null,      // 1단계: 사용자 유형
-    name: '',           // 2단계: 기본 정보
-    email: '',          // 2단계: 기본 정보
-    password: '',       // 3단계: 비밀번호
+    userType: null, // 1단계: 사용자 유형
+    name: '', // 2단계: 기본 정보
+    email: '', // 2단계: 기본 정보
+    password: '', // 3단계: 비밀번호
     confirmPassword: '', // 3단계: 비밀번호 확인
     accountPassword: '', // 4단계: 계좌 비밀번호
     confirmAccountPassword: '', // 4단계: 계좌 비밀번호 확인
@@ -80,7 +80,7 @@ export function useRegisterForm() {
   const validateEmail = async (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isFormatValid = emailRegex.test(email);
-    
+
     if (!isFormatValid) {
       setValidation((prev) => ({
         ...prev,
@@ -96,12 +96,14 @@ export function useRegisterForm() {
     try {
       const response = await registerService.checkEmail(email);
       const isAvailable = response.isSuccess;
-      
+
       setValidation((prev) => ({
         ...prev,
         email: {
           isValid: isAvailable,
-          message: response.message || (isAvailable ? '사용 가능한 이메일입니다' : '이미 가입된 이메일입니다'),
+          message:
+            response.message ||
+            (isAvailable ? '사용 가능한 이메일입니다' : '이미 가입된 이메일입니다'),
           isAvailable,
         },
       }));
@@ -125,7 +127,7 @@ export function useRegisterForm() {
   const validateEmailFormat = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isFormatValid = emailRegex.test(email);
-    
+
     setValidation((prev) => ({
       ...prev,
       email: {
@@ -290,15 +292,15 @@ export function useRegisterForm() {
       if (response.isSuccess) {
         return { success: true };
       } else {
-        return { 
-          success: false, 
-          message: response.message || '회원가입 중 오류가 발생했습니다' 
+        return {
+          success: false,
+          message: response.message || '회원가입 중 오류가 발생했습니다',
         };
       }
     } catch {
-      return { 
-        success: false, 
-        message: '서버와의 통신 중 오류가 발생했습니다' 
+      return {
+        success: false,
+        message: '서버와의 통신 중 오류가 발생했습니다',
       };
     }
   };

@@ -20,4 +20,7 @@ public interface ClassroomCommandService {
 
 	// [교사] 클래스 삭제
 	void deleteClassroom(Member member, int classId);
+
+	// [교사] 클래스 소속 변경
+	LoginWithClassResponse changeClassroom(Member member, int classId);
 }

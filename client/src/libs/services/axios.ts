@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import useAlertStore, { hideGlobalAlert, showGlobalAlert } from '../store/alertStore';
+import { hideGlobalAlert, showGlobalAlert } from '../store/alertStore';
 
 /**
  * Axios 인스턴스 생성

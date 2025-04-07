@@ -28,7 +28,7 @@ const SidebarMenu = ({ userRole }: SidebarMenuProps) => {
       teacher: paths.TEACHER_STOCK,
     },
     dollar: {
-      // student: paths.STUDENT_LOAN,
+      student: paths.STUDENT_LOAN,
       // teacher: paths.TEACHER_LOAN,
     },
     shop: {

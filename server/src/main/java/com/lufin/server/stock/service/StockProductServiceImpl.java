@@ -2,8 +2,10 @@ package com.lufin.server.stock.service;
 
 import static com.lufin.server.common.constants.ErrorCode.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,5 +61,48 @@ public class StockProductServiceImpl implements StockProductService {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
 		}
+	}
+
+	@Scheduled(cron = "0 0 10 * * Mon-Fri")
+	@Transactional
+	@Override
+	public void updateMorningStockPrice() {
+		log.info("10:00 주식 가격 업데이트 스케줄 작업 시작: hour = {}", LocalDateTime.now().getHour());
+		try {
+			List<StockResponseDto.StockInfoDto> stocks = stockProductRepository.getAllStocks();
+			for (StockResponseDto.StockInfoDto stock : stocks) {
+				updateStockPrice(stock.stockProductId(), stock.currentPrice());
+			}
+
+		} catch (BusinessException e) {
+			throw e;
+		} catch (Exception e) {
+			log.error("An error occurred: {}", e.getMessage(), e);
+			throw new BusinessException(SERVER_ERROR);
+		}
+	}
+
+	@Scheduled(cron = "0 0 14 * * Mon-Fri")
+	@Transactional
+	@Override
+	public void updateAfternoonStockPrice() {
+		log.info("14:00 주식 가격 업데이트 스케줄 작업 시작: hour = {}", LocalDateTime.now().getHour());
+		try {
+			List<StockResponseDto.StockInfoDto> stocks = stockProductRepository.getAllStocks();
+			for (StockResponseDto.StockInfoDto stock : stocks) {
+				updateStockPrice(stock.stockProductId(), stock.currentPrice());
+			}
+
+		} catch (BusinessException e) {
+			throw e;
+		} catch (Exception e) {
+			log.error("An error occurred: {}", e.getMessage(), e);
+			throw new BusinessException(SERVER_ERROR);
+		}
+	}
+
+	@Override
+	public void updateStockPrice(Integer stockProductId, Integer price) {
+		
 	}
 }

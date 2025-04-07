@@ -90,7 +90,7 @@ public class StockNewsServiceImpl implements StockNewsService {
 	@Transactional
 	@Override
 	public void createMorningNews() {
-		log.info("09:00 주식 공시 정보 생성 스케줄 작업 시작, hour: {}", LocalDateTime.now().getHour());
+		log.info("09:00 주식 공시 정보 생성 스케줄 작업 시작: hour= {}", LocalDateTime.now().getHour());
 
 		try {
 			List<StockProduct> stockProducts = stockProductRepository.findAll();

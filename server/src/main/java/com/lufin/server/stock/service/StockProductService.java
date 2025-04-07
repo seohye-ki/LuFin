@@ -10,4 +10,12 @@ public interface StockProductService {
 
 	// 주식 상품 상세 조회
 	StockResponseDto.StockInfoDto getStock(Integer stockProductId);
+
+	// 주식 가격 변동 스케줄링
+	void updateMorningStockPrice();
+
+	void updateAfternoonStockPrice();
+
+	// 주식 가격 수동 변동
+	void updateStockPrice(Integer stockProductId, Integer price);
 }

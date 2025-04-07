@@ -9,7 +9,6 @@ import axios from 'axios';
 
 export const axiosInstance = axios.create({
   // 환경변수에서 API URL을 가져옵니다.
-  // @ts-ignore
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 30000,
   headers: {
@@ -18,7 +17,6 @@ export const axiosInstance = axios.create({
 });
 
 // 토큰 저장소 결정 (sessionStorage 또는 localStorage)
-// @ts-ignore
 const TOKEN_STORAGE = import.meta.env.VITE_TOKEN_STORAGE || 'sessionStorage';
 
 /**

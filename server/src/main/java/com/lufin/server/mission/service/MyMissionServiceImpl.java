@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.lufin.server.common.annotation.StudentOnly;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.mission.domain.MissionParticipationStatus;
 import com.lufin.server.mission.dto.MyMissionDto;
@@ -22,7 +21,6 @@ public class MyMissionServiceImpl implements MyMissionService {
 
 	private final MyMissionRepository myMissionRepository;
 
-	@StudentOnly
 	@Override
 	public List<MyMissionDto> getMyMissions(int classId, int memberId) {
 		log.info("[미션 지원 내역 조회] classId={}, memberId={}", classId, memberId);

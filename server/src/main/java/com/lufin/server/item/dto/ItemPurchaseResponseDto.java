@@ -2,6 +2,7 @@ package com.lufin.server.item.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lufin.server.item.domain.ItemPurchase;
 import com.lufin.server.item.domain.ItemPurchaseStatus;
 import com.lufin.server.member.domain.Member;
@@ -14,8 +15,11 @@ public record ItemPurchaseResponseDto(
 	ItemPurchaseStatus status,
 	String memberName,
 	String memberProfileImage,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	LocalDateTime createdAt,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	LocalDateTime updatedAt,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	LocalDateTime expirationDate
 ) {
 	public static ItemPurchaseResponseDto from(ItemPurchase itemPurchase) {

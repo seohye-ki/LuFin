@@ -3,6 +3,7 @@ package com.lufin.server.loan.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lufin.server.loan.domain.LoanApplication;
 import com.lufin.server.loan.domain.LoanApplicationStatus;
 
@@ -18,9 +19,13 @@ public record LoanApplicationDetailDto(
 	Integer interestAmount,
 	BigDecimal interestRate,
 	Integer overdueCount,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	LocalDateTime nextPaymentDate,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	LocalDateTime createdAt,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	LocalDateTime startedAt,
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	LocalDateTime dueDate
 ) {
 

@@ -44,7 +44,7 @@ public class StockPortfolio {
 
 	@Setter
 	@ManyToOne
-	@JoinColumn(name = "class_id", nullable = false)
+	@JoinColumn(name = "classroom_id", nullable = false)
 	private Classroom classroom;
 
 	/* 멤버 필드 */

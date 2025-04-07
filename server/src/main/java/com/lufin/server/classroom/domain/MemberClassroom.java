@@ -65,4 +65,9 @@ public class MemberClassroom {
 	public void deactivate() {
 		this.isCurrent = false;
 	}
+
+	// 현재 소속 여부 활성화
+	public void activate() {
+		this.isCurrent = true;
+	}
 }

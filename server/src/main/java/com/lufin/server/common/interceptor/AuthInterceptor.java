@@ -34,11 +34,11 @@ public class AuthInterceptor implements HandlerInterceptor {
 		String method = request.getMethod();
 		String uri = request.getRequestURI();
 
-		log.debug("[AuthInterceptor] 요청 URI: {} {}", method, uri);
+		log.info("[AuthInterceptor] 요청 URI: {} {}", method, uri);
 
 		// OPTIONS 요청은 바로 통과 (CORS preflight)
 		if ("OPTIONS".equalsIgnoreCase(method)) {
-			log.debug("[AuthInterceptor] OPTIONS 요청은 인증 없이 통과");
+			log.info("[AuthInterceptor] OPTIONS 요청은 인증 없이 통과");
 			return true;
 		}
 
@@ -53,10 +53,10 @@ public class AuthInterceptor implements HandlerInterceptor {
 		}
 
 		Claims claims = tokenUtils.extractClaims(token);
-		log.debug("[AuthInterceptor] Claims 추출 완료: {}", claims);
+		log.info("[AuthInterceptor] Claims 추출 완료: {}", claims);
 
 		int userId = Integer.parseInt(claims.getSubject());
-		log.debug("[AuthInterceptor] userId 파싱 완료: {}", userId);
+		log.info("[AuthInterceptor] userId 파싱 완료: {}", userId);
 
 		Member member = memberRepository.findById(userId)
 			.orElseThrow(() -> {
@@ -69,7 +69,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 			throw new BusinessException(MEMBER_ALREADY_DELETED);
 		}
 
-		log.debug("⚠️[AuthInterceptor] 인증 완료, 사용자 정보 설정: {}", member.getName());
+		log.info("⚠️[AuthInterceptor] 인증 완료, 사용자 정보 설정: {}", member.getName());
 		UserContext.set(member);
 		return true;
 	}

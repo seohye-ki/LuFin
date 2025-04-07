@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lufin.server.item.domain.Item;
 
 public record ItemResponseDto(
-	Integer id,
+	Integer itemId,
 	Integer classroomId,
-	String name,
+	String	itemName,
 	Integer type,
 	Integer price,
 	Integer quantityAvailable,

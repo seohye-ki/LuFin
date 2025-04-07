@@ -1,6 +1,7 @@
 package com.lufin.server.stock.repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,12 +18,24 @@ public interface StockNewsRepository extends JpaRepository<StockNews, Integer>, 
 	 * COUNT 대신 EXISTS 사용으로 성능 향상
 	 */
 	@Query(value = "SELECT EXISTS(SELECT 1 FROM stock_news sn "
-		+ "WHERE sn.stock_product_id = :productId "
-		+ "AND sn.created_at BETWEEN :startDate AND :endDate)",
+		+ "WHERE sn.stock_product_id = :stockProductId "
+		+ "AND sn.created_at BETWEEN :startTime AND :endTime)",
 		nativeQuery = true)
-	boolean existsByStockProductIdAndCreatedAtBetween(
+	Integer existsByStockProductIdAndCreatedAtBetween(
 		Integer stockProductId,
 		LocalDateTime startTime,
 		LocalDateTime endTime
+	);
+
+	/**
+	 * stockProductId에 대한 가장 최근 뉴스를 조회
+	 */
+	@Query(value = "SELECT * FROM stock_news sn "
+		+ "WHERE sn.stock_product_id = :stockProductId "
+		+ "ORDER BY sn.created_at DESC "
+		+ "LIMIT 1",
+		nativeQuery = true)
+	Optional<StockNews> findLatestNewsByStockProductId(
+		Integer stockProductId
 	);
 }

@@ -39,13 +39,14 @@ public class MissionParticipationRepositoryCustomImpl implements MissionParticip
 			.leftJoin(missionParticipation.member, member).fetchJoin()
 			.leftJoin(creditScore).on(creditScore.memberId.eq(member.id)).fetchJoin()
 			.where(missionParticipation.mission.id.eq(missionId)
-				.and(missionParticipation.mission.classId.eq(classId)))
+				.and(missionParticipation.mission.classroom.id.eq(classId)))
 			.fetch();
 
 		// 엔티티를 dto로 변경
 		return missionParticipationEntityList.stream()
 			.map(missionParticipationEntity
 				-> MissionParticipationResponseDto.MissionParticipationSummaryResponseDto.missionParticipationToMissionParticipationSummaryResponseDto(
+				missionParticipationEntity.getParticipationId(),
 				missionParticipationEntity.getMember().getName(),
 				missionParticipationEntity.getMember().getProfileImage(),
 				missionParticipationEntity.getStatus()

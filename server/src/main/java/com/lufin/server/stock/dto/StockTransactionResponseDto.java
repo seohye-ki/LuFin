@@ -2,6 +2,7 @@ package com.lufin.server.stock.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lufin.server.stock.domain.StockTransactionHistory;
 import com.querydsl.core.annotations.QueryProjection;
 
@@ -23,7 +24,9 @@ public class StockTransactionResponseDto {
 		Integer quantity,
 		Integer price,
 		Integer totalPrice,
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 		LocalDateTime createdAt,
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 		LocalDateTime updatedAt
 	) {
 		@QueryProjection

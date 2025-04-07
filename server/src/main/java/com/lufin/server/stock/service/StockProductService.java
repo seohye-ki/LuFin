@@ -10,4 +10,5 @@ public interface StockProductService {
 
 	// 주식 상품 상세 조회
 	StockResponseDto.StockInfoDto getStock(Integer stockProductId);
+
 }

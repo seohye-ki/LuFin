@@ -7,5 +7,5 @@ public interface StockPriceHistoryService {
 	void updateAfternoonStockPrice();
 
 	// 주식 가격 수동 변동
-	void updateStockPrice(Integer stockProductId, Integer price, Integer hour);
+	void updateStockPrice(Integer stockProductId, Integer hour);
 }

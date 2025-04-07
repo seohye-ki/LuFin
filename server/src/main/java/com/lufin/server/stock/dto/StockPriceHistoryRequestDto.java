@@ -10,7 +10,7 @@ public class StockPriceHistoryRequestDto {
 	}
 
 	public record PriceHistoryAiResponseDto(
-		PriceHistoryAiInfoDto priceHistoryAiInfoDto
+		PriceHistoryAiInfoDto data
 	) {
 	}
 

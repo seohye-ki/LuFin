@@ -23,7 +23,7 @@ public class JsonToDtoUtil {
 			log.info("Java 객체 변환 성공: response = {}", response);
 
 			// 변환된 객체 사용하기
-			return response.priceHistoryAiInfoDto();
+			return response.data();
 
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage());

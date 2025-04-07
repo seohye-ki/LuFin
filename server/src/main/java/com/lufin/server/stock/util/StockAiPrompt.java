@@ -23,14 +23,14 @@ public class StockAiPrompt {
 			당신은 교육용 모의 주식 시장의 뉴스를 생성하는 금융 전문 AI입니다. 투자자들이 합리적인 투자 결정을 내릴 수 있도록 현실적이고 교육적인 뉴스를 생성해주세요.
 			
 			## 입력 정보
-			- 상품 ID: {product_id}
-			- 상품명: {product_name}
-			- 회사 설명: {product_description}
-			- 현재 가격: {current_price}
-			- 총 투자자 보유량: {total_holdings}
-			- 총 매수금액: {total_buy_amount}
-			- 총 매도금액: {total_sell_amount}
-			- 생성 시간: {generation_time}
+			- 상품 ID: {productId}
+			- 상품명: {productName}
+			- 회사 설명: {productDescription}
+			- 현재 가격: {currentPrice}
+			- 총 투자자 보유량: {totalHoldings}
+			- 총 매수금액: {totalBuyAmount}
+			- 총 매도금액: {totalSellAmount}
+			- 생성 시간: {generationTime}
 			
 			## 뉴스 생성 규칙
 			1. 뉴스는 해당 기업이나 산업과 관련된 현실적인 내용이어야 합니다.
@@ -41,18 +41,18 @@ public class StockAiPrompt {
 			6. 이전 뉴스와의 연속성을 고려하되 반복되지 않도록 해주세요.
 			
 			## 출력 형식
-			{"data": {"id": {product_id}, "content": "뉴스 본문 내용"}}
+			{"data": {"id": {productId}, "content": "뉴스 본문 내용"}}
 			""";
 
 		return prompt
-			.replace("{product_id}", productId.toString())
-			.replace("{product_name}", productName)
-			.replace("{product_description}", productDescription)
-			.replace("{current_price}", currentPrice.toString())
-			.replace("{total_holdings}", totalHoldings.toString())
-			.replace("{total_buy_amount}", totalPurchaseAmount.toString())
-			.replace("{total_sell_amount}", totalSellAmount.toString())
-			.replace("{generation_time}",
+			.replace("{productId}", productId.toString())
+			.replace("{productName}", productName)
+			.replace("{productDescription}", productDescription)
+			.replace("{currentPrice}", currentPrice.toString())
+			.replace("{totalHoldings}", totalHoldings.toString())
+			.replace("{totalBuyAmount}", totalPurchaseAmount.toString())
+			.replace("{totalSellAmount}", totalSellAmount.toString())
+			.replace("{generationTime}",
 				LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			;
 	}
@@ -73,14 +73,14 @@ public class StockAiPrompt {
 			당신은 교육용 모의 주식 시장의 가격 변동을 계산하는 금융 모델링 AI입니다. 뉴스와 투자자 행동을 반영한 현실적이지만 교육적인 가격 변동을 생성해주세요.
 			
 			## 입력 정보
-			- 상품 ID: {product_id}
-			- 상품명: {product_name}
-			- 이전 가격: {previous_price}
-			- 최근 뉴스 내용: {recent_news_content}
-			- 총 투자자 보유량: {total_holdings}
-			- 총 매수금액: {total_buy_amount}
-			- 총 매도금액: {total_sell_amount}
-			- 가격 변동 시간: {price_change_time}
+			- 상품 ID: {productId}
+			- 상품명: {productName}
+			- 이전 가격: {previousPrice}
+			- 최근 뉴스 내용: {recentNewsContent}
+			- 총 투자자 보유량: {totalHoldings}
+			- 총 매수금액: {totalBuyAmount}
+			- 총 매도금액: {totalSellAmount}
+			- 가격 변동 시간: {priceChangeTime}
 			
 			## 가격 변동 계산 규칙
 			1. 기본적으로 뉴스 내용의 긍정/부정 성향에 따라 가격이 변동합니다:
@@ -101,19 +101,19 @@ public class StockAiPrompt {
 			
 			4. 가격은 10원 단위로 반올림하여 표시
 			
-			## 출력 형식
-			{"data": {"id": {product_id}, "previous_price": {previous_price}, "current_price": 계산된_가격, "change_rate": 변동률_퍼센트}}
+			## 출력 형식: 반드시 이하의 출력 형식으로만 응답해주세요. 계산 과정 등의 다른 답변은 필요하지 않습니다.
+			{"data": {"id": {productId}, "previousPrice": {previousPrice}, "currentPrice": 계산된_가격, "changeRate": 변동률_퍼센트}}
 			""";
 
 		return prompt
-			.replace("{product_id}", productId.toString())
-			.replace("{product_name}", productName)
-			.replace("{current_price}", currentPrice.toString())
-			.replace("{recent_news_content}", previousNews)
-			.replace("{total_holdings}", totalHoldings.toString())
-			.replace("{total_buy_amount}", totalPurchaseAmount.toString())
-			.replace("{total_sell_amount}", totalSellAmount.toString())
-			.replace("{price_change_time}",
+			.replace("{productId}", productId.toString())
+			.replace("{productName}", productName)
+			.replace("{previousPrice}", currentPrice.toString())
+			.replace("{recentNewsContent}", previousNews)
+			.replace("{totalHoldings}", totalHoldings.toString())
+			.replace("{totalBuyAmount}", totalPurchaseAmount.toString())
+			.replace("{totalSellAmount}", totalSellAmount.toString())
+			.replace("{priceChangeTime}",
 				LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
 			;
 	}

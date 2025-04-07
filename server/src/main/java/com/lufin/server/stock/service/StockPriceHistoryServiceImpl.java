@@ -48,7 +48,8 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 		try {
 			List<StockResponseDto.StockInfoDto> stocks = stockProductRepository.getAllStocks();
 			for (StockResponseDto.StockInfoDto stock : stocks) {
-				updateStockPrice(stock.stockProductId(), stock.currentPrice(), LocalDateTime.now().getHour());
+				updateStockPrice(stock.stockProductId(), LocalDateTime.now().getHour());
+				log.info("주식 ID: {}에 대한 오전 가격 변동 성공적으로 반영됨", stock.stockProductId());
 			}
 
 		} catch (BusinessException e) {
@@ -67,21 +68,21 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 		try {
 			List<StockResponseDto.StockInfoDto> stocks = stockProductRepository.getAllStocks();
 			for (StockResponseDto.StockInfoDto stock : stocks) {
-				updateStockPrice(stock.stockProductId(), stock.currentPrice(), LocalDateTime.now().getHour());
+				updateStockPrice(stock.stockProductId(), LocalDateTime.now().getHour());
+				log.info("주식 ID: {}에 대한 오후 가격 변동 성공적으로 반영됨", stock.stockProductId());
 			}
-
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {
-			log.error("An error occurred: {}", e.getMessage(), e);
+			log.error("An error occurred: {}", e.getMessage());
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
 
+	@Transactional
 	@Override
 	public void updateStockPrice(
 		Integer stockProductId,
-		Integer price,
 		Integer hour
 	) {
 		log.info("특정 주식 가격 업데이트 요청: stockProductId = {}, LocalDateTime = {}", stockProductId,
@@ -115,13 +116,13 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 		}
 
 		try {
-			// stockProductId로 stockProduct 객체 조회
+			// 1. stockProductId로 stockProduct 객체 조회
 			StockProduct stockProduct = stockProductRepository.findById(stockProductId)
 				.orElseThrow(() -> new BusinessException(ErrorCode.INVESTMENT_PRODUCT_NOT_FOUND));
 
 			log.info("stockProduct 조회: {}", stockProduct.toString());
 
-			// product에 대한  <- portfolio에서 productId에 대해 조회한 후 모든 total끼리 합쳐서 계산
+			// 2. product에 대한  <- portfolio에서 productId에 대해 조회한 후 모든 total끼리 합쳐서 계산
 			List<StockPortfolio> portfolios = stockPortfolioRepository.findByStockProductId(stockProductId);
 
 			int totalQuantity = 0;
@@ -137,6 +138,7 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 			log.info("주식 상품 정보 계산: totalQuantity = {}, totalPurchaseAmount = {}, totalSellAmount = {}", totalQuantity,
 				totalPurchaseAmount, totalSellAmount);
 
+			// 3. 가장 최근 뉴스 조회
 			Optional<StockNews> recentNews = stockNewsRepository.findLatestNewsByStockProductId(stockProductId);
 
 			if (!recentNews.isPresent()) {

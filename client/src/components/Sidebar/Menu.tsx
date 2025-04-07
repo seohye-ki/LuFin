@@ -60,7 +60,7 @@ const Menu = ({ isActive = false, type, userRole }: MenuProps) => {
       teacher: paths.TEACHER_STOCK,
     },
     dollar: {
-      // student: paths.STUDENT_LOAN,
+      student: paths.STUDENT_LOAN,
       // teacher: paths.TEACHER_LOAN,
     },
     shop: {

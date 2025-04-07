@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react';
 import { Icon } from '../../../../components/Icon/Icon';
 import Card from '../../../../components/Card/Card';
 import { useDropdownMenu } from '../hooks/useDropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
 import Button from '../../../../components/Button/Button';
+import { fileService } from '../../../../libs/services/file/fileService';
 
 interface ClassroomCardProps {
   id: number;
@@ -11,6 +13,7 @@ interface ClassroomCardProps {
   grade: string;
   students: number;
   year: number;
+  imageKey?: string | null;
   showMenu?: boolean;
   onClick?: () => void;
   onEdit?: () => void;
@@ -23,12 +26,24 @@ const ClassroomCard = ({
   grade,
   students,
   year,
+  imageKey,
   showMenu = true,
   onClick,
   onEdit,
   onDelete,
 }: ClassroomCardProps) => {
   const { isOpen, menuRef, toggleMenu, closeMenu } = useDropdownMenu();
+  const [imageUrl, setImageUrl] = useState<string>('');
+
+  useEffect(() => {
+    const loadImage = async () => {
+      if (imageKey) {
+        const url = await fileService.getImageUrl(imageKey);
+        setImageUrl(url);
+      }
+    };
+    loadImage();
+  }, [imageKey]);
 
   const handleMenuItemClick = (handler?: () => void) => (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -42,7 +57,7 @@ const ClassroomCard = ({
         <div className='flex flex-col gap-3'>
           <div className='relative'>
             <img
-              src={`https://picsum.photos/400/200?random=${year}`}
+              src={imageUrl || `https://picsum.photos/400/200?random=${year}`}
               alt={title}
               className='w-full h-[160px] object-cover rounded-lg mb-3'
             />

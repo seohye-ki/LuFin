@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Icon } from '../../../../components/Icon/Icon';
 import Button from '../../../../components/Button/Button';
 import CodeInput from '../../../../components/Form/CodeInput';
@@ -6,40 +6,18 @@ import CodeInput from '../../../../components/Form/CodeInput';
 interface JoinClassroomModalProps {
   onClose: () => void;
   onSubmit: (code: string) => void;
-  isCodeInvalid?: boolean;
-  onInvalidCode?: () => void;
-  onCodeChange?: (code: string) => void;
+  isLoading?: boolean;
 }
 
-const JoinClassroomModal = ({
-  onClose,
-  onSubmit,
-  isCodeInvalid = false,
-  onInvalidCode,
-  onCodeChange,
-}: JoinClassroomModalProps) => {
+const JoinClassroomModal = ({ onClose, onSubmit, isLoading = false }: JoinClassroomModalProps) => {
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | undefined>(undefined);
-  const [isInvalidCode, setIsInvalidCode] = useState(isCodeInvalid);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // 부모 컴포넌트에서 코드 유효성 상태가 변경되면 반영
-  useEffect(() => {
-    if (isCodeInvalid && !isInvalidCode) {
-      setIsInvalidCode(true);
-      setIsLoading(false);
-      onInvalidCode?.();
-    }
-  }, [isCodeInvalid, isInvalidCode, onInvalidCode]);
 
   const handleSubmit = () => {
     if (code.length < 5) {
       setError('코드를 모두 입력해주세요.');
       return;
     }
-
-    // 로딩 상태 시작
-    setIsLoading(true);
 
     // 부모 컴포넌트에 코드 제출
     onSubmit(code);
@@ -70,13 +48,9 @@ const JoinClassroomModal = ({
             onChange={(value) => {
               setCode(value);
               if (error) setError(undefined);
-              if (isInvalidCode) setIsInvalidCode(false);
-              onCodeChange?.(value);
             }}
             size='lg'
             error={error}
-            description={isInvalidCode ? '존재하지 않는 클래스 코드입니다.' : undefined}
-            isError={isInvalidCode}
             className='mt-2'
           />
         </div>

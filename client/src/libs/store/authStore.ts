@@ -11,11 +11,16 @@ interface AuthState {
   userRole: string | null;
 
   // 액션
-  login: (
-    credentials: LoginRequest,
-  ) => Promise<{ success: boolean; message?: string; code?: string; role?: string }>;
+  login: (credentials: LoginRequest) => Promise<{
+    success: boolean;
+    message?: string;
+    code?: string;
+    role?: string;
+    redirectPath?: string;
+  }>;
   logout: () => void;
   clearError: () => void;
+  setTokens: (accessToken: string, refreshToken: string) => void;
   // 상태 selector 헬퍼 함수
   getAuthStatus: () => {
     isAuthenticated: boolean;
@@ -60,6 +65,12 @@ const useAuthStore = create<AuthState>((set, get) => ({
           error: null,
           errorCode: null,
         });
+
+        return {
+          success: true,
+          role: result.role,
+          redirectPath: result.redirectPath,
+        };
       } else {
         // 로그인 실패 시 에러 상태 업데이트
         set({
@@ -68,9 +79,9 @@ const useAuthStore = create<AuthState>((set, get) => ({
           errorCode: result.code || null,
           isAuthenticated: false,
         });
-      }
 
-      return result;
+        return result;
+      }
     } catch {
       // 예외 발생 시 에러 처리
       const errorMessage = '로그인 중 오류가 발생했습니다.';
@@ -105,6 +116,18 @@ const useAuthStore = create<AuthState>((set, get) => ({
    * 에러 상태 초기화
    */
   clearError: () => set({ error: null, errorCode: null }),
+
+  /**
+   * 토큰 설정
+   * @param accessToken 새로운 액세스 토큰
+   * @param refreshToken 새로운 리프레시 토큰
+   */
+  setTokens: (accessToken: string, refreshToken: string) => {
+    AuthService.setTokens(accessToken, refreshToken);
+    set({
+      isAuthenticated: true,
+    });
+  },
 
   /**
    * 현재 인증 상태 정보를 가져오는 헬퍼 함수

@@ -17,7 +17,8 @@ import TeacherShop from '../pages/teacher/Shop/TeacherShop';
 import TeacherClassroom from '../pages/teacher/Classroom/TeacherClassroom';
 import StudentClassroom from '../pages/student/Classroom/StudentClassroom';
 import StudentLoan from '../pages/student/Loan/StudentLoan';
-import Dashboard from '../pages/student/Dashboard/StudentDashboard';
+import StudentDashboard from '../pages/student/Dashboard/StudentDashboard';
+import TeacherDashboard from '../pages/teacher/Dashboard/TeacherDashboard';
 
 const Router = () => {
   return (
@@ -37,7 +38,8 @@ const Router = () => {
         <Route path={paths.TEACHER_CLASSROOM} element={<TeacherClassroom />} />
         <Route path={paths.STUDENT_CLASSROOM} element={<StudentClassroom />} />
         <Route path={paths.STUDENT_LOAN} element={<StudentLoan />} />
-        <Route path={paths.STUDENT_DASHBOARD} element={<Dashboard />} />
+        <Route path={paths.STUDENT_DASHBOARD} element={<StudentDashboard />} />
+        <Route path={paths.TEACHER_DASHBOARD} element={<TeacherDashboard />} />
         {/* 인증이 필요한 라우트들은 PrivateRoute로 감싸기 */}
         <Route element={<PrivateRoute />}>{/* 여기에 인증이 필요한 라우트들 추가 */}</Route>
       </Routes>

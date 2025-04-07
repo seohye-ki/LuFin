@@ -15,7 +15,7 @@ public class AssetStatUtils {
 	 */
 	public static AssetDto buildAssetDto(String label, long current, long previous) {
 		long diff = current - previous;
-		int rate = (previous == 0) ? 100 : (int)((double)diff / previous * 100);
+		int rate = (previous == 0) ? 0 : (int)((double)diff / previous * 100);
 		boolean isPositive = diff >= 0;
 
 		return AssetDto.builder()

@@ -36,10 +36,11 @@ public class RankingServiceImpl implements RankingService {
 		List<MemberAsset> sorted = students.stream()
 			.map(mc -> {
 				Member member = mc.getMember();
-				int asset = accountService.getTotalAsset(member.getId()); // 예금 + 주식
+				int asset = accountService.getTotalAsset(member.getId(), classId); // 예금 + 주식
 				return new MemberAsset(member.getId(), member.getName(), asset);
 			})
 			.sorted(Comparator.comparingInt(MemberAsset::asset).reversed())
+			.limit(5)
 			.toList();
 
 		// 랭킹 1위부터 순서대로 부여

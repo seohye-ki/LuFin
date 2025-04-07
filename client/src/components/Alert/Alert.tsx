@@ -22,7 +22,6 @@ const Alert = () => {
     }
   }, [isVisible]);
 
-  console.log(status);
   const { icon, color } = statusConfig[status];
 
   return (

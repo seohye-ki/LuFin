@@ -8,7 +8,7 @@ import Checkbox from '../../../components/Form/Checkbox';
 import { Icon } from '../../../components/Icon/Icon';
 import CreateModal from './components/CreateModal';
 import ItemDetailModal from './components/ItemDetailModal';
-import { initialItemPreviews, ItemPreview } from '../../../types/item';
+import { initialItemPreviews, ItemPreview } from '../../../types/shop/item';
 
 const TeacherShop = () => {
   const [itemPreviews, setItemPreviews] = useState<ItemPreview[]>([]);
@@ -123,7 +123,7 @@ const TeacherShop = () => {
 
       {showCreateModal && <CreateModal closeModal={closeModal} />}
 
-      {selectedItem && <ItemDetailModal item={selectedItem} closeModal={closeModal} />}
+      {/*{selectedItem && <ItemDetailModal item={selectedItem} closeModal={closeModal} />}*/}
     </SidebarLayout>
   );
 };

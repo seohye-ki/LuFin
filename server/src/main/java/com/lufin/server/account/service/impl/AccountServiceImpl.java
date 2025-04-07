@@ -70,7 +70,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public int getCashBalance(int memberId, int classroomId) {
 		log.info("[현금 자산 확인] member {}", memberId);
-		return accountRepository.findByMemberIdAndType(memberId, AccountType.DEPOSIT)
+		return accountRepository.findByMemberIdAndClassroomIdAndType(memberId, classroomId, AccountType.DEPOSIT)
 			.map(Account::getBalance)
 			.orElse(0);
 	}

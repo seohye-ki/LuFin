@@ -27,9 +27,9 @@ public class StockServiceImpl implements StockService {
 	private final TransactionHistoryRepository transactionHistoryRepository;
 
 	@Override
-	public int getTotalValuation(int memberId) {
+	public int getTotalValuation(int memberId, int classId) {
 		log.info("[보유한 주식의 총 평가 금액 조회] memberId = {}", memberId);
-		return stockRepository.findAllByMemberId(memberId).stream()
+		return stockRepository.findAllByMemberIdAndClassroomId(memberId, classId).stream()
 			.mapToInt(StockTransactionHistory::getTotalPrice)
 			.sum();
 	}

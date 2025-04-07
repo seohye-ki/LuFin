@@ -13,7 +13,7 @@ public interface StockTransactionService {
 		Integer classId
 	);
 
-	// 주식 구매
+	// 주식 거래
 	StockTransactionResponseDto.TransactionInfoDto transactStock(
 		StockTransactionRequestDto.TransactionInfoDto request,
 		Member currentMember,

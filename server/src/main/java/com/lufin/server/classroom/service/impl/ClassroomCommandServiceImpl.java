@@ -103,20 +103,13 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 
 		// 동일한 반에 다시 들어오려한다면? -> 이미 등록된 클래스임을 안내
 		boolean isExist = memberClassroomRepository.existsByMember_IdAndClassroom_Id(member.getId(), classroom.getId());
-		if(isExist) {
+		if (isExist) {
 			log.warn("🏫[동일한 클래스에 접근 요청 시도] memberId: {}, classId: {}", member.getId(), classroom.getId());
 			throw new BusinessException(DUPLICATE_CLASSROOM);
 		}
 
 		// 기존에 소속된 클래스(isCurrent=true)가 있다면 deactivate()
 		deactivateIfInActiveClass(member);
-
-		// 기존 계좌 해지
-		accountRepository.findByMemberIdAndClosedAtIsNull(member.getId())
-			.ifPresent(account -> {
-				account.close();
-				log.info("[기존 계좌 해지 완료] accountId: {}", account.getId());
-			});
 
 		// 새로운 class 계좌 생성
 		MemberClassroom addStudent = MemberClassroom.enroll(member, classroom);
@@ -213,6 +206,53 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 		log.info("[클래스 삭제 완료] classId: {}", classId);
 	}
 
+	@Transactional
+	@TeacherOnly
+	@Override
+	public LoginWithClassResponse changeClassroom(Member member, int classId) {
+		log.info("[클래스 변경 요청] memberId: {}, targetClassId: {}", member.getId(), classId);
+
+		// 타겟 클래스 존재 여부 확인
+		Classroom newClassroom = classroomRepository.findById(classId)
+			.orElseThrow(() -> {
+				log.warn("🏫[클래스 변경 실패 - 대상 클래스 없음] classId: {}", classId);
+				return new BusinessException(CLASS_NOT_FOUND);
+			});
+
+		// 해당 멤버가 대상 클래스에 소속되어 있는지 확인
+		MemberClassroom target = memberClassroomRepository
+			.findByMemberIdAndClassroomId(member.getId(), classId)
+			.orElseThrow(() -> {
+				log.warn("🏫[클래스 변경 실패 - 멤버 소속 아님] memberId: {}, classId: {}", member.getId(), classId);
+				return new BusinessException(CLASS_NOT_FOUND);
+			});
+
+		// 계좌 먼저 조회
+		Account account = accountRepository.findByClassroomId(classId)
+			.orElseThrow(() -> {
+				log.warn("🏫[클래스 변경 실패 - 클래스 계좌 없음] classId: {}", classId);
+				return new BusinessException(ACCOUNT_NOT_FOUND);
+			});
+
+		// 현재 소속 클래스 확인
+		Optional<MemberClassroom> currentClass = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(
+			member.getId());
+		if (currentClass.map(c -> c.getClassroom().getId().equals(classId)).orElse(false)) {
+			log.info("🏫[클래스 변경 요청 - 현재 클래스와 동일] memberId: {}, classId: {}", member.getId(), classId);
+			return responseFactory.createLoginWithClassResponse(member, newClassroom, account);
+		}
+
+		// 기존 소속 클래스가 있다면 비활성화
+		deactivateIfInActiveClass(member);
+
+		// 대상 클래스의 MemberClassroom isCurrent 활성화
+		target.activate();
+		memberClassroomRepository.save(target);
+		log.info("[클래스 변경 완료] memberId: {}, newClassId: {}", member.getId(), classId);
+
+		return responseFactory.createLoginWithClassResponse(member, newClassroom, account);
+	}
+
 	private void checkDuplicateClassroom(String school, int grade, int classGroup, Member teacher) {
 		int year = LocalDate.now().getYear();
 		boolean exist = classroomRepository.existsDuplicateClassroom(school, grade,
@@ -237,14 +277,6 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 
 		if (hasCurrentClassroom.isPresent()) {
 			MemberClassroom current = hasCurrentClassroom.get();
-
-			// 기존 클래스 계좌 해지
-			Optional<Account> optionalAccount = accountRepository.findByClassroomId(current.getClassroom().getId());
-			if (optionalAccount.isPresent()) {
-				Account account = optionalAccount.get();
-				account.close();
-				accountRepository.save(account);
-			}
 
 			current.deactivate();
 			memberClassroomRepository.save(current);

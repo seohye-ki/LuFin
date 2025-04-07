@@ -1,5 +1,6 @@
 package com.lufin.server.account.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,5 +37,11 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 	// 특정 멤버 ID의 활성 계좌 (closedAt == null) 조회
 	Optional<Account> findByMemberIdAndClosedAtIsNull(Integer memberId);
 
-	Optional<Account> findByMemberIdAndType(int memberId, AccountType accountType);
+	Optional<Account> findByMemberIdAndClassroomIdAndType(int memberId, int classId, AccountType type);
+
+
+	// 1년 뒤 해지
+	@Query("SELECT a FROM Account a WHERE a.type = 'CLASSROOM' AND a.createdAt < :limit AND a.closedAt IS NULL")
+	List<Account> findClassAccountsBefore(@Param("limit") LocalDateTime limit);
+
 }

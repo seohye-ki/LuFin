@@ -7,6 +7,7 @@ import com.lufin.server.member.domain.Member;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,17 +34,17 @@ import lombok.Setter;
 public class StockTransactionHistory {
 	/* 연관관계 */
 	@Setter
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
 	@Setter(AccessLevel.PROTECTED)
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "stock_product_id", nullable = false)
 	private StockProduct stockProduct;
 
 	@Setter
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "classroom_id", nullable = false)
 	private Classroom classroom;
 
@@ -75,7 +76,7 @@ public class StockTransactionHistory {
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
-	@Column(name = "updated_at", nullable = false)
+	@Column(name = "updated_at", nullable = true)
 	private LocalDateTime updatedAt;
 
 	// 시간 설정
@@ -99,7 +100,8 @@ public class StockTransactionHistory {
 		int price,
 		int totalPrice,
 		StockProduct stockProduct,
-		Member member
+		Member member,
+		Classroom classroom
 	) {
 		StockTransactionHistory history = StockTransactionHistory.builder()
 			.type(type)
@@ -107,6 +109,7 @@ public class StockTransactionHistory {
 			.price(price)
 			.totalPrice(totalPrice)
 			.member(member)
+			.classroom(classroom)
 			.build();
 
 		stockProduct.addTransactionHistories(history);

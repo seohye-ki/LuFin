@@ -123,6 +123,13 @@ public class Account {
 		if (isClosed()) {
 			throw new BusinessException(ALREADY_CLOSED_ACCOUNT);
 		}
+
+		// 1년 이내 생성된 계좌는 닫지 않음
+		// 교육의 맥락 속에서 연속성을 유지하는것이 중요하기 때문에 하나의 계좌는 해지되더라도 1년간은 재사용이 가능해야 함
+		if (createdAt != null && createdAt.isAfter(LocalDateTime.now().minusYears(1))) {
+			throw new BusinessException(CANNOT_CLOSE_RECENT_ACCOUNT);
+		}
+
 		this.closedAt = LocalDateTime.now();
 	}
 

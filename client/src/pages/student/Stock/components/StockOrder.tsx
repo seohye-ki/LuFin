@@ -38,7 +38,7 @@ const StockOrder = ({ stock }: StockOrderProps) => {
   const total = quantity * stock.currentPrice;
 
   return (
-    <div className='flex flex-col gap-4 w-full h-full p-4'>
+    <div className='flex flex-col justify-between gap-4 w-full h-full p-4'>
       {/* 탭 */}
       <div className='flex rounded-full bg-gray-100 '>
         <button
@@ -58,7 +58,7 @@ const StockOrder = ({ stock }: StockOrderProps) => {
           판매하기
         </button>
       </div>
-      <div className='flex flex-col gap-4  overflow-auto [&::-webkit-scrollbar]:hidden px-4'>
+      <div className='flex flex-col h-full justify-between overflow-auto [&::-webkit-scrollbar]:hidden px-4'>
         {/* 현재 가격 */}
         <div className='flex justify-between items-center'>
           <span className='text-p3 text-grey'>현재 가격</span>

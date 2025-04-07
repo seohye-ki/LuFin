@@ -2,11 +2,10 @@ import { Menu } from '@headlessui/react';
 import { Icon } from '../Icon/Icon';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
-// 드롭다운 아이템의 값 타입 정의
+// 타입 정의
 type StarValue = { type: 'star'; count: 1 | 2 | 3 };
 type DropdownValue = string | number | StarValue | ReactNode;
 
-// 드롭다운 아이템 인터페이스
 interface DropdownItem {
   label: string;
   value: DropdownValue;
@@ -35,7 +34,6 @@ const Dropdown = ({
   const [position, setPosition] = useState<'top' | 'bottom'>('bottom');
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // 현재 선택된 아이템 찾기
   const selectedItem = items.find((item) => {
     if (
       typeof item.value === 'object' &&
@@ -55,38 +53,30 @@ const Dropdown = ({
     return item.value === value;
   });
 
-  // 드롭다운 위치 계산
   useEffect(() => {
     const calculatePosition = () => {
       if (!buttonRef.current) return;
-
-      const buttonRect = buttonRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      const spaceBelow = windowHeight - buttonRect.bottom;
-      const spaceAbove = buttonRect.top;
-
-      // 아래 공간이 200px보다 작고 위 공간이 더 큰 경우 위로 표시
+      const rect = buttonRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
       setPosition(spaceBelow < 200 && spaceAbove > spaceBelow ? 'top' : 'bottom');
     };
 
     calculatePosition();
     window.addEventListener('scroll', calculatePosition);
     window.addEventListener('resize', calculatePosition);
-
     return () => {
       window.removeEventListener('scroll', calculatePosition);
       window.removeEventListener('resize', calculatePosition);
     };
   }, []);
 
-  // 별점 렌더링 함수
   const renderStars = (count: number) => {
     return Array(count)
       .fill(0)
       .map((_, index) => <Icon key={index} name='Star' size={16} />);
   };
 
-  // 아이템 값 렌더링 함수
   const renderValue = (item: DropdownItem) => {
     if (
       typeof item.value === 'object' &&
@@ -112,8 +102,8 @@ const Dropdown = ({
   return (
     <div className={`relative inline-block ${className}`}>
       {label && <label className='block text-p2 font-medium text-dark-grey mb-2'>{label}</label>}
-      <Menu>
-        {({ open }: { open: boolean }) => (
+      <Menu as='div' className='relative'>
+        {({ open }) => (
           <>
             <Menu.Button
               ref={buttonRef}
@@ -151,8 +141,8 @@ const Dropdown = ({
             >
               <div className='py-1'>
                 {items.map((item, index) => (
-                  <Menu.Item key={index}>
-                    {({ active }: { active: boolean }) => (
+                  <Menu.Item key={index} as='div'>
+                    {({ active }) => (
                       <button
                         type='button'
                         className={`

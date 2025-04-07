@@ -1,28 +1,39 @@
+import { useEffect, useState, useCallback } from 'react';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
 import Card from '../../../components/Card/Card';
 import TableView from '../../../components/Frame/TableView';
-import {
-  missionDetails,
-  missionParticipations,
-  MissionDetail,
-} from '../../../types/mission/mission';
-import { useState } from 'react';
 import MyMissionModal from './components/MyMissionModal';
 import { useStudentMissions } from './hooks/useStudentMissions';
 import { Icon } from '../../../components/Icon/Icon';
+import useMissionStore from '../../../libs/store/missionStore';
+import { MissionList, MissionParticipation } from '../../../types/mission/mission';
+
+const myMemberId = 1; // 실제 프로젝트에선 전역 상태(userStore 등)에서 가져와야 함
+const participationList: MissionParticipation[] = []; // 상태로 API 연동 예정
+
 const StudentMission = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedMission, setSelectedMission] = useState<MissionDetail | null>(null);
+  const getMissionList = useMissionStore((state) => state.getMissionList);
+  const getMissionDetail = useMissionStore((state) => state.getMissionDetail);
+  const missions = useMissionStore((state) => state.missions);
+  const selectedMission = useMissionStore((state) => state.selectedMission);
 
-  const handleRowClick = (mission: MissionDetail) => {
-    setSelectedMission(mission);
-    setIsModalOpen(true);
-  };
+  useEffect(() => {
+    getMissionList();
+  }, [getMissionList]);
+
+  const handleRowClick = useCallback(
+    async (mission: MissionList) => {
+      await getMissionDetail(mission.missionId);
+      setIsModalOpen(true);
+    },
+    [getMissionDetail],
+  );
 
   const { myMissionRows, availableMissionRows } = useStudentMissions(
-    1,
-    missionDetails,
-    missionParticipations,
+    missions,
+    participationList,
+    myMemberId,
     handleRowClick,
   );
 
@@ -39,6 +50,7 @@ const StudentMission = () => {
   return (
     <SidebarLayout>
       <div className='flex flex-col h-full gap-3'>
+        {/* 나의 미션 */}
         <Card
           titleLeft='나의 미션'
           titleRight={
@@ -58,6 +70,7 @@ const StudentMission = () => {
             <TableView columns={columns} rows={myMissionRows} />
           </div>
         </Card>
+        {/* 수행 가능 미션 */}
         <Card
           titleLeft='수행 가능 미션'
           titleRight={
@@ -87,11 +100,9 @@ const StudentMission = () => {
           />
           <div className='fixed inset-0 flex items-center justify-center z-50'>
             <MyMissionModal
-              onClose={() => setIsModalOpen(false)}
               mission={selectedMission}
-              participation={missionParticipations.find(
-                (p) => p.missionId === selectedMission.missionId,
-              )}
+              onClose={() => setIsModalOpen(false)}
+              mode='apply'
             />
           </div>
         </>

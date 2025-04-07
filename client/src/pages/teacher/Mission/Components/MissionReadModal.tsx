@@ -1,17 +1,17 @@
-import { MissionDetail } from '../../../../types/mission/mission';
-import { members } from '../../../../types/member/member';
+import { MissionRaw, ParticipationUserInfo } from '../../../../types/mission/mission';
 import Card from '../../../../components/Card/Card';
 import { Icon } from '../../../../components/Icon/Icon';
 import Badge from '../../../../components/Badge/Badge';
 import Lufin from '../../../../components/Lufin/Lufin';
 import Button from '../../../../components/Button/Button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Profile from '../../../../components/Profile/Profile';
 import MissionEditModal from './MissionEditModal';
 import useAlertStore from '../../../../libs/store/alertStore';
+import useMissionStore from '../../../../libs/store/missionStore';
 
 interface MissionReadModalProps {
-  mission: MissionDetail;
+  mission: MissionRaw;
   onClose: () => void;
 }
 
@@ -20,21 +20,50 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [isApproveMode, setIsApproveMode] = useState(false);
-  const [selectedParticipation, setSelectedParticipation] = useState<number | null>(null);
+  const [participations, setParticipations] = useState<ParticipationUserInfo[]>([]);
+  const [selectedParticipation, setSelectedParticipation] = useState<ParticipationUserInfo | null>(
+    null,
+  );
+
+  const { deleteMission, getParticipationList, requestReview } = useMissionStore();
+
+  useEffect(() => {
+    const fetchParticipation = async () => {
+      const result = await getParticipationList(mission.missionId);
+      if (result.success) {
+        setParticipations(result.participations ?? []);
+      } else {
+        useAlertStore
+          .getState()
+          .showAlert(
+            '참여자 목록 조회에 실패했습니다.',
+            '',
+            result.message || '알 수 없는 오류가 발생했습니다.',
+            'danger',
+            {
+              label: '확인',
+              onClick: () => {},
+              color: 'neutral',
+            },
+          );
+      }
+    };
+    fetchParticipation();
+  }, [mission.missionId]);
 
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? mission.missionImages.length - 2 : prev - 2));
+    setCurrentImageIndex((prev) => (prev === 0 ? mission.image.length - 2 : prev - 2));
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev >= mission.missionImages.length - 2 ? 0 : prev + 2));
+    setCurrentImageIndex((prev) => (prev >= mission.image.length - 2 ? 0 : prev + 2));
   };
 
   const getVisibleImages = () => {
     const images = [];
     for (let i = 0; i < 2; i++) {
-      const index = (currentImageIndex + i) % mission.missionImages.length;
-      images.push(mission.missionImages[index]);
+      const index = (currentImageIndex + i) % mission.image.length;
+      images.push(mission.image[index]);
     }
     return images;
   };
@@ -46,7 +75,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
       case 'IN_PROGRESS':
         return <Badge status='ing'>진행중</Badge>;
       case 'CHECKING':
-        return <Badge status='ing'>검토 대기중</Badge>;
+        return <Badge status='review'>검토 대기중</Badge>;
       case 'FAILED':
         return <Badge status='fail'>실패</Badge>;
       case 'REJECTED':
@@ -56,15 +85,21 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
     }
   };
 
-  const handleParticipationClick = (participationId: number, status: string) => {
-    if (status === 'CHECKING') {
-      setSelectedParticipation(participationId);
+  const handleParticipationClick = (p: ParticipationUserInfo) => {
+    if (p.status === 'CHECKING') {
+      setSelectedParticipation(p);
       setIsApproveMode(true);
     }
   };
 
   if (isEditMode) {
-    return <MissionEditModal mission={mission} onClose={() => setIsEditMode(false)} />;
+    return (
+      <MissionEditModal
+        mission={mission}
+        onClose={() => setIsEditMode(false)}
+        selectedDate={new Date(mission.missionDate)}
+      />
+    );
   }
 
   if (isDeleteMode) {
@@ -75,15 +110,13 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
       'danger',
       {
         label: '취소',
-        onClick: () => {
-          setIsDeleteMode(false);
-        },
+        onClick: () => setIsDeleteMode(false),
         color: 'neutral',
       },
       {
         label: '삭제하기',
-        onClick: () => {
-          // TODO: 미션 삭제 API 호출
+        onClick: async () => {
+          await deleteMission(mission.missionId);
           onClose();
         },
         color: 'danger',
@@ -92,16 +125,13 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
     return null;
   }
 
-  if (isApproveMode) {
+  if (isApproveMode && selectedParticipation) {
     useAlertStore.getState().showAlert(
       '미션을 승인하시겠습니까?',
       <div className='flex flex-col justify-center items-center gap-2'>
         <Profile
-          name={members.find((m) => m.memberId === selectedParticipation)?.name || '알 수 없음'}
-          profileImage={
-            members.find((m) => m.memberId === selectedParticipation)?.profileImage ||
-            'https://picsum.photos/200/300?random=1'
-          }
+          name={selectedParticipation.name}
+          profileImage={selectedParticipation.profileImage}
           variant='row'
         />
         <span className='text-c1'>승인하면 보상이 지급됩니다.</span>
@@ -118,8 +148,8 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
       },
       {
         label: '승인하기',
-        onClick: () => {
-          // TODO: 미션 승인 API 호출
+        onClick: async () => {
+          await requestReview(selectedParticipation.participationId);
           setIsApproveMode(false);
           setSelectedParticipation(null);
         },
@@ -132,7 +162,6 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
   return (
     <>
       <div className='fixed inset-0 bg-black z-10' style={{ opacity: 0.5 }} onClick={onClose} />
-      {/* 모달 */}
       <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[416px] max-h-screen rounded-xl bg-white shadow-lg z-50'>
         <Card
           titleLeft='오늘의 미션'
@@ -164,41 +193,21 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
                   ))}
               </div>
             </div>
-            {mission.missionParticipations.length > 0 && (
+            <div className='flex flex-col gap-2'>
+              <span className='text-c1 text-grey'>참여 인원</span>
               <div className='flex flex-col gap-2'>
-                <span className='text-c1 text-grey'>참여 인원</span>
-                <div className='flex flex-col gap-2'>
-                  {mission.missionParticipations.map((participation) => {
-                    const member = members.find((m) => m.memberId === participation.memberId);
-                    return (
-                      <div
-                        key={participation.participationId}
-                        className={`flex items-center gap-2 ${
-                          participation.status === 'CHECKING'
-                            ? 'cursor-pointer hover:bg-grey-50 p-2 rounded-lg'
-                            : ''
-                        }`}
-                        onClick={() =>
-                          handleParticipationClick(
-                            participation.participationId,
-                            participation.status,
-                          )
-                        }
-                      >
-                        <Profile
-                          name={member?.name || '알 수 없음'}
-                          variant='row'
-                          profileImage={
-                            member?.profileImage || 'https://picsum.photos/200/300?random=1'
-                          }
-                        />
-                        {getStatusBadge(participation.status)}
-                      </div>
-                    );
-                  })}
-                </div>
+                {participations.map((p) => (
+                  <div
+                    key={p.name}
+                    className={`flex items-center gap-2 ${p.status === 'CHECKING' ? 'cursor-pointer hover:bg-grey-50 p-2 rounded-lg' : ''}`}
+                    onClick={() => handleParticipationClick(p)}
+                  >
+                    <Profile name={p.name} profileImage={p.profileImage} variant='row' />
+                    {getStatusBadge(p.status)}
+                  </div>
+                ))}
               </div>
-            )}
+            </div>
             <div className='flex flex-col gap-2'>
               <span className='text-c1 text-grey'>보상</span>
               <Lufin size='s' count={mission.wage} />
@@ -207,20 +216,20 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
               <span className='text-c1 text-grey'>설명</span>
               <span className='text-p1 font-semibold'>{mission.content}</span>
             </div>
-            {mission.missionImages.length > 0 && (
+            {mission.image.length > 0 && (
               <div className='mt-2 relative'>
                 <div className='grid grid-cols-2 gap-2'>
-                  {getVisibleImages().map((image) => (
-                    <div key={image.missionImageId} className='relative aspect-square'>
+                  {getVisibleImages().map((image, index) => (
+                    <div key={index} className='relative aspect-square'>
                       <img
-                        src={image.imageUrl}
+                        src={image}
                         alt='미션 인증 이미지'
                         className='w-full h-full object-cover rounded-lg'
                       />
                     </div>
                   ))}
                 </div>
-                {mission.missionImages.length > 2 && (
+                {mission.image.length > 2 && (
                   <>
                     <button
                       onClick={handlePrevImage}
@@ -234,20 +243,6 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
                     >
                       <Icon name='ArrowRight2' size={20} />
                     </button>
-                    <div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1'>
-                      {Array.from({ length: Math.ceil(mission.missionImages.length / 2) }).map(
-                        (_, index) => (
-                          <div
-                            key={index}
-                            className={`w-2 h-2 rounded-full ${
-                              index === Math.floor(currentImageIndex / 2)
-                                ? 'bg-white'
-                                : 'bg-white/50'
-                            }`}
-                          />
-                        ),
-                      )}
-                    </div>
                   </>
                 )}
               </div>

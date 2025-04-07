@@ -1,36 +1,29 @@
-import { MissionDetail, MissionParticipation } from '../../../../types/mission/mission';
+import { MissionList, MissionParticipation } from '../../../../types/mission/mission';
 import { createMissionRow } from '../../../../libs/utils/mission-util';
 
 export const useStudentMissions = (
+  missionList: MissionList[],
+  participationList: MissionParticipation[],
   myMemberId: number,
-  missionDetails: MissionDetail[],
-  missionParticipations: MissionParticipation[],
-  onRowClick: (mission: MissionDetail) => void,
+  onRowClick: (mission: MissionList) => void,
 ) => {
-  // 내가 참여한 미션 데이터
-  const myParticipations = missionParticipations.filter(
-    (participation) => participation.memberId === myMemberId,
-  );
+  // 1. 내가 참여한 미션만 필터링
+  const myParticipations = participationList.filter((p) => p.memberId === myMemberId);
 
-  const myMissionRows = myParticipations
-    .map((participation) => {
-      const mission = missionDetails.find((m) => m.missionId === participation.missionId);
-      if (!mission) return null;
+  // 2. 참여한 미션 → myMissionRows
+  const myMissionRows = missionList
+    .filter((m) => myParticipations.some((p) => p.missionId === m.missionId))
+    .map((mission) => {
+      const participation = myParticipations.find((p) => p.missionId === mission.missionId);
       return createMissionRow(mission, participation, onRowClick);
     })
     .filter((row): row is NonNullable<typeof row> => row !== null);
 
-  // 수행 가능한 미션 데이터
-  const availableMissions = missionDetails.filter(
-    (mission) =>
-      mission.status === 'RECRUITING' &&
-      mission.currentParticipant < mission.maxParticipant &&
-      !myParticipations.some((p) => p.missionId === mission.missionId),
-  );
-
-  const availableMissionRows = availableMissions.map((mission) =>
-    createMissionRow(mission, undefined, onRowClick),
-  );
+  // 3. 아직 참여 안한 미션 → availableMissionRows
+  const availableMissionRows = missionList
+    .filter((m) => !myParticipations.some((p) => p.missionId === m.missionId))
+    .map((mission) => createMissionRow(mission, undefined, onRowClick))
+    .filter((row): row is NonNullable<typeof row> => row !== null);
 
   return {
     myMissionRows,

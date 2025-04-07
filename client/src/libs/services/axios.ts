@@ -14,6 +14,9 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  transformResponse: (data) => {
+    return JSON.parse(data);
+  },
 });
 
 // 토큰 저장소 결정 (sessionStorage 또는 localStorage)

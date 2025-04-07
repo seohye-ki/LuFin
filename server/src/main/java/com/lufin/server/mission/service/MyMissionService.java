@@ -10,8 +10,8 @@ public interface MyMissionService {
 	List<MyMissionDto> getMyMissions(int classId, int memberId);
 
 	// 완료된 미션 수
-	int getCompletedCount(int memberId);
+	int getCompletedCount(int memberId, int classId);
 
 	// 완료한 미션의 누적 보상 금액 총합
-	int getTotalWage(int memberId);
+	int getTotalWage(int memberId, int classId);
 }

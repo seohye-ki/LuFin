@@ -49,14 +49,15 @@ public class StudentDashboardUseCase {
 		log.debug(" - 랭킹 수: {}", rankings.size());
 
 		// 신용 점수 및 등급
-		int creditScore = creditService.getScore(studentId);
-		String creditGrade = creditService.getGrade(studentId);
-		List<CreditHistoryDto> creditHistories = creditService.getGradeChangeHistory(studentId);
+		int creditScore = creditService.getScore(studentId, classId);
+		String creditGrade = creditService.getGrade(studentId, classId);
+		// TODO: 신용등급 history에 classroom 추가.... 필요...
+		List<CreditHistoryDto> creditHistories = creditService.getGradeChangeHistory(studentId, classId);
 		log.debug(" - 신용 점수: {}, 등급: {}, 이력 수: {}", creditScore, creditGrade, creditHistories.size());
 
 		// 자산 구성
 		int cash = accountService.getCashBalance(studentId, classId);
-		int stock = stockService.getTotalValuation(studentId);
+		int stock = stockService.getTotalValuation(studentId, classId);
 		int loan = loanService.getLoanPrincipal(studentId, classId);
 		int totalAsset = cash + stock - loan;
 		log.debug(" - 자산: 현금={}, 주식={}, 대출={}, 총합={}", cash, stock, loan, totalAsset);
@@ -83,8 +84,8 @@ public class StudentDashboardUseCase {
 
 		// 미션 상태
 		List<MyMissionDto> ongoingMissions = myMissionService.getMyMissions(classId, studentId);
-		int totalCompletedMissions = myMissionService.getCompletedCount(studentId);
-		int totalWage = myMissionService.getTotalWage(studentId);
+		int totalCompletedMissions = myMissionService.getCompletedCount(studentId, classId);
+		int totalWage = myMissionService.getTotalWage(studentId, classId);
 		log.debug(" - 미션: 진행중={}, 완료={}, 누적 보상={}", ongoingMissions.size(), totalCompletedMissions, totalWage);
 
 		log.info("[학생 대시보드 구성 완료] studentId={}", studentId);

@@ -21,25 +21,25 @@ public class CreditServiceImpl implements CreditService {
 	private final CreditScoreHistoryRepository historyRepository;
 
 	@Override
-	public int getScore(int memberId) {
-		log.info("[신용 점수 조회] memberId: {}", memberId);
-		return creditRepository.findByMemberId(memberId)
+	public int getScore(int memberId, int classId) {
+		log.info("[신용 점수 조회] memberId: {}, classId: {}", memberId, classId);
+		return creditRepository.findByMemberIdAndClassId(memberId, classId)
 			.map(c -> c.getScore().intValue())
 			.orElse(0);
 	}
 
 	@Override
-	public String getGrade(int memberId) {
+	public String getGrade(int memberId, int classId) {
 		log.info("[신용 등급 조회] memberId: {}", memberId);
-		return creditRepository.findByMemberId(memberId)
+		return creditRepository.findByMemberIdAndClassId(memberId, classId)
 			.map(score -> score.getGrade().getDisplay())
 			.orElse("N/A");
 	}
 
 	@Override
-	public List<CreditHistoryDto> getGradeChangeHistory(int memberId) {
+	public List<CreditHistoryDto> getGradeChangeHistory(int memberId, int classId) {
 		log.info("[신용 점수 이력 조회] memberId: {}", memberId);
-		return historyRepository.findTop10ByMemberIdOrderByCreatedAtDesc(memberId).stream()
+		return historyRepository.findTop10ByMemberIdAndClassIdOrderByCreatedAtDesc(memberId, classId).stream()
 			.map(h -> CreditHistoryDto.builder()
 				.scoreChange(h.getScoreChange())
 				.reason(h.getReason())

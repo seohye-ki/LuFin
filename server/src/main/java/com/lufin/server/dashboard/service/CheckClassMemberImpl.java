@@ -33,4 +33,11 @@ public class CheckClassMemberImpl implements ClassMembershipValidator {
 			throw new BusinessException(FORBIDDEN_REQUEST);
 		}
 	}
+
+	public void validateStudentInClass(int studentId, int classId) {
+		boolean isMember = memberClassroomRepository.existsByMember_IdAndClassroom_Id(studentId, classId);
+		if (!isMember) {
+			throw new BusinessException(FORBIDDEN_REQUEST);
+		}
+	}
 }

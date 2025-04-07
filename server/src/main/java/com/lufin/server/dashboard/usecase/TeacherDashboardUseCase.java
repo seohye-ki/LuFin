@@ -82,11 +82,11 @@ public class TeacherDashboardUseCase {
 
 			// 학생 자산 정보
 			int cash = accountService.getCashBalance(studentId, classId);
-			int stock = stockService.getTotalValuation(studentId);
+			int stock = stockService.getTotalValuation(studentId, classId);
 			int loanAmount = loanDashboardService.getLoanPrincipal(studentId, classId);
 
 			// 신용등급
-			String creditGrade = creditService.getGrade(studentId);
+			String creditGrade = creditService.getGrade(studentId, classId);
 
 			// 미션 상태 판단
 			List<MyMissionDto> missions = myMissionService.getMyMissions(classId, studentId);

@@ -26,9 +26,28 @@ public interface MyMissionRepository extends JpaRepository<MissionParticipation,
 	List<MyMissionDto> findMyMissions(@Param("classId") Integer classId, @Param("memberId") Integer memberId);
 
 	// 특정 상태의 미션 참여 내역 조회
-	List<MissionParticipation> findAllByMemberIdAndStatus(int memberId, MissionParticipationStatus status);
+	@Query("""
+		SELECT mp FROM MissionParticipation mp
+		WHERE mp.member.id = :memberId
+		AND mp.mission.classroom.id = :classId
+		AND mp.status = :status
+		""")
+	List<MissionParticipation> findAllByMemberIdAndClassIdAndStatus(
+		@Param("memberId") int memberId,
+		@Param("classId") int classId,
+		@Param("status") MissionParticipationStatus status
+	);
 
 	// 특정 상태의 미션 참여 개수 반환
-	int countByMemberIdAndStatus(int memberId, MissionParticipationStatus status);
+	@Query("""
+		SELECT COUNT(mp) FROM MissionParticipation mp
+		WHERE mp.member.id = :memberId
+		AND mp.mission.classroom.id = :classId
+		AND mp.status = :status
+		""")
+	int countByMemberIdAndClassIdAndStatus(@Param("memberId") int memberId,
+		@Param("classId") int classId,
+		@Param("status") MissionParticipationStatus status);
+
 }
 

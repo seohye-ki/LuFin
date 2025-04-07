@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lufin.server.common.annotation.StudentOnly;
@@ -33,7 +34,7 @@ public class DashboardController {
 	private final TeacherDashboardUseCase teacher;
 	private final ClassMembershipValidator classMembershipValidator;
 
-	// 학생
+	// 학생 - 현재 반 대시보드
 	@StudentOnly
 	@GetMapping("/my")
 	public ResponseEntity<ApiResponse<StudentDashboardDto>> getMyDashboard(HttpServletRequest request) {
@@ -45,7 +46,18 @@ public class DashboardController {
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
-	// 교사
+	// 학생 - 과거 반 대시보드
+	@StudentOnly
+	@GetMapping(value = "/my", params = "classId")
+	public ResponseEntity<ApiResponse<StudentDashboardDto>> getMyPastDashboard(@RequestParam Integer classId) {
+		Member member = UserContext.get();
+		log.info("[학생 과거 대시보드 조회] classId: {}, memberId: {}", classId, member.getId());
+		classMembershipValidator.validateStudentInClass(member.getId(), classId);
+		StudentDashboardDto result = student.getDashboard(member.getId(), classId);
+		return ResponseEntity.ok(ApiResponse.success(result));
+	}
+
+	// 교사 - 현재 반 대시보드
 	@TeacherOnly
 	@GetMapping("/my-class")
 	public ResponseEntity<ApiResponse<TeacherDashboardDto>> getClassDashboard(HttpServletRequest request) {
@@ -57,6 +69,7 @@ public class DashboardController {
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
+	// 교사 - 학생 대시보드 조회 (현재 반)
 	@TeacherOnly
 	@GetMapping("/my-class/{userId}")
 	public ResponseEntity<ApiResponse<StudentDashboardDto>> getStudentDashboard(HttpServletRequest request,

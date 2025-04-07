@@ -24,11 +24,8 @@ public class StudentDashboardDto {
 	private int stock;
 	private int loan;
 
-	private int weeklyConsumption;
-	private int weeklyConsumptionChange;
-
-	private int investmentAmount;
-	private int investmentChange;
+	private AssetDto investmentStat;
+	private AssetDto consumptionStat;
 
 	private int loanPrincipal;
 

@@ -26,12 +26,27 @@ export interface Student {
   items: number;
 }
 
+export interface StudentDashboardData {
+  cash: number;
+  investment: number;
+  loan: number;
+  totalAssets: number;
+  creditGrade: string;
+}
+
 export interface DashboardResponse {
   isSuccess: boolean;
   data: {
     statistics: StatisticsData;
     students: Student[];
   };
+  code?: string;
+  message?: string;
+}
+
+export interface StudentDashboardResponse {
+  isSuccess: boolean;
+  data: StudentDashboardData;
   code?: string;
   message?: string;
 }
@@ -46,6 +61,19 @@ export const DashboardService = {
       return response.data;
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * 학생 대시보드 데이터 조회
+   */
+  getStudentDashboard: async () => {
+    try {
+      const response = await axiosInstance.get<StudentDashboardResponse>('/dashboards/student');
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch student dashboard data:', error);
       throw error;
     }
   },

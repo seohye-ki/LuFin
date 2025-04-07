@@ -2,17 +2,19 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../../components/Card/Card';
 import Button from '../../../components/Button/Button';
-import type { DashboardResponse } from '../../../libs/services/dashboard/dashbordService';
+import type { DashboardResponse } from '../../../libs/services/dashboard/dashboardService';
+import { DashboardService } from '../../../libs/services/dashboard/dashboardService';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
 import { paths } from '../../../routes/paths';
 import lufinCoin from '../../../assets/svgs/lufin-coin-16.svg';
 import RecoveryApproveModal from './components/RecoveryApproveModal';
+// import useClassroomStore from '../../../libs/store/classroomStore';
 
-// 목데이터
+// fallback용 목데이터
 const MOCK_DATA: DashboardResponse['data'] = {
   statistics: {
     deposit: {
-      label: '총 자산',
+      label: '예금',
       amount: 15000000,
       changeRate: 12.5,
       isPositive: true
@@ -85,17 +87,6 @@ const MOCK_DATA: DashboardResponse['data'] = {
       missionStatus: '수행 중',
       loanStatus: '검토 필요',
       items: 7
-    },
-    {
-      id: 6,
-      name: '한지민',
-      cash: 0,
-      investment: 0,
-      loan: 0,
-      creditGrade: 'F-',
-      missionStatus: '수행 완료',
-      loanStatus: '거절',
-      items: 0
     }
   ]
 };
@@ -103,6 +94,7 @@ const MOCK_DATA: DashboardResponse['data'] = {
 const TeacherDashboard = () => {
   const [dashboardData, setDashboardData] = useState<DashboardResponse['data'] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUsingMockData, setIsUsingMockData] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<{
     id: number;
     name: string;
@@ -114,14 +106,39 @@ const TeacherDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // API 연동 대신 목데이터 사용
-    setTimeout(() => {
-      setDashboardData(MOCK_DATA);
-      setIsLoading(false);
-    }, 1000); // 로딩 상태 테스트를 위한 1초 딜레이
+    const fetchDashboardData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await DashboardService.getTeacherDashboard();
+        
+        if (response.isSuccess && response.data) {
+          // 학생이 한 명도 없는 경우 목데이터를 사용
+          if (response.data.students && response.data.students.length === 0) {
+            console.log('학생이 없어서 목데이터를 사용합니다.');
+            setDashboardData(MOCK_DATA);
+            setIsUsingMockData(true);
+          } else {
+            setDashboardData(response.data);
+          }
+        } else {
+          console.log('API 응답이 실패하여 목데이터를 사용합니다.');
+          setDashboardData(MOCK_DATA);
+          setIsUsingMockData(true);
+        }
+      } catch (err) {
+        console.error('대시보드 데이터 로딩 실패:', err);
+        console.log('에러가 발생하여 목데이터를 사용합니다.');
+        setDashboardData(MOCK_DATA);
+        setIsUsingMockData(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
   }, []);
 
-  const handleMissionReview = () => {
+   const handleMissionReview = () => {
     navigate(paths.TEACHER_MISSION);
   };
 
@@ -147,7 +164,7 @@ const TeacherDashboard = () => {
           <Button
             onClick={handleMissionReview}
             color="primary"
-            size="sm"
+            size="md"
           >
             검토하기
           </Button>
@@ -156,7 +173,7 @@ const TeacherDashboard = () => {
         return (
           <Button
             color="neutral"
-            size="sm"
+            size="md"
             disabled
           >
             수행 중
@@ -166,7 +183,7 @@ const TeacherDashboard = () => {
         return (
           <Button
             color="disabled"
-            size="sm"
+            size="md"
             disabled
           >
             수행 완료
@@ -192,10 +209,16 @@ const TeacherDashboard = () => {
   return (
     <SidebarLayout userRole="teacher">
       <div className="flex flex-col gap-6 p-6">
+        {isUsingMockData && (
+          <div className="bg-warning-light p-4 rounded-md">
+            <p className="text-warning-dark font-medium">실제 데이터를 불러올 수 없어 샘플 데이터를 표시하고 있습니다.</p>
+          </div>
+        )}
+        
         {/* Statistics Section */}
         <div className="grid grid-cols-3 gap-4">
           <Card 
-            titleLeft="총 자산"
+            titleLeft={dashboardData.statistics.deposit.label}
             className="bg-white shadow-sm"
           >
             <div className="flex flex-col">
@@ -209,7 +232,7 @@ const TeacherDashboard = () => {
             </div>
           </Card>
           <Card 
-            titleLeft="투자"
+            titleLeft={dashboardData.statistics.investment.label}
             className="bg-white shadow-sm"
           >
             <div className="flex flex-col">
@@ -223,7 +246,7 @@ const TeacherDashboard = () => {
             </div>
           </Card>
           <Card 
-            titleLeft="대출"
+            titleLeft={dashboardData.statistics.loan.label}
             className="bg-white shadow-sm"
           >
             <div className="flex flex-col">
@@ -266,7 +289,7 @@ const TeacherDashboard = () => {
                         <Button
                           onClick={() => handleRecoveryApproval(student)}
                           color="danger"
-                          size="sm"
+                          size="md"
                         >
                           회생 승인
                         </Button>
@@ -282,12 +305,12 @@ const TeacherDashboard = () => {
                         <Button
                           onClick={handleLoanReview}
                           color="primary"
-                          size="sm"
+                          size="md"
                         >
                           검토하기
                         </Button>
                       ) : (
-                        formatAmount(student.loan)
+                        student.loanStatus
                       )}
                     </td>
                     <td className="py-4 px-4">{student.items}개</td>

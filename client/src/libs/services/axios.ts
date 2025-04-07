@@ -1,17 +1,5 @@
 import axios from 'axios';
 
-// TypeScript용 환경 변수 타입 선언
-declare global {
-  interface ImportMeta {
-    env: {
-      VITE_API_URL: string;
-      VITE_TOKEN_STORAGE: string;
-      VITE_AUTH_LOGIN_ENDPOINT: string;
-      [key: string]: string;
-    };
-  }
-}
-
 /**
  * Axios 인스턴스 생성
  * - baseURL: API의 기본 URL을 설정합니다. 모든 요청의 prefix로 사용됩니다.

@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.account.domain.Account;
 import com.lufin.server.account.repository.AccountRepository;
+import com.lufin.server.classroom.domain.Classroom;
+import com.lufin.server.classroom.repository.ClassroomRepository;
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.Member;
@@ -31,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class StockTransactionServiceImpl implements StockTransactionService {
 	private final AccountRepository accountRepository;
+	private final ClassroomRepository classroomRepository;
 
 	private final StockProductRepository stockProductRepository;
 	private final StockTransactionRepository stockTransactionRepository;
@@ -124,6 +127,10 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 
 			StockPortfolio portfolio = portfolioOptional.get();
 
+			// 4. classroom 조회
+			Classroom classroom = classroomRepository.findById(classId)
+				.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
+
 			StockTransactionResponseDto.TransactionInfoDto result = null;
 
 			// 구매인지 판매인지 구분
@@ -132,7 +139,7 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 					request,
 					currentMember,
 					stockProduct,
-					classId,
+					classroom,
 					account,
 					portfolio
 				);
@@ -142,7 +149,7 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 					request,
 					currentMember,
 					stockProduct,
-					classId,
+					classroom,
 					account
 				);
 			}
@@ -162,7 +169,7 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 	 * @param request
 	 * @param currentMember
 	 * @param stockProduct
-	 * @param classId
+	 * @param classroom
 	 */
 	@Transactional(
 		isolation = Isolation.REPEATABLE_READ,
@@ -173,11 +180,11 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 		StockTransactionRequestDto.TransactionInfoDto request,
 		Member currentMember,
 		StockProduct stockProduct,
-		Integer classId,
+		Classroom classroom,
 		Optional<Account> account
 	) {
 		log.info("주식 구매 작업 시작: request = {}, currentMember = {}, stockProduct = {}, classId = {}",
-			request, currentMember, stockProduct, classId);
+			request, currentMember, stockProduct, classroom.getId());
 		try {
 
 			// 개인 계좌 객체
@@ -187,7 +194,7 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			if (personalAccount.getBalance() < request.totalPrice()) {
 				log.warn(
 					"주식 구매에 필요한 금액이 부족합니다. classId = {}, currentMember = {}, balance = {}, buyRequestTotalAmount = {}",
-					classId, currentMember, personalAccount.getBalance(), request.totalPrice());
+					classroom.getId(), currentMember, personalAccount.getBalance(), request.totalPrice());
 				throw new BusinessException(ErrorCode.INSUFFICIENT_BALANCE);
 			}
 
@@ -203,7 +210,8 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 				request.price(),
 				request.totalPrice(),
 				stockProduct,
-				currentMember
+				currentMember,
+				classroom
 			);
 
 			// 거래 내역 저장
@@ -229,7 +237,7 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 	 * @param request
 	 * @param currentMember
 	 * @param stockProduct
-	 * @param classId
+	 * @param classroom
 	 */
 	@Transactional(
 		isolation = Isolation.REPEATABLE_READ,
@@ -240,15 +248,16 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 		StockTransactionRequestDto.TransactionInfoDto request,
 		Member currentMember,
 		StockProduct stockProduct,
-		Integer classId,
+		Classroom classroom,
 		Optional<Account> account,
 		StockPortfolio portfolio
 	) {
 		log.info("주식 판매 작업 시작: request = {}, currentMember = {}, stockProduct = {}, classId = {}",
-			request, currentMember, stockProduct, classId);
+			request, currentMember, stockProduct, classroom.getId());
 		try {
 			if (!account.isPresent()) {
-				log.warn("주식 판매에 필요한 개인 계좌를 찾을 수 없습니다. classId = {}, currentMember = {}", classId, currentMember);
+				log.warn("주식 판매에 필요한 개인 계좌를 찾을 수 없습니다. classId = {}, currentMember = {}", classroom.getId(),
+					currentMember);
 				throw new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND);
 			}
 
@@ -260,7 +269,7 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			if (request.quantity() > portfolio.getQuantity()) {
 				log.warn(
 					"주식 판매에 필요한 주식 개수가 부족합니다. classId = {}, currentMember = {}, sellRequestQuantity = {}, ownQuantity = {}",
-					classId, currentMember, request.quantity(), portfolio.getQuantity());
+					classroom.getId(), currentMember, request.quantity(), portfolio.getQuantity());
 				throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK_AMOUNT);
 			}
 
@@ -271,7 +280,8 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 				request.price(),
 				request.totalPrice(),
 				stockProduct,
-				currentMember
+				currentMember,
+				classroom
 			);
 
 			// 거래 내역 저장
@@ -281,7 +291,8 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			personalAccount.deposit(savedTransaction.getTotalPrice());
 			log.info("계좌 입금 작업 완료: 잔액 = {}", personalAccount.getBalance());
 
-			return null;
+			return StockTransactionResponseDto.TransactionInfoDto.stockTransactionHistoryEntityToTransactionInfoDto(
+				savedTransaction);
 
 		} catch (TransactionTimedOutException tte) {
 			log.error("주식 판매 중 타임 아웃 발생: {}", tte.getMessage());

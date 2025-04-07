@@ -47,9 +47,15 @@ public class StockNewsServiceImpl implements StockNewsService {
 		try {
 			List<StockNewsResponseDto.NewsInfoDto> result = stockNewsRepository.getAllNews(stockProductId);
 
+			if (result == null || result.isEmpty()) {
+				throw new BusinessException(ErrorCode.INVESTMENT_NEWS_NOT_FOUND);
+			}
+
 			return result;
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
-			log.error("An error occurred: {}", e.getMessage(), e);
+			log.error("An error occurred: {}", e.getMessage());
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
 		}
 
@@ -205,11 +211,15 @@ public class StockNewsServiceImpl implements StockNewsService {
 				totalSellAmount);
 			log.info("AI 공시 정보 생성 요청: prompt = {}", prompt.length());
 
-			String newsContent = stockAiService.generateResponse(prompt);
+			String newsContent = "";
+			try {
+				newsContent = stockAiService.generateResponse(prompt);
+				log.info("AI 공시 정보 생성 요청: newsContent = {}", newsContent);
+			} catch (Exception e) {
+				throw new BusinessException(ErrorCode.GENERATE_FAILED);
+			}
 
-			log.info("AI 공시 정보 생성 요청: newsContent = {}", newsContent);
-
-			if (newsContent == null) {
+			if (newsContent == null || newsContent.isEmpty()) {
 				throw new BusinessException(ErrorCode.GENERATE_FAILED);
 			}
 

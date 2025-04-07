@@ -7,7 +7,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +37,7 @@ public class StockTransactionController {
 	 */
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<StockTransactionResponseDto.TransactionDetailDto>>> getAllTransactionByMemberId(
-		@RequestAttribute HttpServletRequest httpRequest
+		HttpServletRequest httpRequest
 	) {
 		Integer classId = (Integer)httpRequest.getAttribute("classId");
 		ValidationUtils.validateClassId(classId);
@@ -68,7 +67,7 @@ public class StockTransactionController {
 	public ResponseEntity<ApiResponse<StockTransactionResponseDto.TransactionInfoDto>> transactStock(
 		@PathVariable @Positive Integer productId,
 		@RequestBody @Valid StockTransactionRequestDto.TransactionInfoDto request,
-		@RequestAttribute HttpServletRequest httpRequest,
+		HttpServletRequest httpRequest,
 		BindingResult bindingResult
 	) {
 		if (bindingResult.hasErrors()) {

@@ -152,7 +152,7 @@ public class Mission {
 	/**
 	 * 미션 객체를 생성하는 팩토리 메서드
 	 */
-	public static Mission create(Integer classId, Classroom classroom, String title, String content, Integer difficulty,
+	public static Mission create(Classroom classroom, String title, String content, Integer difficulty,
 		Integer maxParticipants, Integer wage, LocalDateTime missionDate) {
 		Mission mission = Mission.builder()
 			.title(title)
@@ -260,14 +260,7 @@ public class Mission {
 
 		images.remove(missionImage);
 	}
-
-	/**
-	 * 현재 참가자 수와 참가자 목록의 크기가 일치하는지 확인
-	 */
-	public boolean isParticipantsCountConsistent() {
-		return this.currentParticipants == this.participations.size();
-	}
-
+	
 	/* classroom 연관 관계 메서드 */
 	public void setClassroom(Classroom classroom) {
 		if (classroom == null) {

@@ -5,12 +5,14 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.dto.ApiResponse;
 import com.lufin.server.stock.dto.StockResponseDto;
+import com.lufin.server.stock.service.StockPriceHistoryService;
 import com.lufin.server.stock.service.StockProductService;
 
 import jakarta.validation.constraints.Positive;
@@ -21,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StockProductController {
 	private final StockProductService stockProductService;
+	private final StockPriceHistoryService stockPriceHistoryService;
 
 	/**
 	 * 주식 상품 목록 조회
@@ -44,7 +47,15 @@ public class StockProductController {
 		if (result == null) {
 			return ResponseEntity.status(404).body(ApiResponse.failure(ErrorCode.INVESTMENT_PRODUCT_NOT_FOUND));
 		}
-		
+
 		return ResponseEntity.status(200).body(ApiResponse.success(result));
+	}
+
+	@PostMapping("/{productId}")
+	public void createStockPriceHistory(
+		@PathVariable @Positive Integer productId
+	) {
+		stockPriceHistoryService.updateStockPrice(productId, 9);
+
 	}
 }

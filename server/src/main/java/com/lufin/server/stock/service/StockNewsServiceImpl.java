@@ -10,11 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.stock.domain.StockNews;
+import com.lufin.server.stock.domain.StockPortfolio;
 import com.lufin.server.stock.domain.StockProduct;
 import com.lufin.server.stock.dto.StockNewsRequestDto;
 import com.lufin.server.stock.dto.StockNewsResponseDto;
 import com.lufin.server.stock.repository.StockNewsRepository;
+import com.lufin.server.stock.repository.StockPortfolioRepository;
 import com.lufin.server.stock.repository.StockProductRepository;
+import com.lufin.server.stock.util.StockAiPrompt;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 public class StockNewsServiceImpl implements StockNewsService {
 	private final StockNewsRepository stockNewsRepository;
 	private final StockProductRepository stockProductRepository;
+	private final StockPortfolioRepository stockPortfolioRepository;
+
+	private final StockAiService stockAiService;
 
 	/**
 	 * 특정 주식 공시 정보 목록 조회
@@ -84,7 +90,7 @@ public class StockNewsServiceImpl implements StockNewsService {
 	@Transactional
 	@Override
 	public void createMorningNews() {
-		log.info("09:00 주식 공시 정보 생성 스케줄 작업 시작, hour: {}", LocalDateTime.now().getHour());
+		log.info("09:00 주식 공시 정보 생성 스케줄 작업 시작: hour= {}", LocalDateTime.now().getHour());
 
 		try {
 			List<StockProduct> stockProducts = stockProductRepository.findAll();
@@ -162,10 +168,10 @@ public class StockNewsServiceImpl implements StockNewsService {
 		LocalDateTime endTime = startTime.plusHours(1); // 1시간 차이 이내에 있는 지 확인
 
 		// db에서 시작 시간과 끝 시간 사이에 이미 stockProductId에 해당하는 공시 정보가 존재하는 지 확인
-		boolean existsInTimeRange = stockNewsRepository.existsByStockProductIdAndCreatedAtBetween(
+		Integer existsInTimeRange = stockNewsRepository.existsByStockProductIdAndCreatedAtBetween(
 			stockProductId, startTime, endTime);
 
-		if (existsInTimeRange) {
+		if (existsInTimeRange == 1) {
 			log.warn("해당 시간대에 이미 생성된 뉴스가 있습니다: stockProductId = {}, hour = {}",
 				stockProductId, hour);
 			throw new BusinessException(ErrorCode.DUPLICATE_NEWS);
@@ -177,8 +183,29 @@ public class StockNewsServiceImpl implements StockNewsService {
 			StockProduct stockProduct = stockProductRepository.findById(stockProductId)
 				.orElseThrow(() -> new BusinessException(ErrorCode.INVESTMENT_PRODUCT_NOT_FOUND));
 
-			// TODO: 생성형 AI API를 활용해 공시 정보 생성 후 newsContent에 대입
-			String newsContent = "테스트용트스테";
+			log.info("stockProduct 조회: {}", stockProduct.toString());
+
+			// product에 대한  <- portfolio에서 productId에 대해 조회한 후 모든 total끼리 합쳐서 계산
+			List<StockPortfolio> portfolios = stockPortfolioRepository.findByStockProductId(stockProductId);
+
+			int totalQuantity = 0;
+			int totalPurchaseAmount = 0;
+			int totalSellAmount = 0;
+
+			for (StockPortfolio portfolio : portfolios) {
+				totalQuantity += portfolio.getQuantity();
+				totalPurchaseAmount += portfolio.getTotalPurchaseAmount();
+				totalSellAmount += portfolio.getTotalSellAmount();
+			}
+
+			log.info("주식 상품 정보 계산: totalQuantity = {}, totalPurchaseAmount = {}, totalSellAmount = {}", totalQuantity,
+				totalPurchaseAmount, totalSellAmount);
+
+			String prompt = StockAiPrompt.newsPromptTemplate(stockProduct, totalQuantity, totalPurchaseAmount,
+				totalSellAmount);
+			log.info("AI 공시 정보 생성 요청: prompt = {}", prompt.length());
+
+			String newsContent = stockAiService.generateResponse(prompt);
 
 			log.info("AI 공시 정보 생성 요청: newsContent = {}", newsContent);
 

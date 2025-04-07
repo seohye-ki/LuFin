@@ -4,10 +4,7 @@ import static com.lufin.server.common.constants.ErrorCode.*;
 
 import org.springframework.util.StringUtils;
 
-import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.exception.BusinessException;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 검증 관련 유틸리티 클래스
@@ -29,7 +26,7 @@ public class ValidationUtils {
 	}
 
 	public static void validateClassId(Integer classId) {
-		if (classId == null) {
+		if (classId == null || classId < 1) {
 			throw new BusinessException(UNAUTHORIZED_ACCESS);
 		}
 	}

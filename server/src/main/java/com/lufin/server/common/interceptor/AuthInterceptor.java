@@ -60,16 +60,16 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 		Member member = memberRepository.findById(userId)
 			.orElseThrow(() -> {
-				log.warn("[AuthInterceptor] 존재하지 않는 사용자: {}", userId);
+				log.warn("⚠️[AuthInterceptor] 존재하지 않는 사용자: {}", userId);
 				return new BusinessException(MEMBER_NOT_FOUND);
 			});
 
 		if (member.getActivationStatus() != 1) {
-			log.warn("[AuthInterceptor] 비활성화된 사용자 접근 시도: {}", userId);
+			log.warn("⚠️[AuthInterceptor] 비활성화된 사용자 접근 시도: {}", userId);
 			throw new BusinessException(MEMBER_ALREADY_DELETED);
 		}
 
-		log.debug("[AuthInterceptor] 인증 완료, 사용자 정보 설정: {}", member.getName());
+		log.debug("⚠️[AuthInterceptor] 인증 완료, 사용자 정보 설정: {}", member.getName());
 		UserContext.set(member);
 		return true;
 	}

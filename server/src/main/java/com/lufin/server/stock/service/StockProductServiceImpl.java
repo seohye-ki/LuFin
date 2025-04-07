@@ -60,4 +60,5 @@ public class StockProductServiceImpl implements StockProductService {
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
+
 }

@@ -24,7 +24,8 @@ public interface MissionRepository extends JpaRepository<Mission, Integer>, Miss
 	@QueryHints({
 		@QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000")
 	})
-	@Query("SELECT m FROM Mission m WHERE m.id = :id AND m.classId = :classId")
-	Optional<Mission> findByIdAndClassIdWithPessimisticLock(@Param("id") Integer id, @Param("classId") Integer classId);
+	@Query("SELECT m FROM Mission m WHERE m.id = :id AND m.classroom.id = :classId")
+	Optional<Mission> findByIdAndClassIdWithPessimisticLock(@Param("id") Integer id,
+		@Param("classId") Integer classId);
 
 }

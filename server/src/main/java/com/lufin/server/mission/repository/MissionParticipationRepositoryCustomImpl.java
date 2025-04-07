@@ -46,6 +46,7 @@ public class MissionParticipationRepositoryCustomImpl implements MissionParticip
 		return missionParticipationEntityList.stream()
 			.map(missionParticipationEntity
 				-> MissionParticipationResponseDto.MissionParticipationSummaryResponseDto.missionParticipationToMissionParticipationSummaryResponseDto(
+				missionParticipationEntity.getParticipationId(),
 				missionParticipationEntity.getMember().getName(),
 				missionParticipationEntity.getMember().getProfileImage(),
 				missionParticipationEntity.getStatus()

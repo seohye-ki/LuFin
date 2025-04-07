@@ -41,7 +41,7 @@ public class StockAiPrompt {
 			6. 이전 뉴스와의 연속성을 고려하되 반복되지 않도록 해주세요.
 			
 			## 출력 형식
-			<< news >> {"data": [{"id": {product_id}, "content": "뉴스 본문 내용"}]}
+			{"data": {"id": {product_id}, "content": "뉴스 본문 내용"}}
 			""";
 
 		return prompt
@@ -102,7 +102,7 @@ public class StockAiPrompt {
 			4. 가격은 10원 단위로 반올림하여 표시
 			
 			## 출력 형식
-			<< price >> {"data": [{"id": {product_id}, "previous_price": {previous_price}, "current_price": 계산된_가격, "change_rate": 변동률_퍼센트}]}
+			{"data": {"id": {product_id}, "previous_price": {previous_price}, "current_price": 계산된_가격, "change_rate": 변동률_퍼센트}}
 			""";
 
 		return prompt

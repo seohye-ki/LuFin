@@ -1,6 +1,7 @@
 package com.lufin.server.stock.repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +27,15 @@ public interface StockNewsRepository extends JpaRepository<StockNews, Integer>, 
 		LocalDateTime endTime
 	);
 
+	/**
+	 * stockProductId에 대한 가장 최근 뉴스를 조회
+	 */
+	@Query(value = "SELECT * FROM stock_news sn "
+		+ "WHERE sn.stock_product_id = :stockProductId "
+		+ "ORDER BY sn.created_at DESC "
+		+ "LIMIT 1",
+		nativeQuery = true)
+	Optional<StockNews> findLatestNewsByStockProductId(
+		Integer stockProductId
+	);
 }

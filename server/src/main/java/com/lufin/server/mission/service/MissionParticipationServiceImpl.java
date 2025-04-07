@@ -40,17 +40,14 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class MissionParticipationServiceImpl implements MissionParticipationService {
 
-	private final MissionRepository missionRepository;
-	private final MissionParticipationRepository missionParticipationRepository;
-
-	private final AccountRepository accountRepository;
-	private final TransactionHistoryService transactionHistoryService;
-
-	private final CreditScoreService creditScoreService;
-	private final CreditService creditService;
-
 	public static int missionSuccessCreditScore = 2;
 	public static int missionFailureCreditScore = -2;
+	private final MissionRepository missionRepository;
+	private final MissionParticipationRepository missionParticipationRepository;
+	private final AccountRepository accountRepository;
+	private final TransactionHistoryService transactionHistoryService;
+	private final CreditScoreService creditScoreService;
+	private final CreditService creditService;
 
 	/**
 	 * 미션 참여 신청
@@ -239,7 +236,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 						);
 
 						log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
-							creditService.getScore(participation.getMember().getId()));
+							creditService.getScore(participation.getMember().getId(), classId));
 					}
 				} catch (Exception e) {
 					throw new BusinessException(CREDIT_SCORE_UPDATE_FAILED);
@@ -318,7 +315,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 					CreditEventType.MISSION_COMPLETION
 				);
 				log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
-					creditService.getScore(participation.getMember().getId()));
+					creditService.getScore(participation.getMember().getId(), classId));
 			} catch (Exception e) {
 				throw new BusinessException(CREDIT_SCORE_UPDATE_FAILED);
 			}

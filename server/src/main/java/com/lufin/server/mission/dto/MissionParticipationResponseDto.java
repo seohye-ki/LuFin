@@ -21,6 +21,7 @@ public class MissionParticipationResponseDto {
 	}
 
 	public record MissionParticipationSummaryResponseDto(
+		Integer participationId,
 		String name,
 		String profileImage,
 		MissionParticipationStatus status
@@ -33,11 +34,12 @@ public class MissionParticipationResponseDto {
 		 * MissionParticipation 엔티티를 dto로 변환
 		 */
 		public static MissionParticipationSummaryResponseDto missionParticipationToMissionParticipationSummaryResponseDto(
+			Integer participationId,
 			String name,
 			String profileImage,
 			MissionParticipationStatus status
 		) {
-			return new MissionParticipationSummaryResponseDto(name, profileImage, status);
+			return new MissionParticipationSummaryResponseDto(participationId, name, profileImage, status);
 		}
 	}
 

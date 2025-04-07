@@ -1,5 +1,6 @@
 package com.lufin.server.stock.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,5 +31,9 @@ public interface StockPortfolioRepository
 	Optional<StockPortfolio> findByStockProductIdAndMemberIdWithPessimisticLock(
 		@Param("stockProductId") Integer stockProductId,
 		@Param("memberId") Integer memberId);
+
+	// 상품 ID로 모든 포트폴리오 조회
+	List<StockPortfolio> findByStockProductId(Integer stockProductId);
+
 }
 

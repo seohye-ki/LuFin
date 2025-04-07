@@ -31,7 +31,8 @@ public class TeacherDashboardDto {
 		private Integer investment;   // 투자
 		private Integer loan;         // 대출
 		private String creditGrade;   // 신용등급
-		private String missionStatus; // 미션 상태 (수행중, 수행완, 검토하기)
-		private String itemStatus;    // 아이템 상태
+		private String missionStatus; // 미션 상태 (검토 필요, 수행 중, 수행 완료)
+		private String loanStatus;    // 대출 상태 (검토 필요, 승인, 거절)
+		private int items;    		  // 아이템 수량
 	}
 }

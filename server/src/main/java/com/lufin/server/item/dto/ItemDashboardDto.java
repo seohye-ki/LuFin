@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ItemDashboardDto {
-	private String name;
-	private int quantity;
-	private int expireInDays;
+	private String name;		// 아이템 명
+	private int quantity;		// 수량
+	private int expireInDays;	// 만료일
 }

@@ -21,7 +21,7 @@ public interface MyMissionRepository extends JpaRepository<MissionParticipation,
 			"m.id, mp.participationId, m.title, mp.status, m.wage, m.missionDate) " +
 			"FROM MissionParticipation mp " +
 			"JOIN mp.mission m " +
-			"WHERE m.classId = :classId AND mp.member.id = :memberId " +
+			"WHERE m.classroom.id = :classId AND mp.member.id = :memberId " +
 			"ORDER BY mp.createdAt DESC")
 	List<MyMissionDto> findMyMissions(@Param("classId") Integer classId, @Param("memberId") Integer memberId);
 
@@ -31,3 +31,4 @@ public interface MyMissionRepository extends JpaRepository<MissionParticipation,
 	// 특정 상태의 미션 참여 개수 반환
 	int countByMemberIdAndStatus(int memberId, MissionParticipationStatus status);
 }
+

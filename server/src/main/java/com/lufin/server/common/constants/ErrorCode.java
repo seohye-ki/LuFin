@@ -54,6 +54,7 @@ public enum ErrorCode {
 	DUPLICATE_CLASSROOM("E409003", "이미 등록된 클래스입니다."),
 	LOAN_APPLICATION_ALREADY_EXISTS("E409004", "이미 진행중인 대출이 존재합니다."),
 	DUPLICATE_NEWS("E409005", "이미 생성된 공시정보가 존재합니다."),
+	DUPLICATE_UPDATE("E409006", "이미 생성된 가격 변동이 존재합니다."),
 
 	INSUFFICIENT_CREDIT_SCORE("E422001", "신용 점수가 부족하여 이용할 수 없습니다."),
 	INSUFFICIENT_BALANCE("E422002", "잔액이 부족합니다."),

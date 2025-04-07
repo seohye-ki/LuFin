@@ -45,26 +45,26 @@ public class JwtFilter implements Filter {
 		String requestUri = httpRequest.getRequestURI();
 		String method = httpRequest.getMethod();
 
-		log.debug("[JwtFilter] 요청 uri: {} method: {}", requestUri, method);
+		log.info("[JwtFilter] 요청 uri: {} method: {}", requestUri, method);
 		// OPTIONS 요청은 무조건 통과 (CORS preflight)
 		if ("OPTIONS".equalsIgnoreCase(method)) {
-			log.debug("[JwtFilter] OPTIONS 요청 → 인증 없이 통과");
+			log.info("[JwtFilter] OPTIONS 요청 → 인증 없이 통과");
 			filterChain.doFilter(request, response);
 			return;
 		}
 
 		// 필터 예외 경로는 바로 통과
 		if (isExcluded(requestUri)) {
-			log.debug("[JwtFilter] 인증 제외 경로 → 통과: {}", requestUri);
+			log.info("[JwtFilter] 인증 제외 경로 → 통과: {}", requestUri);
 			filterChain.doFilter(request, response);
 			return;
 		}
 
 		try {
 			// JWT 기반 헤더 검증
-			log.debug("[JwtFilter] JWT 검증 시작");
+			log.info("[JwtFilter] JWT 검증 시작");
 			validateToken(httpRequest);
-			log.debug("[JwtFilter] JWT 검증 완료 → 필터 통과");
+			log.info("[JwtFilter] JWT 검증 완료 → 필터 통과");
 			filterChain.doFilter(request, response);
 
 		} catch (BusinessException e) {
@@ -77,7 +77,7 @@ public class JwtFilter implements Filter {
 	// userId, tokenType, classId 유효성 검증
 	private void validateToken(HttpServletRequest request) {
 		String authorizationHeader = request.getHeader("Authorization");
-		log.debug("[JwtFilter] Authorization 헤더: {}", authorizationHeader);
+		log.info("[JwtFilter] Authorization 헤더: {}", authorizationHeader);
 
 		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
 			log.warn("⚠️[JwtFilter] 잘못된 Authorization 헤더 형식 → 인증 실패");
@@ -99,7 +99,7 @@ public class JwtFilter implements Filter {
 
 		String classId = claims.get(TokenClaimName.CLASS_ID, String.class);
 		if (classId != null) {
-			log.debug("[JwtFilter] classId 추출: {}", classId);
+			log.info("[JwtFilter] classId 추출: {}", classId);
 			validateIntegerId(classId);
 			request.setAttribute("classId", Integer.parseInt(classId));
 		}

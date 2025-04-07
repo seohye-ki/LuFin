@@ -1,10 +1,11 @@
-import { missionDetails } from '../../../../types/mission/mission';
 import moment from 'moment';
 import { Icon } from '../../../../components/Icon/Icon';
 import MissionTable from './MissionTable';
 import MissionCreateModal from './MissionCreateModal';
 import MissionReadModal from './MissionReadModal';
 import { useWeeklyMissionModal } from '../hooks/useWeeklyMissionModal';
+import useMissionStore from '../../../../libs/store/missionStore';
+
 interface WeeklyMissionModalProps {
   selectedDate: Date;
   onDateChange: (date: Date | null) => void;
@@ -17,8 +18,12 @@ export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMission
   const startOfWeek = moment(selectedDate).startOf('week');
   const weekDays = Array.from({ length: 7 }, (_, i) => moment(startOfWeek).add(i, 'days'));
 
+  const missions = useMissionStore((state) => state.missions);
+
   const dateKey = moment(selectedDate).format('YYYY-MM-DD');
-  const dayMissions = missionDetails.filter((mission) => mission.missionDate === dateKey);
+  const dayMissions = missions.filter(
+    (mission) => moment(mission.missionDate).format('YYYY-MM-DD') === dateKey,
+  );
 
   return (
     <div className='w-full max-h-full overflow-y-auto rounded-lg p-4 bg-white'>
@@ -62,7 +67,12 @@ export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMission
           </button>
         </div>
         <MissionTable missions={dayMissions} onMissionClick={onSelectMission} />
-        {showCreateModal && <MissionCreateModal onClose={() => setShowCreateModal(false)} />}
+        {showCreateModal && (
+          <MissionCreateModal
+            selectedDate={selectedDate}
+            onClose={() => setShowCreateModal(false)}
+          />
+        )}
         {selectedMission && <MissionReadModal mission={selectedMission} onClose={onCloseModal} />}
       </div>
     </div>

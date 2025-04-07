@@ -1,42 +1,142 @@
 import Card from '../../../../components/Card/Card';
 import Badge from '../../../../components/Badge/Badge';
 import Button from '../../../../components/Button/Button';
-import { MissionDetail, MissionParticipation } from '../../../../types/mission/mission';
+import { MissionRaw } from '../../../../types/mission/mission';
 import { Icon } from '../../../../components/Icon/Icon';
 import Lufin from '../../../../components/Lufin/Lufin';
 import { useState } from 'react';
 import { getStatusBadge } from '../../../../libs/utils/mission-util';
+import useMissionStore from '../../../../libs/store/missionStore';
+import useAlertStore from '../../../../libs/store/alertStore';
+
 interface MyMissionModalProps {
   onClose: () => void;
-  mission: MissionDetail;
-  participation?: MissionParticipation;
+  mission: MissionRaw;
+  mode: 'apply' | 'review';
+  participationId?: number;
 }
 
-const MyMissionModal = ({ onClose, mission, participation }: MyMissionModalProps) => {
+const MyMissionModal = ({ onClose, mission, mode, participationId }: MyMissionModalProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const applyMission = useMissionStore((state) => state.applyMission);
+  const requestReview = useMissionStore((state) => state.requestReview);
 
-  const status = getStatusBadge(participation);
+  const status = getStatusBadge();
 
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? mission.missionImages.length - 2 : prev - 2));
+    setCurrentImageIndex((prev) => (prev === 0 ? mission.image.length - 2 : prev - 2));
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev >= mission.missionImages.length - 2 ? 0 : prev + 2));
+    setCurrentImageIndex((prev) => (prev >= mission.image.length - 2 ? 0 : prev + 2));
   };
 
   const getVisibleImages = () => {
     const images = [];
     for (let i = 0; i < 2; i++) {
-      const index = (currentImageIndex + i) % mission.missionImages.length;
-      images.push(mission.missionImages[index]);
+      const index = (currentImageIndex + i) % mission.image.length;
+      images.push(mission.image[index]);
     }
     return images;
   };
 
+  const handlePrimaryAction = async () => {
+    if (mode === 'apply') {
+      const result = await applyMission(mission.missionId);
+      if (result.success) {
+        useAlertStore
+          .getState()
+          .showAlert(
+            '미션 신청이 완료되었습니다.',
+            null,
+            result.message || '신청에 실패했습니다.',
+            'success',
+            {
+              label: '확인',
+              onClick: () => {
+                onClose();
+              },
+              color: 'neutral',
+            },
+          );
+      } else {
+        useAlertStore
+          .getState()
+          .showAlert(
+            '미션 신청에 실패했습니다.',
+            null,
+            result.message || '신청에 실패했습니다.',
+            'danger',
+            {
+              label: '확인',
+              onClick: () => {
+                onClose();
+              },
+              color: 'neutral',
+            },
+          );
+      }
+    }
+
+    if (mode === 'review') {
+      if (participationId === undefined) {
+        useAlertStore
+          .getState()
+          .showAlert(
+            '참여자 정보를 찾을 수 없습니다.',
+            null,
+            '참여자 정보를 찾을 수 없습니다.',
+            'danger',
+            {
+              label: '확인',
+              onClick: () => {
+                onClose();
+              },
+            },
+          );
+        return;
+      }
+
+      const result = await requestReview(participationId);
+      if (result.success) {
+        useAlertStore
+          .getState()
+          .showAlert(
+            '리뷰 요청이 완료되었습니다.',
+            null,
+            result.message || '리뷰 요청에 실패했습니다.',
+            'success',
+            {
+              label: '확인',
+              onClick: () => {
+                onClose();
+              },
+              color: 'neutral',
+            },
+          );
+      } else {
+        useAlertStore
+          .getState()
+          .showAlert(
+            '리뷰 요청에 실패했습니다.',
+            null,
+            result.message || '리뷰 요청에 실패했습니다.',
+            'danger',
+            {
+              label: '확인',
+              onClick: () => {
+                onClose();
+              },
+              color: 'neutral',
+            },
+          );
+      }
+    }
+  };
+
   return (
     <Card
-      titleLeft={participation ? '나의 미션' : '수행 가능 미션'}
+      titleLeft={mode === 'apply' ? '수행 가능 미션' : '나의 미션'}
       titleRight={<Badge status={status.status}>{status.text}</Badge>}
       titleSize='l'
       isModal
@@ -59,7 +159,7 @@ const MyMissionModal = ({ onClose, mission, participation }: MyMissionModalProps
         <div className='flex flex-col gap-2'>
           <span className='text-c1 text-grey'>참여 인원</span>
           <div className='flex flex-col gap-2'>
-            {`${mission.currentParticipant}/${mission.maxParticipant}`}
+            {`${mission.currentParticipants}/${mission.maxParticipants}`}
           </div>
         </div>
         <div className='flex flex-col gap-2'>
@@ -70,22 +170,22 @@ const MyMissionModal = ({ onClose, mission, participation }: MyMissionModalProps
           <span className='text-c1 text-grey'>설명</span>
           <span className='text-p1 font-semibold'>{mission.content}</span>
         </div>
-        {mission.missionImages.length > 0 && (
+        {mission.image.length > 0 && (
           <div className='flex flex-col gap-2'>
             <span className='text-c1 text-grey'>사진</span>
             <div className='mt-2 relative'>
               <div className='grid grid-cols-2 gap-2'>
                 {getVisibleImages().map((image) => (
-                  <div key={image.missionImageId} className='relative aspect-square'>
+                  <div key={image} className='relative aspect-square'>
                     <img
-                      src={image.imageUrl}
+                      src={image}
                       alt='미션 인증 이미지'
                       className='w-full h-full object-cover rounded-lg'
                     />
                   </div>
                 ))}
               </div>
-              {mission.missionImages.length > 2 && (
+              {mission.image.length > 2 && (
                 <>
                   <button
                     onClick={handlePrevImage}
@@ -100,16 +200,14 @@ const MyMissionModal = ({ onClose, mission, participation }: MyMissionModalProps
                     <Icon name='ArrowRight2' size={20} />
                   </button>
                   <div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1'>
-                    {Array.from({ length: Math.ceil(mission.missionImages.length / 2) }).map(
-                      (_, index) => (
-                        <div
-                          key={index}
-                          className={`w-2 h-2 rounded-full ${
-                            index === Math.floor(currentImageIndex / 2) ? 'bg-white' : 'bg-white/50'
-                          }`}
-                        />
-                      ),
-                    )}
+                    {Array.from({ length: Math.ceil(mission.image.length / 2) }).map((_, index) => (
+                      <div
+                        key={index}
+                        className={`w-2 h-2 rounded-full ${
+                          index === Math.floor(currentImageIndex / 2) ? 'bg-white' : 'bg-white/50'
+                        }`}
+                      />
+                    ))}
                   </div>
                 </>
               )}
@@ -121,8 +219,8 @@ const MyMissionModal = ({ onClose, mission, participation }: MyMissionModalProps
         <Button variant='solid' color='neutral' size='md' full onClick={onClose}>
           취소
         </Button>
-        <Button variant='solid' color='primary' size='md' full>
-          신청하기
+        <Button variant='solid' color='primary' size='md' full onClick={handlePrimaryAction}>
+          {mode === 'apply' ? '신청하기' : '리뷰 요청하기'}
         </Button>
       </div>
     </Card>

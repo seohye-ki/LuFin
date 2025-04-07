@@ -1,11 +1,18 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import CalendarView from '../../../components/Calendar/Calendar';
 import { WeeklyMissionModal } from './Components/WeeklyMissionModal';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
 import BottomPopup from './Components/BottomPopup';
+import useMissionStore from '../../../libs/store/missionStore';
+
 const TeacherMission = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const mainRef = useRef<HTMLDivElement>(null);
+  const { getMissionList } = useMissionStore();
+
+  useEffect(() => {
+    getMissionList();
+  }, []);
 
   const handleDateSelect = (date: Date | null) => {
     setSelectedDate(date);

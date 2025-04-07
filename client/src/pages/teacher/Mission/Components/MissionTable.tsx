@@ -2,11 +2,11 @@ import TableView from '../../../../components/Frame/TableView';
 import { Icon } from '../../../../components/Icon/Icon';
 import Lufin from '../../../../components/Lufin/Lufin';
 import Badge from '../../../../components/Badge/Badge';
-import { MissionDetail } from '../../../../types/mission/mission';
+import { MissionList } from '../../../../types/mission/mission';
 
 interface MissionTableProps {
-  missions: MissionDetail[];
-  onMissionClick: (mission: MissionDetail) => void;
+  missions: MissionList[];
+  onMissionClick: (mission: MissionList) => void;
 }
 
 const MissionTable = ({ missions, onMissionClick }: MissionTableProps) => {
@@ -24,7 +24,7 @@ const MissionTable = ({ missions, onMissionClick }: MissionTableProps) => {
     difficulty: Array(mission.difficulty)
       .fill(0)
       .map((_, i) => <Icon key={i} name='Star' />),
-    participant: `${mission.currentParticipant}/${mission.maxParticipant}`,
+    participant: `${mission.currentParticipants}/${mission.maxParticipants}`,
     status:
       mission.status === 'RECRUITING' ? (
         <Badge status='ing'>모집중</Badge>

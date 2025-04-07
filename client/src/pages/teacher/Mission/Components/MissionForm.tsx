@@ -1,4 +1,3 @@
-import { useState, useRef } from 'react';
 import TextField from '../../../../components/Form/TextField';
 import Dropdown from '../../../../components/Form/Dropdown';
 import TextArea from '../../../../components/Form/TextArea';
@@ -6,25 +5,38 @@ import ImageUpload from '../../../../components/Form/ImageUpload';
 import Button from '../../../../components/Button/Button';
 import { Icon } from '../../../../components/Icon/Icon';
 import { MissionDetail } from '../../../../types/mission/mission';
+import { useMissionForm } from '../hooks/useMissionForm';
 import Card from '../../../../components/Card/Card';
 
 interface MissionFormProps {
   defaultValues?: Partial<MissionDetail>;
   onClose: () => void;
   mode: 'create' | 'edit';
+  selectedDate: Date;
 }
 
-const MissionForm = ({ defaultValues = {}, onClose, mode }: MissionFormProps) => {
-  const [title, setTitle] = useState(defaultValues?.title || '');
-  const [difficulty, setDifficulty] = useState<{ type: 'star'; count: 1 | 2 | 3 } | null>(
-    defaultValues.difficulty
-      ? { type: 'star', count: defaultValues.difficulty as 1 | 2 | 3 }
-      : null,
-  );
-  const [maxParticipant, setMaxParticipant] = useState(defaultValues?.maxParticipant || '');
-  const [wage, setWage] = useState(defaultValues?.wage || '');
-  const [content, setContent] = useState(defaultValues?.content || '');
-  const [multipleImages, setMultipleImages] = useState<File[]>([]);
+const MissionForm = ({ defaultValues = {}, onClose, mode, selectedDate }: MissionFormProps) => {
+  const {
+    title,
+    setTitle,
+    difficulty,
+    setDifficulty,
+    maxParticipants,
+    setMaxParticipants,
+    wage,
+    setWage,
+    content,
+    setContent,
+    multipleImages,
+    setMultipleImages,
+    titleRef,
+    wageRef,
+    contentRef,
+    isValidTitle,
+    isValidWage,
+    isValidContent,
+    handleSubmit,
+  } = useMissionForm(mode, selectedDate, defaultValues);
 
   const starDropdownItems = [
     { label: '', value: { type: 'star' as const, count: 1 as const } },
@@ -37,40 +49,6 @@ const MissionForm = ({ defaultValues = {}, onClose, mode }: MissionFormProps) =>
     { label: '2', value: '2' },
     { label: '3', value: '3' },
   ];
-
-  const isValidTitle = title.length >= 2 && title.length <= 30;
-  const isValidDifficulty = difficulty !== null;
-  const isValidMaxParticipant = maxParticipant !== '';
-  const parsedWage = Number(wage);
-  const isValidWage = !isNaN(parsedWage) && parsedWage >= 100 && parsedWage <= 10000000;
-  const isValidContent = content.length <= 500;
-
-  const titleRef = useRef<HTMLInputElement>(null);
-  const wageRef = useRef<HTMLInputElement>(null);
-  const contentRef = useRef<HTMLTextAreaElement>(null);
-
-  const handleSubmit = () => {
-    if (!isValidTitle) {
-      titleRef.current?.focus();
-      return;
-    }
-    if (!isValidDifficulty) {
-      document.getElementById('difficulty')?.focus();
-      return;
-    }
-    if (!isValidMaxParticipant) {
-      document.getElementById('maxParticipant')?.focus();
-      return;
-    }
-    if (!isValidWage) {
-      wageRef.current?.focus();
-      return;
-    }
-    if (!isValidContent) {
-      contentRef.current?.focus();
-      return;
-    }
-  };
 
   return (
     <Card
@@ -103,8 +81,8 @@ const MissionForm = ({ defaultValues = {}, onClose, mode }: MissionFormProps) =>
         <Dropdown
           label='참여 인원'
           items={dropdownItems}
-          value={maxParticipant}
-          onChange={(value) => setMaxParticipant(value as string)}
+          value={maxParticipants}
+          onChange={(value) => setMaxParticipants(value as string)}
         />
         <TextField
           id='wage'
@@ -140,8 +118,14 @@ const MissionForm = ({ defaultValues = {}, onClose, mode }: MissionFormProps) =>
           <Button variant='solid' color='neutral' size='md' full onClick={onClose}>
             취소
           </Button>
-          <Button variant='solid' color='primary' size='md' full onClick={handleSubmit}>
-            생성하기
+          <Button
+            variant='solid'
+            color='primary'
+            size='md'
+            full
+            onClick={() => handleSubmit(onClose)}
+          >
+            {mode === 'create' ? '생성하기' : '수정하기'}
           </Button>
         </div>
       </div>

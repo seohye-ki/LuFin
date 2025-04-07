@@ -1,8 +1,9 @@
-import { MissionDetail, MissionParticipation } from '../../types/mission/mission';
+import { MissionList, MissionParticipation } from '../../types/mission/mission';
 import { Icon } from '../../components/Icon/Icon';
 import Badge from '../../components/Badge/Badge';
 import Button from '../../components/Button/Button';
 import Lufin from '../../components/Lufin/Lufin';
+import moment from 'moment';
 
 export const getStatusBadge = (participation?: MissionParticipation) => {
   if (!participation) {
@@ -25,9 +26,9 @@ export const getStatusBadge = (participation?: MissionParticipation) => {
 };
 
 export const createMissionRow = (
-  mission: MissionDetail,
+  mission: MissionList,
   participation: MissionParticipation | undefined,
-  onClick: (mission: MissionDetail) => void,
+  onClick: (mission: MissionList) => void,
 ) => {
   const difficultyStars = (
     <div className='flex items-center'>
@@ -41,13 +42,17 @@ export const createMissionRow = (
 
   const isJoined = Boolean(participation);
   const status = participation?.status;
+  const formattedDate = moment(mission.missionDate).format('YYYY-MM-DD');
+
+  const isDisabled =
+    !!participation && ['SUCCESS', 'FAILED', 'REJECTED'].includes(participation.status);
 
   return {
     title: mission.title,
     wage: <Lufin size='s' count={mission.wage} />,
     difficulty: difficultyStars,
-    participants: `${mission.currentParticipant}/${mission.maxParticipant}`,
-    createdAt: new Date(mission.createdAt).toLocaleDateString(),
+    participants: `${mission.currentParticipants}/${mission.maxParticipants}`,
+    createdAt: formattedDate,
     status: (
       <Badge
         status={
@@ -90,7 +95,7 @@ export const createMissionRow = (
             variant='ghost'
             color='info'
             size='md'
-            disabled={status === 'SUCCESS' || status === 'FAILED' || status === 'REJECTED'}
+            disabled={isDisabled}
             onClick={() => onClick(mission)}
           >
             신청하기

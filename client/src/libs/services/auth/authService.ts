@@ -19,7 +19,6 @@ export interface AuthResponse {
 }
 
 // 환경 변수에서 로그인 엔드포인트 가져오기
-// @ts-ignore
 const LOGIN_ENDPOINT = import.meta.env.VITE_AUTH_LOGIN_ENDPOINT || '/auth/login';
 
 /**

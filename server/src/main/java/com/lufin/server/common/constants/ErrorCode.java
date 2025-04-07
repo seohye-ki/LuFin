@@ -48,6 +48,8 @@ public enum ErrorCode {
 	ITEM_REQUEST_NOT_FOUND("E404010", "해당 아이템 사용 요청을 찾을 수 없습니다."),
 	TRANSACTION_NOT_FOUND("E404011", "거래 내역을 찾을 수 없습니다."),
 	CREDIT_SCORE_NOT_FOUND("E404012", "해당 회원의 신용 점수를 찾을 수 없습니다."),
+	INVESTMENT_NEWS_NOT_FOUND("E404013", "해당 투자 공시 정보를 찾을 수 없습니다."),
+	INVESTMENT_PRICE_NOT_FOUND("E404014", "해당 투자 가격 정보를 찾을 수 없습니다."),
 
 	EMAIL_ALREADY_REGISTERED("E409001", "이미 가입된 이메일입니다."),
 	DUPLICATE_COUPON_USAGE("E409002", "이미 등록된 교번/학번 입니다."),

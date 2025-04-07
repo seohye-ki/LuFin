@@ -66,17 +66,17 @@ public class StockAiServiceImpl implements StockAiService {
 
 			// 응답 확인 및 반환
 			if (responseDto != null && responseDto.getContent() != null && !responseDto.getContent().isEmpty()) {
-				log.debug("Claude API 응답: {}", responseDto.getId());
+				log.info("Claude API 응답: {}", responseDto.getId());
 				// 배열의 첫 번째 항목에서 텍스트 추출
 				return responseDto.getContent().get(0).getText();
 			} else {
 				log.error("Claude API 응답이 올바르지 않습니다");
-				throw new RuntimeException("Claude API 응답이 올바르지 않습니다");
+				return null;
 			}
 		} catch (Exception e) {
 			// 오류 로깅 및 예외 처리
 			log.error("Claude API 호출 중 오류 발생", e);
-			throw new RuntimeException("Claude API 호출 중 오류가 발생했습니다: " + e.getMessage(), e);
+			return null;
 		}
 	}
 }

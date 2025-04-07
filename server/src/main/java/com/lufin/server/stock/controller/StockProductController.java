@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.dto.ApiResponse;
+import com.lufin.server.stock.dto.StockPriceHistoryResponseDto;
 import com.lufin.server.stock.dto.StockResponseDto;
 import com.lufin.server.stock.service.StockPriceHistoryService;
 import com.lufin.server.stock.service.StockProductService;
@@ -57,5 +59,15 @@ public class StockProductController {
 	) {
 		stockPriceHistoryService.updateStockPrice(productId, 9);
 
+	}
+
+	@GetMapping("/{productId}/price-history")
+	public ResponseEntity<ApiResponse<List<StockPriceHistoryResponseDto.PriceHistoryResponseDto>>> getPriceHistory(
+		@PathVariable @Positive Integer productId,
+		@RequestParam @Positive Integer counts
+	) {
+		// List<StockPriceHistoryResponseDto.PriceHistoryResponseDto> result = stockPriceHistoryService
+		//TODO null -> dto
+		return ResponseEntity.status(200).body(ApiResponse.success(null));
 	}
 }

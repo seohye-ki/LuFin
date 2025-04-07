@@ -78,7 +78,7 @@ public class CreditServiceImpl implements CreditService {
 			throw new BusinessException(ErrorCode.CREDIT_RECOVERY_NOT_ALLOWED);
 		}
 
-		int delta = 39 - getScore(memberId);
+		int delta = 39 - score.getScore();
 		creditScoreService.applyScoreChange(score.getMember(), delta, CreditEventType.SYSTEM_RECOVERY);
 		score.updateCreditStatusDescription("개인 회생 진행");
 

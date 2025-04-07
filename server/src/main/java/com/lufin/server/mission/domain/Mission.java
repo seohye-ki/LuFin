@@ -45,7 +45,7 @@ public class Mission {
 
 	// JPA 연관관계 매핑
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "classroom_id", nullable = false)
+	@JoinColumn(name = "class_id", nullable = false)
 	private Classroom classroom;
 
 	@Builder.Default
@@ -260,7 +260,7 @@ public class Mission {
 
 		images.remove(missionImage);
 	}
-	
+
 	/* classroom 연관 관계 메서드 */
 	public void setClassroom(Classroom classroom) {
 		if (classroom == null) {

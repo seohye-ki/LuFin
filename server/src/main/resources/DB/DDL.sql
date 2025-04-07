@@ -531,7 +531,7 @@ CREATE TABLE `job_requests`
 CREATE TABLE `missions`
 (
     `mission_id`           INT                                        NOT NULL AUTO_INCREMENT,
-    `classroom_id`         INT                                        NOT NULL,
+    `class_id`             INT                                        NOT NULL,
     `title`                VARCHAR(100)                               NOT NULL,
     `content`              TEXT                                       NOT NULL,
     `difficulty`           TINYINT                                    NOT NULL DEFAULT 2 COMMENT '상,중,하',
@@ -543,10 +543,10 @@ CREATE TABLE `missions`
     `created_at`           TIMESTAMP                                  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`           TIMESTAMP                                  NULL ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`mission_id`),
-    INDEX `idx_mission_class` (`classroom_id`),
+    INDEX `idx_mission_class` (`class_id`),
     INDEX `idx_mission_status` (`status`),
     INDEX `idx_mission_date` (`mission_date`),
-    CONSTRAINT `fk_mission_class` FOREIGN KEY (`classroom_id`) REFERENCES `classrooms` (`classroom_id`) ON DELETE CASCADE
+    CONSTRAINT `fk_mission_class` FOREIGN KEY (`class_id`) REFERENCES `classrooms` (`classroom_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='미션 정보';
 

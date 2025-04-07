@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.BatchSize;
+
 import com.lufin.server.classroom.domain.Classroom;
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.exception.BusinessException;
@@ -43,15 +45,19 @@ public class Mission {
 
 	// JPA 연관관계 매핑
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "class_id", nullable = false)
+	@JoinColumn(name = "classroom_id", nullable = false)
 	private Classroom classroom;
 
 	@Builder.Default
-	@OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true) // 양방향 연관관계 주인 mission으로 설정
+	@BatchSize(size = 30)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true)
+	// 양방향 연관관계 주인 mission으로 설정
 	private List<MissionParticipation> participations = new ArrayList<>();
 
 	@Builder.Default
-	@OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true) // 양방향 연관관계 주인 mission으로 설정
+	@BatchSize(size = 30)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "mission", cascade = CascadeType.ALL, orphanRemoval = true)
+	// 양방향 연관관계 주인 mission으로 설정
 	private List<MissionImage> images = new ArrayList<>();
 
 	// Member Field
@@ -59,9 +65,6 @@ public class Mission {
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT
 	@Column(name = "mission_id")
 	private Integer id;
-
-	@Column(name = "class_id", insertable = false, updatable = false, nullable = false)
-	private Integer classId;
 
 	@Column(name = "title", nullable = false, length = MAX_TITLE_LENGTH)
 	@NotBlank
@@ -152,7 +155,6 @@ public class Mission {
 	public static Mission create(Integer classId, Classroom classroom, String title, String content, Integer difficulty,
 		Integer maxParticipants, Integer wage, LocalDateTime missionDate) {
 		Mission mission = Mission.builder()
-			.classId(classId)
 			.title(title)
 			.content(content)
 			.difficulty(difficulty)

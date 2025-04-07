@@ -82,7 +82,7 @@ public class MissionResponseDto {
 		public static MissionDetailResponseDto missionEntityToMissionDetailResponseDto(Mission mission) {
 			return new MissionDetailResponseDto(
 				mission.getId(),
-				mission.getClassId(),
+				mission.getClassroom().getId(),
 				mission.getTitle(),
 				mission.getContent(),
 				mission.getImages() != null

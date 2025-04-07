@@ -35,7 +35,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 		// 먼저 엔티티를 조회
 		List<Mission> missions = queryFactory
 			.selectFrom(mission)
-			.where(mission.classId.eq(classId))
+			.where(mission.classroom.id.eq(classId))
 			.fetch();
 
 		// 엔티티를 DTO로 변환
@@ -63,9 +63,9 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 		 */
 		Mission missionEntity = queryFactory
 			.selectFrom(mission).distinct() // distinct()를 통해 카타시안 곱 문제 해결
-			.where(mission.classId.eq(classId).and(mission.id.eq(missionId)))
-			.leftJoin(mission.images, missionImage).fetchJoin()
-			.leftJoin(mission.participations, missionParticipation).fetchJoin()
+			.where(mission.classroom.id.eq(classId).and(mission.id.eq(missionId)))
+			.leftJoin(mission.images, missionImage)
+			.leftJoin(mission.participations, missionParticipation)
 			.fetchOne();
 
 		if (missionEntity == null) {
@@ -81,7 +81,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 
 		MissionResponseDto.MissionDetailResponseDto result = new MissionResponseDto.MissionDetailResponseDto(
 			missionEntity.getId(),                   // id
-			missionEntity.getClassId(),              // classId
+			missionEntity.getClassroom().getId(),              // classId
 			missionEntity.getTitle(),                // title
 			missionEntity.getContent(),              // content
 			images,                 // missionImage: 데이터가 없으면 빈 리스트 반환
@@ -117,7 +117,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 		 */
 		Mission missionEntity = queryFactory
 			.selectFrom(mission)
-			.where(mission.classId.eq(classId).and(mission.id.eq(missionId)))
+			.where(mission.classroom.id.eq(classId).and(mission.id.eq(missionId)))
 			.leftJoin(mission.images, missionImage).fetchJoin()
 			.fetchOne();
 
@@ -131,7 +131,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 
 		MissionResponseDto.MissionDetailResponseDto result = new MissionResponseDto.MissionDetailResponseDto(
 			missionEntity.getId(),                   // id
-			missionEntity.getClassId(),              // classId
+			missionEntity.getClassroom().getId(),               // classId
 			missionEntity.getTitle(),                // title
 			missionEntity.getContent(),              // content
 			images,               // missionImage

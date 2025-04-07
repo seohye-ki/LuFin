@@ -178,7 +178,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			Mission mission = participation.getMission();
 			if (mission == null
 				|| !mission.getId().equals(missionId)
-				|| !mission.getClassId().equals(classId)
+				|| !mission.getClassroom().getId().equals(classId)
 			) {
 				throw new BusinessException(INVALID_INPUT_VALUE);
 			}

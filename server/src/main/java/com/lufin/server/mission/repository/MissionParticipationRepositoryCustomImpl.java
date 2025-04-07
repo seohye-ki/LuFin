@@ -39,7 +39,7 @@ public class MissionParticipationRepositoryCustomImpl implements MissionParticip
 			.leftJoin(missionParticipation.member, member).fetchJoin()
 			.leftJoin(creditScore).on(creditScore.memberId.eq(member.id)).fetchJoin()
 			.where(missionParticipation.mission.id.eq(missionId)
-				.and(missionParticipation.mission.classId.eq(classId)))
+				.and(missionParticipation.mission.classroom.id.eq(classId)))
 			.fetch();
 
 		// 엔티티를 dto로 변경

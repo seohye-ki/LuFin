@@ -1,5 +1,7 @@
 package com.lufin.server.classroom.controller;
 
+import static com.lufin.server.common.utils.ValidationUtils.*;
+
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -12,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lufin.server.classroom.dto.ClassCodeResponse;
+import com.lufin.server.classroom.dto.ClassIdRequest;
 import com.lufin.server.classroom.dto.ClassRequest;
 import com.lufin.server.classroom.dto.ClassResponse;
-import com.lufin.server.classroom.dto.DeleteClassRequest;
 import com.lufin.server.classroom.dto.LoginWithClassResponse;
 import com.lufin.server.classroom.dto.UpdateClassRequest;
 import com.lufin.server.classroom.service.ClassroomCommandService;
@@ -34,7 +36,6 @@ public class ClassroomController {
 	private final ClassroomCommandService commandService;
 	private final ClassroomQueryService queryService;
 
-
 	// [교사] 클래스 생성
 	@PostMapping
 	ResponseEntity<ApiResponse<LoginWithClassResponse>> createClassroom(@RequestBody @Valid ClassRequest classRequest) {
@@ -51,11 +52,13 @@ public class ClassroomController {
 		return ResponseEntity.status(200).body(ApiResponse.success(result));
 	}
 
-	// 	본인이 현재 소속된 클래스 조회
-	@GetMapping("/current")
-	ResponseEntity<ApiResponse<ClassResponse>> getCurrentClassroom() {
+	// [교사] 본인이 과거에 소속된 클래스로 소속 변경
+	@PostMapping("/current/change")
+	ResponseEntity<ApiResponse<LoginWithClassResponse>> changeCurrentClassroom(
+		@RequestBody @Valid ClassIdRequest request) {
 		Member currentMember = UserContext.get();
-		ClassResponse response = queryService.findCurrentClass(currentMember.getId());
+		validateClassId(request.classId());
+		LoginWithClassResponse response = commandService.changeClassroom(currentMember, request.classId());
 		return ResponseEntity.status(200).body(ApiResponse.success(response));
 	}
 
@@ -77,7 +80,7 @@ public class ClassroomController {
 
 	// [교사] 클래스 삭제
 	@DeleteMapping
-	ResponseEntity<ApiResponse<Void>> deleteClassroom(@RequestBody @Valid DeleteClassRequest request) {
+	ResponseEntity<ApiResponse<Void>> deleteClassroom(@RequestBody @Valid ClassIdRequest request) {
 		Member currentMember = UserContext.get();
 		commandService.deleteClassroom(currentMember, request.classId());
 		return ResponseEntity.status(204).build();

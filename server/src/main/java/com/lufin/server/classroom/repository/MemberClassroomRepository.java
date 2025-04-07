@@ -37,4 +37,6 @@ public interface MemberClassroomRepository extends JpaRepository<MemberClassroom
 
 	// 클래스에 속한 멤버 매핑 모두 삭제
 	void deleteAllByClassroom(Classroom classroom);
+
+	Optional<MemberClassroom> findByMemberIdAndClassroomId(Integer memberId, Integer classroomId);
 }

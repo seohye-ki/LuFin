@@ -44,16 +44,27 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 	@Override
 	public List<StockPriceHistoryResponseDto.PriceHistoryResponseDto> getStockPriceHistory(Integer stockProductId,
 		Integer counts) {
-		log.info("주식 가격 정보 조회 요청: stockProductId = {}, days = {}", stockProductId, counts);
+		log.info("주식 가격 변동 조회 요청: stockProductId = {}, days = {}", stockProductId, counts);
 
 		if (stockProductId == null || counts == null) {
 			throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE);
 		}
 
 		try {
-			// 로직 완성
+			List<StockPriceHistory> priceHistoryList = stockPriceHistoryRepository.findLatestPriceByStockProductIdAndCount(
+				stockProductId,
+				counts
+			);
 
-			return null;
+			if (priceHistoryList == null || priceHistoryList.isEmpty()) {
+				log.warn("주식 가격 변동 조회 실패");
+				throw new BusinessException(INVESTMENT_PRICE_NOT_FOUND);
+			}
+
+			return priceHistoryList.stream()
+				.map(
+					StockPriceHistoryResponseDto.PriceHistoryResponseDto::stockPriceHistoryEntityToPriceHistoryResponseDto)
+				.toList();
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {

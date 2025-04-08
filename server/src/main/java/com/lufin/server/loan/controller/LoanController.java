@@ -39,9 +39,11 @@ public class LoanController {
 
 	// 대출 상품 목록 조회
 	@GetMapping("/products")
-	public ResponseEntity<ApiResponse<List<LoanProductResponseDto>>> getLoanProducts() {
+	public ResponseEntity<ApiResponse<List<LoanProductResponseDto>>> getLoanProducts(HttpServletRequest httpRequest) {
+		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		validateClassId(classId);
 		Member member = UserContext.get();
-		List<LoanProductResponseDto> result = loanService.getLoanProducts(member);
+		List<LoanProductResponseDto> result = loanService.getLoanProducts(member, classId);
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 

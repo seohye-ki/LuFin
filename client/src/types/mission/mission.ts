@@ -25,14 +25,14 @@ export interface MissionList
     | 'currentParticipants'
     | 'maxParticipants'
   > {
-  image: string[];
+  images: string[];
 }
 
 export interface MissionRaw {
   missionId: number;
   title: string;
   content: string;
-  image: string[];
+  images: string[];
   difficulty: number;
   maxParticipants: number;
   currentParticipants: number;
@@ -43,7 +43,7 @@ export interface MissionRaw {
 export interface MissionCreateRequest {
   title: string;
   content: string;
-  image: string[];
+  s3Keys: string[];
   difficulty: number;
   maxParticipants: number;
   wage: number;

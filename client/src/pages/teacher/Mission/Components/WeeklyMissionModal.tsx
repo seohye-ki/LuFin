@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { Icon } from '../../../../components/Icon/Icon';
 import MissionTable from './MissionTable';
 import MissionCreateModal from './MissionCreateModal';
@@ -11,18 +10,35 @@ interface WeeklyMissionModalProps {
   onDateChange: (date: Date | null) => void;
 }
 
+// 요일 이름 반환 (일~토)
+const getWeekdayName = (index: number) => {
+  const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+  return weekdays[index];
+};
+
+// 'YYYY-MM-DD' 포맷
+const formatDateKey = (date: Date) => date.toISOString().split('T')[0];
+
 export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMissionModalProps) {
   const { showCreateModal, selectedMission, onSelectMission, onCloseModal, setShowCreateModal } =
     useWeeklyMissionModal();
 
-  const startOfWeek = moment(selectedDate).startOf('week');
-  const weekDays = Array.from({ length: 7 }, (_, i) => moment(startOfWeek).add(i, 'days'));
+  // 일요일 기준으로 주 시작 날짜 구하기
+  const startOfWeek = new Date(selectedDate);
+  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+
+  // 일~토까지 날짜 배열 생성
+  const weekDays = Array.from({ length: 7 }, (_, i) => {
+    const day = new Date(startOfWeek);
+    day.setDate(day.getDate() + i);
+    return day;
+  });
 
   const missions = useMissionStore((state) => state.missions);
 
-  const dateKey = moment(selectedDate).format('YYYY-MM-DD');
+  const dateKey = formatDateKey(selectedDate);
   const dayMissions = missions.filter(
-    (mission) => moment(mission.missionDate).format('YYYY-MM-DD') === dateKey,
+    (mission) => formatDateKey(new Date(mission.missionDate)) === dateKey,
   );
 
   return (
@@ -35,30 +51,37 @@ export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMission
           <Icon name='ArrowDown2' size={24} />
         </button>
       </div>
+
+      {/* 요일 그리드 */}
       <div className='grid grid-cols-7 rounded-lg bg-light-cyan-30'>
-        {weekDays.map((day, index) => (
-          <div
-            key={day.format('YYYY-MM-DD')}
-            onClick={() => onDateChange(day.toDate())}
-            className={`text-center p-2 ${
-              day.format('YYYY-MM-DD') === dateKey ? 'bg-light-cyan rounded-lg font-bold' : ''
-            }`}
-          >
+        {weekDays.map((day) => {
+          const dayKey = formatDateKey(day);
+          const isSelected = dayKey === dateKey;
+          const dayOfWeek = day.getDay();
+
+          return (
             <div
-              className={`text-sm mb-1 ${
-                index === 0 ? 'text-red-500' : index === 6 ? 'text-blue-500' : ''
-              }`}
+              key={dayKey}
+              onClick={() => onDateChange(day)}
+              className={`text-center p-2 ${isSelected ? 'bg-light-cyan rounded-lg font-bold' : ''}`}
             >
-              {day.format('ddd')}
+              <div
+                className={`text-sm mb-1 ${
+                  dayOfWeek === 0 ? 'text-red-500' : dayOfWeek === 6 ? 'text-blue-500' : ''
+                }`}
+              >
+                {getWeekdayName(dayOfWeek)}
+              </div>
+              <div className='text-lg'>{day.getDate()}</div>
             </div>
-            <div className='text-lg'>{day.format('D')}</div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
       <div className='p-4'>
-        {/* 해당 날짜 */}
+        {/* 선택 날짜 헤더 */}
         <div className='flex justify-between items-center text-h3 mb-4 font-semibold'>
-          {moment(selectedDate).format('YYYY년 MM월 DD일')}
+          {`${selectedDate.getFullYear()}년 ${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일`}
           <button
             className='flex items-center justify-center'
             onClick={() => setShowCreateModal(true)}
@@ -66,7 +89,9 @@ export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMission
             <Icon name='CircleAdd' size={32} />
           </button>
         </div>
+
         <MissionTable missions={dayMissions} onMissionClick={onSelectMission} />
+
         {showCreateModal && (
           <MissionCreateModal
             selectedDate={selectedDate}

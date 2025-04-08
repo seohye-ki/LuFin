@@ -65,7 +65,7 @@ function CalendarView({ onDateSelect }: CalendarViewProps) {
         value={value}
         locale='ko-KR'
         showNavigation={false}
-        formatDay={(_, date) => moment(date).format('D')}
+        formatDay={(_, date) => date.getDate().toString()}
         formatShortWeekday={(_, date) => ['일', '월', '화', '수', '목', '금', '토'][date.getDay()]}
         tileContent={({ date }: { date: Date }) => {
           const dateKey = getDateKeyFromMissionDate(

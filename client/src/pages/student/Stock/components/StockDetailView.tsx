@@ -1,8 +1,8 @@
-import { useStockStore } from '../../../../libs/store/stockStore';
+import { useSelectedStockStore } from '../../../../libs/store/stockStore';
 import SpecifiedStockGraph from './SpecifiedStockGraph';
 
 const StockDetailView = () => {
-  const { selectedStock, setSelectedStock } = useStockStore();
+  const { selectedStock, setSelectedStock } = useSelectedStockStore();
 
   if (!selectedStock) return null;
 

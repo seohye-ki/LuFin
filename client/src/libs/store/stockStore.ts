@@ -1,7 +1,49 @@
 import { create } from 'zustand';
-import { StockProduct } from '../../types/stock/stock';
+import {
+  StockProduct,
+  StockPriceHistory,
+  StockNews,
+  StockPortfolio,
+} from '../../types/stock/stock';
+import { stockService } from '../services/stock/stockService';
 
 type ChartType = 'realTime' | 'portfolio';
+
+interface StockState {
+  products: StockProduct[];
+  selectedProductId: number | null;
+  priceHistory: StockPriceHistory[];
+  news: StockNews[];
+  portfolio: StockPortfolio[];
+  isLoading: boolean;
+  error: string | null;
+
+  getStockProducts: () => Promise<{ success: boolean; message?: string }>;
+  getStockPriceHistory: (
+    productId: number,
+    day?: number,
+  ) => Promise<{ success: boolean; message?: string }>;
+  postStockTransaction: (
+    productId: number,
+    type: 'BUY' | 'SELL',
+    quantity: number,
+    unitPrice: number,
+  ) => Promise<{ success: boolean; transactionId?: number; message?: string }>;
+  getStockNews: (productId: number) => Promise<{ success: boolean; message?: string }>;
+  getStockPortfolio: () => Promise<{ success: boolean; message?: string }>;
+
+  getStockStatus: () => {
+    products: StockProduct[];
+    selectedProductId: number | null;
+    priceHistory: StockPriceHistory[];
+    news: StockNews[];
+    portfolio: StockPortfolio[];
+    isLoading: boolean;
+    error: string | null;
+  };
+
+  resetStockState: () => void;
+}
 
 interface StockStore {
   selectedStock: StockProduct | null;
@@ -10,10 +52,174 @@ interface StockStore {
   toggleChartType: () => void;
 }
 
-export const useStockStore = create<StockStore>((set) => ({
+export const useSelectedStockStore = create<StockStore>((set) => ({
   selectedStock: null,
   chartType: 'realTime',
-  setSelectedStock: (stock: StockProduct | null) => set({ selectedStock: stock }),
+  setSelectedStock: (stock) => set({ selectedStock: stock }),
   toggleChartType: () =>
-    set((state) => ({ chartType: state.chartType === 'realTime' ? 'portfolio' : 'realTime' })),
+    set((state) => ({
+      chartType: state.chartType === 'realTime' ? 'portfolio' : 'realTime',
+    })),
+}));
+
+export const useStockStore = create<StockState>((set, get) => ({
+  products: [],
+  selectedProductId: null,
+  priceHistory: [],
+  news: [],
+  portfolio: [],
+  isLoading: false,
+  error: null,
+
+  /**
+   * 종목 목록 조회
+   */
+  getStockProducts: async () => {
+    set({ isLoading: true });
+    try {
+      const result = await stockService.getStockProducts();
+      if (result.success) {
+        set({
+          products: result.products,
+          isLoading: false,
+        });
+        return { success: true };
+      } else {
+        set({ isLoading: false, error: result.message || null });
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      console.error('종목 목록 조회 오류:', error);
+      set({ isLoading: false, error: '종목 목록 조회 오류' });
+      return { success: false, message: '종목 목록 조회 오류' };
+    }
+  },
+  /**
+   * 종목 가격 변동 이력 조회
+   */
+  getStockPriceHistory: async (productId: number, day: number = 7) => {
+    set({ isLoading: true });
+    try {
+      const result = await stockService.getStockPriceHistory(productId, day);
+      if (result.success) {
+        set({
+          priceHistory: result.history,
+          selectedProductId: productId,
+          isLoading: false,
+        });
+        return { success: true };
+      } else {
+        set({ isLoading: false, error: result.message || null });
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      console.error('종목 가격 변동 이력 조회 오류:', error);
+      set({ isLoading: false, error: '종목 가격 변동 이력 조회 오류' });
+      return { success: false, message: '종목 가격 변동 이력 조회 오류' };
+    }
+  },
+  /**
+   * 종목 매수/매도
+   */
+  postStockTransaction: async (
+    productId,
+    type,
+    quantity,
+    unitPrice,
+  ): Promise<{ success: boolean; transactionId?: number; message?: string }> => {
+    set({ isLoading: true });
+    try {
+      const result = await stockService.postStockTransaction(productId, {
+        StockProductId: productId,
+        Type: type === 'BUY' ? 1 : 0,
+        Quantity: quantity,
+        UnitPrice: unitPrice,
+        TotalValue: quantity * unitPrice,
+      });
+      if (result.success) {
+        set({ isLoading: false });
+        return { success: true, transactionId: result.transactionId };
+      } else {
+        set({ isLoading: false });
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      console.error('종목 매수/매도 오류:', error);
+      set({ isLoading: false, error: '종목 매수/매도 오류' });
+      return { success: false, message: '종목 매수/매도 오류' };
+    }
+  },
+  /**
+   * 종목 공시 정보 조회
+   */
+  getStockNews: async (productId: number) => {
+    set({ isLoading: true });
+    try {
+      const result = await stockService.getStockNews(productId);
+      if (result.success) {
+        set({
+          news: result.news,
+          isLoading: false,
+        });
+        return { success: true };
+      } else {
+        set({ isLoading: false, error: result.message || null });
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      console.error('종목 공시 정보 조회 오류:', error);
+      set({ isLoading: false, error: '종목 공시 정보 조회 오류' });
+      return { success: false, message: '종목 공시 정보 조회 오류' };
+    }
+  },
+  /**
+   * 투자 포트폴리오 조회
+   */
+  getStockPortfolio: async () => {
+    set({ isLoading: true });
+    try {
+      const result = await stockService.getStockPortfolio();
+      if (result.success) {
+        set({
+          portfolio: result.portfolio,
+          isLoading: false,
+        });
+        return { success: true };
+      } else {
+        set({ isLoading: false, error: result.message || null });
+        return { success: false, message: result.message };
+      }
+    } catch (error) {
+      console.error('투자 포트폴리오 조회 오류:', error);
+      set({ isLoading: false, error: '투자 포트폴리오 조회 오류' });
+      return { success: false, message: '투자 포트폴리오 조회 오류' };
+    }
+  },
+  /**
+   * 상태 조회
+   */
+  getStockStatus: () => {
+    const { products, selectedProductId, priceHistory, news, portfolio, isLoading, error } = get();
+    return {
+      products,
+      selectedProductId,
+      priceHistory,
+      news,
+      portfolio,
+      isLoading,
+      error,
+    };
+  },
+  /**
+   * 상태 초기화
+   */
+  resetStockState: () => {
+    set({
+      selectedProductId: null,
+      priceHistory: [],
+      news: [],
+      isLoading: false,
+      error: null,
+    });
+  },
 }));

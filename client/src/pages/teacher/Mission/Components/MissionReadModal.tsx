@@ -51,19 +51,81 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
     fetchParticipation();
   }, [mission.missionId]);
 
+  useEffect(() => {
+    if (isDeleteMode) {
+      useAlertStore.getState().showAlert(
+        '미션을 삭제하시겠습니까?',
+        null,
+        '삭제된 미션은 복구할 수 없습니다.',
+        'danger',
+        {
+          label: '취소',
+          onClick: () => {
+            useAlertStore.setState({ isVisible: false, isOpening: false });
+          },
+          color: 'neutral',
+        },
+        {
+          label: '삭제하기',
+          onClick: async () => {
+            await deleteMission(mission.missionId);
+            useAlertStore.setState({ isVisible: false, isOpening: false });
+            onClose();
+          },
+          color: 'danger',
+        },
+      );
+    }
+  }, [isDeleteMode]);
+
+  useEffect(() => {
+    if (isApproveMode && selectedParticipation) {
+      useAlertStore.getState().showAlert(
+        '미션을 승인하시겠습니까?',
+        <div className='flex flex-col justify-center items-center gap-2'>
+          <Profile
+            name={selectedParticipation.name}
+            profileImage={selectedParticipation.profileImage}
+            variant='row'
+          />
+          <span className='text-c1'>승인하면 보상이 지급됩니다.</span>
+        </div>,
+        '',
+        'success',
+        {
+          label: '취소',
+          onClick: () => {
+            setIsApproveMode(false);
+            setSelectedParticipation(null);
+          },
+          color: 'neutral',
+        },
+        {
+          label: '승인하기',
+          onClick: async () => {
+            await requestReview(selectedParticipation.participationId);
+            setIsApproveMode(false);
+            setSelectedParticipation(null);
+          },
+          color: 'primary',
+        },
+      );
+    }
+  }, [isApproveMode, selectedParticipation]);
+
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? mission.image.length - 2 : prev - 2));
+    setCurrentImageIndex((prev) => (prev === 0 ? mission.images.length - 2 : prev - 2));
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev >= mission.image.length - 2 ? 0 : prev + 2));
+    setCurrentImageIndex((prev) => (prev >= mission.images.length - 2 ? 0 : prev + 2));
   };
 
   const getVisibleImages = () => {
     const images = [];
     for (let i = 0; i < 2; i++) {
-      const index = (currentImageIndex + i) % mission.image.length;
-      images.push(mission.image[index]);
+      const index = (currentImageIndex + i) % mission.images.length;
+      images.push(mission.images[index]);
     }
     return images;
   };
@@ -102,67 +164,10 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
     );
   }
 
-  if (isDeleteMode) {
-    useAlertStore.getState().showAlert(
-      '미션을 삭제하시겠습니까?',
-      null,
-      '삭제된 미션은 복구할 수 없습니다.',
-      'danger',
-      {
-        label: '취소',
-        onClick: () => setIsDeleteMode(false),
-        color: 'neutral',
-      },
-      {
-        label: '삭제하기',
-        onClick: async () => {
-          await deleteMission(mission.missionId);
-          onClose();
-        },
-        color: 'danger',
-      },
-    );
-    return null;
-  }
-
-  if (isApproveMode && selectedParticipation) {
-    useAlertStore.getState().showAlert(
-      '미션을 승인하시겠습니까?',
-      <div className='flex flex-col justify-center items-center gap-2'>
-        <Profile
-          name={selectedParticipation.name}
-          profileImage={selectedParticipation.profileImage}
-          variant='row'
-        />
-        <span className='text-c1'>승인하면 보상이 지급됩니다.</span>
-      </div>,
-      '',
-      'success',
-      {
-        label: '취소',
-        onClick: () => {
-          setIsApproveMode(false);
-          setSelectedParticipation(null);
-        },
-        color: 'neutral',
-      },
-      {
-        label: '승인하기',
-        onClick: async () => {
-          await requestReview(selectedParticipation.participationId);
-          setIsApproveMode(false);
-          setSelectedParticipation(null);
-        },
-        color: 'primary',
-      },
-    );
-    return null;
-  }
-
   return (
     <>
       <div className='fixed inset-0 bg-black z-10' style={{ opacity: 0.5 }} onClick={onClose} />
-      <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[416px] max-h-screen rounded-xl bg-white shadow-lg z-50'>
+      <div className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[416px] max-h-screen rounded-xl bg-white shadow-lg z-40'>
         <Card
           titleLeft='오늘의 미션'
           titleRight={
@@ -216,7 +221,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
               <span className='text-c1 text-grey'>설명</span>
               <span className='text-p1 font-semibold'>{mission.content}</span>
             </div>
-            {mission.image.length > 0 && (
+            {mission.images.length > 0 && (
               <div className='mt-2 relative'>
                 <div className='grid grid-cols-2 gap-2'>
                   {getVisibleImages().map((image, index) => (
@@ -229,7 +234,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
                     </div>
                   ))}
                 </div>
-                {mission.image.length > 2 && (
+                {mission.images.length > 2 && (
                   <>
                     <button
                       onClick={handlePrevImage}

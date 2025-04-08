@@ -3,10 +3,17 @@ import TodayNews from './components/TodayNews';
 import StockInfoNotice from './components/StockInfoNotice';
 import StockOverview from './components/StockOverview';
 import StockDetailView from './components/StockDetailView';
-import { useStockStore } from '../../../libs/store/stockStore';
+import { useSelectedStockStore, useStockStore } from '../../../libs/store/stockStore';
+import { useEffect } from 'react';
 
 const StudentStock = () => {
-  const { selectedStock } = useStockStore();
+  const { selectedStock } = useSelectedStockStore();
+  const { getStockProducts, getStockPortfolio } = useStockStore();
+
+  useEffect(() => {
+    getStockProducts();
+    getStockPortfolio();
+  }, []);
 
   return (
     <SidebarLayout>

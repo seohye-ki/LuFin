@@ -1,35 +1,29 @@
 import Lufin from '../../../../components/Lufin/Lufin';
 import Button from '../../../../components/Button/Button';
 import { calcProfitRate } from '../../../../libs/utils/stock-util';
-import { stockPortfolios, stockProducts } from '../../../../types/stock/stock';
 import Card from '../../../../components/Card/Card';
 import { useStockStore } from '../../../../libs/store/stockStore';
-
+import { useSelectedStockStore } from '../../../../libs/store/stockStore';
 const MyStockListCard = () => {
-  const { toggleChartType } = useStockStore();
-  const memberId = 2; // ToDo: 회원 아이디 받아오기
-  const stockPortfolio = stockPortfolios.filter((portfolio) => portfolio.memberId === memberId);
+  const { products, portfolio } = useStockStore();
+  const { toggleChartType } = useSelectedStockStore();
 
-  const stockDetails = stockPortfolio
-    .map((portfolio) => {
-      const stock = stockProducts.find(
-        (stock) => stock.stockProductId === portfolio.stockProductId,
-      );
+  const stockDetails = portfolio
+    .map((p) => {
+      const stock = products.find((s) => s.StockProductId === p.StockProductId);
       if (!stock) return null;
-      const averagePrice =
-        portfolio.quantity > 0 ? portfolio.totalPurchaseAmount / portfolio.quantity : 0;
-      const currentPrice = stock.currentPrice * portfolio.quantity;
-      const { profitValue, profitRate } = calcProfitRate(
-        portfolio.totalPurchaseAmount,
-        currentPrice,
-      );
+
+      const avgPrice = p.Quantity > 0 ? p.TotalPurchaseAmount / p.Quantity : 0;
+      const currentPrice = stock.CurrentPrice * p.Quantity;
+      const { profitValue, profitRate } = calcProfitRate(p.TotalPurchaseAmount, currentPrice);
+
       return {
-        stock: stock.name,
-        quantity: portfolio.quantity,
-        amount: averagePrice,
-        currentPrice: currentPrice,
+        stock: stock.Name,
+        quantity: p.Quantity,
+        amount: avgPrice,
+        currentPrice,
         profit: profitValue,
-        profitRate: profitRate,
+        profitRate,
       };
     })
     .filter((detail): detail is NonNullable<typeof detail> => detail !== null);
@@ -39,7 +33,7 @@ const MyStockListCard = () => {
       titleLeft='나의 투자 현황'
       titleRight={
         <Button variant='solid' size='sm' color='primary' onClick={toggleChartType}>
-          실시간 차트
+          종목 현황
         </Button>
       }
     >
@@ -48,10 +42,7 @@ const MyStockListCard = () => {
           <div className='text-gray-400 text-sm'>보유 주식이 없습니다.</div>
         ) : (
           stockDetails.map((stock) => (
-            <div
-              key={stock.stock}
-              className='flex flex-col gap-2 overflow-y-auto [&::-webkit-scrollbar]:hidden'
-            >
+            <div key={stock.stock} className='flex flex-col gap-2'>
               <div className='flex justify-between'>
                 <span className='text-p1 font-bold'>{stock.stock}</span>
                 <Lufin size='s' count={stock.currentPrice} />
@@ -64,7 +55,7 @@ const MyStockListCard = () => {
                       ? 'text-p3 text-red-500'
                       : stock.profit < 0
                         ? 'text-p3 text-blue-500'
-                        : ''
+                        : 'text-p3 text-gray-500'
                   }
                 >
                   {stock.profit > 0 ? '+' : ''}

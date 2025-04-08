@@ -6,10 +6,7 @@ import MyMissionModal from './components/MyMissionModal';
 import { useStudentMissions } from './hooks/useStudentMissions';
 import { Icon } from '../../../components/Icon/Icon';
 import useMissionStore from '../../../libs/store/missionStore';
-import { MissionList, MissionParticipation } from '../../../types/mission/mission';
-
-const myMemberId = 1; // 실제 프로젝트에선 전역 상태(userStore 등)에서 가져와야 함
-const participationList: MissionParticipation[] = []; // 상태로 API 연동 예정
+import { MissionList, ParticipationUserInfo } from '../../../types/mission/mission';
 
 const StudentMission = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,6 +14,8 @@ const StudentMission = () => {
   const getMissionDetail = useMissionStore((state) => state.getMissionDetail);
   const missions = useMissionStore((state) => state.missions);
   const selectedMission = useMissionStore((state) => state.selectedMission);
+  const [participationList, setParticipationList] = useState<ParticipationUserInfo[]>([]);
+  const myMemberId = 1; // TODO: 전역 상태로 교체 예정
 
   useEffect(() => {
     getMissionList();
@@ -30,11 +29,12 @@ const StudentMission = () => {
     [getMissionDetail],
   );
 
-  const { myMissionRows, availableMissionRows } = useStudentMissions(
+  const { myMissionRows, availableMissionRows, refetchParticipations } = useStudentMissions(
     missions,
     participationList,
     myMemberId,
     handleRowClick,
+    setParticipationList,
   );
 
   const columns = [
@@ -98,11 +98,15 @@ const StudentMission = () => {
             style={{ opacity: 0.5 }}
             onClick={() => setIsModalOpen(false)}
           />
-          <div className='fixed inset-0 flex items-center justify-center z-50'>
+          <div className='fixed inset-0 flex items-center justify-center z-40'>
             <MyMissionModal
               mission={selectedMission}
               onClose={() => setIsModalOpen(false)}
               mode='apply'
+              onSuccess={() => {
+                refetchParticipations(selectedMission.missionId);
+                setIsModalOpen(false);
+              }}
             />
           </div>
         </>

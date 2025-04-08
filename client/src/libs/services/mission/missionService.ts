@@ -159,31 +159,31 @@ export const missionService = {
    */
   deleteMission: async (missionId: number) => {
     try {
-      const response = await axiosInstance.delete(`/missions/${missionId}`);
+      const response = await axiosInstance.delete(`/missions/${missionId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: undefined,
+      });
 
       if (response.status === 204) {
         return { success: true };
       }
 
+      const message = response.data?.message || '미션 삭제에 실패했습니다.';
       return {
         success: false,
-        message: '미션 삭제에 실패했습니다.',
+        message,
+        code: response.data?.code,
       };
     } catch (error: any) {
       console.error('미션 삭제 오류:', error);
 
-      const response = error.response;
-      if (response?.data) {
-        return {
-          success: false,
-          code: response.data.code,
-          message: response.data.message || '미션 삭제 중 오류가 발생했습니다.',
-        };
-      }
-
+      const message = error.response?.data?.message || '알 수 없는 오류가 발생했습니다.';
       return {
         success: false,
-        message: '알 수 없는 오류가 발생했습니다.',
+        message,
+        code: error.response?.data?.code,
       };
     }
   },
@@ -211,7 +211,8 @@ export const missionService = {
   applyMission: async (missionId: number) => {
     try {
       const response = await axiosInstance.post<MissionResponse<{ participationId: number }>>(
-        `${MISSION_ENDPOINT}/${missionId}`,
+        `${MISSION_ENDPOINT}/${missionId}/participations`,
+        null,
       );
 
       if (response.data.isSuccess && response.data.data) {

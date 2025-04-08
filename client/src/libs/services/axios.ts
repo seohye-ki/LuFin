@@ -15,6 +15,9 @@ export const axiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
   transformResponse: (data) => {
+    if (!data) {
+      return null;
+    }
     return JSON.parse(data);
   },
 });

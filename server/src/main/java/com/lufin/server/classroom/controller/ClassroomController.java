@@ -83,7 +83,7 @@ public class ClassroomController {
 	ResponseEntity<ApiResponse<Void>> deleteClassroom(@RequestBody @Valid ClassIdRequest request) {
 		Member currentMember = UserContext.get();
 		commandService.deleteClassroom(currentMember, request.classId());
-		return ResponseEntity.status(204).build();
+		return ResponseEntity.status(204).body(ApiResponse.success(null));
 	}
 
 }

@@ -18,7 +18,7 @@ public record CreditScoreDto(
 ) {
 	public static CreditScoreDto from(CreditScore creditScore) {
 		return new CreditScoreDto(
-			creditScore.getMemberId(),
+			creditScore.getMemberClassroom().getId(),
 			creditScore.getScore(),
 			creditScore.getGrade().getDisplay(),
 			creditScore.getCreditStatus(),

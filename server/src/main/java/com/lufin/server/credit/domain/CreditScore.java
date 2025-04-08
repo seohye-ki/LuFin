@@ -74,7 +74,7 @@ public class CreditScore {
 		int newScore = Math.max(0, Math.min(100, this.score + delta));
 		this.score = (byte)newScore;
 		this.grade = CreditGrade.fromScore(newScore);
-		this.creditStatus = (byte)(newScore <= 30 ? 1 : 0);
+		this.creditStatus = (byte)(newScore <= 30 ? 1 : 0); // 30이하 도달 시 신용불량자로 자동 전환
 
 		return CreditScoreHistory.of(this.memberClassroom, (byte)delta, eventType.getDisplayName());
 	}

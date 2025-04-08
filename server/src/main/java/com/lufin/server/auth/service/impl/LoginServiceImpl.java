@@ -2,7 +2,6 @@ package com.lufin.server.auth.service.impl;
 
 import static com.lufin.server.common.constants.ErrorCode.*;
 import static com.lufin.server.member.util.MaskingUtil.*;
-import static com.lufin.server.member.util.MemberValidator.*;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.lufin.server.auth.dto.LoginWithAssetResponse;
 import com.lufin.server.auth.factory.LoginResponseFactory;
@@ -48,13 +48,10 @@ public class LoginServiceImpl implements LoginService {
 
 		loginFailCheck(failKey);
 
-		try {
-			isValidEmail(inputEmail);
-			isValidPassword(inputPassword);
-		} catch (BusinessException e) {
-			log.warn("🔐[로그인 실패 - 입력값 오류] 이메일: {}, 이유: {}", maskEmail(inputEmail), e.getMessage());
+		if (!StringUtils.hasText(inputEmail) || !StringUtils.hasText(inputPassword)) {
+			log.warn("🔐[로그인 실패 - 입력값 오류] 이메일: {}", maskEmail(inputEmail));
 			increaseLoginFailCount(failKey);
-			throw e;
+			throw new BusinessException(MISSING_REQUIRED_VALUE);
 		}
 
 		Member member = memberRepository.findByEmail(inputEmail)

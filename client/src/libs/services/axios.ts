@@ -102,7 +102,26 @@ axiosInstance.interceptors.response.use(
 
   // 에러 응답 처리
   (error: AxiosError) => {
-    const message = (error.response?.data as any)?.message || '알 수 없는 에러 발생';
+    const errorData = error.response?.data as any;
+    let message = errorData?.message || '알 수 없는 에러 발생';
+
+    if (['E401002', 'E401003', 'E401004', 'E401005'].includes(errorData?.code)) {
+      message = '로그인 정보가 없습니다. 다시 로그인 해주세요.';
+
+      showGlobalAlert('에러 발생', null, message, 'danger', {
+        label: '확인',
+        onClick: () => {
+          hideGlobalAlert();
+          tokenUtils.removeToken('accessToken');
+          tokenUtils.removeToken('refreshToken');
+          tokenUtils.removeToken('userRole');
+          window.location.href = '/login';
+        },
+        color: 'danger',
+      });
+
+      return Promise.reject(error); // 리다이렉션 전에 에러는 반환
+    }
 
     showGlobalAlert('에러 발생', null, message, 'danger', {
       label: '확인',
@@ -111,13 +130,6 @@ axiosInstance.interceptors.response.use(
       },
       color: 'danger',
     });
-
-    if (error.response?.status === 401) {
-      tokenUtils.removeToken('accessToken');
-      tokenUtils.removeToken('refreshToken');
-      tokenUtils.removeToken('userRole');
-      window.location.href = '/login';
-    }
 
     return Promise.reject(error);
   },

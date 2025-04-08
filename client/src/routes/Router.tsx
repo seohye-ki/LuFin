@@ -19,6 +19,8 @@ import StudentClassroom from '../pages/student/Classroom/StudentClassroom';
 import StudentLoan from '../pages/student/Loan/StudentLoan';
 import StudentDashboard from '../pages/student/Dashboard/StudentDashboard';
 import TeacherDashboard from '../pages/teacher/Dashboard/TeacherDashboard';
+import Dashboard from '../pages/student/Dashboard/StudentDashboard';
+import TeacherShop from '../pages/teacher/Shop/TeacherShop';
 
 const Router = () => {
   return (
@@ -30,7 +32,7 @@ const Router = () => {
         <Route path={paths.DESIGN_SYSTEM} element={<DesignSystem />} />
         <Route path={paths.COMMON_COMPONENTS} element={<CommonComponents />} />
         <Route path={paths.STUDENT_SHOP} element={<StudentShop />} />
-        {/* <Route path={paths.TEACHER_SHOP} element={<TeacherShop />} /> */}
+        <Route path={paths.TEACHER_SHOP} element={<TeacherShop />} />
         <Route path={paths.TEACHER_MISSION} element={<TeacherMission />} />
         <Route path={paths.STUDENT_MISSION} element={<StudentMission />} />
         <Route path={paths.STUDENT_STOCK} element={<StudentStock />} />

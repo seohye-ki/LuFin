@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lufin.server.auth.dto.LoginRequest;
+import com.lufin.server.auth.dto.LoginWithAssetResponse;
 import com.lufin.server.auth.dto.TokenResponse;
 import com.lufin.server.auth.service.LoginService;
 import com.lufin.server.auth.service.RefreshTokenService;
@@ -21,8 +23,6 @@ import com.lufin.server.classroom.service.ClassroomCommandService;
 import com.lufin.server.common.dto.ApiResponse;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.member.domain.Member;
-import com.lufin.server.member.dto.LoginRequest;
-import com.lufin.server.member.dto.LoginResponse;
 import com.lufin.server.member.support.UserContext;
 
 import jakarta.validation.Valid;
@@ -38,9 +38,9 @@ public class AuthController {
 	private final RefreshTokenService refreshTokenService;
 
 	@PostMapping("/login")
-	public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
+	public ResponseEntity<ApiResponse<LoginWithAssetResponse>> login(@Valid @RequestBody LoginRequest request) {
 
-		LoginResponse response = loginService.login(request.email(), request.password());
+		LoginWithAssetResponse response = loginService.login(request.email(), request.password());
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Cache-Control", "no-store");

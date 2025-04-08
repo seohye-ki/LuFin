@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lufin.server.auth.dto.EmailValidationResponse;
 import com.lufin.server.common.dto.ApiResponse;
-import com.lufin.server.member.dto.EmailValidationResponse;
 import com.lufin.server.member.dto.RegisterRequest;
 import com.lufin.server.member.dto.RegisterResponse;
 import com.lufin.server.member.service.RegisterService;

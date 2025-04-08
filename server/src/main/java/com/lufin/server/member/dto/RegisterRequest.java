@@ -11,5 +11,6 @@ public record RegisterRequest(@NotBlank @Email String email,
 							  @NotBlank String password,
 							  @NotBlank String name,
 							  @NotNull MemberRole role,
-							  @Pattern(regexp = "^\\d{6}$") String secondaryPassword) {
+							  @Pattern(regexp = "^\\d{6}$") String secondaryPassword,
+							  @NotBlank String profileImage) {
 }

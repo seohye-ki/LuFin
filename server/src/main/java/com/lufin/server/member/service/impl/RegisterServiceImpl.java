@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.common.exception.BusinessException;
-import com.lufin.server.credit.repository.CreditScoreRepository;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
 import com.lufin.server.member.dto.RegisterRequest;
@@ -28,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 public class RegisterServiceImpl implements RegisterService {
 
 	private final MemberRepository memberRepository;
-	private final CreditScoreRepository creditScoreRepository;
 	private final RedisTemplate<String, String> redisTemplate;
 
 	@Transactional
@@ -58,13 +56,15 @@ public class RegisterServiceImpl implements RegisterService {
 				request.email(),
 				request.name(),
 				request.password(),
-				request.secondaryPassword());
+				request.secondaryPassword(),
+				request.profileImage());
 		} else if (request.role().equals(MemberRole.TEACHER)) {
 			member = Member.createTeacher(
 				request.email(),
 				request.name(),
 				request.password(),
-				request.secondaryPassword());
+				request.secondaryPassword(),
+				request.profileImage());
 		} else {
 			log.warn("🔐[회원가입 실패] 이메일:{}, Role:{}", maskEmail(request.email()), request.role().name());
 			throw new BusinessException(INVALID_ROLE_SELECTION);

@@ -57,7 +57,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 	 * @return
 	 */
 	@Override
-	@Transactional
+	@Transactional(isolation = Isolation.REPEATABLE_READ, rollbackFor = BusinessException.class)
 	public MissionParticipationResponseDto.MissionApplicationResponseDto applyMission(Integer classId,
 		Integer missionId,
 		Member currentMember) {
@@ -80,6 +80,15 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			// 인원수가 다 찼으면 신청 불가능
 			if (mission.getCurrentParticipants() >= mission.getMaxParticipants()) {
 				throw new BusinessException(MISSION_CAPACITY_FULL);
+			}
+
+			// 이미 내가 신청한 미션이 있으면 불가능
+			boolean memberMissionFlag = missionParticipationRepository.existsByMemberIdAndStatusInProgress(
+				currentMember.getId(), classId);
+
+			if (memberMissionFlag) {
+				log.warn("미션 진행은 단 하나만 가능합니다. currentMember = {}, mission = {}", currentMember, mission);
+				throw new BusinessException(MISSION_APPLICATION_ALREADY_EXISTS);
 			}
 
 			// MissionParticipation 엔티티 생성
@@ -232,7 +241,8 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 						creditScoreService.applyScoreChange(
 							participation.getMember(),
 							missionFailureCreditScore,
-							CreditEventType.MISSION_FAILURE
+							CreditEventType.MISSION_FAILURE,
+							classId
 						);
 
 						log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
@@ -312,7 +322,8 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 				creditScoreService.applyScoreChange(
 					participation.getMember(),
 					missionSuccessCreditScore,
-					CreditEventType.MISSION_COMPLETION
+					CreditEventType.MISSION_COMPLETION,
+					classId
 				);
 				log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
 					creditService.getScore(participation.getMember().getId(), classId));

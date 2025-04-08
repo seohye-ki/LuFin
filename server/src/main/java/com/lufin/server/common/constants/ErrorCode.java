@@ -36,6 +36,7 @@ public enum ErrorCode {
 	FORBIDDEN_REQUEST("E403001", "요청을 처리할 수 없습니다."),
 	REQUEST_DENIED("E403002", "요청이 거부되었습니다."),
 	MEMBER_ALREADY_DELETED("E403003", "탈퇴된 사용자입니다."),
+	STUDENT_NOT_IN_TEACHER_CLASS("E403004", "해당 학생은 교사의 반에 속하지 않습니다."),
 
 	CLASS_NOT_FOUND("E404001", "해당 클래스가 존재하지 않습니다."),
 	PURCHASE_RECORD_NOT_FOUND("E404002", "해당 구매 내역을 찾을 수 없습니다."),
@@ -58,6 +59,7 @@ public enum ErrorCode {
 	LOAN_APPLICATION_ALREADY_EXISTS("E409004", "이미 진행중인 대출이 존재합니다."),
 	DUPLICATE_NEWS("E409005", "이미 생성된 공시정보가 존재합니다."),
 	DUPLICATE_UPDATE("E409006", "이미 생성된 가격 변동이 존재합니다."),
+	MISSION_APPLICATION_ALREADY_EXISTS("E409007", "이미 진행중인 미션이 존재합니다."),
 
 	INSUFFICIENT_CREDIT_SCORE("E422001", "신용 점수가 부족하여 이용할 수 없습니다."),
 	INSUFFICIENT_BALANCE("E422002", "잔액이 부족합니다."),
@@ -66,6 +68,7 @@ public enum ErrorCode {
 	LOAN_AMOUNT_EXCEEDS_MAX("E422005", "요청 금액이 대출 상품의 최대 한도를 초과합니다."),
 	CLASS_HAS_STUDENTS("E422006", "사용자가 남아있어 클래스를 삭제할 수 없습니다."),
 	INSUFFICIENT_STOCK_AMOUNT("E422007", "주식 개수가 부족합니다."),
+	CREDIT_RECOVERY_NOT_ALLOWED("E422009", "신용 상태가 복구 대상이 아닙니다."),
 
 	SERVER_ERROR("E500001", "요청을 처리할 수 없습니다. 다시 시도해 주세요."),
 	CREDIT_SCORE_UPDATE_FAILED("E500002", "신용 점수 업데이트에 실패했습니다."),

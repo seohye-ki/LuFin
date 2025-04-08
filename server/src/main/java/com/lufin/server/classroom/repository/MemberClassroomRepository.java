@@ -39,4 +39,6 @@ public interface MemberClassroomRepository extends JpaRepository<MemberClassroom
 	void deleteAllByClassroom(Classroom classroom);
 
 	Optional<MemberClassroom> findByMemberIdAndClassroomId(Integer memberId, Integer classroomId);
+
+	Optional<MemberClassroom> findByMemberIdAndClassroomIdAndIsCurrentTrue(int memberId, int classId);
 }

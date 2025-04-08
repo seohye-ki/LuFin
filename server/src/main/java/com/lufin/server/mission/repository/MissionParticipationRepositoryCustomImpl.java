@@ -37,7 +37,12 @@ public class MissionParticipationRepositoryCustomImpl implements MissionParticip
 		List<MissionParticipation> missionParticipationEntityList = queryFactory
 			.selectFrom(missionParticipation)
 			.leftJoin(missionParticipation.member, member).fetchJoin()
-			.leftJoin(creditScore).on(creditScore.memberId.eq(member.id)).fetchJoin()
+			.leftJoin(creditScore)
+			.on(
+				creditScore.memberClassroom.member.id.eq(member.id)
+					.and(creditScore.memberClassroom.classroom.id.eq(missionParticipation.mission.classroom.id))
+			)
+			.fetchJoin()
 			.where(missionParticipation.mission.id.eq(missionId)
 				.and(missionParticipation.mission.classroom.id.eq(classId)))
 			.fetch();
@@ -52,5 +57,4 @@ public class MissionParticipationRepositoryCustomImpl implements MissionParticip
 				missionParticipationEntity.getStatus()
 			)).collect(Collectors.toList());
 	}
-
 }

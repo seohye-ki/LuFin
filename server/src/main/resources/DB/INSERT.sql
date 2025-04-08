@@ -77,7 +77,7 @@ VALUES (4, 11, 'J5mFd', '싸피초', 5, 2, '5학년 2반', 1, 'classrooms/302e3f
 -- accounts
 INSERT INTO lufin.accounts (account_id, member_id, classroom_id, account_type, account_number, balance, created_at,
                             closed_at)
-VALUES (1, null, 1, 'CLASSROOM', '224-513-656-843', 0, '2025-04-04 13:03:47', '2025-04-04 13:04:02');
+VALUES (1, null, 1, 'CLASSROOM', '224-513-656-843', 0, '2025-04-04 13:03:47', null);
 INSERT INTO lufin.accounts (account_id, member_id, classroom_id, account_type, account_number, balance, created_at,
                             closed_at)
 VALUES (2, null, 2, 'CLASSROOM', '480-290-966-408', 0, '2025-04-04 13:04:02', null);
@@ -98,7 +98,7 @@ INSERT INTO lufin.accounts (account_id, member_id, classroom_id, account_type, a
 VALUES (7, 5, null, 'DEPOSIT', '562-239-101-512', 0, '2025-04-04 13:08:00', null);
 INSERT INTO lufin.accounts (account_id, member_id, classroom_id, account_type, account_number, balance, created_at,
                             closed_at)
-VALUES (8, null, 3, 'CLASSROOM', '617-504-233-583', 0, '2025-04-04 13:09:06', '2025-04-04 13:09:17');
+VALUES (8, null, 3, 'CLASSROOM', '617-504-233-583', 0, '2025-04-04 13:09:06', null);
 INSERT INTO lufin.accounts (account_id, member_id, classroom_id, account_type, account_number, balance, created_at,
                             closed_at)
 VALUES (9, null, 4, 'CLASSROOM', '902-495-555-151', 0, '2025-04-04 13:09:17', null);
@@ -128,33 +128,13 @@ VALUES (9, 4, 11, '2025-04-04 13:09:17', 1);
 -- Teacher 11 in Class 4 (current)
 
 -- credit_scores
-INSERT INTO lufin.credit_scores (member_id, score, grade, credit_status, credit_status_description, created_at,
-                                 updated_at)
-VALUES (1, 60, 'C', 0, null, '2025-04-04 12:58:57', null);
-INSERT INTO lufin.credit_scores (member_id, score, grade, credit_status, credit_status_description, created_at,
-                                 updated_at)
-VALUES (2, 60, 'C', 0, null, '2025-04-04 12:59:05', null);
-INSERT INTO lufin.credit_scores (member_id, score, grade, credit_status, credit_status_description, created_at,
-                                 updated_at)
-VALUES (3, 60, 'C', 0, null, '2025-04-04 12:59:11', null);
-INSERT INTO lufin.credit_scores (member_id, score, grade, credit_status, credit_status_description, created_at,
-                                 updated_at)
-VALUES (4, 60, 'C', 0, null, '2025-04-04 12:59:23', null);
-INSERT INTO lufin.credit_scores (member_id, score, grade, credit_status, credit_status_description, created_at,
-                                 updated_at)
-VALUES (5, 60, 'C', 0, null, '2025-04-04 12:59:31', null);
-INSERT INTO lufin.credit_scores (member_id, score, grade, credit_status, credit_status_description, created_at,
-                                 updated_at)
-VALUES (6, 60, 'C', 0, null, '2025-04-04 12:59:40', null);
-INSERT INTO lufin.credit_scores (member_id, score, grade, credit_status, credit_status_description, created_at,
-                                 updated_at)
-VALUES (7, 60, 'C', 0, null, '2025-04-04 12:59:47', null);
-INSERT INTO lufin.credit_scores (member_id, score, grade, credit_status, credit_status_description, created_at,
-                                 updated_at)
-VALUES (8, 60, 'C', 0, null, '2025-04-04 12:59:53', null);
-INSERT INTO lufin.credit_scores (member_id, score, grade, credit_status, credit_status_description, created_at,
-                                 updated_at)
-VALUES (9, 60, 'C', 0, null, '2025-04-04 13:00:04', null);
+INSERT INTO lufin.credit_scores (member_class_id, score, grade, credit_status, credit_status_description, created_at, updated_at)
+VALUES (3, 60, 'C', 0, NULL, '2025-04-04 12:58:57', NULL),
+       (4, 60, 'C', 0, NULL, '2025-04-04 12:59:05', NULL),
+       (5, 60, 'C', 0, NULL, '2025-04-04 12:59:11', NULL),
+       (6, 60, 'C', 0, NULL, '2025-04-04 12:59:23', NULL),
+       (7, 60, 'C', 0, NULL, '2025-04-04 12:59:31', NULL);
+
 
 
 -- items
@@ -756,26 +736,18 @@ VALUES (6, 7, 4, 'TRANSFER', 3000, 95500, DATE_SUB(NOW(), INTERVAL 8 DAY), '미�
 -- from acc 6 (mem 4) to acc 7 (mem 5)
 
 -- 신용 점수 이력(credit_score_histories) 추가 (총 10개)
-INSERT INTO lufin.credit_score_histories (member_id, score_change, reason, created_at)
-VALUES (1, 5, '적금 가입으로 인한 신용 점수 상승', NOW());
-INSERT INTO lufin.credit_score_histories (member_id, score_change, reason, created_at)
-VALUES (2, 3, '정기 적금 납입으로 신용 점수 상승', DATE_SUB(NOW(), INTERVAL 1 DAY));
-INSERT INTO lufin.credit_score_histories (member_id, score_change, reason, created_at)
-VALUES (3, -3, '대출 신청으로 인한 신용 점수 하락', DATE_SUB(NOW(), INTERVAL 2 DAY));
-INSERT INTO lufin.credit_score_histories (member_id, score_change, reason, created_at)
-VALUES (4, -2, '자동 이체 설정 실패로 신용 점수 하락', DATE_SUB(NOW(), INTERVAL 3 DAY));
-INSERT INTO lufin.credit_score_histories (member_id, score_change, reason, created_at)
-VALUES (5, 4, '대출금 상환으로 신용 점수 상승', DATE_SUB(NOW(), INTERVAL 4 DAY));
-INSERT INTO lufin.credit_score_histories (member_id, score_change, reason, created_at)
-VALUES (1, -1, '이체 지연으로 신용 점수 하락', DATE_SUB(NOW(), INTERVAL 5 DAY));
-INSERT INTO lufin.credit_score_histories (member_id, score_change, reason, created_at)
-VALUES (2, 2, '정기 저축으로 신용 점수 상승', DATE_SUB(NOW(), INTERVAL 6 DAY));
-INSERT INTO lufin.credit_score_histories (member_id, score_change, reason, created_at)
-VALUES (3, 3, '대출금 조기 상환으로 신용 점수 상승', DATE_SUB(NOW(), INTERVAL 7 DAY));
-INSERT INTO lufin.credit_score_histories (member_id, score_change, reason, created_at)
-VALUES (4, -3, '연체로 인한 신용 점수 하락', DATE_SUB(NOW(), INTERVAL 8 DAY));
-INSERT INTO lufin.credit_score_histories (member_id, score_change, reason, created_at)
-VALUES (5, 5, '정기 저축 완료로 신용 점수 상승', DATE_SUB(NOW(), INTERVAL 9 DAY));
+INSERT INTO lufin.credit_score_histories (member_class_id, score_change, reason, created_at)
+VALUES (3, 5, '적금 가입으로 인한 신용 점수 상승', NOW()),
+       (4, 3, '정기 적금 납입으로 신용 점수 상승', DATE_SUB(NOW(), INTERVAL 1 DAY)),
+       (5, -3, '대출 신청으로 인한 신용 점수 하락', DATE_SUB(NOW(), INTERVAL 2 DAY)),
+       (6, -2, '자동 이체 설정 실패로 신용 점수 하락', DATE_SUB(NOW(), INTERVAL 3 DAY)),
+       (7, 4, '대출금 상환으로 신용 점수 상승', DATE_SUB(NOW(), INTERVAL 4 DAY)),
+       (3, -10, '이체 지연으로 신용 점수 하락', DATE_SUB(NOW(), INTERVAL 5 DAY)),
+       (4, 2, '정기 저축으로 신용 점수 상승', DATE_SUB(NOW(), INTERVAL 6 DAY)),
+       (5, 3, '대출금 조기 상환으로 신용 점수 상승', DATE_SUB(NOW(), INTERVAL 7 DAY)),
+       (6, -10, '연체로 인한 신용 점수 하락', DATE_SUB(NOW(), INTERVAL 8 DAY)),
+       (7, 5, '정기 저축 완료로 신용 점수 상승', DATE_SUB(NOW(), INTERVAL 9 DAY));
+
 
 -- 알림(notifications) 추가 (총 10개)
 -- Need corresponding transaction_id, loan_application_id, stock_portfolio_id values from above inserts.

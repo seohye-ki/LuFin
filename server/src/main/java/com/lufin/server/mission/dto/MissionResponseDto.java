@@ -107,6 +107,20 @@ public class MissionResponseDto {
 		}
 	}
 
+	public record MissionResponseWrapperDto(
+		List<MissionSummaryResponseDto> myData,
+		List<MissionSummaryResponseDto> allData
+	) {
+
+		// 내 미션과 전체 미션 리스트로 wrapper dto 생성
+		public static MissionResponseWrapperDto createWrapperDto(
+			List<MissionSummaryResponseDto> myMissions,
+			List<MissionSummaryResponseDto> allMissions
+		) {
+			return new MissionResponseWrapperDto(myMissions, allMissions);
+		}
+	}
+
 	/**
 	 * 미션 목록 응답 DTO (요약본)
 	 */

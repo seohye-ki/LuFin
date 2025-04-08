@@ -23,6 +23,6 @@ public class LoginFacadeService {
 		int cash = accountService.getCashBalance(memberId, classId);
 		int stock = stockService.getTotalValuation(memberId, classId);
 		int loan = loanService.getLoanPrincipal(memberId, classId);
-		return cash + stock - loan;
+		return cash + stock + loan;
 	}
 }

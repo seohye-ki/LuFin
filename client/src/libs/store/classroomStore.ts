@@ -190,21 +190,31 @@ const useClassroomStore = create<ClassroomStore>((set, get) => ({
   changeCurrentClass: async (classId: number, className?: string) => {
     try {
       set({ isLoading: true, error: null });
-      const response = await classroomService.changeCurrentClass(classId);
-      if (response.isSuccess) {
-        // 클래스 ID 저장
-        tokenUtils.setToken('classId', classId.toString());
-
-        // 현재 선택된 클래스 ID와 이름 업데이트
-        set({
-          currentClassId: classId,
-          currentClassName:
-            className || get().classrooms.find((c) => c.classId === classId)?.name || null,
-        });
-
-        console.log(`클래스 변경 완료: ${classId}`);
+      
+      // 사용자 역할 확인
+      const userRole = tokenUtils.getToken('userRole');
+      
+      // 교사인 경우에만 API 호출
+      if (userRole?.toUpperCase() === 'TEACHER') {
+        const response = await classroomService.changeCurrentClass(classId);
+        if (!response.isSuccess) {
+          throw new Error('클래스 전환에 실패했습니다.');
+        }
       }
+      
+      // 클래스 ID 저장 (API 성공 여부와 관계없이 로컬 상태 업데이트)
+      tokenUtils.setToken('classId', classId.toString());
+      
+      // 현재 선택된 클래스 ID와 이름 업데이트
+      set({ 
+        currentClassId: classId,
+        currentClassName: className || get().classrooms.find(c => c.classId === classId)?.name || null
+      });
+      
+      console.log(`클래스 변경 완료: ${classId} (${userRole})`);
+      
     } catch (error) {
+      console.error('클래스 전환 오류:', error);
       set({ error: '클래스 전환에 실패했습니다.' });
       throw error;
     } finally {

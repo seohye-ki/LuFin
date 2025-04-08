@@ -4,6 +4,7 @@ import Card from '../../../components/Card/Card';
 import Button from '../../../components/Button/Button';
 import type { DashboardResponse } from '../../../libs/services/dashboard/dashboardService';
 import { DashboardService } from '../../../libs/services/dashboard/dashboardService';
+import { CreditService } from '../../../libs/services/credit/creditService';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
 import { paths } from '../../../routes/paths';
 import lufinCoin from '../../../assets/svgs/lufin-coin-16.svg';
@@ -151,10 +152,24 @@ const TeacherDashboard = () => {
     setSelectedStudent(student);
   };
 
-  const handleApproveRecovery = () => {
-    // TODO: API 연동
-    console.log('회생 승인:', selectedStudent?.id);
-    setSelectedStudent(null);
+  const handleApproveRecovery = async () => {
+    if (!selectedStudent) return;
+    
+    try {
+      const response = await CreditService.approveRecovery(selectedStudent.id);
+      
+      if (response.isSuccess) {
+        // 성공적으로 회생 승인이 되었을 때 대시보드 데이터를 새로 불러옴
+        const dashboardResponse = await DashboardService.getTeacherDashboard();
+        if (dashboardResponse.isSuccess && dashboardResponse.data) {
+          setDashboardData(dashboardResponse.data);
+        }
+      }
+    } catch (error) {
+      console.error('회생 승인 실패:', error);
+    } finally {
+      setSelectedStudent(null);
+    }
   };
 
   const getMissionStatusButton = (status: string) => {

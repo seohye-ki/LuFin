@@ -70,7 +70,7 @@ export const DashboardService = {
    */
   getStudentDashboard: async () => {
     try {
-      const response = await axiosInstance.get<StudentDashboardResponse>('/dashboards/student');
+      const response = await axiosInstance.get<StudentDashboardResponse>('/dashboards/my');
       return response.data;
     } catch (error) {
       console.error('Failed to fetch student dashboard data:', error);

@@ -48,9 +48,12 @@ interface DashboardData {
     expireInDays: number;
   }[];
   ongoingMissions: {
-    name: string;
-    reward: number;
-    daysLeft: number;
+    missionId: number;
+    participationId: number;
+    title: string;
+    status: string;
+    wage: number;
+    missionDate: string;
   }[];
   totalCompletedMissions: number;
   totalWage: number;
@@ -192,7 +195,11 @@ const StudentDashboard = () => {
           />
           <MissionSection
             completedCount={dashboardData.totalCompletedMissions}
-            currentMission={dashboardData.ongoingMissions[0]}
+            currentMission={dashboardData.ongoingMissions[0] ? {
+              name: dashboardData.ongoingMissions[0].title,
+              reward: dashboardData.ongoingMissions[0].wage,
+              daysLeft: Math.ceil((new Date(dashboardData.ongoingMissions[0].missionDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+            } : undefined}
             totalReward={dashboardData.totalWage}
           />
         </section>

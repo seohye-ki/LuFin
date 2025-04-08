@@ -13,14 +13,14 @@ const StudentClassroom = () => {
   const navigate = useNavigate();
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [isCodeEntryModalOpen, setIsCodeEntryModalOpen] = useState(false);
-  const { 
-    classrooms, 
-    isLoading, 
-    error, 
-    fetchClassrooms, 
-    joinClassroom, 
-    enterClassCode, 
-    changeCurrentClass 
+  const {
+    classrooms,
+    isLoading,
+    error,
+    fetchClassrooms,
+    joinClassroom,
+    enterClassCode,
+    changeCurrentClass,
   } = useClassroomStore();
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const StudentClassroom = () => {
         });
     }
   };
-  
+
   const handleCodeEntrySubmit = async (code: string) => {
     try {
       await enterClassCode(code);
@@ -61,13 +61,19 @@ const StudentClassroom = () => {
 
       useAlertStore
         .getState()
-        .showAlert('클래스 코드 입력 완료', null, '클래스 코드가 성공적으로 적용되었습니다.', 'success', {
-          label: '확인',
-          onClick: () => {
-            useAlertStore.getState().hideAlert();
+        .showAlert(
+          '클래스 코드 입력 완료',
+          null,
+          '클래스 코드가 성공적으로 적용되었습니다.',
+          'success',
+          {
+            label: '확인',
+            onClick: () => {
+              useAlertStore.getState().hideAlert();
+            },
+            color: 'primary',
           },
-          color: 'primary',
-        });
+        );
     } catch {
       useAlertStore
         .getState()
@@ -81,7 +87,7 @@ const StudentClassroom = () => {
 
   const handleClassroomClick = (classId: number) => {
     // 클래스룸 선택 시 현재 클래스 정보 저장
-    const selectedClassroom = classrooms.find(classroom => classroom.classId === classId);
+    const selectedClassroom = classrooms.find((classroom) => classroom.classId === classId);
     if (selectedClassroom) {
       changeCurrentClass(classId, selectedClassroom.name);
     }
@@ -143,7 +149,7 @@ const StudentClassroom = () => {
             isLoading={isLoading}
           />
         )}
-        
+
         {isCodeEntryModalOpen && (
           <JoinClassroomModal
             onClose={() => {
@@ -152,9 +158,9 @@ const StudentClassroom = () => {
             onSubmit={() => {}}
             onEnterCode={handleCodeEntrySubmit}
             isLoading={isLoading}
-            mode="enterCode"
-            title="클래스 코드 입력"
-            description="선생님이 제공한 클래스 코드를 입력해주세요"
+            mode='enterCode'
+            title='클래스 코드 입력'
+            description='선생님이 제공한 클래스 코드를 입력해주세요'
           />
         )}
 

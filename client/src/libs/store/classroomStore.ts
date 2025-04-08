@@ -45,20 +45,20 @@ const useClassroomStore = create<ClassroomStore>((set, get) => ({
         // 현재 클래스 ID 저장
         const currentClassIdStr = tokenUtils.getToken('classId');
         const currentClassId = currentClassIdStr ? parseInt(currentClassIdStr, 10) : null;
-        
+
         // 현재 클래스 이름 찾기
         let currentClassName = null;
         if (currentClassId) {
-          const currentClass = classrooms.find(c => c.classId === currentClassId);
+          const currentClass = classrooms.find((c) => c.classId === currentClassId);
           if (currentClass) {
             currentClassName = currentClass.name;
           }
         }
-        
-        set({ 
+
+        set({
           classrooms: classrooms,
           currentClassId: currentClassId || (classrooms.length > 0 ? classrooms[0].classId : null),
-          currentClassName: currentClassName || (classrooms.length > 0 ? classrooms[0].name : null)
+          currentClassName: currentClassName || (classrooms.length > 0 ? classrooms[0].name : null),
         });
       }
     } catch (err) {
@@ -77,12 +77,12 @@ const useClassroomStore = create<ClassroomStore>((set, get) => ({
         // 새로운 토큰 저장
         const { token, classInfo } = response.data;
         useAuthStore.getState().setTokens(token.accessToken, token.refreshToken, token.classId);
-        
+
         // 클래스룸 목록 업데이트
         set((state) => ({
           classrooms: [...state.classrooms, classInfo],
           currentClassId: token.classId,
-          currentClassName: classInfo.name
+          currentClassName: classInfo.name,
         }));
       }
     } catch (error) {
@@ -121,11 +121,12 @@ const useClassroomStore = create<ClassroomStore>((set, get) => ({
       set((state) => ({
         classrooms: state.classrooms.filter((classroom) => classroom.classId !== classId),
         // 현재 선택된 클래스가 삭제된 경우 첫 번째 클래스로 변경
-        currentClassId: state.currentClassId === classId 
-          ? (state.classrooms.length > 1 
-            ? state.classrooms.find(c => c.classId !== classId)?.classId || null 
-            : null) 
-          : state.currentClassId
+        currentClassId:
+          state.currentClassId === classId
+            ? state.classrooms.length > 1
+              ? state.classrooms.find((c) => c.classId !== classId)?.classId || null
+              : null
+            : state.currentClassId,
       }));
     } catch (error) {
       set({ error: '클래스룸 삭제에 실패했습니다.' });
@@ -143,12 +144,12 @@ const useClassroomStore = create<ClassroomStore>((set, get) => ({
         // 새로운 토큰 저장
         const { token, classInfo } = response.data;
         useAuthStore.getState().setTokens(token.accessToken, token.refreshToken, token.classId);
-        
+
         // 클래스룸 목록 업데이트
         set((state) => ({
           classrooms: [...state.classrooms, classInfo],
           currentClassId: token.classId,
-          currentClassName: classInfo.name
+          currentClassName: classInfo.name,
         }));
       }
     } catch (error) {
@@ -168,15 +169,13 @@ const useClassroomStore = create<ClassroomStore>((set, get) => ({
         const { accessToken } = response.data;
         const currentRefreshToken = tokenUtils.getToken('refreshToken');
         const currentClassId = tokenUtils.getToken('classId');
-        
+
         if (currentRefreshToken && currentClassId) {
-          useAuthStore.getState().setTokens(
-            accessToken, 
-            currentRefreshToken, 
-            parseInt(currentClassId, 10)
-          );
+          useAuthStore
+            .getState()
+            .setTokens(accessToken, currentRefreshToken, parseInt(currentClassId, 10));
         }
-        
+
         // 클래스룸 목록 다시 불러오기
         await get().fetchClassrooms();
       }
@@ -195,13 +194,14 @@ const useClassroomStore = create<ClassroomStore>((set, get) => ({
       if (response.isSuccess) {
         // 클래스 ID 저장
         tokenUtils.setToken('classId', classId.toString());
-        
+
         // 현재 선택된 클래스 ID와 이름 업데이트
-        set({ 
+        set({
           currentClassId: classId,
-          currentClassName: className || get().classrooms.find(c => c.classId === classId)?.name || null
+          currentClassName:
+            className || get().classrooms.find((c) => c.classId === classId)?.name || null,
         });
-        
+
         console.log(`클래스 변경 완료: ${classId}`);
       }
     } catch (error) {
@@ -234,12 +234,12 @@ const useClassroomStore = create<ClassroomStore>((set, get) => ({
 
   reset: () => {
     tokenUtils.removeToken('classId');
-    set({ 
-      classrooms: [], 
-      currentClassId: null, 
+    set({
+      classrooms: [],
+      currentClassId: null,
       currentClassName: null,
-      isLoading: false, 
-      error: null 
+      isLoading: false,
+      error: null,
     });
   },
 }));

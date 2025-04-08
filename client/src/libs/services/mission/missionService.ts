@@ -6,6 +6,7 @@ import {
   MissionUpdateRequest,
   ParticipationUserInfo,
 } from '../../../types/mission/mission';
+import { AxiosError } from 'axios';
 
 export interface MissionResponse<T> {
   isSuccess: boolean;
@@ -24,13 +25,18 @@ export const missionService = {
     try {
       console.log('API 요청 시작: 미션 목록 조회');
 
-      const response = await axiosInstance.get<MissionResponse<MissionList[]>>(MISSION_ENDPOINT);
+      const response =
+        await axiosInstance.get<MissionResponse<{ myData: MissionList[]; allData: MissionList[] }>>(
+          MISSION_ENDPOINT,
+        );
       console.log('API 응답:', response.data);
 
       if (response.data.isSuccess && response.data.data) {
+        const { myData, allData } = response.data.data;
         return {
           success: true,
-          missions: response.data.data,
+          myMissions: myData,
+          allMissions: allData,
         };
       } else {
         console.log('API 응답 실패:', response.data.message);
@@ -176,14 +182,15 @@ export const missionService = {
         message,
         code: response.data?.code,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('미션 삭제 오류:', error);
 
-      const message = error.response?.data?.message || '알 수 없는 오류가 발생했습니다.';
+      const axiosError = error as AxiosError<{ message: string; code: string }>;
+      const message = axiosError.response?.data?.message || '알 수 없는 오류가 발생했습니다.';
       return {
         success: false,
         message,
-        code: error.response?.data?.code,
+        code: axiosError.response?.data?.code,
       };
     }
   },

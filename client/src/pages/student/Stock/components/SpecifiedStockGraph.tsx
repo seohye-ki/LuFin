@@ -14,13 +14,11 @@ interface SpecifiedStockGraphProps {
 const SpecifiedStockGraph = ({ stock, onBack }: SpecifiedStockGraphProps) => {
   const { priceHistory } = useStockStore();
   const stockPriceInfos = useMemo(() => {
-    return priceHistory
-      .filter((history) => history.StockProductId === stock.StockProductId)
-      .map((h) => ({
-        date: dateUtil(h.CreatedAt),
-        price: h.UnitPrice,
-      }));
-  }, [stock]);
+    return priceHistory.map((h) => ({
+      date: dateUtil(h.CreatedAt),
+      price: h.UnitPrice,
+    }));
+  }, [priceHistory]);
 
   return (
     <div className='flex h-full gap-3'>

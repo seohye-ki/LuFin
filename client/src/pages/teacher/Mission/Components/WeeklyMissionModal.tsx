@@ -16,7 +16,6 @@ const getWeekdayName = (index: number) => {
   return weekdays[index];
 };
 
-// 'YYYY-MM-DD' 포맷
 const formatDateKey = (date: Date) => date.toISOString().split('T')[0];
 
 export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMissionModalProps) {
@@ -34,7 +33,7 @@ export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMission
     return day;
   });
 
-  const missions = useMissionStore((state) => state.missions);
+  const missions = useMissionStore((state) => state.myMissions);
 
   const dateKey = formatDateKey(selectedDate);
   const dayMissions = missions.filter(

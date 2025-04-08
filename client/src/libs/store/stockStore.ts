@@ -17,6 +17,7 @@ interface StockState {
   portfolio: StockPortfolio[];
   isLoading: boolean;
   error: string | null;
+  selectedStock: StockProduct | null;
 
   getStockProducts: () => Promise<{ success: boolean; message?: string }>;
   getStockPriceHistory: (
@@ -70,6 +71,7 @@ export const useStockStore = create<StockState>((set, get) => ({
   portfolio: [],
   isLoading: false,
   error: null,
+  selectedStock: null,
 
   /**
    * 종목 목록 조회

@@ -22,9 +22,9 @@ const ClassAssetRanking = ({ rankings }: ClassAssetRankingProps) => {
   const currentUser = rankings.length > 0 ? rankings[0].name : '';
 
   // Convert API rankings to the format required by StudentRankCard
-  const studentRankings: StudentRanking[] = rankings.map(item => ({
+  const studentRankings: StudentRanking[] = rankings.map((item) => ({
     name: item.name,
-    ranking: item.rank
+    ranking: item.rank,
   }));
 
   return (

@@ -53,7 +53,10 @@ const CreateClassroomModal = ({
     if (!file) return;
 
     try {
-      console.log('[CreateClassroomModal] Starting image upload:', { fileName: file.name, fileSize: file.size });
+      console.log('[CreateClassroomModal] Starting image upload:', {
+        fileName: file.name,
+        fileSize: file.size,
+      });
       setIsUploading(true);
       const key = await fileService.uploadFile('classrooms', file);
       console.log('[CreateClassroomModal] Image upload successful:', { key });

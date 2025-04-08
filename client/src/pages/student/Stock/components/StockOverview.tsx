@@ -10,6 +10,7 @@ import { useSelectedStockStore, useStockStore } from '../../../../libs/store/sto
 const StockOverview = () => {
   const { setSelectedStock, chartType, toggleChartType } = useSelectedStockStore();
   const { products } = useStockStore();
+
   const columns = [
     { key: 'id', label: 'NO' },
     { key: 'name', label: '종목' },
@@ -41,7 +42,17 @@ const StockOverview = () => {
       titleLeft='종목 현황'
       titleRight={
         <div className='flex items-center gap-2'>
-          <div className='text-c1 text-grey'>2025.03.31 13:00 기준</div>
+          <div className='text-c1 text-grey'>
+            {products.length > 0
+              ? new Date(products[0].UpdatedAt).toLocaleString('ko-KR', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : ''}
+          </div>
           <Button variant='solid' size='sm' color='primary' onClick={toggleChartType}>
             나의 투자 현황
           </Button>

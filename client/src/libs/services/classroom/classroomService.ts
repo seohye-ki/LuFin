@@ -113,21 +113,19 @@ export const classroomService = {
     });
     return response.data;
   },
-  
+
   // 현재 클래스 코드 조회 (교사용)
   getClassCode: async (): Promise<ApiResponse<ClassCodeResponse>> => {
-    const response = await axiosInstance.get<ApiResponse<ClassCodeResponse>>(
-      '/classes/current/code'
-    );
+    const response =
+      await axiosInstance.get<ApiResponse<ClassCodeResponse>>('/classes/current/code');
     return response.data;
   },
-  
+
   // 학생 클래스 코드 입력
   enterClassCode: async (code: string): Promise<ApiResponse<ClassCodeEntryResponse>> => {
-    const response = await axiosInstance.post<ApiResponse<ClassCodeEntryResponse>>(
-      '/auth/class',
-      { code }
-    );
+    const response = await axiosInstance.post<ApiResponse<ClassCodeEntryResponse>>('/auth/class', {
+      code,
+    });
     return response.data;
   },
 };

@@ -12,7 +12,8 @@ const StudentMission = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const getMissionList = useMissionStore((state) => state.getMissionList);
   const getMissionDetail = useMissionStore((state) => state.getMissionDetail);
-  const missions = useMissionStore((state) => state.missions);
+  const myMissions = useMissionStore((state) => state.myMissions);
+  const availableMissions = useMissionStore((state) => state.availableMissions);
   const selectedMission = useMissionStore((state) => state.selectedMission);
   const [participationList, setParticipationList] = useState<ParticipationUserInfo[]>([]);
   const myMemberId = 1; // TODO: 전역 상태로 교체 예정
@@ -30,7 +31,8 @@ const StudentMission = () => {
   );
 
   const { myMissionRows, availableMissionRows, refetchParticipations } = useStudentMissions(
-    missions,
+    myMissions,
+    availableMissions,
     participationList,
     myMemberId,
     handleRowClick,

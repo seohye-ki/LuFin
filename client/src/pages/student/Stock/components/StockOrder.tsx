@@ -4,7 +4,7 @@ import Lufin from '../../../../components/Lufin/Lufin';
 import { Icon } from '../../../../components/Icon/Icon';
 import { StockProduct } from '../../../../types/stock/stock';
 import useAlertStore from '../../../../libs/store/alertStore';
-import { useStock } from '../hooks/useStock';
+import { useStockStore } from '../../../../libs/store/stockStore';
 
 interface StockOrderProps {
   stock: StockProduct;
@@ -13,8 +13,7 @@ interface StockOrderProps {
 const StockOrder = ({ stock }: StockOrderProps) => {
   const [tab, setTab] = useState<'buy' | 'sell'>('buy');
   const [quantity, setQuantity] = useState(1);
-
-  const { postStockTransaction, getStockPortfolio, portfolio } = useStock();
+  const { postStockTransaction, getStockPortfolio, portfolio } = useStockStore();
 
   const holding = portfolio.find((item) => item.StockProductId === stock.StockProductId);
   const MAX_QUANTITY = holding ? holding.Quantity : 0;
@@ -62,6 +61,34 @@ const StockOrder = ({ stock }: StockOrderProps) => {
           },
         );
     }
+  };
+
+  const handleAlert = () => {
+    const type = tab === 'buy' ? '구매' : '판매';
+
+    useAlertStore.getState().showAlert(
+      `${stock.Name} ${type} ${quantity}주`,
+      <div className='flex justify-center items-center gap-2'>
+        <span className='text-p3 text-grey'>현재 가격</span>
+        <Lufin size='s' count={stock.CurrentPrice} />
+      </div>,
+      '',
+      'info',
+      {
+        label: '취소',
+        onClick: () => useAlertStore.getState().hideAlert(),
+        variant: 'solid',
+        color: 'neutral',
+      },
+      {
+        label: `${type}하기`,
+        onClick: () => {
+          handleOrder();
+        },
+        variant: 'solid',
+        color: tab === 'buy' ? 'danger' : 'info',
+      },
+    );
   };
 
   const handleQuantityChange = (delta: number) => {
@@ -174,33 +201,7 @@ const StockOrder = ({ stock }: StockOrderProps) => {
         size='md'
         color={tab === 'buy' ? 'danger' : 'info'}
         className='w-full'
-        onClick={() => {
-          const type = tab === 'buy' ? '구매' : '판매';
-
-          useAlertStore.getState().showAlert(
-            `${stock.Name} ${type} ${quantity}주`,
-            <div className='flex justify-center items-center gap-2'>
-              <span className='text-p3 text-grey'>현재 가격</span>
-              <Lufin size='s' count={stock.CurrentPrice} />
-            </div>,
-            '',
-            'info',
-            {
-              label: '취소',
-              onClick: () => useAlertStore.getState().hideAlert(),
-              variant: 'solid',
-              color: 'neutral',
-            },
-            {
-              label: `${type}하기`,
-              onClick: () => {
-                handleOrder();
-              },
-              variant: 'solid',
-              color: tab === 'buy' ? 'danger' : 'info',
-            },
-          );
-        }}
+        onClick={handleAlert}
       >
         {tab === 'buy' ? '구매하기' : '판매하기'}
       </Button>

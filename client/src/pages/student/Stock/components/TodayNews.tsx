@@ -1,5 +1,4 @@
 import Card from '../../../../components/Card/Card';
-import moment from 'moment';
 
 const TodayNews = () => {
   return (

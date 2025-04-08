@@ -17,7 +17,7 @@ const AssetCard = ({ currency = '루핀', assets, totalAsset }: AssetCardProps) 
     { stock: '현금', amount: assets.cash },
     { stock: '주식', amount: assets.stock },
     { stock: '대출', amount: Math.abs(assets.loan) * -1 }, // Make loan negative
-  ].filter(item => item.amount !== 0); // Filter out zero values
+  ].filter((item) => item.amount !== 0); // Filter out zero values
 
   return (
     <DashboardCard titleLeft='자산' className='flex-1 h-full'>

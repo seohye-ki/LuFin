@@ -13,14 +13,14 @@ interface JoinClassroomModalProps {
   description?: string;
 }
 
-const JoinClassroomModal = ({ 
-  onClose, 
-  onSubmit, 
+const JoinClassroomModal = ({
+  onClose,
+  onSubmit,
   onEnterCode,
   isLoading = false,
   mode = 'join',
   title = '새로운 반 입장하기',
-  description = '클래스 코드를 입력해주세요'
+  description = '클래스 코드를 입력해주세요',
 }: JoinClassroomModalProps) => {
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | undefined>(undefined);
@@ -81,7 +81,7 @@ const JoinClassroomModal = ({
             full
             disabled={isLoading}
           >
-            {isLoading ? '처리 중...' : (mode === 'enterCode' ? '코드 입력하기' : '입장하기')}
+            {isLoading ? '처리 중...' : mode === 'enterCode' ? '코드 입력하기' : '입장하기'}
           </Button>
         </div>
       </div>

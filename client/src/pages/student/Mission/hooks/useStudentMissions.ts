@@ -20,7 +20,8 @@ const convertToMissionParticipations = (
 };
 
 export const useStudentMissions = (
-  missionList: MissionList[],
+  myMissions: MissionList[],
+  availableMissions: MissionList[],
   participationList: ParticipationUserInfo[],
   myMemberId: number,
   onRowClick: (mission: MissionList) => void,
@@ -35,13 +36,13 @@ export const useStudentMissions = (
     }
   };
 
-  const allMissionParticipations: MissionParticipation[] = missionList.flatMap((mission) =>
+  const allMissionParticipations: MissionParticipation[] = myMissions.flatMap((mission) =>
     convertToMissionParticipations(participationList, myMemberId, mission.missionId),
   );
 
   const myParticipations = allMissionParticipations.filter((p) => p.memberId === myMemberId);
 
-  const myMissionRows = missionList
+  const myMissionRows = myMissions
     .filter((m) => myParticipations.some((p) => p.missionId === m.missionId))
     .map((mission) => {
       const participation = myParticipations.find((p) => p.missionId === mission.missionId);
@@ -49,7 +50,7 @@ export const useStudentMissions = (
     })
     .filter((row): row is NonNullable<typeof row> => row !== null);
 
-  const availableMissionRows = missionList
+  const availableMissionRows = availableMissions
     .filter((m) => !myParticipations.some((p) => p.missionId === m.missionId))
     .map((mission) => createMissionRow(mission, undefined, onRowClick))
     .filter((row): row is NonNullable<typeof row> => row !== null);

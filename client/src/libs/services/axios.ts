@@ -1,5 +1,4 @@
-import axios, { AxiosError } from 'axios';
-import { hideGlobalAlert, showGlobalAlert } from '../store/alertStore';
+import axios from 'axios';
 
 /**
  * Axios 인스턴스 생성
@@ -16,9 +15,6 @@ export const axiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
   transformResponse: (data) => {
-    if (!data) {
-      return null;
-    }
     return JSON.parse(data);
   },
 });
@@ -100,23 +96,37 @@ axiosInstance.interceptors.request.use(
  */
 
 axiosInstance.interceptors.response.use(
+  // 정상적인 응답 처리
   (response) => response,
-  (error: AxiosError) => {
-    const message = (error.response?.data as any)?.message || '알 수 없는 에러 발생';
 
-    showGlobalAlert('에러 발생', null, message, 'danger', {
-      label: '확인',
-      onClick: () => {
-        hideGlobalAlert();
-      },
-      color: 'danger',
-    });
+  // 에러 응답 처리
+  (error) => {
+    // HTTP 상태 코드별 처리
+    switch (error.response?.status) {
+      case 401: // 인증 에러
+        // 토큰이 만료되었거나 유효하지 않은 경우
+        tokenUtils.removeToken('accessToken');
+        tokenUtils.removeToken('refreshToken');
+        tokenUtils.removeToken('userRole');
+        window.location.href = '/login';
+        break;
 
-    if (error.response?.status === 401) {
-      tokenUtils.removeToken('accessToken');
-      tokenUtils.removeToken('refreshToken');
-      tokenUtils.removeToken('userRole');
-      window.location.href = '/login';
+      case 403: // 권한 에러
+        // 접근 권한이 없는 경우
+        console.error('접근 권한이 없습니다.');
+        break;
+
+      case 404: // Not Found
+        console.error('요청한 리소스를 찾을 수 없습니다.');
+        break;
+
+      case 500: // 서버 에러
+        console.error('서버 에러가 발생했습니다.');
+        break;
+
+      default:
+        // 기타 에러
+        console.error('알 수 없는 에러가 발생했습니다.', error);
     }
 
     return Promise.reject(error);

@@ -102,6 +102,5 @@ export const DashboardService = {
       console.error('Failed to review student loan:', error);
       throw error;
     }
-  }
+  },
 };
-

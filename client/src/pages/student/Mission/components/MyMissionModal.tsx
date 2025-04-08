@@ -14,9 +14,16 @@ interface MyMissionModalProps {
   mission: MissionRaw;
   mode: 'apply' | 'review';
   participationId?: number;
+  onSuccess?: () => void;
 }
 
-const MyMissionModal = ({ onClose, mission, mode, participationId }: MyMissionModalProps) => {
+const MyMissionModal = ({
+  onClose,
+  mission,
+  mode,
+  participationId,
+  onSuccess,
+}: MyMissionModalProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const applyMission = useMissionStore((state) => state.applyMission);
   const requestReview = useMissionStore((state) => state.requestReview);
@@ -24,18 +31,18 @@ const MyMissionModal = ({ onClose, mission, mode, participationId }: MyMissionMo
   const status = getStatusBadge();
 
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? mission.image.length - 2 : prev - 2));
+    setCurrentImageIndex((prev) => (prev === 0 ? mission.images.length - 2 : prev - 2));
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev >= mission.image.length - 2 ? 0 : prev + 2));
+    setCurrentImageIndex((prev) => (prev >= mission.images.length - 2 ? 0 : prev + 2));
   };
 
   const getVisibleImages = () => {
     const images = [];
     for (let i = 0; i < 2; i++) {
-      const index = (currentImageIndex + i) % mission.image.length;
-      images.push(mission.image[index]);
+      const index = (currentImageIndex + i) % mission.images.length;
+      images.push(mission.images[index]);
     }
     return images;
   };
@@ -54,7 +61,9 @@ const MyMissionModal = ({ onClose, mission, mode, participationId }: MyMissionMo
             {
               label: '확인',
               onClick: () => {
+                useAlertStore.getState().hideAlert();
                 onClose();
+                onSuccess?.();
               },
               color: 'neutral',
             },
@@ -70,6 +79,7 @@ const MyMissionModal = ({ onClose, mission, mode, participationId }: MyMissionMo
             {
               label: '확인',
               onClick: () => {
+                useAlertStore.getState().hideAlert();
                 onClose();
               },
               color: 'neutral',
@@ -90,6 +100,7 @@ const MyMissionModal = ({ onClose, mission, mode, participationId }: MyMissionMo
             {
               label: '확인',
               onClick: () => {
+                useAlertStore.getState().hideAlert();
                 onClose();
               },
             },
@@ -109,6 +120,7 @@ const MyMissionModal = ({ onClose, mission, mode, participationId }: MyMissionMo
             {
               label: '확인',
               onClick: () => {
+                useAlertStore.getState().hideAlert();
                 onClose();
               },
               color: 'neutral',
@@ -125,6 +137,7 @@ const MyMissionModal = ({ onClose, mission, mode, participationId }: MyMissionMo
             {
               label: '확인',
               onClick: () => {
+                useAlertStore.getState().hideAlert();
                 onClose();
               },
               color: 'neutral',
@@ -170,13 +183,13 @@ const MyMissionModal = ({ onClose, mission, mode, participationId }: MyMissionMo
           <span className='text-c1 text-grey'>설명</span>
           <span className='text-p1 font-semibold'>{mission.content}</span>
         </div>
-        {mission.image.length > 0 && (
+        {mission.images.length > 0 && (
           <div className='flex flex-col gap-2'>
             <span className='text-c1 text-grey'>사진</span>
             <div className='mt-2 relative'>
               <div className='grid grid-cols-2 gap-2'>
-                {getVisibleImages().map((image) => (
-                  <div key={image} className='relative aspect-square'>
+                {getVisibleImages().map((image, index) => (
+                  <div key={`${image}-${index}`} className='relative aspect-square'>
                     <img
                       src={image}
                       alt='미션 인증 이미지'
@@ -185,7 +198,7 @@ const MyMissionModal = ({ onClose, mission, mode, participationId }: MyMissionMo
                   </div>
                 ))}
               </div>
-              {mission.image.length > 2 && (
+              {mission.images.length > 2 && (
                 <>
                   <button
                     onClick={handlePrevImage}
@@ -200,14 +213,16 @@ const MyMissionModal = ({ onClose, mission, mode, participationId }: MyMissionMo
                     <Icon name='ArrowRight2' size={20} />
                   </button>
                   <div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1'>
-                    {Array.from({ length: Math.ceil(mission.image.length / 2) }).map((_, index) => (
-                      <div
-                        key={index}
-                        className={`w-2 h-2 rounded-full ${
-                          index === Math.floor(currentImageIndex / 2) ? 'bg-white' : 'bg-white/50'
-                        }`}
-                      />
-                    ))}
+                    {Array.from({ length: Math.ceil(mission.images.length / 2) }).map(
+                      (_, index) => (
+                        <div
+                          key={index}
+                          className={`w-2 h-2 rounded-full ${
+                            index === Math.floor(currentImageIndex / 2) ? 'bg-white' : 'bg-white/50'
+                          }`}
+                        />
+                      ),
+                    )}
                   </div>
                 </>
               )}

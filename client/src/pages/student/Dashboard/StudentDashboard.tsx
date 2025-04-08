@@ -70,7 +70,7 @@ const StudentDashboard = () => {
       try {
         setLoading(true);
         const response = await axiosInstance.get('/dashboards/my');
-        
+
         if (response.data.isSuccess) {
           setDashboardData(response.data.data);
         }
@@ -89,24 +89,24 @@ const StudentDashboard = () => {
     if (dashboardData && dashboardData.creditGrade === 'F-') {
       showAlert(
         '신용등급이 낮아',
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-p1">서비스를 이용할 수 없어요.</p>
-          <Lufin size="m" count={dashboardData.totalAsset} />
+        <div className='flex flex-col items-center gap-2'>
+          <p className='text-p1'>서비스를 이용할 수 없어요.</p>
+          <Lufin size='m' count={dashboardData.totalAsset} />
         </div>,
         '담임 선생님과 상담 후 회생 신청을 해주세요.',
         'danger',
         {
           label: '회생 신청',
           onClick: () => setShowRecoveryModal(true),
-        }
+        },
       );
     }
   }, [dashboardData, showAlert]);
 
   if (loading) {
     return (
-      <SidebarLayout userRole="student">
-        <div className="flex items-center justify-center h-full">
+      <SidebarLayout userRole='student'>
+        <div className='flex items-center justify-center h-full'>
           <p>데이터를 불러오는 중...</p>
         </div>
       </SidebarLayout>
@@ -115,8 +115,8 @@ const StudentDashboard = () => {
 
   if (!dashboardData) {
     return (
-      <SidebarLayout userRole="student">
-        <div className="flex items-center justify-center h-full">
+      <SidebarLayout userRole='student'>
+        <div className='flex items-center justify-center h-full'>
           <p>데이터를 불러올 수 없습니다.</p>
         </div>
       </SidebarLayout>
@@ -124,10 +124,10 @@ const StudentDashboard = () => {
   }
 
   // Find current user name (for now using rank 1 as current user)
-  const currentUserName = dashboardData.rankings.find(r => r.rank === 1)?.name || '';
+  const currentUserName = dashboardData.rankings.find((r) => r.rank === 1)?.name || '';
 
   return (
-    <SidebarLayout userRole="student">
+    <SidebarLayout userRole='student'>
       <div className='w-full h-full flex flex-col gap-4 overflow-y-auto'>
         {/* User Profile Section */}
         <section className='flex gap-4 min-h-fit'>
@@ -137,24 +137,24 @@ const StudentDashboard = () => {
         {/* Credit Score and Assets Section */}
         <section className='flex gap-4 min-h-[280px]'>
           <div className='flex-1'>
-            <CreditScoreCard 
+            <CreditScoreCard
               userName={currentUserName}
-              creditScore={dashboardData.creditScore} 
+              creditScore={dashboardData.creditScore}
               creditRating={dashboardData.creditGrade}
-              recentActivities={dashboardData.creditHistories.map(history => ({
+              recentActivities={dashboardData.creditHistories.map((history) => ({
                 type: history.scoreChange > 0 ? 'increase' : 'decrease',
                 amount: Math.abs(history.scoreChange),
                 description: history.reason,
-                date: history.changedAt
+                date: history.changedAt,
               }))}
             />
           </div>
           <div className='flex-1'>
-            <AssetCard 
+            <AssetCard
               assets={{
                 cash: dashboardData.cash,
                 stock: dashboardData.stock,
-                loan: dashboardData.loan
+                loan: dashboardData.loan,
               }}
               totalAsset={dashboardData.totalAsset}
             />
@@ -163,22 +163,22 @@ const StudentDashboard = () => {
 
         {/* Financial Summary Section */}
         <section className='flex gap-4 min-h-fit'>
-          <StatCard 
-            title={dashboardData.consumptionStat.label} 
-            amount={dashboardData.consumptionStat.amount} 
+          <StatCard
+            title={dashboardData.consumptionStat.label}
+            amount={dashboardData.consumptionStat.amount}
             trend={{
               value: dashboardData.consumptionStat.changeRate,
-              isPositive: dashboardData.consumptionStat.isPositive
-            }} 
+              isPositive: dashboardData.consumptionStat.isPositive,
+            }}
           />
 
-          <StatCard 
-            title={dashboardData.investmentStat.label} 
-            amount={dashboardData.investmentStat.amount} 
+          <StatCard
+            title={dashboardData.investmentStat.label}
+            amount={dashboardData.investmentStat.amount}
             trend={{
               value: dashboardData.investmentStat.changeRate,
-              isPositive: dashboardData.investmentStat.isPositive
-            }} 
+              isPositive: dashboardData.investmentStat.isPositive,
+            }}
           />
 
           <StatCard title='대출' amount={dashboardData.loan} />
@@ -186,12 +186,12 @@ const StudentDashboard = () => {
 
         {/* Items and Missions Section */}
         <section className='flex gap-4 max-h-[270px]'>
-          <ItemList 
-            items={dashboardData.items.map(item => ({
+          <ItemList
+            items={dashboardData.items.map((item) => ({
               name: item.name,
               count: item.quantity,
-              daysLeft: item.expireInDays
-            }))} 
+              daysLeft: item.expireInDays,
+            }))}
           />
           <MissionSection
             completedCount={dashboardData.totalCompletedMissions}
@@ -222,4 +222,3 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
-

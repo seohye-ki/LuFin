@@ -115,7 +115,7 @@ export const AuthService = {
   setTokens: (accessToken: string, refreshToken: string, classId?: number) => {
     tokenUtils.setToken('accessToken', accessToken);
     tokenUtils.setToken('refreshToken', refreshToken);
-    
+
     // classId가 제공된 경우에만 저장
     if (classId !== undefined) {
       tokenUtils.setToken('classId', classId.toString());

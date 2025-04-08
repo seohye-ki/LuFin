@@ -3,7 +3,6 @@ import { Icon } from '../../components/Icon/Icon';
 import Badge from '../../components/Badge/Badge';
 import Button from '../../components/Button/Button';
 import Lufin from '../../components/Lufin/Lufin';
-import moment from 'moment';
 
 export const getStatusBadge = (participation?: MissionParticipation) => {
   if (!participation) {
@@ -42,7 +41,7 @@ export const createMissionRow = (
 
   const isJoined = Boolean(participation);
   const status = participation?.status;
-  const formattedDate = moment(mission.missionDate).format('YYYY-MM-DD');
+  const formattedDate = new Date(mission.missionDate).toISOString().split('T')[0];
 
   const isDisabled =
     !!participation && ['SUCCESS', 'FAILED', 'REJECTED'].includes(participation.status);

@@ -70,17 +70,18 @@ const ClassroomCard = ({
     console.error('[ClassroomCard] 이미지 렌더링 실패:', imageUrl);
     setImageError(true);
   };
-  
+
   // 코드 복사 함수
   const handleCopyCode = (e: React.MouseEvent) => {
     e.stopPropagation(); // 클릭 이벤트가 카드까지 전파되지 않도록
     if (code) {
-      navigator.clipboard.writeText(code)
+      navigator.clipboard
+        .writeText(code)
         .then(() => {
           setCopySuccess(true);
           setTimeout(() => setCopySuccess(false), 2000);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error('클래스 코드 복사 실패:', err);
         });
     }
@@ -100,7 +101,7 @@ const ClassroomCard = ({
         <div className='flex flex-col gap-3'>
           <div className='relative'>
             <img
-              src={imageError ? fallbackImageUrl : (imageUrl || fallbackImageUrl)}
+              src={imageError ? fallbackImageUrl : imageUrl || fallbackImageUrl}
               alt={title}
               className='w-full h-[160px] object-cover rounded-lg mb-3'
               onError={handleImageError}
@@ -135,10 +136,10 @@ const ClassroomCard = ({
                 className='p-1 rounded-full hover:bg-grey/40 transition-colors flex items-center justify-center'
                 title={copySuccess ? '복사되었습니다' : `초대 코드: ${code} (클릭하여 복사)`}
               >
-                <Icon 
+                <Icon
                   name={copySuccess ? 'TickCircle' : 'Copy'}
-                  size={24} 
-                  color={copySuccess ? 'success' : 'grey'} 
+                  size={24}
+                  color={copySuccess ? 'success' : 'grey'}
                 />
               </button>
             )}
@@ -153,12 +154,7 @@ const ClassroomCard = ({
           </div>
           <div className='mt-auto pt-4 flex justify-between items-center text-p1'>
             <span className='text-grey'>{year}</span>
-            <Button
-              color='info'
-              variant='solid'
-              size='md'
-              onClick={handleEntryClick}
-            >
+            <Button color='info' variant='solid' size='md' onClick={handleEntryClick}>
               입장하기
             </Button>
           </div>

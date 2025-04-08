@@ -12,7 +12,7 @@ export const useMissionForm = (
   selectedDate: Date,
   defaultValues: Partial<MissionDetail> = {},
 ) => {
-  const { createMission, updateMission, selectedMission } = useMissionStore();
+  const { createMission, updateMission, selectedMission, getMissionList } = useMissionStore();
 
   const [title, setTitle] = useState(defaultValues?.title || '');
   const [difficulty, setDifficulty] = useState<{ type: 'star'; count: 1 | 2 | 3 } | null>(
@@ -78,15 +78,16 @@ export const useMissionForm = (
         const payload: MissionCreateRequest = {
           title,
           content,
-          image: imageUrls,
           difficulty: difficulty!.count,
           maxParticipants: Number(maxParticipants),
           wage: Number(wage),
-          missionDate: moment(selectedDate).format('YYYY-MM-DD'),
+          missionDate: moment(selectedDate).startOf('day').toDate().toISOString(),
+          s3Keys: [],
         };
 
         const result = await createMission(payload);
         if (result) {
+          await getMissionList();
           onSuccess();
         }
       }
@@ -98,11 +99,11 @@ export const useMissionForm = (
           missionId: selectedMission.missionId,
           title,
           content,
-          image: imageUrls,
+          s3Keys: imageUrls,
           difficulty: difficulty!.count,
           maxParticipants: Number(maxParticipants),
           wage: Number(wage),
-          missionDate: moment(selectedDate).format('YYYY-MM-DD'),
+          missionDate: moment(selectedDate).startOf('day').toDate().toISOString(),
         };
 
         const result = await updateMission(payload);

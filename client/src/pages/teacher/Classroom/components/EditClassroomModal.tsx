@@ -58,7 +58,10 @@ const EditClassroomModal = ({
     if (!file) return;
 
     try {
-      console.log('[EditClassroomModal] Starting image upload:', { fileName: file.name, fileSize: file.size });
+      console.log('[EditClassroomModal] Starting image upload:', {
+        fileName: file.name,
+        fileSize: file.size,
+      });
       setIsUploading(true);
       const key = await fileService.uploadFile('classrooms', file);
       console.log('[EditClassroomModal] Image upload successful:', { key });

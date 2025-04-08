@@ -2,14 +2,14 @@ import Button from '../../../../components/Button/Button';
 import Card from '../../../../components/Card/Card';
 import TableView from '../../../../components/Frame/TableView';
 import Lufin from '../../../../components/Lufin/Lufin';
-import { useStockStore } from '../../../../libs/store/stockStore';
-import { stockProducts } from '../../../../types/stock/stock';
 import MyStockChart from './MyStockChart';
 import { calcStockChangeRate } from '../../../../libs/utils/stock-util';
 import StockChangeText from './stockChangeText';
+import { useSelectedStockStore, useStockStore } from '../../../../libs/store/stockStore';
 
 const StockOverview = () => {
-  const { chartType, toggleChartType, setSelectedStock } = useStockStore();
+  const { setSelectedStock, chartType, toggleChartType } = useSelectedStockStore();
+  const { products } = useStockStore();
 
   const columns = [
     { key: 'id', label: 'NO' },
@@ -18,20 +18,20 @@ const StockOverview = () => {
     { key: 'changeRate', label: '등락률' },
   ];
 
-  const rows = stockProducts.map((stock) => {
-    const { diff, rate } = calcStockChangeRate(stock.currentPrice, stock.initialPrice);
+  const rows = products.map((stock) => {
+    const { diff, rate } = calcStockChangeRate(stock.CurrentPrice, stock.InitialPrice);
 
     return {
-      id: stock.stockProductId.toString(),
-      name: stock.name,
-      currentPrice: <Lufin size='s' count={stock.currentPrice} />,
+      id: stock.StockProductId,
+      name: stock.Name,
+      currentPrice: <Lufin size='s' count={stock.CurrentPrice} />,
       changeRate: <StockChangeText diff={diff} rate={rate} />,
     };
   });
 
   const handleRowClick = (row: { [key: string]: React.ReactNode }) => {
     const id = Number(row.id);
-    const stock = stockProducts.find((s) => s.stockProductId === id);
+    const stock = products.find((s) => s.StockProductId === id);
     if (stock) setSelectedStock(stock);
   };
 
@@ -39,10 +39,20 @@ const StockOverview = () => {
     <MyStockChart />
   ) : (
     <Card
-      titleLeft='실시간 차트'
+      titleLeft='종목 현황'
       titleRight={
         <div className='flex items-center gap-2'>
-          <div className='text-c1 text-grey'>2025.03.31 13:00 기준</div>
+          <div className='text-c1 text-grey'>
+            {products.length > 0
+              ? new Date(products[0].UpdatedAt).toLocaleString('ko-KR', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : ''}
+          </div>
           <Button variant='solid' size='sm' color='primary' onClick={toggleChartType}>
             나의 투자 현황
           </Button>

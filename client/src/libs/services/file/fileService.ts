@@ -30,36 +30,36 @@ interface ApiResponse<T> {
 
 /**
  * 파일 업로드 및 다운로드 관련 유틸리티 서비스
- * 
+ *
  * 주요 기능:
  * 1. 이미지 업로드를 위한 Presigned URL 발급
  * 2. S3에 파일 직접 업로드
  * 3. 이미지 다운로드 URL 조회
  * 4. 파일 확장자 검증
- * 
+ *
  * @example
  * // 이미지 업로드
  * const key = await fileService.uploadFile('classrooms', imageFile);
- * 
+ *
  * // 이미지 URL 조회
  * const url = await fileService.getImageUrl(key);
  */
 export const fileService = {
   /**
    * Presigned URL 요청
-   * 
+   *
    * @param folder - 업로드할 폴더 위치 ('classrooms' | 'missions')
    * @param file - 업로드할 파일 객체
    * @returns Presigned URL 정보 (uploadUrl, key)
    * @throws Error - URL 발급 실패 시
-   * 
+   *
    * @example
    * const { uploadUrl, key } = await fileService.getPresignedUrl('classrooms', file);
    */
   getPresignedUrl: async (folder: FolderType, file: File): Promise<PresignedUrlResponse> => {
-    const response = await axiosInstance.get<ApiResponse<PresignedUrlResponse> | PresignedUrlResponse>(
-      `/files/presigned-url?folder=${folder}&filename=${encodeURIComponent(file.name)}`,
-    );
+    const response = await axiosInstance.get<
+      ApiResponse<PresignedUrlResponse> | PresignedUrlResponse
+    >(`/files/presigned-url?folder=${folder}&filename=${encodeURIComponent(file.name)}`);
 
     if ('uploadUrl' in response.data && 'key' in response.data) {
       return response.data as PresignedUrlResponse;
@@ -74,22 +74,24 @@ export const fileService = {
 
   /**
    * 이미지 다운로드 URL 조회
-   * 
+   *
    * @param key - 이미지의 고유 식별자 (S3 경로)
    * @returns 이미지 다운로드 URL
    * - 성공 시: Presigned URL 반환
    * - 실패 시: S3 직접 URL로 폴백
    * - key가 null인 경우: 빈 문자열 반환
-   * 
+   *
    * @example
    * const imageUrl = await fileService.getImageUrl('classrooms/image-123.jpg');
    * // <img src={imageUrl} alt="이미지" />
    */
   getImageUrl: async (key: string | null): Promise<string> => {
     if (!key) return '';
-    
+
     try {
-      const response = await axiosInstance.get(`/files/download-url?key=${encodeURIComponent(key)}`);
+      const response = await axiosInstance.get(
+        `/files/download-url?key=${encodeURIComponent(key)}`,
+      );
       return response.data.uploadUrl;
     } catch {
       return `https://lufin-bucket.s3.ap-northeast-2.amazonaws.com/${key}`;
@@ -98,11 +100,11 @@ export const fileService = {
 
   /**
    * S3에 파일 직접 업로드
-   * 
+   *
    * @param uploadUrl - Presigned URL
    * @param file - 업로드할 파일
    * @throws Error - 업로드 실패 시
-   * 
+   *
    * @example
    * await fileService.uploadToS3(presignedUrl, file);
    */
@@ -116,7 +118,7 @@ export const fileService = {
       mode: 'cors',
       credentials: 'omit',
     });
-    
+
     if (!response.ok) {
       throw new Error(`S3 upload failed: ${response.statusText}`);
     }
@@ -125,10 +127,10 @@ export const fileService = {
   /**
    * 파일 확장자 검증
    * 허용된 확장자: jpg, jpeg, png
-   * 
+   *
    * @param file - 검증할 파일
    * @returns 유효한 확장자인지 여부
-   * 
+   *
    * @example
    * if (!fileService.isValidFileExtension(file)) {
    *   alert('지원하지 않는 파일 형식입니다.');
@@ -146,12 +148,12 @@ export const fileService = {
    * 1. 파일 확장자 검증
    * 2. Presigned URL 발급
    * 3. S3 업로드
-   * 
+   *
    * @param folder - 업로드할 폴더 ('classrooms' | 'missions')
    * @param file - 업로드할 파일
    * @returns 업로드된 파일의 key (S3 경로)
    * @throws Error - 파일 형식이 잘못되었거나 업로드 실패 시
-   * 
+   *
    * @example
    * try {
    *   const key = await fileService.uploadFile('classrooms', imageFile);

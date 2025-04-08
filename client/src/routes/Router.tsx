@@ -19,7 +19,6 @@ import StudentClassroom from '../pages/student/Classroom/StudentClassroom';
 import StudentLoan from '../pages/student/Loan/StudentLoan';
 import StudentDashboard from '../pages/student/Dashboard/StudentDashboard';
 import TeacherDashboard from '../pages/teacher/Dashboard/TeacherDashboard';
-import Dashboard from '../pages/student/Dashboard/StudentDashboard';
 import TeacherShop from '../pages/teacher/Shop/TeacherShop';
 
 const Router = () => {

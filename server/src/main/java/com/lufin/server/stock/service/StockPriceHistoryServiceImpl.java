@@ -41,6 +41,11 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 
 	private final StockAiService stockAiService;
 
+	private static final int maxRetries = 30;
+	private static int retryCount = 0;
+	private static boolean isNewsCreated = false;
+	private static long waitTime = 1000L;
+
 	/**
 	 * 주식 가격 변동 기록 조회
 	 * @param stockProductId
@@ -79,11 +84,11 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 		}
 	}
 
-	@Scheduled(cron = "0 0 10 * * Mon-Fri")
+	@Scheduled(cron = "0 5 9 * * Mon-Fri")
 	@Transactional
 	@Override
-	public void updateMorningStockPrice() {
-		log.info("10:00 주식 가격 업데이트 스케줄 작업 시작: hour = {}", LocalDateTime.now().getHour());
+	public synchronized void updateMorningStockPrice() { // 스케줄러 중첩 실행 방지를 위해 synchronized 사용
+		log.info("09:05 주식 가격 업데이트 스케줄 작업 시작: hour = {}", LocalDateTime.now().getHour());
 		try {
 			List<StockResponseDto.StockInfoDto> stocks = stockProductRepository.getAllStocks();
 			for (StockResponseDto.StockInfoDto stock : stocks) {
@@ -99,11 +104,11 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 		}
 	}
 
-	@Scheduled(cron = "0 0 14 * * Mon-Fri")
+	@Scheduled(cron = "0 5 13 * * Mon-Fri")
 	@Transactional
 	@Override
-	public void updateAfternoonStockPrice() {
-		log.info("14:00 주식 가격 업데이트 스케줄 작업 시작: hour = {}", LocalDateTime.now().getHour());
+	public synchronized void updateAfternoonStockPrice() { // 스케줄러 중첩 실행 방지를 위해 synchronized 사용
+		log.info("13:05 주식 가격 업데이트 스케줄 작업 시작: hour = {}", LocalDateTime.now().getHour());
 		try {
 			List<StockResponseDto.StockInfoDto> stocks = stockProductRepository.getAllStocks();
 			for (StockResponseDto.StockInfoDto stock : stocks) {
@@ -118,6 +123,11 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 		}
 	}
 
+	/**
+	 * 주식 가격 변동 생성 메서드
+	 * @param stockProductId
+	 * @param hour
+	 */
 	@Transactional
 	@Override
 	public void updateStockPrice(
@@ -144,11 +154,51 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 		);
 		LocalDateTime endTime = startTime.plusHours(1); // 1시간 차이 이내에 있는 지 확인
 
-		Integer existsInTimeRange = stockPriceHistoryRepository.existsByStockProductIdAndCreatedAtBetween(
+		while (!isNewsCreated && retryCount < maxRetries) {
+			try {
+				Integer existsInTimeRangeNews = stockNewsRepository.existsByStockProductIdAndCreatedAtBetween(
+					stockProductId, startTime, endTime
+				);
+
+				if (existsInTimeRangeNews == 1) {
+					isNewsCreated = true;
+					log.info("{}시 뉴스 생성 확인. 주식 가격 업데이트를 시작합니다.", hour);
+					break;
+				} else {
+					retryCount++;
+					log.info("{}시 뉴스가 아직 생성되지 않았습니다. 재시도 중... ({}/{})", hour, retryCount, maxRetries);
+					waitTime = Math.min(waitTime * 2, 30000);
+					Thread.sleep(waitTime); // 최대 30초 대기 후 재시도
+				}
+			} catch (InterruptedException ie) {
+				Thread.currentThread().interrupt();
+				log.error("주식 가격 변동 생성 재시도 중 인터럽트 발생", ie.getMessage());
+				break;
+
+			} catch (Exception e) {
+				log.error("주식 가격 변동 생성 중 오류 발생: {}", e.getMessage());
+				retryCount++;
+				try {
+					waitTime = Math.min(waitTime * 2, 30000);
+					Thread.sleep(waitTime); // 최대 30초 대기 후 재시도
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
+					break;
+				}
+			}
+
+		}
+
+		if (!isNewsCreated) {
+			log.error("최대 재시도 횟수({})에 도달했습니다. {}시 뉴스가 생성되지 않아 주식 가격 변동 생성을 진행할 수 없습니다.", maxRetries, hour);
+			throw new BusinessException(SERVER_ERROR);
+		}
+
+		Integer existsInTimeRangePrice = stockPriceHistoryRepository.existsByStockProductIdAndCreatedAtBetween(
 			stockProductId, startTime, endTime
 		);
 
-		if (existsInTimeRange == 1) {
+		if (existsInTimeRangePrice == 1) {
 			log.warn("해당 시간대에 이미 생성된 가격 변동이 있습니다: stockProductId = {}, hour = {}",
 				stockProductId, hour);
 			throw new BusinessException(ErrorCode.DUPLICATE_UPDATE);

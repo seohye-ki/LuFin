@@ -45,7 +45,7 @@ const Menu = ({ isActive = false, type, userRole }: MenuProps) => {
   const pathMap: Record<MenuType, Partial<Record<'student' | 'teacher', string>>> = {
     home: {
       student: paths.STUDENT_DASHBOARD,
-      // teacher: paths.TEACHER_DASHBOARD,
+      teacher: paths.TEACHER_DASHBOARD,
     },
     mission: {
       student: paths.STUDENT_MISSION,
@@ -60,7 +60,7 @@ const Menu = ({ isActive = false, type, userRole }: MenuProps) => {
       teacher: paths.TEACHER_STOCK,
     },
     dollar: {
-      // student: paths.STUDENT_LOAN,
+      student: paths.STUDENT_LOAN,
       // teacher: paths.TEACHER_LOAN,
     },
     shop: {

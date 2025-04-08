@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import logo from '../../../assets/svgs/logo.svg';
 import lufinCoin from '../../../assets/svgs/lufin-coin-200.svg';
 import UserTypeSelect from './components/UserTypeSelect';
@@ -10,14 +11,43 @@ import { useRegisterForm } from './hooks/useRegisterForm';
 import { useRegisterStep } from './hooks/useRegisterStep';
 
 export default function Register() {
-  const { formData, validation, handleChange, handleAutoComplete, setUserType } = useRegisterForm();
-
+  const {
+    formData,
+    validation,
+    handleChange,
+    handleAutoComplete,
+    setUserType,
+    handleSubmit,
+    validateEmail,
+  } = useRegisterForm();
   const { currentStep, totalSteps, stepTitles, handleNext, handlePrev, goToCompletion } =
     useRegisterStep();
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    goToCompletion();
+  const handleBasicInfoNext = async () => {
+    try {
+      const isEmailValid = await validateEmail(formData.email);
+      if (isEmailValid) {
+        setTimeout(() => {
+          handleNext();
+        }, 0);
+      }
+    } catch {
+      setError('이메일 확인 중 오류가 발생했습니다.');
+    }
+  };
+
+  const handleAccountSetupNext = async () => {
+    try {
+      const result = await handleSubmit();
+      if (result.success) {
+        goToCompletion();
+      } else {
+        setError(result.message || '회원가입 중 오류가 발생했습니다');
+      }
+    } catch {
+      setError('회원가입 처리 중 오류가 발생했습니다');
+    }
   };
 
   return (
@@ -68,7 +98,13 @@ export default function Register() {
                   stepTitles={stepTitles}
                 />
 
-                <form className='space-y-6' onSubmit={handleSubmit}>
+                {error && (
+                  <div className='mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600'>
+                    {error}
+                  </div>
+                )}
+
+                <div className='space-y-6'>
                   {currentStep === 1 && (
                     <UserTypeSelect
                       userType={formData.userType}
@@ -85,7 +121,7 @@ export default function Register() {
                       onChange={handleChange}
                       onBlur={handleAutoComplete}
                       onPrev={handlePrev}
-                      onNext={handleNext}
+                      onNext={handleBasicInfoNext}
                     />
                   )}
 
@@ -109,7 +145,7 @@ export default function Register() {
                       onChange={handleChange}
                       onBlur={handleAutoComplete}
                       onPrev={handlePrev}
-                      onNext={handleNext}
+                      onNext={handleAccountSetupNext}
                     />
                   )}
 
@@ -126,7 +162,7 @@ export default function Register() {
                       </button>
                     </div>
                   )}
-                </form>
+                </div>
               </div>
             </div>
           </div>

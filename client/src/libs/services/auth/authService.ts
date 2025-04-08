@@ -19,7 +19,7 @@ export interface AuthResponse {
 }
 
 // 환경 변수에서 로그인 엔드포인트 가져오기
-const LOGIN_ENDPOINT = import.meta.env.VITE_AUTH_LOGIN_ENDPOINT || '/api/v1/lufin/auth/login';
+const LOGIN_ENDPOINT = import.meta.env.VITE_AUTH_LOGIN_ENDPOINT || '/auth/login';
 
 /**
  * 인증 관련 서비스 함수들
@@ -33,35 +33,24 @@ export const AuthService = {
    */
   login: async (credentials: LoginRequest) => {
     try {
-      console.log('API 요청 시작:', credentials);
-
       const response = await axiosInstance.post<AuthResponse>(LOGIN_ENDPOINT, credentials);
-
-      console.log('API 응답:', response.data);
 
       if (response.data.isSuccess && response.data.data) {
         // 토큰 저장
         const { accessToken, refreshToken, role } = response.data.data;
-        console.log('토큰 저장 시도:', { accessToken, refreshToken, role });
-
         tokenUtils.setToken('accessToken', accessToken);
         tokenUtils.setToken('refreshToken', refreshToken);
         tokenUtils.setToken('userRole', role);
 
-        console.log('토큰 저장 완료');
-        console.log('저장된 토큰 확인:', {
-          accessToken: tokenUtils.getToken('accessToken'),
-          refreshToken: tokenUtils.getToken('refreshToken'),
-          role: tokenUtils.getToken('userRole'),
-        });
+        // 역할에 따른 리다이렉션 경로 결정
+        const redirectPath = role.toUpperCase() === 'TEACHER' ? '/classroom/teacher' : '/classroom';
 
         return {
           success: true,
           role: role,
+          redirectPath,
         };
       } else {
-        console.log('API 응답 실패:', response.data.message);
-        // 서버에서 오류 메시지가 온 경우
         return {
           success: false,
           code: response.data.code,
@@ -69,7 +58,6 @@ export const AuthService = {
         };
       }
     } catch (error) {
-      console.error('로그인 에러:', error);
       let errorMessage = '로그인 중 오류가 발생했습니다.';
       let errorCode = '';
 
@@ -90,6 +78,7 @@ export const AuthService = {
     tokenUtils.removeToken('accessToken');
     tokenUtils.removeToken('refreshToken');
     tokenUtils.removeToken('userRole');
+    window.location.href = '/login';
   },
 
   /**
@@ -106,5 +95,30 @@ export const AuthService = {
    */
   getUserRole: () => {
     return tokenUtils.getToken('userRole');
+  },
+
+  /**
+   * 현재 사용자의 리다이렉션 경로 가져오기
+   * @returns 리다이렉션 경로
+   */
+  getRedirectPath: () => {
+    const role = tokenUtils.getToken('userRole');
+    return role?.toUpperCase() === 'TEACHER' ? '/classroom/teacher' : '/classroom';
+  },
+
+  /**
+   * 토큰 설정
+   * @param accessToken 새로운 액세스 토큰
+   * @param refreshToken 새로운 리프레시 토큰
+   * @param classId 선택된 클래스 ID (선택적)
+   */
+  setTokens: (accessToken: string, refreshToken: string, classId?: number) => {
+    tokenUtils.setToken('accessToken', accessToken);
+    tokenUtils.setToken('refreshToken', refreshToken);
+
+    // classId가 제공된 경우에만 저장
+    if (classId !== undefined) {
+      tokenUtils.setToken('classId', classId.toString());
+    }
   },
 };

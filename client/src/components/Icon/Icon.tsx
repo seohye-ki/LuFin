@@ -50,6 +50,8 @@ import {
   Add,
   More,
   Minus,
+  Copy,
+  DocumentCopy,
 } from 'iconsax-react';
 import { HiStar } from 'react-icons/hi2';
 
@@ -134,6 +136,8 @@ const ICONSAX_ICONS = {
   Add,
   Minus,
   More,
+  Copy,
+  DocumentCopy,
   Close: Add,
   CircleEdit: Add,
   CircleTrash: Add,

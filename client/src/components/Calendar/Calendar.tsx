@@ -6,7 +6,7 @@ import styles from './Calendar.module.css';
 import { Icon } from '../Icon/Icon';
 import { useMissionsByDate } from '../../hooks/calendar/useMissionsByDate';
 import { useCalendarNavigation } from '../../hooks/calendar/useCalendarNavigation';
-import { Mission } from '../../types/mission/mission';
+import { MissionList } from '../../types/mission/mission';
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
@@ -18,7 +18,7 @@ interface CalendarViewProps {
 function CalendarView({ onDateSelect }: CalendarViewProps) {
   const [value, onChange] = useState<Value>(new Date());
   const [expandedDate, setExpandedDate] = useState<string | null>(null);
-  const { getFormattedKey, getMissionsByDate } = useMissionsByDate();
+  const { getDateKeyFromMissionDate, getMissionsByDate } = useMissionsByDate();
   const { goPrevMonth, goNextMonth } = useCalendarNavigation(value as Date, (date: Date) =>
     onChange(date),
   );
@@ -53,6 +53,7 @@ function CalendarView({ onDateSelect }: CalendarViewProps) {
           <Icon name='ArrowSquareRight' color='purple' variant='Bold' size={26} />
         </button>
       </div>
+      {/* <h1 className='text-h2 font-semibold'>날짜를 클릭해서 미션을 생성해보세요!</h1> */}
     </div>
   );
 
@@ -64,10 +65,14 @@ function CalendarView({ onDateSelect }: CalendarViewProps) {
         value={value}
         locale='ko-KR'
         showNavigation={false}
-        formatDay={(_, date) => moment(date).format('D')}
+        formatDay={(_, date) => date.getDate().toString()}
         formatShortWeekday={(_, date) => ['일', '월', '화', '수', '목', '금', '토'][date.getDay()]}
         tileContent={({ date }: { date: Date }) => {
-          const dateKey = getFormattedKey(date);
+          const dateKey = getDateKeyFromMissionDate(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+          );
           const dayMissions = getMissionsByDate(dateKey);
           if (dayMissions.length > 0) {
             const isExpanded = expandedDate === dateKey;
@@ -76,7 +81,7 @@ function CalendarView({ onDateSelect }: CalendarViewProps) {
 
             return (
               <div className={styles.todoList}>
-                {displayItems.map((mission: Mission) => (
+                {displayItems.map((mission: MissionList) => (
                   <div key={mission.missionId} className={styles.todoItem}>
                     {mission.title}
                   </div>

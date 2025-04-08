@@ -1,39 +1,63 @@
-import { MissionDetail, MissionParticipation } from '../../../../types/mission/mission';
+import {
+  MissionList,
+  MissionParticipation,
+  ParticipationUserInfo,
+} from '../../../../types/mission/mission';
 import { createMissionRow } from '../../../../libs/utils/mission-util';
+import useMissionStore from '../../../../libs/store/missionStore';
+
+const convertToMissionParticipations = (
+  users: ParticipationUserInfo[],
+  memberId: number,
+  missionId: number,
+): MissionParticipation[] => {
+  return users.map((user) => ({
+    participationId: user.participationId,
+    memberId,
+    missionId,
+    status: user.status,
+  }));
+};
 
 export const useStudentMissions = (
+  myMissions: MissionList[],
+  availableMissions: MissionList[],
+  participationList: ParticipationUserInfo[],
   myMemberId: number,
-  missionDetails: MissionDetail[],
-  missionParticipations: MissionParticipation[],
-  onRowClick: (mission: MissionDetail) => void,
+  onRowClick: (mission: MissionList) => void,
+  setParticipationList: (list: ParticipationUserInfo[]) => void,
 ) => {
-  // 내가 참여한 미션 데이터
-  const myParticipations = missionParticipations.filter(
-    (participation) => participation.memberId === myMemberId,
+  const getParticipationList = useMissionStore((state) => state.getParticipationList);
+
+  const refetchParticipations = async (missionId: number) => {
+    const result = await getParticipationList(missionId);
+    if (result.success && result.participations) {
+      setParticipationList(result.participations);
+    }
+  };
+
+  const allMissionParticipations: MissionParticipation[] = myMissions.flatMap((mission) =>
+    convertToMissionParticipations(participationList, myMemberId, mission.missionId),
   );
 
-  const myMissionRows = myParticipations
-    .map((participation) => {
-      const mission = missionDetails.find((m) => m.missionId === participation.missionId);
-      if (!mission) return null;
+  const myParticipations = allMissionParticipations.filter((p) => p.memberId === myMemberId);
+
+  const myMissionRows = myMissions
+    .filter((m) => myParticipations.some((p) => p.missionId === m.missionId))
+    .map((mission) => {
+      const participation = myParticipations.find((p) => p.missionId === mission.missionId);
       return createMissionRow(mission, participation, onRowClick);
     })
     .filter((row): row is NonNullable<typeof row> => row !== null);
 
-  // 수행 가능한 미션 데이터
-  const availableMissions = missionDetails.filter(
-    (mission) =>
-      mission.status === 'RECRUITING' &&
-      mission.currentParticipant < mission.maxParticipant &&
-      !myParticipations.some((p) => p.missionId === mission.missionId),
-  );
-
-  const availableMissionRows = availableMissions.map((mission) =>
-    createMissionRow(mission, undefined, onRowClick),
-  );
+  const availableMissionRows = availableMissions
+    .filter((m) => !myParticipations.some((p) => p.missionId === m.missionId))
+    .map((mission) => createMissionRow(mission, undefined, onRowClick))
+    .filter((row): row is NonNullable<typeof row> => row !== null);
 
   return {
     myMissionRows,
     availableMissionRows,
+    refetchParticipations,
   };
 };

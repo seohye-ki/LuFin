@@ -1,29 +1,42 @@
+import { useEffect, useState, useCallback } from 'react';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
 import Card from '../../../components/Card/Card';
 import TableView from '../../../components/Frame/TableView';
-import {
-  missionDetails,
-  missionParticipations,
-  MissionDetail,
-} from '../../../types/mission/mission';
-import { useState } from 'react';
 import MyMissionModal from './components/MyMissionModal';
 import { useStudentMissions } from './hooks/useStudentMissions';
 import { Icon } from '../../../components/Icon/Icon';
+import useMissionStore from '../../../libs/store/missionStore';
+import { MissionList, ParticipationUserInfo } from '../../../types/mission/mission';
+
 const StudentMission = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedMission, setSelectedMission] = useState<MissionDetail | null>(null);
+  const getMissionList = useMissionStore((state) => state.getMissionList);
+  const getMissionDetail = useMissionStore((state) => state.getMissionDetail);
+  const myMissions = useMissionStore((state) => state.myMissions);
+  const availableMissions = useMissionStore((state) => state.availableMissions);
+  const selectedMission = useMissionStore((state) => state.selectedMission);
+  const [participationList, setParticipationList] = useState<ParticipationUserInfo[]>([]);
+  const myMemberId = 1; // TODO: 전역 상태로 교체 예정
 
-  const handleRowClick = (mission: MissionDetail) => {
-    setSelectedMission(mission);
-    setIsModalOpen(true);
-  };
+  useEffect(() => {
+    getMissionList();
+  }, [getMissionList]);
 
-  const { myMissionRows, availableMissionRows } = useStudentMissions(
-    1,
-    missionDetails,
-    missionParticipations,
+  const handleRowClick = useCallback(
+    async (mission: MissionList) => {
+      await getMissionDetail(mission.missionId);
+      setIsModalOpen(true);
+    },
+    [getMissionDetail],
+  );
+
+  const { myMissionRows, availableMissionRows, refetchParticipations } = useStudentMissions(
+    myMissions,
+    availableMissions,
+    participationList,
+    myMemberId,
     handleRowClick,
+    setParticipationList,
   );
 
   const columns = [
@@ -39,6 +52,7 @@ const StudentMission = () => {
   return (
     <SidebarLayout>
       <div className='flex flex-col h-full gap-3'>
+        {/* 나의 미션 */}
         <Card
           titleLeft='나의 미션'
           titleRight={
@@ -58,6 +72,7 @@ const StudentMission = () => {
             <TableView columns={columns} rows={myMissionRows} />
           </div>
         </Card>
+        {/* 수행 가능 미션 */}
         <Card
           titleLeft='수행 가능 미션'
           titleRight={
@@ -85,13 +100,15 @@ const StudentMission = () => {
             style={{ opacity: 0.5 }}
             onClick={() => setIsModalOpen(false)}
           />
-          <div className='fixed inset-0 flex items-center justify-center z-50'>
+          <div className='fixed inset-0 flex items-center justify-center z-40'>
             <MyMissionModal
-              onClose={() => setIsModalOpen(false)}
               mission={selectedMission}
-              participation={missionParticipations.find(
-                (p) => p.missionId === selectedMission.missionId,
-              )}
+              onClose={() => setIsModalOpen(false)}
+              mode='apply'
+              onSuccess={() => {
+                refetchParticipations(selectedMission.missionId);
+                setIsModalOpen(false);
+              }}
             />
           </div>
         </>

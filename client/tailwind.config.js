@@ -25,7 +25,9 @@ export default {
 
         // Semantic Colors
         success: 'var(--color-success)',
+        'success-60': 'var(--color-success-60)',
         danger: 'var(--color-danger)',
+        'danger-60': 'var(--color-danger-60)',
         info: 'var(--color-info)',
         warning: 'var(--color-warning)',
 

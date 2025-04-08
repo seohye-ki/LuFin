@@ -1,8 +1,16 @@
-import { useStockStore } from '../../../../libs/store/stockStore';
+import { useEffect } from 'react';
+import { useSelectedStockStore, useStockStore } from '../../../../libs/store/stockStore';
 import SpecifiedStockGraph from './SpecifiedStockGraph';
 
 const StockDetailView = () => {
-  const { selectedStock, setSelectedStock } = useStockStore();
+  const { selectedStock, setSelectedStock } = useSelectedStockStore();
+  const { getStockPriceHistory } = useStockStore();
+
+  useEffect(() => {
+    if (selectedStock) {
+      getStockPriceHistory(selectedStock.StockProductId, 7);
+    }
+  }, [selectedStock]);
 
   if (!selectedStock) return null;
 

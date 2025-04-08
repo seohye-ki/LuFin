@@ -3,6 +3,8 @@ import Card from '../../../../components/Card/Card';
 import Button from '../../../../components/Button/Button';
 import TextField from '../../../../components/Form/TextField';
 import ImageUpload from '../../../../components/Form/ImageUpload';
+import { fileService } from '../../../../libs/services/file/fileService';
+import useAlertStore from '../../../../libs/store/alertStore';
 
 interface CreateClassroomModalProps {
   onClose: () => void;
@@ -12,6 +14,7 @@ interface CreateClassroomModalProps {
     grade: number;
     class: number;
     image?: File;
+    key?: string | null;
   }) => void;
   isLoading?: boolean;
 }
@@ -27,9 +30,11 @@ const CreateClassroomModal = ({
     grade: '',
     class: '',
     image: undefined as File | undefined,
+    key: null as string | null,
   });
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.title || !formData.school || !formData.grade || !formData.class) {
@@ -43,8 +48,37 @@ const CreateClassroomModal = ({
     });
   };
 
-  const handleImageUpload = (files: File[]) => {
-    setFormData({ ...formData, image: files[0] });
+  const handleImageUpload = async (files: File[]) => {
+    const file = files[0];
+    if (!file) return;
+
+    try {
+      console.log('[CreateClassroomModal] Starting image upload:', {
+        fileName: file.name,
+        fileSize: file.size,
+      });
+      setIsUploading(true);
+      const key = await fileService.uploadFile('classrooms', file);
+      console.log('[CreateClassroomModal] Image upload successful:', { key });
+      setFormData((prev) => ({ ...prev, image: file, key }));
+    } catch (error) {
+      console.error('[CreateClassroomModal] Image upload failed:', error);
+      useAlertStore
+        .getState()
+        .showAlert(
+          '이미지 업로드 실패',
+          null,
+          error instanceof Error ? error.message : '이미지 업로드에 실패했습니다.',
+          'danger',
+          {
+            label: '확인',
+            onClick: () => useAlertStore.getState().hideAlert(),
+            color: 'primary',
+          },
+        );
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -98,15 +132,22 @@ const CreateClassroomModal = ({
             <ImageUpload
               label='클래스 사진'
               onChange={handleImageUpload}
-              accept='SVG, PNG, JPG or GIF (max. 800×400px)'
+              accept='image/jpeg,image/jpg,image/png'
+              isLoading={isUploading}
             />
           </div>
 
           <div className='flex gap-3 mt-4'>
-            <Button type='button' color='neutral' full onClick={onClose} disabled={isLoading}>
+            <Button
+              type='button'
+              color='neutral'
+              full
+              onClick={onClose}
+              disabled={isLoading || isUploading}
+            >
               취소
             </Button>
-            <Button type='submit' color='info' full disabled={isLoading}>
+            <Button type='submit' color='info' full disabled={isLoading || isUploading}>
               {isLoading ? '생성 중...' : '생성하기'}
             </Button>
           </div>

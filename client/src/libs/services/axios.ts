@@ -6,12 +6,16 @@ import axios from 'axios';
  * - timeout: 요청 제한 시간을 설정합니다 (30초).
  * - headers: 기본 헤더를 설정합니다.
  */
+
 export const axiosInstance = axios.create({
   // 환경변수에서 API URL을 가져옵니다.
-  baseURL: `${import.meta.env.VITE_API_URL}/api/v1/lufin`,
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
+  },
+  transformResponse: (data) => {
+    return JSON.parse(data);
   },
 });
 
@@ -90,6 +94,7 @@ axiosInstance.interceptors.request.use(
  * 2. 403 에러 발생 시 (권한 부족)
  *    - 접근 권한 없음 에러 로깅
  */
+
 axiosInstance.interceptors.response.use(
   // 정상적인 응답 처리
   (response) => response,

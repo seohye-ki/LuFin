@@ -1,30 +1,39 @@
 import Card from '../../../components/Card/Card';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
-import { dateUtil } from '../../../libs/utils/date-util';
 import Awning from './components/Awning';
-import Item, { ItemProps } from './components/Item';
-import { useState } from 'react';
+import Item from './components/Item';
+import { useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import useAlertStore from '../../../libs/store/alertStore'; // zustand store
-
-const itemsData = [
-  { expired: dateUtil('2025-03-28T10:21:12'), name: '안마권1', price: 1000, quantity: 1 },
-  { expired: dateUtil('2025-03-28T10:21:12'), name: '안마권2', price: 1000 },
-  { expired: dateUtil('2025-03-28T10:21:12'), name: '안마권3', price: 1000 },
-  { expired: dateUtil('2025-03-28T10:21:12'), name: '안마권4', price: 1000 },
-  { expired: dateUtil('2025-03-28T10:21:12'), name: '안마권5', price: 1000 },
-  { expired: dateUtil('2025-03-28T10:21:12'), name: '안마권6', price: 1000 },
-  { expired: dateUtil('2025-03-28T10:21:12'), name: '안마권7', price: 1000 },
-  { expired: dateUtil('2025-03-28T10:21:12'), name: '안마권8', price: 1000 },
-  { expired: dateUtil('2025-03-28T10:21:12'), name: '안마권9', price: 1000 },
-  { expired: dateUtil('2025-03-28T10:21:12'), name: '안마권10', price: 1000 },
-];
+import {
+  buyItem,
+  getMyItemList,
+  getSalesItemList,
+  requestUseItem,
+} from '../../../libs/services/shop/shop.service';
+import { ItemDTO } from '../../../types/shop/item';
 
 const StudentShop = () => {
-  const [items] = useState(itemsData);
+  const [myItemList, setMyItemList] = useState<ItemDTO[]>([]);
+  const [salesItemList, setSalesItemList] = useState<ItemDTO[]>([]);
   const { showAlert, hideAlert } = useAlertStore((state) => state);
+
+  useEffect(() => {
+    const fetchMyItemList = async () => {
+      const res = await getMyItemList();
+      setMyItemList(res);
+    };
+
+    const fetchSalesItemList = async () => {
+      const res = await getSalesItemList();
+      setSalesItemList(res);
+    };
+
+    fetchMyItemList();
+    fetchSalesItemList();
+  }, []);
 
   const settings = {
     speed: 1000,
@@ -33,22 +42,73 @@ const StudentShop = () => {
     dots: true,
     arrows: false,
     autoSlide: true,
+    infinite: false,
   };
-
-  const handleItemClick = (item: ItemProps) => {
+  const handleMyItemClick = (item: ItemDTO) => {
     showAlert(
-      '아래 아이템을 구매하시겠습니까?',
-      <Item expired={item.expired} name={item.name} price={item.price} quantity={item.quantity} />,
-      '구매한 아이템은 환불할 수 없어요.',
+      '아래 아이템을 사용할까요?',
+      <Item expired={item.expirationDate} name={item.itemName} />,
+      `선생님이 승인해주셔야 사용이 완료돼요.`,
       'success',
       {
-        label: '구매할게요.',
+        label: '사용할게요.',
+        onClick: async () => {
+          const res: boolean = await requestUseItem(item.purchaseId);
+
+          if (res) {
+            setMyItemList(await getMyItemList());
+
+            showAlert(
+              '사용 요청을 보냈어요.',
+              null,
+              '선생님이 승인해주셔야 사용이 완료돼요.',
+              'success',
+              {
+                label: '확인',
+                onClick: () => hideAlert(),
+              },
+            );
+          }
+        },
+      },
+      {
+        label: '다음에 할게요.',
         onClick: () => {
           hideAlert();
         },
       },
+    );
+  };
+
+  const handleSalesItemClick = (item: ItemDTO) => {
+    showAlert(
+      '아래 아이템을 구매하시겠습니까?',
+      <Item
+        expired={item.expirationDate}
+        name={item.itemName}
+        price={item.price}
+        quantity={item.quantityAvailable - item.quantitySold}
+      />,
+      '구매한 아이템은 환불할 수 없어요.',
+      'success',
       {
-        label: '다시 올게요.',
+        label: '구매할게요.',
+        onClick: async () => {
+          const res = await buyItem(item.itemId);
+
+          if (res) {
+            setMyItemList(await getMyItemList());
+            setSalesItemList(await getSalesItemList());
+
+            showAlert('아이템을 구매 했어요.', null, '나의 아이템에서 사용해보세요.', 'success', {
+              label: '확인',
+              onClick: () => hideAlert(),
+            });
+          }
+        },
+      },
+      {
+        label: '다음에 할게요.',
         onClick: () => {
           hideAlert();
         },
@@ -59,30 +119,34 @@ const StudentShop = () => {
   return (
     <SidebarLayout>
       <div className='w-full h-full flex flex-col gap-4'>
-        <Card titleLeft='내 아이템' className='w-full h-fit pb-7'>
-          <Slider {...settings}>
-            {items.map((item, index) => (
-              <div key={index} onClick={() => handleItemClick(item)}>
-                <Item expired={item.expired} name={item.name} price={item.price} />
-              </div>
-            ))}
-          </Slider>
-        </Card>
+        <div className='w-full flex justify-start'>
+          <Card titleLeft='내 아이템' className='w-full h-fit'>
+            <Slider {...settings}>
+              {myItemList.map((item) => {
+                return (
+                  <div key={item.itemId} onClick={() => handleMyItemClick(item)}>
+                    <Item expired={item.expirationDate} name={item.itemName} />
+                  </div>
+                );
+              })}
+            </Slider>
+          </Card>
+        </div>
 
         <Card className='w-full h-full bg-yellow-30 overflow-hidden'>
           <Awning />
           <div className='w-full h-fit flex flex-row flex-wrap gap-4 justify-start items-start overflow-y-auto'>
-            {items.map((item, index) => (
+            {salesItemList.map((item) => (
               <div
-                key={index}
+                key={item.itemId}
                 className='w-[calc(33.33%-0.67rem)] h-fit'
-                onClick={() => handleItemClick(item)}
+                onClick={() => handleSalesItemClick(item)}
               >
                 <Item
-                  expired={item.expired}
-                  name={item.name}
+                  expired={item.expirationDate}
+                  name={item.itemName}
                   price={item.price}
-                  quantity={item.quantity}
+                  quantity={item.quantityAvailable - item.quantitySold}
                 />
               </div>
             ))}

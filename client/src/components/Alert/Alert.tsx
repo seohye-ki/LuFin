@@ -22,12 +22,11 @@ const Alert = () => {
     }
   }, [isVisible]);
 
-  console.log(status);
   const { icon, color } = statusConfig[status];
 
   return (
     isVisible && (
-      <div className='fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-black/80 z-50'>
+      <div className='fixed top-0 left-0 right-0 bottom-0 flex justify-center items-center bg-black/80 z-100'>
         <div
           className={`w-96 h-fit p-8 rounded-2xl gap-8 bg-white flex flex-col items-center transition-all ease-out duration-300 ${isOpening ? 'scale-100 opacity-100' : 'scale-100 opacity-0'}`}
         >

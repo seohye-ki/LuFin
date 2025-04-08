@@ -6,7 +6,7 @@ interface BadgeProps {
 
 export default function Badge({ status, children, className = '' }: BadgeProps) {
   const baseStyles =
-    'rounded-[50px] px-3 py-1 text-p1 font-bold inline-flex items-center justify-center gap-1.5';
+    'rounded-[50px] px-3 py-1 text-p2 font-medium inline-flex items-center justify-center gap-1.5';
 
   const statusStyles = {
     ready: 'bg-light-cyan-30 text-info before:bg-info', // 모집 중

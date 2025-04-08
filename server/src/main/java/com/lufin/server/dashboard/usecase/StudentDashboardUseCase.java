@@ -59,7 +59,7 @@ public class StudentDashboardUseCase {
 		int cash = accountService.getCashBalance(studentId, classId);
 		int stock = stockService.getTotalValuation(studentId, classId);
 		int loan = loanService.getLoanPrincipal(studentId, classId);
-		int totalAsset = cash + stock - loan;
+		int totalAsset = cash + stock + loan;
 		log.debug(" - 자산: 현금={}, 주식={}, 대출={}, 총합={}", cash, stock, loan, totalAsset);
 
 		// 소비 통계
@@ -76,7 +76,7 @@ public class StudentDashboardUseCase {
 
 		int investmentToday = stockService.getInvestmentAmountOnDate(studentId, today);
 		int investmentCompare = stockService.getInvestmentAmountOnDate(studentId, compareDate);
-		AssetDto investmentStat = buildAssetDto("투자", investmentToday, investmentCompare);
+		AssetDto investmentStat = buildStockDto("투자", investmentToday, investmentCompare, stock);
 
 		// 아이템 보유 현황
 		List<ItemDashboardDto> items = itemService.getMyItems(studentId, classId);

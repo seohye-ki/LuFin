@@ -5,10 +5,13 @@ import TextField from '../../../../components/Form/TextField';
 import ImageUpload from '../../../../components/Form/ImageUpload';
 import { fileService } from '../../../../libs/services/file/fileService';
 import useAlertStore from '../../../../libs/store/alertStore';
+import { Classroom } from '../../../../libs/services/classroom/classroomService';
 
-interface CreateClassroomModalProps {
+interface EditClassroomModalProps {
+  classroom: Classroom;
   onClose: () => void;
   onSubmit: (data: {
+    classId: number;
     title: string;
     school: string;
     grade: number;
@@ -19,18 +22,19 @@ interface CreateClassroomModalProps {
   isLoading?: boolean;
 }
 
-const CreateClassroomModal = ({
+const EditClassroomModal = ({
+  classroom,
   onClose,
   onSubmit,
   isLoading = false,
-}: CreateClassroomModalProps) => {
+}: EditClassroomModalProps) => {
   const [formData, setFormData] = useState({
-    title: '',
-    school: '',
-    grade: '',
-    class: '',
+    title: classroom.name,
+    school: classroom.school,
+    grade: classroom.grade.toString(),
+    class: classroom.classGroup.toString(),
     image: undefined as File | undefined,
-    key: null as string | null,
+    key: classroom.key,
   });
   const [isUploading, setIsUploading] = useState(false);
 
@@ -42,6 +46,7 @@ const CreateClassroomModal = ({
     }
 
     onSubmit({
+      classId: classroom.classId,
       ...formData,
       grade: Number(formData.grade),
       class: Number(formData.class),
@@ -53,13 +58,13 @@ const CreateClassroomModal = ({
     if (!file) return;
 
     try {
-      console.log('[CreateClassroomModal] Starting image upload:', { fileName: file.name, fileSize: file.size });
+      console.log('[EditClassroomModal] Starting image upload:', { fileName: file.name, fileSize: file.size });
       setIsUploading(true);
       const key = await fileService.uploadFile('classrooms', file);
-      console.log('[CreateClassroomModal] Image upload successful:', { key });
+      console.log('[EditClassroomModal] Image upload successful:', { key });
       setFormData((prev) => ({ ...prev, image: file, key }));
     } catch (error) {
-      console.error('[CreateClassroomModal] Image upload failed:', error);
+      console.error('[EditClassroomModal] Image upload failed:', error);
       useAlertStore
         .getState()
         .showAlert(
@@ -82,7 +87,7 @@ const CreateClassroomModal = ({
     <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
       <Card className='w-[480px] max-h-[90vh] overflow-y-auto'>
         <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
-          <h2 className='text-h2 font-semibold'>새로운 반 생성하기</h2>
+          <h2 className='text-h2 font-semibold'>클래스룸 수정하기</h2>
 
           <TextField
             label='클래스명'
@@ -145,7 +150,7 @@ const CreateClassroomModal = ({
               취소
             </Button>
             <Button type='submit' color='info' full disabled={isLoading || isUploading}>
-              {isLoading ? '생성 중...' : '생성하기'}
+              {isLoading ? '수정 중...' : '수정하기'}
             </Button>
           </div>
         </form>
@@ -154,4 +159,4 @@ const CreateClassroomModal = ({
   );
 };
 
-export default CreateClassroomModal;
+export default EditClassroomModal;

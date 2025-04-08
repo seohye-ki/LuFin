@@ -1,66 +1,218 @@
+import { useEffect, useState } from 'react';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
+import useAlertStore from '../../../libs/store/alertStore';
+import Lufin from '../../../components/Lufin/Lufin';
 import StatCard from './components/StatCard';
 import CreditScoreCard from './components/CreditScoreCard';
 import ClassAssetRanking from './components/ClassAssetRanking';
 import ItemList from './components/ItemList';
 import MissionSection from './components/MissionSection';
 import AssetCard from './components/AssetCard';
+import RecoveryApplicationModal from './components/RecoveryApplicationModal';
+import axiosInstance from '../../../libs/services/axios';
 
-const ITEMS_DATA = [
-  { name: '급식줄 제일 앞에 서기', count: 1, daysLeft: 3 },
-  { name: '간식 찬스', count: 2, daysLeft: 3 },
-  { name: '간식 찬스', count: 2, daysLeft: 3 },
-  { name: '간식 찬스', count: 2, daysLeft: 3 },
-  { name: '간식 찬스', count: 2, daysLeft: 3 },
-  { name: '간식 찬스', count: 2, daysLeft: 3 },
-  { name: '간식 찬스', count: 2, daysLeft: 3 },
-  { name: '급식줄 제일 앞에 서기', count: 3, daysLeft: 3 },
-];
+// Dashboard API response type
+interface DashboardData {
+  rankings: {
+    memberId: number;
+    name: string;
+    asset: number;
+    rank: number;
+  }[];
+  creditGrade: string;
+  creditScore: number;
+  creditHistories: {
+    scoreChange: number;
+    reason: string;
+    changedAt: string;
+  }[];
+  totalAsset: number;
+  cash: number;
+  stock: number;
+  loan: number;
+  investmentStat: {
+    label: string;
+    amount: number;
+    changeRate: number;
+    isPositive: boolean;
+  };
+  consumptionStat: {
+    label: string;
+    amount: number;
+    changeRate: number;
+    isPositive: boolean;
+  };
+  items: {
+    name: string;
+    quantity: number;
+    expireInDays: number;
+  }[];
+  ongoingMissions: {
+    name: string;
+    reward: number;
+    daysLeft: number;
+  }[];
+  totalCompletedMissions: number;
+  totalWage: number;
+}
 
-const Dashboard = () => {
+const StudentDashboard = () => {
+  const showAlert = useAlertStore((state) => state.showAlert);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get('/dashboards/my');
+        
+        if (response.data.isSuccess) {
+          setDashboardData(response.data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  useEffect(() => {
+    // Credit grade check for recovery application alert
+    if (dashboardData && dashboardData.creditGrade === 'F-') {
+      showAlert(
+        '신용등급이 낮아',
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-p1">서비스를 이용할 수 없어요.</p>
+          <Lufin size="m" count={dashboardData.totalAsset} />
+        </div>,
+        '담임 선생님과 상담 후 회생 신청을 해주세요.',
+        'danger',
+        {
+          label: '회생 신청',
+          onClick: () => setShowRecoveryModal(true),
+        }
+      );
+    }
+  }, [dashboardData, showAlert]);
+
+  if (loading) {
+    return (
+      <SidebarLayout userRole="student">
+        <div className="flex items-center justify-center h-full">
+          <p>데이터를 불러오는 중...</p>
+        </div>
+      </SidebarLayout>
+    );
+  }
+
+  if (!dashboardData) {
+    return (
+      <SidebarLayout userRole="student">
+        <div className="flex items-center justify-center h-full">
+          <p>데이터를 불러올 수 없습니다.</p>
+        </div>
+      </SidebarLayout>
+    );
+  }
+
+  // Find current user name (for now using rank 1 as current user)
+  const currentUserName = dashboardData.rankings.find(r => r.rank === 1)?.name || '';
+
   return (
-    <SidebarLayout>
+    <SidebarLayout userRole="student">
       <div className='w-full h-full flex flex-col gap-4 overflow-y-auto'>
         {/* User Profile Section */}
         <section className='flex gap-4 min-h-fit'>
-          <ClassAssetRanking />
+          <ClassAssetRanking rankings={dashboardData.rankings} />
         </section>
 
         {/* Credit Score and Assets Section */}
         <section className='flex gap-4 min-h-[280px]'>
           <div className='flex-1'>
-            <CreditScoreCard userName='최민주' creditScore={89} creditRating='A+' />
+            <CreditScoreCard 
+              userName={currentUserName}
+              creditScore={dashboardData.creditScore} 
+              creditRating={dashboardData.creditGrade}
+              recentActivities={dashboardData.creditHistories.map(history => ({
+                type: history.scoreChange > 0 ? 'increase' : 'decrease',
+                amount: Math.abs(history.scoreChange),
+                description: history.reason,
+                date: history.changedAt
+              }))}
+            />
           </div>
           <div className='flex-1'>
-            <AssetCard />
+            <AssetCard 
+              assets={{
+                cash: dashboardData.cash,
+                stock: dashboardData.stock,
+                loan: dashboardData.loan
+              }}
+              totalAsset={dashboardData.totalAsset}
+            />
           </div>
         </section>
 
         {/* Financial Summary Section */}
         <section className='flex gap-4 min-h-fit'>
-          <StatCard title='이번주 소비' amount={13000} trend={{ value: 15, isPositive: true }} />
+          <StatCard 
+            title={dashboardData.consumptionStat.label} 
+            amount={dashboardData.consumptionStat.amount} 
+            trend={{
+              value: dashboardData.consumptionStat.changeRate,
+              isPositive: dashboardData.consumptionStat.isPositive
+            }} 
+          />
 
-          <StatCard title='투자' amount={33000} trend={{ value: 15, isPositive: true }} />
+          <StatCard 
+            title={dashboardData.investmentStat.label} 
+            amount={dashboardData.investmentStat.amount} 
+            trend={{
+              value: dashboardData.investmentStat.changeRate,
+              isPositive: dashboardData.investmentStat.isPositive
+            }} 
+          />
 
-          <StatCard title='대출' amount={23000} />
+          <StatCard title='대출' amount={dashboardData.loan} />
         </section>
 
         {/* Items and Missions Section */}
         <section className='flex gap-4 max-h-[270px]'>
-          <ItemList items={ITEMS_DATA} />
+          <ItemList 
+            items={dashboardData.items.map(item => ({
+              name: item.name,
+              count: item.quantity,
+              daysLeft: item.expireInDays
+            }))} 
+          />
           <MissionSection
-            completedCount={5}
-            currentMission={{
-              name: '쓰레기통 비우기',
-              reward: 1000,
-              daysLeft: 3,
-            }}
-            totalReward={123000}
+            completedCount={dashboardData.totalCompletedMissions}
+            currentMission={dashboardData.ongoingMissions[0]}
+            totalReward={dashboardData.totalWage}
           />
         </section>
       </div>
+
+      {showRecoveryModal && (
+        <RecoveryApplicationModal
+          studentName={currentUserName}
+          creditGrade={dashboardData.creditGrade}
+          currentAsset={dashboardData.totalAsset}
+          onClose={() => setShowRecoveryModal(false)}
+          onSubmit={() => {
+            // TODO: Implement recovery application submission
+            setShowRecoveryModal(false);
+          }}
+        />
+      )}
     </SidebarLayout>
   );
 };
 
-export default Dashboard;
+export default StudentDashboard;
+

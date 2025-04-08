@@ -26,32 +26,38 @@ const CreditScoreBack = ({ recentActivities = [], onFlip }: CreditScoreBackProps
     <div className='h-full flex flex-col'>
       <div className='flex-1 min-h-0 max-h-[calc(100%-3rem)] overflow-y-auto scrollbar-hide'>
         <div className='flex flex-col gap-2 p-4'>
-          {recentActivities.map((activity, index) => (
-            <div
-              key={index}
-              className='flex items-center justify-between p-3 bg-broken-white rounded-lg'
-            >
-              <div className='flex items-center gap-2'>
-                <Icon
-                  name={activity.type === 'increase' ? 'ArrowCircleUp' : 'ArrowCircleDown'}
-                  size={20}
-                  color={activity.type === 'increase' ? 'success' : 'danger'}
-                />
-                <span className='text-p1 font-medium'>{activity.description}</span>
+          {recentActivities.length > 0 ? (
+            recentActivities.map((activity, index) => (
+              <div
+                key={index}
+                className='flex items-center justify-between p-3 bg-broken-white rounded-lg'
+              >
+                <div className='flex items-center gap-2'>
+                  <Icon
+                    name={activity.type === 'increase' ? 'ArrowCircleUp' : 'ArrowCircleDown'}
+                    size={20}
+                    color={activity.type === 'increase' ? 'success' : 'danger'}
+                  />
+                  <span className='text-p1 font-medium'>{activity.description}</span>
+                </div>
+                <div className='flex items-center gap-4'>
+                  <span
+                    className={`text-p2 font-semibold ${
+                      activity.type === 'increase' ? 'text-success' : 'text-danger'
+                    }`}
+                  >
+                    {activity.type === 'increase' ? '+' : '-'}
+                    {activity.amount}
+                  </span>
+                  <span className='text-p2 text-grey'>{activity.date}</span>
+                </div>
               </div>
-              <div className='flex items-center gap-4'>
-                <span
-                  className={`text-p2 font-semibold ${
-                    activity.type === 'increase' ? 'text-success' : 'text-danger'
-                  }`}
-                >
-                  {activity.type === 'increase' ? '+' : '-'}
-                  {activity.amount}
-                </span>
-                <span className='text-p2 text-grey'>{activity.date}</span>
-              </div>
+            ))
+          ) : (
+            <div className='flex items-center justify-center h-20'>
+              <span className='text-p1 text-grey'>신용도 변경 기록이 없습니다.</span>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>

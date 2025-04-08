@@ -14,4 +14,5 @@ export const paths = {
   STUDENT_CLASSROOM: '/classroom',
   STUDENT_LOAN: '/loan',
   STUDENT_DASHBOARD: '/dashboard',
+  TEACHER_DASHBOARD: '/dashboard/teacher',
 } as const;

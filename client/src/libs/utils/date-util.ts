@@ -8,14 +8,23 @@ export interface DateUtil {
   minute: number;
   second: number;
   dayOfWeek: string;
+  remainingDays: number;
 }
 
 export const dateUtil = (dateString: string): DateUtil => {
   const date = new Date(dateString);
+  const now = new Date();
+
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+  const diffInMs = targetDate.getTime() - startOfToday.getTime();
+  const remainingDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
+
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  const hour = date.getUTCHours() % 24; // 이미 KST로 넘어오기때문에 UTC로 보정한 '척' 해야함.
+  const hour = date.getUTCHours() % 24; // 이미 KST로 넘어오기 때문에 UTC로 보정한 '척'
   const minute = date.getMinutes();
   const second = date.getSeconds();
   const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
@@ -31,5 +40,6 @@ export const dateUtil = (dateString: string): DateUtil => {
     minute,
     second,
     dayOfWeek,
+    remainingDays,
   };
 };

@@ -11,7 +11,7 @@ interface loanAPplicationCardsProps {
 const LoanApplicationCards: React.FC<loanAPplicationCardsProps> = ({ loanApplicationDetail }) => {
   return loanApplicationDetail ? (
     <div className='flex flex-row gap-4'>
-      <Card titleLeft='대출 금액' titleSize='s' className='w-full'>
+      <Card titleLeft='나의 대출 금액' titleSize='s' className='w-full'>
         <Lufin size='l' count={loanApplicationDetail.requiredAmount} />
       </Card>
       <Card titleLeft='다음 이자 납부일' titleSize='s' className='w-full'>

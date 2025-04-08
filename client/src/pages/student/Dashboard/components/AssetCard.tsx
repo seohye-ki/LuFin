@@ -3,17 +3,21 @@ import DashboardPieChart from './DashboardPieChart';
 
 type AssetCardProps = {
   currency?: string;
+  assets: {
+    cash: number;
+    stock: number;
+    loan: number;
+  };
+  totalAsset: number;
 };
 
-const ASSET_DATA = [
-  { stock: '현금', amount: 23000 },
-  { stock: '적금', amount: 50000 },
-  { stock: '주식', amount: 15000 },
-  { stock: '대출', amount: -10000 },
-];
-
-const AssetCard = ({ currency = '루핀' }: AssetCardProps) => {
-  const totalAsset = ASSET_DATA.reduce((sum, item) => sum + item.amount, 0);
+const AssetCard = ({ currency = '루핀', assets, totalAsset }: AssetCardProps) => {
+  // Convert assets to the format required by DashboardPieChart
+  const assetData = [
+    { stock: '현금', amount: assets.cash },
+    { stock: '주식', amount: assets.stock },
+    { stock: '대출', amount: Math.abs(assets.loan) * -1 }, // Make loan negative
+  ].filter(item => item.amount !== 0); // Filter out zero values
 
   return (
     <DashboardCard titleLeft='자산' className='flex-1 h-full'>
@@ -22,7 +26,7 @@ const AssetCard = ({ currency = '루핀' }: AssetCardProps) => {
         <div className='flex flex-col items-center'>
           <div className='relative mb-4 h-[140px] w-full'>
             <DashboardPieChart
-              stocks={ASSET_DATA.map((item) => ({
+              stocks={assetData.map((item) => ({
                 stock: item.stock,
                 amount: Math.abs(item.amount),
               }))}

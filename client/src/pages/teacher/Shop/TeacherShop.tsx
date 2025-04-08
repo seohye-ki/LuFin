@@ -8,20 +8,46 @@ import Checkbox from '../../../components/Form/Checkbox';
 import { Icon } from '../../../components/Icon/Icon';
 import CreateModal from './components/CreateModal';
 import ItemDetailModal from './components/ItemDetailModal';
-import { initialItemPreviews, ItemPreview } from '../../../types/item';
+import { ItemDTO, ItemRequestDTO } from '../../../types/shop/item';
+import { dateUtil } from '../../../libs/utils/date-util';
+import {
+  deleteItem,
+  getItemRequestList,
+  getSalesItemList,
+} from '../../../libs/services/shop/shop.service';
+import Button from '../../../components/Button/Button';
+import ItemUseRequest from './components/ItemUseRequest';
 
 const TeacherShop = () => {
-  const [itemPreviews, setItemPreviews] = useState<ItemPreview[]>([]);
+  const [itemList, setItemList] = useState<ItemDTO[]>([]);
+  const [itemRequestList, setItemRequestList] = useState<ItemRequestDTO[]>([]);
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
   const [selectedItems, setSelectedItems] = useState<{ [itemId: number]: boolean }>({});
-  const [selectedItem, setSelectedItem] = useState<ItemPreview | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ItemDTO | null>(null);
+  const [showItemUseRequestModal, setShowItemUseRequestModal] = useState(false);
+
+  const fetchItemList = async () => {
+    const res = await getSalesItemList();
+    setItemList(res);
+  };
+
+  const fetchRequestList = async () => {
+    const res = await getItemRequestList();
+    setItemRequestList(res);
+  };
 
   useEffect(() => {
-    setItemPreviews(initialItemPreviews);
-  });
+    fetchItemList();
+    fetchRequestList();
+  }, []);
+
+  const handleSuccess = () => {
+    fetchItemList();
+    setShowCreateModal(false);
+  };
 
   const clickRow = (row: TableRow) => {
-    const item = itemPreviews.find((item) => item.itemId === row.id);
+    const item = itemList.find((item) => item.itemId === row.id);
     if (item) {
       setSelectedItem(item);
     }
@@ -35,13 +61,19 @@ const TeacherShop = () => {
   };
 
   const checkAll = () => {
-    const newSelections: { [itemId: number]: boolean } = {};
+    const hasAnySelection = Object.values(selectedItems).some((isSelected) => isSelected);
 
-    itemPreviews.forEach((item) => {
-      newSelections[item.itemId] = true;
-    });
+    if (hasAnySelection) {
+      setSelectedItems({});
+    } else {
+      const newSelections: { [itemId: number]: boolean } = {};
 
-    setSelectedItems(newSelections);
+      itemList.forEach((item) => {
+        newSelections[item.itemId] = true;
+      });
+
+      setSelectedItems(newSelections);
+    }
   };
 
   const deleteItems = () => {
@@ -49,11 +81,11 @@ const TeacherShop = () => {
       .filter((itemId) => selectedItems[parseInt(itemId)])
       .map((itemId) => parseInt(itemId));
 
-    if (itemsToDelete.length > 0) {
-      const filteredItems = itemPreviews.filter((item) => !itemsToDelete.includes(item.itemId));
-      setItemPreviews(filteredItems);
-      setSelectedItems({});
-    }
+    itemsToDelete.forEach(async (itemId: number) => {
+      await deleteItem(itemId);
+    });
+
+    fetchItemList();
   };
 
   const closeModal = () => {
@@ -68,7 +100,7 @@ const TeacherShop = () => {
       label: (
         <Checkbox
           id='select-all'
-          checked={Object.keys(selectedItems).length === itemPreviews.length}
+          checked={Object.values(selectedItems).some((v) => v === true)}
           onChange={checkAll}
         />
       ),
@@ -80,7 +112,7 @@ const TeacherShop = () => {
     { key: 'dueDate', label: '마감일' },
   ];
 
-  const rows: TableRow[] = itemPreviews.map((item) => ({
+  const rows: TableRow[] = itemList.map((item) => ({
     select: (
       <div onClick={(e) => e.stopPropagation()}>
         <Checkbox
@@ -91,20 +123,27 @@ const TeacherShop = () => {
       </div>
     ),
     id: item.itemId,
-    name: item.name,
+    name: item.itemName,
     price: <Lufin count={item.price} size='s' />,
     quantity: item.quantityAvailable - item.quantitySold,
     status: (
       <Badge status={item.status ? 'ing' : 'done'}>{item.status ? '판매중' : '판매종료'}</Badge>
     ),
-    dueDate: item.expirationDate.formattedDate,
+    dueDate: dateUtil(item.expirationDate).formattedDate,
   }));
 
   return (
     <SidebarLayout userRole='teacher'>
       <Card
+        titleLeft='아이템 목록'
         titleRight={
           <div className='flex flex-row items-center gap-2'>
+            {itemRequestList.length > 0 && (
+              <div className='relative inline-block'>
+                <Button onClick={() => setShowItemUseRequestModal(true)}>아이템 사용 신청</Button>
+                <span className='absolute top-1 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white' />
+              </div>
+            )}
             <button
               className='flex items-center justify-center'
               onClick={() => setShowCreateModal(true)}
@@ -121,9 +160,16 @@ const TeacherShop = () => {
         <TableView columns={columns} rows={rows} onRowClick={clickRow} />
       </Card>
 
-      {showCreateModal && <CreateModal closeModal={closeModal} />}
+      {showCreateModal && <CreateModal closeModal={closeModal} onSuccess={handleSuccess} />}
 
       {selectedItem && <ItemDetailModal item={selectedItem} closeModal={closeModal} />}
+
+      {showItemUseRequestModal && (
+        <ItemUseRequest
+          itemReuqestList={itemRequestList}
+          closeModal={() => setShowItemUseRequestModal(false)}
+        />
+      )}
     </SidebarLayout>
   );
 };

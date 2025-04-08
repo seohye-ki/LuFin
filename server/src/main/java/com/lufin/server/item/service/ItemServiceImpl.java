@@ -63,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
 		validateClassroomExists(classId);
 		List<Item> items;
 		if (member.getMemberRole() == MemberRole.TEACHER) {
-			items = itemRepository.findByClassroomId(classId);
+			items = itemRepository.findByClassroomIdOrderByStatusDesc(classId);
 		} else {
 			items = itemRepository.findByClassroomIdAndStatusTrue(classId);
 		}

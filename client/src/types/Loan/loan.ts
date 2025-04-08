@@ -16,7 +16,7 @@ export type LoanApplicationDTO = {
   productName: string;
   requiredAmount: number;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'OPEN' | 'OVERDUED' | 'CLOSED';
-  createdAt: string;
+  startedAt: string;
   dueDate: string;
 };
 

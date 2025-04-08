@@ -2,8 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Button from '../../../../components/Button/Button';
 import Card from '../../../../components/Card/Card';
 import TextField from '../../../../components/Form/TextField';
+import { addItem } from '../../../../libs/services/shop/shop.service';
 
-const CreateModal: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
+const CreateModal: React.FC<{ closeModal: () => void; onSuccess: () => void }> = ({
+  closeModal,
+  onSuccess,
+}) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [amount, setAmount] = useState('');
@@ -27,17 +31,17 @@ const CreateModal: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
     setIsFormValid(isValidName && isValidPrice && isValidAmount && isValidDate);
   }, [name, price, amount, expirationDate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
 
-    console.log('📝 생성됨:', {
-      name,
-      price: parsedPrice,
-      amount: parsedAmount,
-      expirationDate,
-    });
+    const isoDate = new Date(expirationDate).toISOString().split('.')[0];
 
+    const res = await addItem(name, parsedPrice, parsedAmount, isoDate);
+
+    if (res) {
+      onSuccess();
+    }
     closeModal();
   };
 

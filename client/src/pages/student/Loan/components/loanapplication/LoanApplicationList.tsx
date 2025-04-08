@@ -52,11 +52,11 @@ const LoanApplicationList: React.FC<LoanApplicationListProps> = ({
       startDate:
         loanApplication.status === 'PENDING'
           ? '신청 중'
-          : dateUtil(loanApplication.createdAt).formattedDate,
+          : dateUtil(loanApplication.startedAt).formattedDate,
       dueDate:
         loanApplication.status === 'PENDING'
           ? '신청 중'
-          : dateUtil(loanApplication.createdAt).formattedDate,
+          : dateUtil(loanApplication.dueDate).formattedDate,
       status: <Badge status={badgeStatus}>{label}</Badge>,
     };
   });

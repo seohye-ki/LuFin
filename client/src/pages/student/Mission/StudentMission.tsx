@@ -6,7 +6,7 @@ import MyMissionModal from './components/MyMissionModal';
 import { useStudentMissions } from './hooks/useStudentMissions';
 import { Icon } from '../../../components/Icon/Icon';
 import useMissionStore from '../../../libs/store/missionStore';
-import { MissionList, ParticipationUserInfo } from '../../../types/mission/mission';
+import { MissionList } from '../../../types/mission/mission';
 
 const StudentMission = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,8 +15,6 @@ const StudentMission = () => {
   const myMissions = useMissionStore((state) => state.myMissions);
   const availableMissions = useMissionStore((state) => state.availableMissions);
   const selectedMission = useMissionStore((state) => state.selectedMission);
-  const [participationList, setParticipationList] = useState<ParticipationUserInfo[]>([]);
-  const myMemberId = 1; // TODO: 전역 상태로 교체 예정
 
   useEffect(() => {
     getMissionList();
@@ -30,13 +28,18 @@ const StudentMission = () => {
     [getMissionDetail],
   );
 
-  const { myMissionRows, availableMissionRows, refetchParticipations } = useStudentMissions(
-    myMissions,
+  const { myMissionRows, availableMissionRows } = useStudentMissions(
+    myMissions.map((mission) => ({
+      mission,
+      participation: {
+        participationId: 0,
+        memberId: 0,
+        missionId: mission.missionId,
+        status: 'IN_PROGRESS' as const,
+      },
+    })),
     availableMissions,
-    participationList,
-    myMemberId,
     handleRowClick,
-    setParticipationList,
   );
 
   const columns = [
@@ -104,9 +107,10 @@ const StudentMission = () => {
             <MyMissionModal
               mission={selectedMission}
               onClose={() => setIsModalOpen(false)}
-              mode='apply'
+              isMyMission={myMissions.some(
+                (mission) => mission.missionId === selectedMission.missionId,
+              )}
               onSuccess={() => {
-                refetchParticipations(selectedMission.missionId);
                 setIsModalOpen(false);
               }}
             />

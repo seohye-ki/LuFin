@@ -12,7 +12,7 @@ import useAlertStore from '../../../../libs/store/alertStore';
 interface MyMissionModalProps {
   onClose: () => void;
   mission: MissionRaw;
-  mode: 'apply' | 'review';
+  isMyMission: boolean;
   participationId?: number;
   onSuccess?: () => void;
 }
@@ -20,7 +20,7 @@ interface MyMissionModalProps {
 const MyMissionModal = ({
   onClose,
   mission,
-  mode,
+  isMyMission,
   participationId,
   onSuccess,
 }: MyMissionModalProps) => {
@@ -48,7 +48,7 @@ const MyMissionModal = ({
   };
 
   const handlePrimaryAction = async () => {
-    if (mode === 'apply') {
+    if (isMyMission) {
       const result = await applyMission(mission.missionId);
       if (result.success) {
         useAlertStore
@@ -88,7 +88,7 @@ const MyMissionModal = ({
       }
     }
 
-    if (mode === 'review') {
+    if (!isMyMission) {
       if (participationId === undefined) {
         useAlertStore
           .getState()
@@ -149,7 +149,7 @@ const MyMissionModal = ({
 
   return (
     <Card
-      titleLeft={mode === 'apply' ? '수행 가능 미션' : '나의 미션'}
+      titleLeft={isMyMission ? '나의 미션' : '수행 가능 미션'}
       titleRight={<Badge status={status.status}>{status.text}</Badge>}
       titleSize='l'
       isModal
@@ -235,7 +235,7 @@ const MyMissionModal = ({
           취소
         </Button>
         <Button variant='solid' color='primary' size='md' full onClick={handlePrimaryAction}>
-          {mode === 'apply' ? '신청하기' : '리뷰 요청하기'}
+          {isMyMission ? '리뷰 요청하기' : '신청하기'}
         </Button>
       </div>
     </Card>

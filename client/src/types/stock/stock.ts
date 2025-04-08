@@ -1,48 +1,46 @@
-// types/stock.ts
-
 export interface StockProduct {
-  StockProductId: number;
-  Name: string;
-  Description: string;
-  InitialPrice: number;
-  CurrentPrice: number;
-  CreatedAt: string;
-  UpdatedAt: string;
+  stockProductId: number;
+  name: string;
+  description: string;
+  initialPrice: number;
+  currentPrice: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface StockPriceHistory {
-  StockHistoryId: number;
-  StockProductId: number;
-  UnitPrice: number;
-  CreatedAt: string;
+  stockHistoryId: number;
+  stockProductId: number;
+  price: number;
+  createdAt: string;
 }
 
 export interface StockNews {
-  StockProductId: number;
-  Content: string;
-  CreatedAt: string;
-  UpdatedAt: string;
+  stockProductId: number;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface StockTransactionRequest {
-  StockProductId: number;
-  Type: 0 | 1; // 0: 판매, 1: 구매
-  Quantity: number;
-  UnitPrice: number;
-  TotalValue: number;
+  stockProductId: number;
+  type: 0 | 1; // 0: 판매, 1: 구매
+  quantity: number;
+  price: number;
+  totalPrice: number;
 }
 
 export interface StockTransactionResponse {
-  StockHistoryId: number;
+  stockHistoryId: number;
 }
 
 export interface StockPortfolio {
-  StockProductId: number;
-  Quantity: number;
-  TotalPurchaseAmount: number;
-  TotalSellAmount: number;
-  TotalReturn: number;
-  TotalReturnRate: number;
-  CreatedAt: string;
-  UpdatedAt: string;
+  stockProductId: number;
+  quantity: number;
+  totalPurchaseAmount: number;
+  totalSellAmount: number;
+  totalReturn: number;
+  totalReturnRate: number;
+  createdAt: string;
+  updatedAt: string;
 }

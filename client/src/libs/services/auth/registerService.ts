@@ -32,17 +32,17 @@ export const registerService = {
    * 회원가입 API
    */
   register: async (data: RegisterRequest): Promise<RegisterResponse> => {
-      const response = await axiosInstance.post('/register', data);
-      return response.data;
+    const response = await axiosInstance.post('/register', data);
+    return response.data;
   },
 
   /**
    * 이메일 중복 확인
    */
   checkEmail: async (email: string): Promise<EmailCheckResponse> => {
-      const response = await axiosInstance.get(`/register/emails`, {
-        params: { email },
-      });
-      return response.data;
+    const response = await axiosInstance.get(`/register/emails`, {
+      params: { email },
+    });
+    return response.data;
   },
 };

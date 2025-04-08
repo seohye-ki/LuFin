@@ -15,8 +15,8 @@ const SpecifiedStockGraph = ({ stock, onBack }: SpecifiedStockGraphProps) => {
   const { priceHistory } = useStockStore();
   const stockPriceInfos = useMemo(() => {
     return priceHistory.map((h) => ({
-      date: dateUtil(h.CreatedAt),
-      price: h.UnitPrice,
+      date: dateUtil(h.createdAt),
+      price: h.price,
     }));
   }, [priceHistory]);
 
@@ -25,7 +25,7 @@ const SpecifiedStockGraph = ({ stock, onBack }: SpecifiedStockGraphProps) => {
       {/* 차트 영역 */}
       <div className='flex flex-col bg-white rounded-xl p-4 w-[70%]'>
         <div className='flex justify-between items-center mb-3'>
-          <h2 className='text-h3 font-semibold text-black'>{stock.Name}</h2>
+          <h2 className='text-h3 font-semibold text-black'>{stock.name}</h2>
           <Button size='sm' variant='solid' onClick={onBack}>
             종목 현황
           </Button>

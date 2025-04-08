@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import type { IconsaxIconName } from '../Icon/Icon';
 import { useNavigate } from 'react-router-dom';
 import { paths } from '../../routes/paths';
-export type MenuType = 'home' | 'mission' | 'wallet' | 'chart' | 'dollar' | 'shop';
+export type MenuType = 'home' | 'mission' | 'chart' | 'dollar' | 'shop';
 
 interface MenuProps {
   isActive?: boolean;
@@ -19,10 +19,6 @@ const menuConfig: Record<MenuType, { icon: IconsaxIconName; text: string }> = {
   mission: {
     icon: 'TaskSquare',
     text: '미션',
-  },
-  wallet: {
-    icon: 'Wallet',
-    text: '적금',
   },
   chart: {
     icon: 'ChartSquare',
@@ -50,10 +46,6 @@ const Menu = ({ isActive = false, type, userRole }: MenuProps) => {
     mission: {
       student: paths.STUDENT_MISSION,
       teacher: paths.TEACHER_MISSION,
-    },
-    wallet: {
-      student: paths.STUDENT_STOCK,
-      // teacher: paths.TEACHER_STOCK,
     },
     chart: {
       student: paths.STUDENT_STOCK,

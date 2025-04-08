@@ -2,7 +2,7 @@ import Menu, { MenuType } from './Menu';
 import { useLocation } from 'react-router-dom';
 import { paths } from '../../routes/paths';
 
-const menuList: MenuType[] = ['home', 'mission', 'wallet', 'chart', 'dollar', 'shop'];
+const menuList: MenuType[] = ['home', 'mission', 'chart', 'dollar', 'shop'];
 
 interface SidebarMenuProps {
   userRole: 'student' | 'teacher';
@@ -19,17 +19,13 @@ const SidebarMenu = ({ userRole }: SidebarMenuProps) => {
       student: paths.STUDENT_MISSION,
       teacher: paths.TEACHER_MISSION,
     },
-    wallet: {
-      // student: paths.STUDENT_STOCK,
-      // teacher: paths.TEACHER_STOCK,
-    },
     chart: {
       student: paths.STUDENT_STOCK,
       teacher: paths.TEACHER_STOCK,
     },
     dollar: {
       student: paths.STUDENT_LOAN,
-      // teacher: paths.TEACHER_LOAN,
+      teacher: paths.TEACHER_LOAN,
     },
     shop: {
       student: paths.STUDENT_SHOP,

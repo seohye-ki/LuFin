@@ -39,16 +39,19 @@ public class LoanController {
 
 	// 대출 상품 목록 조회
 	@GetMapping("/products")
-	public ResponseEntity<ApiResponse<List<LoanProductResponseDto>>> getLoanProducts() {
+	public ResponseEntity<ApiResponse<List<LoanProductResponseDto>>> getLoanProducts(HttpServletRequest httpRequest) {
+		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		validateClassId(classId);
 		Member member = UserContext.get();
-		List<LoanProductResponseDto> result = loanService.getLoanProducts(member);
+		List<LoanProductResponseDto> result = loanService.getLoanProducts(member, classId);
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 
 	// 대출 신청
 	@StudentOnly
 	@PostMapping("/applications")
-	public ResponseEntity<ApiResponse<LoanApplicationDetailDto>> createLoanApplication(HttpServletRequest httpRequest, @RequestBody @Valid LoanApplicationRequestDto request) {
+	public ResponseEntity<ApiResponse<LoanApplicationDetailDto>> createLoanApplication(HttpServletRequest httpRequest,
+		@RequestBody @Valid LoanApplicationRequestDto request) {
 		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);
 		Member member = UserContext.get();
@@ -68,7 +71,9 @@ public class LoanController {
 
 	// 대출 내역 상세 조회
 	@GetMapping("/applications/{loanApplicationId}")
-	public ResponseEntity<ApiResponse<LoanApplicationDetailDto>> getLoanApplicationDetail(@PathVariable Integer loanApplicationId, HttpServletRequest httpRequest) {
+	public ResponseEntity<ApiResponse<LoanApplicationDetailDto>> getLoanApplicationDetail(
+		@PathVariable Integer loanApplicationId,
+		HttpServletRequest httpRequest) {
 		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);
 		Member member = UserContext.get();
@@ -79,12 +84,17 @@ public class LoanController {
 	// 대출 신청 승인 거절
 	@TeacherOnly
 	@PatchMapping("/applications/{loanApplicationId}")
-	public ResponseEntity<ApiResponse<LoanApplicationDetailDto>> approveOrRejectLoanApplication(@PathVariable Integer loanApplicationId,
-		HttpServletRequest httpRequest, @RequestBody @Valid LoanApplicationApprovalDto request) {
+	public ResponseEntity<ApiResponse<LoanApplicationDetailDto>> approveOrRejectLoanApplication(
+		@PathVariable Integer loanApplicationId, HttpServletRequest httpRequest,
+		@RequestBody @Valid LoanApplicationApprovalDto request) {
 		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);
 		Member member = UserContext.get();
-		LoanApplicationDetailDto result = loanService.approveOrRejectLoanApplication(request, loanApplicationId, member, classId);
+		LoanApplicationDetailDto result = loanService.approveOrRejectLoanApplication(
+			request,
+			loanApplicationId,
+			member,
+			classId);
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 }

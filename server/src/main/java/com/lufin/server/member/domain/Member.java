@@ -68,22 +68,25 @@ public class Member {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
-	public static Member createStudent(String email, String name, String password, String secondaryPassword) {
-		return create(email, name, password, secondaryPassword, MemberRole.STUDENT);
+	public static Member createStudent(String email, String name, String password, String secondaryPassword,
+		String profileImage) {
+		return create(email, name, password, secondaryPassword, MemberRole.STUDENT, profileImage);
 	}
 
-	public static Member createTeacher(String email, String name, String password, String secondaryPassword) {
-		return create(email, name, password, secondaryPassword, MemberRole.TEACHER);
+	public static Member createTeacher(String email, String name, String password, String secondaryPassword,
+		String profileImage) {
+		return create(email, name, password, secondaryPassword, MemberRole.TEACHER, profileImage);
 	}
 
 	private static Member create(String email, String name, String password, String secondaryPassword,
-		MemberRole role) {
+		MemberRole role, String profileImage) {
 		isValidEmail(email);
 		Member member = new Member();
 		member.email = email;
 		member.name = name;
 		member.memberRole = role;
 		member.auth = new MemberAuth(password, secondaryPassword);
+		member.profileImage = profileImage;
 		return member;
 	}
 

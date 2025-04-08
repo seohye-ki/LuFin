@@ -1,4 +1,4 @@
-package com.lufin.server.member.dto;
+package com.lufin.server.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

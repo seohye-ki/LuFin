@@ -11,13 +11,15 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lufin.server.auth.dto.LoginWithAssetResponse;
+import com.lufin.server.auth.factory.LoginResponseFactory;
+import com.lufin.server.auth.service.LoginFacadeService;
 import com.lufin.server.auth.service.LoginService;
 import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.common.utils.TokenUtils;
 import com.lufin.server.member.domain.Member;
-import com.lufin.server.member.dto.LoginResponse;
 import com.lufin.server.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -35,25 +37,24 @@ public class LoginServiceImpl implements LoginService {
 	private final MemberClassroomRepository memberClassroomRepository;
 	private final TokenUtils tokenUtils;
 	private final RedisTemplate<String, String> redisTemplate;
+	private final LoginResponseFactory loginResponseFactory;
+	private final LoginFacadeService loginFacadeService;
 
 	@Transactional
 	@Override
-	public LoginResponse login(String inputEmail, String inputPassword) {
-
+	public LoginWithAssetResponse login(String inputEmail, String inputPassword) {
 		String failKey = LOGIN_FAIL_PREFIX + inputEmail;
 		log.info("[로그인 요청] 이메일: {}", maskEmail(inputEmail));
 
-		// 로그인 차단 여부 확인
 		loginFailCheck(failKey);
 
 		try {
-			// 입력값 검증
 			isValidEmail(inputEmail);
 			isValidPassword(inputPassword);
 		} catch (BusinessException e) {
 			log.warn("🔐[로그인 실패 - 입력값 오류] 이메일: {}, 이유: {}", maskEmail(inputEmail), e.getMessage());
 			increaseLoginFailCount(failKey);
-			throw e; // 다시 던져서 전역 예외 처리됨
+			throw e;
 		}
 
 		Member member = memberRepository.findByEmail(inputEmail)
@@ -69,26 +70,28 @@ public class LoginServiceImpl implements LoginService {
 			throw new BusinessException(INVALID_CREDENTIALS);
 		}
 
-		// 로그인 성공 시 실패 카운트 초기화
 		redisTemplate.delete(failKey);
 		log.info("[로그인 성공] 사용자 ID: {}", member.getId());
 
-		// Optional<MemberClassroom> 현재 로그인한 멤버가 클래스에 등록되어 있다면 값이 있고, 아니면 비어있음
 		Optional<MemberClassroom> optionalClassroom = memberClassroomRepository.findByMember_IdAndIsCurrentTrue(
 			member.getId());
 		int classId = optionalClassroom.map(c -> c.getClassroom().getId()).orElse(0);
 
-		// Token 발급
 		Result getTokens = createTokens(member, optionalClassroom);
-
-		// 로그인 성공
 		member.updateLastLogin();
 
 		log.info("[로그인 완료] 사용자 ID: {}, 이름: {}, Role: {}, 소속 반: {}", member.getId(), maskName(member.getName()),
 			member.getMemberRole().name(), classId);
 
-		return new LoginResponse(getTokens.accessToken(), getTokens.refreshToken(), member.getMemberRole().name(),
-			classId);
+		int totalAsset = loginFacadeService.getTotalAsset(member.getId(), classId);
+
+		return loginResponseFactory.createLoginFlatResponse(
+			member,
+			classId,
+			getTokens.accessToken(),
+			getTokens.refreshToken(),
+			totalAsset
+		);
 	}
 
 	// 사용자 정보로 액세스 토큰과 리프레시 토큰을 생성

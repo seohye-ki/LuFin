@@ -1,9 +1,9 @@
 package com.lufin.server.auth.service;
 
-import com.lufin.server.member.dto.LoginResponse;
+import com.lufin.server.auth.dto.LoginWithAssetResponse;
 
 public interface LoginService {
 
 	// 로그인
-	LoginResponse login(String username, String password);
+	LoginWithAssetResponse login(String username, String password);
 }

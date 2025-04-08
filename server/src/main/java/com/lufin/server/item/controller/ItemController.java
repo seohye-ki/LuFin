@@ -39,7 +39,7 @@ public class ItemController {
 	@PostMapping
 	public ResponseEntity<ApiResponse<ItemResponseDto>> createItem(HttpServletRequest httpRequest,
 		@RequestBody @Valid ItemDto request) {
-		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		Integer classId = (Integer)httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);
 		ItemResponseDto result = itemService.createItem(request, classId);
 		return ResponseEntity.status(201).body(ApiResponse.success(result));
@@ -48,7 +48,7 @@ public class ItemController {
 	// 아이템 전체 조회
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<ItemResponseDto>>> getItems(HttpServletRequest httpRequest) {
-		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		Integer classId = (Integer)httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);
 		Member member = UserContext.get();
 		List<ItemResponseDto> result = itemService.getItems(member, classId);
@@ -60,7 +60,7 @@ public class ItemController {
 	@GetMapping("/{itemId}")
 	public ResponseEntity<ApiResponse<ItemResponseDto>> getItemDetail(HttpServletRequest httpRequest,
 		@PathVariable Integer itemId) {
-		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		Integer classId = (Integer)httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);
 		ItemResponseDto result = itemService.getItemDetail(itemId, classId);
 		return ResponseEntity.ok(ApiResponse.success(result));
@@ -71,7 +71,7 @@ public class ItemController {
 	@PutMapping("/{itemId}")
 	public ResponseEntity<ApiResponse<ItemResponseDto>> updateItem(HttpServletRequest httpRequest,
 		@PathVariable Integer itemId, @RequestBody @Valid ItemDto request) {
-		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		Integer classId = (Integer)httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);
 		ItemResponseDto result = itemService.updateItem(itemId, request, classId);
 		return ResponseEntity.ok(ApiResponse.success(result));
@@ -82,9 +82,9 @@ public class ItemController {
 	@DeleteMapping("/{itemId}")
 	public ResponseEntity<ApiResponse<Void>> deleteItem(HttpServletRequest httpRequest,
 		@PathVariable Integer itemId) {
-		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		Integer classId = (Integer)httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);
 		itemService.deleteItem(itemId, classId);
-		return ResponseEntity.status(204).body(ApiResponse.success(null));
+		return ResponseEntity.status(200).body(ApiResponse.success(null));
 	}
 }

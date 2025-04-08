@@ -38,13 +38,54 @@ public class MissionServiceImpl implements MissionService {
 	private final MissionImageRepository missionImageRepository;
 	private final ClassroomRepository classroomRepository;
 
-	// TODO: 추후 캐시 추가로 조회 성능 향상 도모
+	/**
+	 * 현재 반의 내 미션 전체 조회
+	 */
+	@Override
+	public List<MissionResponseDto.MissionSummaryResponseDto> getMyMissions(Integer classId, Member currentMember) {
+		log.info("현재 반 나의 미션 전체 조회 요청: classId = {}, member = {}", classId, currentMember.getId());
+		try {
+			if (classId == null || currentMember == null) {
+				log.warn("현재 반 나의 미션 전체 조회에 필수 값이 누락되었습니다. classId: {}, member: {}", classId, currentMember.getId());
+				throw new BusinessException(MISSING_REQUIRED_VALUE);
+			}
+
+			List<Mission> result = missionRepository.findByClassIdAndMemberId(classId,
+				currentMember.getId());
+
+			if (result == null) {
+				log.warn("현재 반 나의 미션 전체 조회에 실패했습니다. classId: {}, member: {}", classId, currentMember.getId());
+				throw new BusinessException(MISSION_NOT_FOUND);
+			}
+
+			if (result.isEmpty()) {
+				return new ArrayList<>();
+			}
+
+			return result.stream()
+				.map(MissionResponseDto.MissionSummaryResponseDto::missionEntityToMissionDetailResponseDto
+				)
+				.toList();
+
+		} catch (BusinessException e) {
+			throw e;
+		} catch (Exception e) {
+			log.error("An error occurred: {}", e.getMessage());
+			throw new BusinessException(SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * 반 미션 전체 조회
+	 * @param classId
+	 * @return
+	 */
 	@Override
 	public List<MissionResponseDto.MissionSummaryResponseDto> getAllMissions(Integer classId) {
-		log.info("미션 전체 조회 요청: classId: {}", classId);
+		log.info("반 미션 전체 조회 요청: classId = {}", classId);
 		try {
 			if (classId == null) {
-				log.error("미션 상세 조회에 필수 값이 누락되었습니다. classId: ");
+				log.error("반 미션 전체 조회에 필수 값이 누락되었습니다. classId: ");
 				throw new BusinessException(MISSING_REQUIRED_VALUE);
 			}
 
@@ -53,7 +94,7 @@ public class MissionServiceImpl implements MissionService {
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {
-			log.error("An error occurred: {}", e.getMessage(), e);
+			log.error("An error occurred: {}", e.getMessage());
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
@@ -61,10 +102,10 @@ public class MissionServiceImpl implements MissionService {
 	@Override
 	public MissionResponseDto.MissionDetailResponseDto getMissionById(Integer classId, Integer missionId,
 		MemberRole role) {
-		log.info("미션 상세 조회 요청: classId: {}, missionId: {}, role: {}", classId, missionId, role);
+		log.info("미션 상세 조회 요청: classId = {}, missionId = {}, role = {}", classId, missionId, role);
 
 		if (classId == null || missionId == null || role == null) {
-			log.error("미션 상세 조회에 필수 값이 누락되었습니다. classId: {}, missionId: {}", classId, missionId);
+			log.error("미션 상세 조회에 필수 값이 누락되었습니다. classId = {}, missionId = {}", classId, missionId);
 			throw new BusinessException(MISSING_REQUIRED_VALUE);
 		}
 
@@ -90,7 +131,7 @@ public class MissionServiceImpl implements MissionService {
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {
-			log.error("An error occurred: {}", e.getMessage(), e);
+			log.error("An error occurred: {}", e.getMessage());
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
@@ -148,11 +189,17 @@ public class MissionServiceImpl implements MissionService {
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {
-			log.error("An error occurred: {}", e.getMessage(), e);
+			log.error("An error occurred: {}", e.getMessage());
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
 
+	/**
+	 * 미션 삭제
+	 * @param classId
+	 * @param missionId
+	 * @param role
+	 */
 	@Transactional
 	@TeacherOnly
 	@Override
@@ -176,11 +223,19 @@ public class MissionServiceImpl implements MissionService {
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {
-			log.error("An error occurred: {}", e.getMessage(), e);
+			log.error("An error occurred: {}", e.getMessage());
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}
 
+	/**
+	 * 미션 수정
+	 * @param requestDto
+	 * @param classId
+	 * @param missionId
+	 * @param role
+	 * @return
+	 */
 	@Transactional
 	@Override
 	public MissionResponseDto.MissionDetailResponseDto putMission(
@@ -217,7 +272,7 @@ public class MissionServiceImpl implements MissionService {
 		} catch (BusinessException e) {
 			throw e;
 		} catch (Exception e) {
-			log.error("An error occurred during mission modification: {}", e.getMessage(), e);
+			log.error("An error occurred during mission modification: {}", e.getMessage());
 			throw new BusinessException(SERVER_ERROR);
 		}
 	}

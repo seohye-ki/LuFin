@@ -15,4 +15,6 @@ public interface CreditScoreRepository extends JpaRepository<CreditScore, Intege
 			WHERE cs.member.id = :memberId AND mc.classroom.id = :classId
 		""")
 	Optional<CreditScore> findByMemberIdAndClassId(int memberId, int classId);
+
+	Optional<CreditScore> findByMemberId(int memberId);
 }

@@ -19,6 +19,7 @@ import com.lufin.server.stock.dto.StockNewsResponseDto;
 import com.lufin.server.stock.service.StockNewsService;
 
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,12 +29,12 @@ public class StockNewsController {
 	private final StockNewsService stockNewsService;
 
 	/**
-	 * 특정 주식 공시 정보 목록 조회
+	 * 공시 정보 목록 조회
 	 * @param productId
 	 */
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<StockNewsResponseDto.NewsInfoDto>>> getAllNews(
-		@PathVariable @Positive Integer productId
+		@PathVariable @PositiveOrZero Integer productId
 	) {
 		List<StockNewsResponseDto.NewsInfoDto> result = stockNewsService.getAllNews(productId);
 

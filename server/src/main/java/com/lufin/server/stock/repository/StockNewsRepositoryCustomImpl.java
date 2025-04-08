@@ -9,6 +9,8 @@ import com.lufin.server.stock.domain.QStockNews;
 import com.lufin.server.stock.domain.QStockProduct;
 import com.lufin.server.stock.domain.StockNews;
 import com.lufin.server.stock.dto.StockNewsResponseDto;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -68,6 +70,31 @@ public class StockNewsRepositoryCustomImpl implements StockNewsRepositoryCustom 
 		}
 
 		return StockNewsResponseDto.NewsInfoDto.stockNewsEntityToNewsInfoDto(newsEntity);
+	}
+
+	/**
+	 * 모든 stockProduct에 대한 가장 최근 뉴스 조회
+	 */
+	@Override
+	public List<StockNews> findLatestNewsForAllStockProducts() {
+		QStockNews stockNews = QStockNews.stockNews;
+		QStockProduct stockProduct = QStockProduct.stockProduct;
+		QStockNews subStockNews = new QStockNews("subStockNews");
+
+		// 서브쿼리와 조인을 활용하여 각 stockProduct별 최신 뉴스 조회
+		return queryFactory
+			.selectFrom(stockNews)
+			.leftJoin(stockNews.stockProduct, stockProduct).fetchJoin()
+			.where(
+				Expressions.list(stockNews.stockProduct.id, stockNews.createdAt).in(
+					JPAExpressions // 서브쿼리
+						.select(subStockNews.stockProduct.id,
+							subStockNews.createdAt.max()) // 각 상품 ID와 해당 상품의 가장 최근 일시 선택
+						.from(subStockNews)
+						.groupBy(subStockNews.stockProduct.id) // 상품 ID 별로 그룹화
+				)
+			)
+			.fetch();
 	}
 
 }

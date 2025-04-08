@@ -13,6 +13,7 @@ export const paths = {
   TEACHER_CLASSROOM: '/classroom/teacher',
   STUDENT_CLASSROOM: '/classroom',
   STUDENT_LOAN: '/loan',
+  TEACHER_LOAN: '/loan/teacher',
   STUDENT_DASHBOARD: '/dashboard',
   TEACHER_DASHBOARD: '/dashboard/teacher',
 } as const;

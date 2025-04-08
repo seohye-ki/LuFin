@@ -5,5 +5,5 @@ import com.lufin.server.member.domain.Member;
 
 public interface CreditScoreService {
 
-	void applyScoreChange(Member member, int delta, CreditEventType eventType);
+	void applyScoreChange(Member member, int delta, CreditEventType eventType, int classId);
 }

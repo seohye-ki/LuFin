@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.common.exception.BusinessException;
-import com.lufin.server.credit.domain.CreditScore;
 import com.lufin.server.credit.repository.CreditScoreRepository;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.domain.MemberRole;
@@ -60,9 +59,6 @@ public class RegisterServiceImpl implements RegisterService {
 				request.name(),
 				request.password(),
 				request.secondaryPassword());
-			// 학생의 경우 신용 등급 설정
-			CreditScore creditScore = CreditScore.init(member);
-			creditScoreRepository.save(creditScore);
 		} else if (request.role().equals(MemberRole.TEACHER)) {
 			member = Member.createTeacher(
 				request.email(),

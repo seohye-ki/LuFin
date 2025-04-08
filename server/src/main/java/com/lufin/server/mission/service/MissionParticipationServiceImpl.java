@@ -241,7 +241,8 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 						creditScoreService.applyScoreChange(
 							participation.getMember(),
 							missionFailureCreditScore,
-							CreditEventType.MISSION_FAILURE
+							CreditEventType.MISSION_FAILURE,
+							classId
 						);
 
 						log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
@@ -321,7 +322,8 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 				creditScoreService.applyScoreChange(
 					participation.getMember(),
 					missionSuccessCreditScore,
-					CreditEventType.MISSION_COMPLETION
+					CreditEventType.MISSION_COMPLETION,
+					classId
 				);
 				log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
 					creditService.getScore(participation.getMember().getId(), classId));

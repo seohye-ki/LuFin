@@ -1,6 +1,7 @@
 package com.lufin.server.classroom.service.impl;
 
 import static com.lufin.server.common.constants.ErrorCode.*;
+import static com.lufin.server.credit.domain.CreditEventType.*;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -26,6 +27,7 @@ import com.lufin.server.classroom.util.ClassCodeGenerator;
 import com.lufin.server.common.annotation.StudentOnly;
 import com.lufin.server.common.annotation.TeacherOnly;
 import com.lufin.server.common.exception.BusinessException;
+import com.lufin.server.credit.service.CreditScoreService;
 import com.lufin.server.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,7 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 	private final AccountService accountService;
 	private final AccountRepository accountRepository;
 	private final ResponseFactory responseFactory;
+	private final CreditScoreService creditScoreService;
 
 	@Transactional
 	@TeacherOnly
@@ -118,6 +121,10 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 		classroom.addMemberClass(addStudent);
 
 		memberClassroomRepository.save(addStudent);
+
+		// 기본 신용등급 설정
+		creditScoreService.applyScoreChange(member, 0, INIT, classroom.getId());
+
 		log.info("[학생 클래스 매핑 완료] memberId: {}, classId: {}", member.getId(), classroom.getId());
 
 		Account account = accountService.createAccountForMember(member.getId());

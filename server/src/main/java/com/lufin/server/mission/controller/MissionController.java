@@ -41,14 +41,21 @@ public class MissionController {
 	 * @return [{}, {} ...]
 	 */
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<MissionResponseDto.MissionSummaryResponseDto>>> getMissions(
+	public ResponseEntity<ApiResponse<MissionResponseDto.MissionResponseWrapperDto>> getMissions(
 		HttpServletRequest request
 	) {
 		Integer classId = (Integer)request.getAttribute("classId");
 		ValidationUtils.validateClassId(classId);
 
-		List<MissionResponseDto.MissionSummaryResponseDto> missions = missionService.getAllMissions(classId);
-		return ResponseEntity.status(200).body(ApiResponse.success(missions));
+		// 전체 미션 조회
+		List<MissionResponseDto.MissionSummaryResponseDto> AllMissionList = missionService.getAllMissions(classId);
+		// 내 미션 조회
+		List<MissionResponseDto.MissionSummaryResponseDto> myMissionList = missionService.getMyMissions(classId,
+			UserContext.get());
+
+		MissionResponseDto.MissionResponseWrapperDto wrapperDto = MissionResponseDto.MissionResponseWrapperDto.createWrapperDto(
+			myMissionList, AllMissionList);
+		return ResponseEntity.status(200).body(ApiResponse.success(wrapperDto));
 	}
 
 	/**
@@ -103,7 +110,7 @@ public class MissionController {
 	}
 
 	@DeleteMapping("/{missionId}")
-	public ResponseEntity<ApiResponse> deleteMission(
+	public ResponseEntity<ApiResponse<Void>> deleteMission(
 		@PathVariable @Positive Integer missionId,
 		HttpServletRequest request
 	) {
@@ -114,8 +121,7 @@ public class MissionController {
 		MemberRole role = currentMember.getMemberRole();
 
 		missionService.deleteMission(classId, missionId, role);
-		return ResponseEntity.noContent().build();
-
+		return ResponseEntity.status(204).body(ApiResponse.success(null));
 	}
 
 	@PutMapping("/{missionId}")

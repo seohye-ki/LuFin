@@ -34,8 +34,8 @@ public class LoanPaymentServiceImpl implements LoanPaymentService {
 	private final TransactionHistoryService transactionHistoryService;
 	private final CreditScoreService creditScoreService;
 
-	private Account getActiveAccount(Member member) {
-		return accountRepository.findOpenAccountByMemberIdWithPessimisticLock(member.getId())
+	private Account getActiveAccount(Member member, int classId) {
+		return accountRepository.findOpenAccountByMemberIdWithPessimisticLock(member.getId(), classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 
@@ -93,7 +93,7 @@ public class LoanPaymentServiceImpl implements LoanPaymentService {
 		int interestAmount = loan.calculateNextInterestAmount();
 		log.info("대출 [{}]의 이자 금액 계산: {}", loan.getId(), interestAmount);
 
-		Account account = getActiveAccount(loan.getMember());
+		Account account = getActiveAccount(loan.getMember(), loan.getClassroom().getId());
 		Account classAccount = getClassAccount(loan.getClassroom());
 		if (!isDueDate && account.getBalance() < interestAmount) {
 			log.warn("⚠️(일반일) 잔액 부족으로 이자 납부 실패 (잔액: {}, 이자: {})", account.getBalance(), interestAmount);
@@ -132,7 +132,7 @@ public class LoanPaymentServiceImpl implements LoanPaymentService {
 	}
 
 	private boolean attemptPrincipalRepayment(LoanApplication loan) {
-		Account account = getActiveAccount(loan.getMember());
+		Account account = getActiveAccount(loan.getMember(), loan.getClassroom().getId());
 		Account classAccount = getClassAccount(loan.getClassroom());
 		account.forceWithdraw(loan.getRequiredAmount());
 		log.info("대출 [{}]의 계좌에서 원금 금액 [{}] 출금 완료", loan.getId(), loan.getRequiredAmount());

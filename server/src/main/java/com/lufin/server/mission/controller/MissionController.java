@@ -121,7 +121,7 @@ public class MissionController {
 		MemberRole role = currentMember.getMemberRole();
 
 		missionService.deleteMission(classId, missionId, role);
-		return ResponseEntity.status(204).body(ApiResponse.success(null));
+		return ResponseEntity.status(200).body(ApiResponse.success(null));
 	}
 
 	@PutMapping("/{missionId}")

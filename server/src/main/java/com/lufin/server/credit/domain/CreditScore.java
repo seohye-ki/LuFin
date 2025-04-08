@@ -2,7 +2,7 @@ package com.lufin.server.credit.domain;
 
 import java.time.LocalDateTime;
 
-import com.lufin.server.member.domain.Member;
+import com.lufin.server.classroom.domain.MemberClassroom;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,13 +28,13 @@ import lombok.NoArgsConstructor;
 public class CreditScore {
 
 	@Id
-	@Column(name = "member_id")
-	private Integer memberId;
+	@Column(name = "member_class_id")
+	private Integer id;
 
-	@MapsId
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "fk_creditscore_member"))
-	private Member member;
+	@MapsId
+	@JoinColumn(name = "member_class_id", foreignKey = @ForeignKey(name = "fk_credit_score_member_classroom"))
+	private MemberClassroom memberClassroom;
 
 	@Column(name = "score", nullable = false)
 	private Byte score;
@@ -59,24 +59,24 @@ public class CreditScore {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
+	private CreditScore(MemberClassroom memberClassroom) {
+		this.memberClassroom = memberClassroom;
+		this.score = 60;
+		this.grade = CreditGrade.fromScore(60);
+		this.creditStatus = 0;
+	}
+
+	public static CreditScore init(MemberClassroom memberClassroom) {
+		return new CreditScore(memberClassroom);
+	}
+
 	public CreditScoreHistory applyChange(int delta, CreditEventType eventType) {
 		int newScore = Math.max(0, Math.min(100, this.score + delta));
-		this.score = (byte) newScore;
+		this.score = (byte)newScore;
 		this.grade = CreditGrade.fromScore(newScore);
-		this.creditStatus = (byte) (newScore <= 30 ? 1 : 0);
+		this.creditStatus = (byte)(newScore <= 30 ? 1 : 0); // 30이하 도달 시 신용불량자로 자동 전환
 
-		return CreditScoreHistory.of(this.member, (byte) delta, eventType.getDisplayName());
-	}
-
-	private CreditScore(Member member) {
-		this.member = member;
-		this.score = 60;
-		this.grade = CreditGrade.fromScore(score);
-		this.creditStatus = (byte)0;
-	}
-
-	public static CreditScore init(Member member) {
-		return new CreditScore(member);
+		return CreditScoreHistory.of(this.memberClassroom, (byte)delta, eventType.getDisplayName());
 	}
 
 	@PrePersist
@@ -85,7 +85,7 @@ public class CreditScore {
 	}
 
 	@PreUpdate
-	private void setUpdatedAt() {
+	protected void setUpdatedAt() {
 		this.updatedAt = LocalDateTime.now();
 	}
 

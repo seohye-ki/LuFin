@@ -7,7 +7,8 @@ public enum CreditEventType {
 	LOAN_INTEREST_DEFAULT("대출 이자 연체"),
 	MISSION_COMPLETION("미션 수행 완료"),
 	MISSION_FAILURE("미션 수행 실패"),
-	SYSTEM_RECOVERY("회생 시스템");
+	SYSTEM_RECOVERY("회생 시스템"),
+	INIT("신용등급 초기화");
 
 	private final String displayName;
 

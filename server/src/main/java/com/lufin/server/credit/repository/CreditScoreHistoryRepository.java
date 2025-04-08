@@ -3,18 +3,12 @@ package com.lufin.server.credit.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
+import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.credit.domain.CreditScoreHistory;
 
 public interface CreditScoreHistoryRepository extends JpaRepository<CreditScoreHistory, Integer> {
 
-	@Query("""
-				SELECT h FROM CreditScoreHistory h
-				JOIN MemberClassroom mc ON h.member.id = mc.member.id
-				WHERE h.member.id = :memberId AND mc.classroom.id = :classId
-				ORDER BY h.createdAt DESC
-		""")
-	List<CreditScoreHistory> findTop10ByMemberIdAndClassIdOrderByCreatedAtDesc(int memberId, int classId);
+	List<CreditScoreHistory> findTop10ByMemberClassroomOrderByCreatedAtDesc(MemberClassroom memberClassroom);
 
 }

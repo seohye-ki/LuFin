@@ -52,25 +52,30 @@ public class LoanPaymentServiceImpl implements LoanPaymentService {
 		log.info("오늘 이자 납부 예정 대출 건수: {}", loans.size());
 
 		for (LoanApplication loan : loans) {
+			int classId = loan.getClassroom().getId();
 			if (isDueDateToday(loan)) {
 				log.info("대출 [{}]의 대출 만기일입니다.", loan.getId());
 				loan.resetOverdueCount();
 				if (attemptInterestPayment(loan, true)) {
 					log.info("대출 [{}]의 이자 납부 성공 (만기일)", loan.getId());
-					creditScoreService.applyScoreChange(loan.getMember(), 1, CreditEventType.LOAN_INTEREST_REPAYMENT);
+					creditScoreService.applyScoreChange(loan.getMember(), 1, CreditEventType.LOAN_INTEREST_REPAYMENT,
+						classId);
 				} else {
 					log.warn("⚠️ 대출 [{}]의 이자 납부 실패 (만기일)", loan.getId());
-					creditScoreService.applyScoreChange(loan.getMember(), -4 + (-2 * loan.getOverdueCount()), CreditEventType.LOAN_INTEREST_DEFAULT);
+					creditScoreService.applyScoreChange(loan.getMember(), -4 + (-2 * loan.getOverdueCount()),
+						CreditEventType.LOAN_INTEREST_DEFAULT, classId);
 				}
 			} else {
 				log.info("대출 [{}]의 대출 만기일이 아닙니다.", loan.getId());
 				if (attemptInterestPayment(loan, false)) {
 					log.info("대출 [{}]의 이자 납부 성공 (일반일)", loan.getId());
-					creditScoreService.applyScoreChange(loan.getMember(), 1, CreditEventType.LOAN_INTEREST_REPAYMENT);
+					creditScoreService.applyScoreChange(loan.getMember(), 1, CreditEventType.LOAN_INTEREST_REPAYMENT,
+						classId);
 					loan.resetOverdueCount();
 				} else {
 					log.warn("⚠️ 대출 [{}]의 이자 납부 실패 (일반일)", loan.getId());
-					creditScoreService.applyScoreChange(loan.getMember(), -4 + (-2 * loan.getOverdueCount()), CreditEventType.LOAN_INTEREST_DEFAULT);
+					creditScoreService.applyScoreChange(loan.getMember(), -4 + (-2 * loan.getOverdueCount()),
+						CreditEventType.LOAN_INTEREST_DEFAULT, classId);
 					loan.incrementOverdueCount();
 				}
 				loan.updateNextPaymentDate();
@@ -105,7 +110,7 @@ public class LoanPaymentServiceImpl implements LoanPaymentService {
 			HistoryStatus.SUCCESS,
 			"이자 납부",
 			TransactionSourceType.LOAN_INTEREST_REPAYMENT);
-		return  account.getBalance() >= 0;
+		return account.getBalance() >= 0;
 	}
 
 	@Override
@@ -146,13 +151,15 @@ public class LoanPaymentServiceImpl implements LoanPaymentService {
 	}
 
 	private void handleSuccessPrincipalRepayment(LoanApplication loan) {
-		creditScoreService.applyScoreChange(loan.getMember(), 3, CreditEventType.LOAN_PRINCIPLE_REPAYMENT);
+		creditScoreService.applyScoreChange(loan.getMember(), 3, CreditEventType.LOAN_PRINCIPLE_REPAYMENT,
+			loan.getClassroom().getId());
 		loan.close();
 		loanApplicationRepository.save(loan);
 	}
 
 	private void handleFailPrincipalRepayment(LoanApplication loan) {
-		creditScoreService.applyScoreChange(loan.getMember(), -10, CreditEventType.LOAN_PRINCIPLE_DEFAULT);
+		creditScoreService.applyScoreChange(loan.getMember(), -10, CreditEventType.LOAN_PRINCIPLE_DEFAULT,
+			loan.getClassroom().getId());
 		loan.overdue();
 		loanApplicationRepository.save(loan);
 	}

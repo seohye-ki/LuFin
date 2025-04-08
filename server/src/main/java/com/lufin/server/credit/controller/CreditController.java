@@ -27,13 +27,13 @@ public class CreditController {
 	private final CreditService creditService;
 
 	@TeacherOnly
-	@PatchMapping("/recovery/{memberId}")
+	@PatchMapping("/recovery/{userId}")
 	public ResponseEntity<ApiResponse<CreditScoreDto>> recoverCreditStatus(HttpServletRequest httpRequest,
-		@PathVariable int memberId) {
-		Integer classId = (Integer) httpRequest.getAttribute(CLASS_ID);
+		@PathVariable int userId) {
+		Integer classId = (Integer)httpRequest.getAttribute(CLASS_ID);
 		validateClassId(classId);
 		Member member = UserContext.get();
-		CreditScoreDto result = creditService.recoverCreditStatus(member, memberId, classId);
+		CreditScoreDto result = creditService.recoverCreditStatus(member, userId, classId);
 		return ResponseEntity.ok(ApiResponse.success(result));
 	}
 }

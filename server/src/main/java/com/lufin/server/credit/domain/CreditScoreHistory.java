@@ -2,7 +2,7 @@ package com.lufin.server.credit.domain;
 
 import java.time.LocalDateTime;
 
-import com.lufin.server.member.domain.Member;
+import com.lufin.server.classroom.domain.MemberClassroom;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +13,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -31,9 +30,9 @@ public class CreditScoreHistory {
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id", nullable = false,
-		foreignKey = @ForeignKey(name = "fk_credithistory_member"))
-	private Member member;
+	@JoinColumn(name = "member_class_id", nullable = false,
+		foreignKey = @ForeignKey(name = "fk_credithistory_member_classroom"))
+	private MemberClassroom memberClassroom;
 
 	@Column(name = "score_change", nullable = false)
 	private Byte scoreChange;
@@ -41,22 +40,15 @@ public class CreditScoreHistory {
 	@Column(name = "reason", nullable = false, length = 100)
 	private String reason;
 
-	@Column(name = "created_at")
-	private LocalDateTime createdAt = LocalDateTime.now();
+	@Column(name = "created_at", nullable = false)
+	private LocalDateTime createdAt;
 
-	private CreditScoreHistory(Member member, Byte scoreChange, String reason) {
-		this.member = member;
-		this.scoreChange = scoreChange;
-		this.reason = reason;
+	public static CreditScoreHistory of(MemberClassroom memberClassroom, Byte scoreChange, String reason) {
+		CreditScoreHistory history = new CreditScoreHistory();
+		history.memberClassroom = memberClassroom;
+		history.scoreChange = scoreChange;
+		history.reason = reason;
+		history.createdAt = LocalDateTime.now();
+		return history;
 	}
-
-	public static CreditScoreHistory of(Member member, Byte scoreChange, String reason) {
-		return new CreditScoreHistory(member, scoreChange, reason);
-	}
-
-	@PrePersist
-	private void setCreatedAt() {
-		this.createdAt = LocalDateTime.now();
-	}
-
 }

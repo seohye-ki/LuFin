@@ -9,6 +9,7 @@ import com.querydsl.core.annotations.QueryProjection;
 public class StockNewsResponseDto {
 	public record NewsInfoDto(
 		Integer stockNewsId,
+		Integer stockProductId,
 		String content,
 		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 		LocalDateTime createdAt,
@@ -24,7 +25,8 @@ public class StockNewsResponseDto {
 		public static NewsInfoDto stockNewsEntityToNewsInfoDto(
 			StockNews news
 		) {
-			return new NewsInfoDto(news.getId(), news.getContent(), news.getCreatedAt(), news.getUpdatedAt());
+			return new NewsInfoDto(news.getId(), news.getStockProduct().getId(), news.getContent(), news.getCreatedAt(),
+				news.getUpdatedAt());
 		}
 	}
 

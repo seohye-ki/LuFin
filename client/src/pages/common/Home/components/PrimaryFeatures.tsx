@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Tab } from '@headlessui/react';
 import clsx from 'clsx';
 import { Container } from './Container';
+import { Icon } from '../../../../components/Icon/Icon';
 import dashboard from '../../../../assets/images/mockups/dashboard.png';
 import missionStudent from '../../../../assets/images/mockups/mission_student.png';
 import loanStudent from '../../../../assets/images/mockups/loan_student.png';
@@ -22,6 +23,12 @@ const features = [
     image: missionStudent,
   },
   {
+    title: '주식 투자',
+    description:
+      '루핀의 주식 시장에서 투자 경험을 쌓으세요. 실제와 유사한 환경에서 투자 지식을 키워보세요.',
+    image: investStudent,
+  },
+  {
     title: '대출 신청',
     description:
       '루핀에서 필요한 자금을 대출받으세요. 다양한 대출 상품의 이자율과 조건을 비교하고 선택하세요.',
@@ -33,16 +40,17 @@ const features = [
       '루핀에서만 사용할 수 있는 특별한 아이템을 구매하세요. 루핀으로 다양한 혜택을 받아보세요.',
     image: item,
   },
-  {
-    title: '주식 투자',
-    description:
-      '루핀의 주식 시장에서 투자 경험을 쌓으세요. 실제와 유사한 환경에서 투자 지식을 키워보세요.',
-    image: investStudent,
-  },
 ];
 
 export function PrimaryFeatures() {
   const [tabOrientation, setTabOrientation] = useState<'horizontal' | 'vertical'>('horizontal');
+
+  const scrollToNextSection = () => {
+    const nextSection = document.getElementById('cta-section');
+    if (nextSection) {
+      nextSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     const lgMediaQuery = window.matchMedia('(min-width: 1024px)');
@@ -61,27 +69,22 @@ export function PrimaryFeatures() {
 
   return (
     <section
-      id='features'
+      id='next-section'
       aria-label='주요 기능'
-      className='relative overflow-hidden bg-info pt-20 pb-28 sm:py-32'
+      className='relative overflow-hidden bg-info pt-10 pb-28'
     >
-      <Container className='relative'>
+      <Container className='relative min-h-[720px] flex flex-col'>
         <div className='max-w-2xl md:mx-auto md:text-center xl:max-w-none'>
           <h2 className='font-pretendard text-h1 font-bold tracking-tight text-white'>
-            <span className='block'>루핀</span>
-            <span className='mt-2 block font-pretendard text-h2 font-medium text-light-cyan'>
-              학생을 위한 맞춤형 금융 교육 플랫폼
-            </span>
+            <span className='block'>주요 기능</span>
           </h2>
-          <p className='mt-8 font-pretendard text-p1 font-medium text-light-cyan/80 max-w-3xl mx-auto'>
-            루핀으로 시작하는 새로운 금융 교육.
-            <br className='hidden sm:inline' />
+          <h2 className='mt-4 font-pretendard text-h2 font-medium text-broken-white max-w-3xl mx-auto'>
             재정 관리부터 투자 학습까지, 학생들의 금융 생활을 한 곳에서 관리하세요.
-          </p>
+          </h2>
         </div>
 
         <Tab.Group
-          className='mt-16 grid grid-cols-1 items-center gap-y-2 pt-10 sm:gap-y-6 md:mt-20 lg:grid-cols-12 lg:pt-0'
+          className='mt-16 grid grid-cols-1 items-center gap-y-2 pt-10 sm:gap-y-6 md:mt-10 lg:grid-cols-12 lg:pt-0'
           vertical={tabOrientation === 'vertical'}
         >
           {({ selectedIndex }) => (
@@ -101,10 +104,10 @@ export function PrimaryFeatures() {
                       <h3>
                         <Tab
                           className={clsx(
-                            'font-pretendard text-h3 font-medium outline-none',
+                            'font-pretendard text-h2 font-medium outline-none',
                             selectedIndex === featureIndex
                               ? 'text-info lg:text-white'
-                              : 'text-light-cyan hover:text-white lg:text-white',
+                              : 'text-broken-white hover:text-white lg:text-white',
                           )}
                         >
                           <span className='absolute inset-0 rounded-full lg:rounded-l-xl lg:rounded-r-none' />
@@ -113,10 +116,10 @@ export function PrimaryFeatures() {
                       </h3>
                       <p
                         className={clsx(
-                          'mt-2 hidden font-pretendard text-p2 lg:block',
+                          'mt-2 hidden font-pretendard text-p1 lg:block',
                           selectedIndex === featureIndex
                             ? 'text-white'
-                            : 'text-light-cyan group-hover:text-white',
+                            : 'text-broken-white group-hover:text-white',
                         )}
                       >
                         {feature.description}
@@ -148,6 +151,15 @@ export function PrimaryFeatures() {
             </>
           )}
         </Tab.Group>
+        <div className='absolute -bottom-20 left-1/2 transform -translate-x-1/2 cursor-pointer animate-gentle-bounce'>
+          <button 
+            onClick={scrollToNextSection}
+            className='p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:bg-white transition-colors'
+            aria-label='다음 섹션으로 이동'
+          >
+            <Icon name='ArrowDown2' size={32} color='info' />
+          </button>
+        </div>
       </Container>
     </section>
   );

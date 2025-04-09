@@ -42,9 +42,9 @@ export const registerService = {
    * 이메일 중복 확인
    */
   checkEmail: async (email: string): Promise<EmailCheckResponse> => {
-      const response = await axiosInstance.get(`/register/emails`, {
-        params: { email },
-      });
-      return response.data;
+    const response = await axiosInstance.get(`/register/emails`, {
+      params: { email },
+    });
+    return response.data;
   },
 };

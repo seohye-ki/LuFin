@@ -154,10 +154,10 @@ const TeacherDashboard = () => {
 
   const handleApproveRecovery = async () => {
     if (!selectedStudent) return;
-    
+
     try {
       const response = await CreditService.approveRecovery(selectedStudent.id);
-      
+
       if (response.isSuccess) {
         // 성공적으로 회생 승인이 되었을 때 대시보드 데이터를 새로 불러옴
         const dashboardResponse = await DashboardService.getTeacherDashboard();

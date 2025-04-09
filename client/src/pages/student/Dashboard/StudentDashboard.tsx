@@ -195,11 +195,19 @@ const StudentDashboard = () => {
           />
           <MissionSection
             completedCount={dashboardData.totalCompletedMissions}
-            currentMission={dashboardData.ongoingMissions[0] ? {
-              name: dashboardData.ongoingMissions[0].title,
-              reward: dashboardData.ongoingMissions[0].wage,
-              daysLeft: Math.ceil((new Date(dashboardData.ongoingMissions[0].missionDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
-            } : undefined}
+            currentMission={
+              dashboardData.ongoingMissions[0]
+                ? {
+                    name: dashboardData.ongoingMissions[0].title,
+                    reward: dashboardData.ongoingMissions[0].wage,
+                    daysLeft: Math.ceil(
+                      (new Date(dashboardData.ongoingMissions[0].missionDate).getTime() -
+                        new Date().getTime()) /
+                        (1000 * 60 * 60 * 24),
+                    ),
+                  }
+                : undefined
+            }
             totalReward={dashboardData.totalWage}
           />
         </section>

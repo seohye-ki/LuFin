@@ -33,9 +33,9 @@ export const registerService = {
    * 회원가입 API
    */
   register: async (data: RegisterRequest): Promise<RegisterResponse> => {
-      const profileImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(data.email)}`;
-      const response = await axiosInstance.post('/register', { ...data, profileImage });
-      return response.data;
+    const profileImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(data.email)}`;
+    const response = await axiosInstance.post('/register', { ...data, profileImage });
+    return response.data;
   },
 
   /**

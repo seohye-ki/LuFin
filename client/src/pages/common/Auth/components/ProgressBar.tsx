@@ -1,11 +1,11 @@
 interface ProgressBarProps {
   currentStep: number;
-  totalSteps: number;
   stepTitles: string[];
 }
 
-export default function ProgressBar({ currentStep, totalSteps, stepTitles }: ProgressBarProps) {
-  const progress = (currentStep / totalSteps) * 100;
+export default function ProgressBar({ currentStep, stepTitles }: ProgressBarProps) {
+  const progressPercentages = [10, 25, 50, 75, 100];
+  const progress = progressPercentages[currentStep - 1] || 0;
 
   return (
     <div className='mb-10'>

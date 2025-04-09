@@ -98,3 +98,47 @@
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+
+/* 모든 input[type=number]에서 스핀 버튼 제거 */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+/* global.css */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #c3ebfa; /* 파스텔 핑크 느낌 */
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #c3ebfa; /* hover 시 살짝 진해짐 */
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #c3ebfa transparent; /* Firefox용 */
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}

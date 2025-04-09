@@ -14,6 +14,7 @@ interface AuthState {
   userName: string | null;
   userProfileImage: string | null;
   totalAsset: number;
+  activeClassId: number | null;
 
   // 액션
   login: (credentials: LoginRequest) => Promise<{
@@ -51,6 +52,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
   userName: null,
   userProfileImage: null,
   totalAsset: 0,
+  activeClassId: null,
 
   /**
    * 로그인 처리
@@ -76,6 +78,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
           userName: result.name,
           userProfileImage: await fileService.getImageUrl(result.profileImage as string),
           totalAsset: result.totalAsset,
+          activeClassId: result.classId,
         });
 
         return {

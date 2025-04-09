@@ -1,6 +1,11 @@
-import axiosInstance from '../axios';
+import useAuthStore from '../../store/authStore';
+import useClassroomStore from '../../store/classroomStore';
+import axiosInstance, { tokenUtils } from '../axios';
 
-// Types
+// ---------------------
+// 타입 정의
+// ---------------------
+
 export interface Classroom {
   classId: number;
   name: string;
@@ -58,7 +63,22 @@ export interface ClassCodeResponse {
 }
 
 export interface ClassCodeEntryResponse {
+  token: {
+    accessToken: string;
+    refreshToken: string;
+    classId: number;
+  };
+}
+
+export interface ChangeClassToken {
   accessToken: string;
+  refreshToken: string;
+  role: string;
+}
+
+export interface ChangeCurrentClassResponse {
+  token: ChangeClassToken;
+  classInfo: Classroom;
 }
 
 export interface ApiResponse<T> {
@@ -66,7 +86,10 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-// API functions
+// ---------------------
+// API 함수
+// ---------------------
+
 export const classroomService = {
   // 클래스 목록 조회
   getClassrooms: async (): Promise<ApiResponse<Classroom[]>> => {
@@ -99,10 +122,18 @@ export const classroomService = {
   },
 
   // 활성화된 클래스 변경
-  changeCurrentClass: async (classId: number): Promise<ApiResponse<Classroom>> => {
-    const response = await axiosInstance.post<ApiResponse<Classroom>>('/classes/current/change', {
-      classId,
-    });
+  changeCurrentClass: async (classId: number): Promise<ApiResponse<ChangeCurrentClassResponse>> => {
+    const response = await axiosInstance.post<ApiResponse<ChangeCurrentClassResponse>>(
+      '/classes/current/change',
+      { classId },
+    );
+
+    const { token } = response.data.data;
+
+    tokenUtils.setToken('accessToken', token.accessToken);
+    tokenUtils.setToken('refreshToken', token.refreshToken);
+    tokenUtils.setToken('userRole', token.role);
+
     return response.data;
   },
 
@@ -118,6 +149,11 @@ export const classroomService = {
     const response = await axiosInstance.post<ApiResponse<ClassCodeEntryResponse>>('/auth/class', {
       code,
     });
+
+    const { accessToken, refreshToken, classId } = response.data.data.token;
+
+    const authStore = useAuthStore.getState();
+    authStore.setTokens(accessToken, refreshToken, classId);
     return response.data;
   },
 };

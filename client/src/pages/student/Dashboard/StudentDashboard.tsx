@@ -10,6 +10,7 @@ import MissionSection from './components/MissionSection';
 import AssetCard from './components/AssetCard';
 import RecoveryApplicationModal from './components/RecoveryApplicationModal';
 import axiosInstance from '../../../libs/services/axios';
+import useClassroomStore from '../../../libs/store/classroomStore';
 
 // Dashboard API response type
 interface DashboardData {
@@ -67,12 +68,22 @@ const StudentDashboard = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
+  const { currentClassId } = useClassroomStore();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get('/dashboards/my');
+
+        const activeClassId = sessionStorage.getItem('classId');
+
+        console.log(activeClassId);
+        console.log(currentClassId);
+
+        const response =
+          currentClassId === Number(activeClassId)
+            ? await axiosInstance.get('/dashboards/my')
+            : await axiosInstance.get(`/dashboards/my?classId=${currentClassId}`);
 
         if (response.data.isSuccess) {
           setDashboardData(response.data.data);

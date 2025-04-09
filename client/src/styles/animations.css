@@ -1,0 +1,134 @@
+/**
+ * 캐러셀 슬라이드 애니메이션
+ * 
+ * 원리: 이미지가 차례대로 부드럽게 전환되는 캐러셀 방식
+ * 순서: 
+ * 1. 이미지 입장 (오른쪽에서 중앙으로)
+ * 2. 이미지 표시 (중앙에 고정)
+ * 3. 이미지 퇴장 (중앙에서 왼쪽으로) + 다음 이미지 입장 (동시에 진행)
+ * 
+ * 각 이미지는 전체 시간의 25%를 차지하며 겹치지 않게 표시
+ */
+@keyframes slideCarousel {
+  /* 대기 상태 (이전 슬라이드가 표시되는 동안) */
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+    z-index: 1;
+  }
+  /* 입장 시작 */
+  20% {
+    transform: translateX(100%);
+    opacity: 0;
+    z-index: 2;
+  }
+  /* 입장 완료 */
+  25% {
+    transform: translateX(0);
+    opacity: 1;
+    z-index: 2;
+  }
+  /* 표시 유지 */
+  45% {
+    transform: translateX(0);
+    opacity: 1;
+    z-index: 2;
+  }
+  /* 퇴장 완료 */
+  50% {
+    transform: translateX(-100%);
+    opacity: 0;
+    z-index: 2;
+  }
+  /* 대기 상태 유지 (다른 슬라이드가 표시되는 동안) */
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+    z-index: 1;
+  }
+}
+
+/**
+ * 슬라이드 컨테이너 스타일
+ * 
+ * - position: relative: 자식 요소가 이 컨테이너 기준으로 배치됨
+ * - width: 100%: 부모 요소의 너비에 맞춤 (확대/축소는 transform: scale()로 조절)
+ * - height: 100%: 부모 요소의 높이에 맞춤
+ * - overflow: hidden: 컨테이너 바깥으로 요소가 넘치지 않도록 함
+ */
+.slide-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/**
+ * 슬라이드 아이템 스타일
+ * 
+ * - position: absolute: 컨테이너 내에서 절대 위치로 배치됨
+ * - opacity: 0: 기본적으로 모든 슬라이드는 투명 상태에서 시작
+ * - z-index: 적절한 레이어 순서로 슬라이드 표시
+ */
+.slide-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+/**
+ * 각 슬라이드 아이템의 애니메이션 타이밍 (4개 슬라이드 최적화)
+ * 
+ * - 전체 순환 시간: 20초 (4개 슬라이드 × 5초)
+ * - 각 슬라이드마다 정확히 5초 간격으로 순차 진행
+ * 
+ * 슬라이드 개수 변경 시:
+ * 1. 전체 시간은 (슬라이드 개수 × 5초)로 유지
+ * 2. animation-delay 값을 (n × 5초)로 설정
+ * 3. @keyframes의 퍼센트 값은 그대로 유지 (상대적 비율로 계산됨)
+ */
+.slide-item:nth-child(1) {
+  animation: slideCarousel 20s infinite;
+}
+
+.slide-item:nth-child(2) {
+  animation: slideCarousel 20s infinite;
+  animation-delay: 5s; /* 첫 번째 슬라이드 후 5초 지점에서 시작 */
+}
+
+.slide-item:nth-child(3) {
+  animation: slideCarousel 20s infinite;
+  animation-delay: 10s; /* 두 번째 슬라이드 후 5초 지점에서 시작 */
+}
+
+.slide-item:nth-child(4) {
+  animation: slideCarousel 20s infinite;
+  animation-delay: 15s; /* 세 번째 슬라이드 후 5초 지점에서 시작 */
+}
+
+/**
+ * 부드러운 바운스 애니메이션
+ * 
+ * 화살표 버튼 등에 사용되는 부드러운 상하 움직임
+ * 
+ * 주요 파라미터:
+ * - translateY(-3px): 위로 움직이는 높이 (값이 클수록 크게 움직임)
+ * - 2s: 애니메이션 주기 (값이 작을수록 빠르게 움직임)
+ * - ease-in-out: 부드러운 가속/감속 효과
+ */
+@keyframes gentleBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.animate-gentle-bounce {
+  animation: gentleBounce 2s ease-in-out infinite;
+}

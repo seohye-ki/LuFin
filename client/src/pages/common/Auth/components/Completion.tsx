@@ -8,7 +8,7 @@ interface CompletionProps {
 export default function Completion({ userType }: CompletionProps) {
   return (
     <div className='space-y-10 transition-all duration-300'>
-      <div className='flex flex-col items-center text-center'>
+      <div className='flex flex-col items-center text-center pb-10'>
         <div className='w-40 h-40 mb-8'>
           <img src={lufinCoin} alt='루핀 코인' className='w-full h-full' />
         </div>

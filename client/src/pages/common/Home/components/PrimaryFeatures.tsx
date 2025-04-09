@@ -152,7 +152,7 @@ export function PrimaryFeatures() {
           )}
         </Tab.Group>
         <div className='absolute -bottom-20 left-1/2 transform -translate-x-1/2 cursor-pointer animate-gentle-bounce'>
-          <button 
+          <button
             onClick={scrollToNextSection}
             className='p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:bg-white transition-colors'
             aria-label='다음 섹션으로 이동'

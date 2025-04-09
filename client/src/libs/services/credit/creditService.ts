@@ -15,7 +15,9 @@ interface CreditRecoveryResponse {
 
 export const CreditService = {
   approveRecovery: async (memberId: number): Promise<CreditRecoveryResponse> => {
-    const response = await axiosInstance.patch<CreditRecoveryResponse>(`/credit/recovery/${memberId}`);
+    const response = await axiosInstance.patch<CreditRecoveryResponse>(
+      `/credit/recovery/${memberId}`,
+    );
     return response.data;
-  }
-}; 
+  },
+};

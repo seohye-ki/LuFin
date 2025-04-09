@@ -98,14 +98,6 @@ export const classroomService = {
     });
   },
 
-  // 클래스 참여
-  joinClassroom: async (code: string): Promise<ApiResponse<JoinClassroomResponse>> => {
-    const response = await axiosInstance.post<ApiResponse<JoinClassroomResponse>>('/classes/join', {
-      code,
-    });
-    return response.data;
-  },
-
   // 활성화된 클래스 변경
   changeCurrentClass: async (classId: number): Promise<ApiResponse<Classroom>> => {
     const response = await axiosInstance.post<ApiResponse<Classroom>>('/classes/current/change', {
@@ -122,7 +114,7 @@ export const classroomService = {
   },
 
   // 학생 클래스 코드 입력
-  enterClassCode: async (code: string): Promise<ApiResponse<ClassCodeEntryResponse>> => {
+  joinClass: async (code: string): Promise<ApiResponse<ClassCodeEntryResponse>> => {
     const response = await axiosInstance.post<ApiResponse<ClassCodeEntryResponse>>('/auth/class', {
       code,
     });

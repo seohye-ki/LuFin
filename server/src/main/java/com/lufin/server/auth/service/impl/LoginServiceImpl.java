@@ -1,6 +1,7 @@
 package com.lufin.server.auth.service.impl;
 
 import static com.lufin.server.common.constants.ErrorCode.*;
+import static com.lufin.server.member.domain.MemberRole.*;
 import static com.lufin.server.member.util.MaskingUtil.*;
 
 import java.util.Optional;
@@ -80,7 +81,10 @@ public class LoginServiceImpl implements LoginService {
 		log.info("[로그인 완료] 사용자 ID: {}, 이름: {}, Role: {}, 소속 반: {}", member.getId(), maskName(member.getName()),
 			member.getMemberRole().name(), classId);
 
-		int totalAsset = loginFacadeService.getTotalAsset(member.getId(), classId);
+		int totalAsset = 0;
+		if (member.getMemberRole() == STUDENT) {
+			totalAsset = loginFacadeService.getTotalAsset(member.getId(), classId);
+		}
 
 		return loginResponseFactory.createLoginFlatResponse(
 			member,

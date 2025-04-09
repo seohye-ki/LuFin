@@ -311,7 +311,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			Account personalAccount = account.get();
 
 			// 클래스 계좌가 있는지 확인
-			Account classAccount = accountRepository.findByClassroomId(classId)
+			Account classAccount = accountRepository.findByClassroomIdAndMemberIdIsNull(classId)
 				.orElseThrow(() -> new BusinessException(ACCOUNT_NOT_FOUND));
 
 			participation.changeMissionStatus(status); // 상태를 성공으로 변경

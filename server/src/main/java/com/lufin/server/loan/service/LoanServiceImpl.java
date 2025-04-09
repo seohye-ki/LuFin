@@ -71,7 +71,7 @@ public class LoanServiceImpl implements LoanService {
 	}
 
 	private Account getClassAccount(Integer classId) {
-		return accountRepository.findByClassroomId(classId)
+		return accountRepository.findByClassroomIdAndMemberIdIsNull(classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 

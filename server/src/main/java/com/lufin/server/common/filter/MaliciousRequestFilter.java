@@ -37,12 +37,6 @@ public class MaliciousRequestFilter implements Filter {
 		String uri = req.getRequestURI().toLowerCase();
 		String userAgent = req.getHeader("User-Agent");
 
-		// 정상 브라우저는 무조건 통과 (화이트리스트 우선)
-		if (userAgent != null && SAFE_AGENTS.stream().anyMatch(userAgent::contains)) {
-			chain.doFilter(request, response);
-			return;
-		}
-
 		// 경로 기반 차단
 		boolean blockedPath = BLOCKED_PATHS.stream().anyMatch(uri::contains);
 
@@ -53,6 +47,12 @@ public class MaliciousRequestFilter implements Filter {
 		if (blockedPath || blockedAgent) {
 			log.warn("[차단된 요청]: URI={}, User-Agent={}", uri, userAgent);
 			res.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+			return;
+		}
+
+		// 정상 브라우저는 무조건 통과
+		if (userAgent != null && SAFE_AGENTS.stream().anyMatch(userAgent::contains)) {
+			chain.doFilter(request, response);
 			return;
 		}
 

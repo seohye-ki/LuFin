@@ -124,7 +124,7 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 
 		log.info("[학생 클래스 매핑 완료] memberId: {}, classId: {}", member.getId(), classroom.getId());
 
-		Account account = accountService.createAccountForMember(member.getId());
+		Account account = accountService.createAccountForMember(member.getId(), classroom);
 		log.info("[학생 계좌 생성 완료] memberId: {}, accountId: {}", member.getId(), account.getId());
 
 		// 토큰 발급
@@ -157,7 +157,7 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 		);
 		log.info("[클래스 정보 수정 완료] classId: {}", classroom.getId());
 
-		Account account = accountRepository.findByClassroomId(classroom.getId())
+		Account account = accountRepository.findByClassroomIdAndMemberIdIsNull(classroom.getId())
 			.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
 
 		return new ClassResponse(
@@ -232,7 +232,7 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 			});
 
 		// 계좌 먼저 조회
-		Account account = accountRepository.findByClassroomId(classId)
+		Account account = accountRepository.findByClassroomIdAndMemberIdIsNull(classId)
 			.orElseThrow(() -> {
 				log.warn("🏫[클래스 변경 실패 - 클래스 계좌 없음] classId: {}", classId);
 				return new BusinessException(ACCOUNT_NOT_FOUND);

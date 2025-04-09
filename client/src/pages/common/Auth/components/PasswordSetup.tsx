@@ -1,5 +1,7 @@
+import { useEffect, useRef } from 'react';
 import TextField from '../../../../components/Form/TextField';
 import StepButtons from './StepButtons';
+import useDebounce from '../hooks/useDebounce';
 
 interface PasswordSetupProps {
   password: string;
@@ -26,6 +28,32 @@ export default function PasswordSetup({
   onPrev,
   onNext,
 }: PasswordSetupProps) {
+  // 비밀번호 필드 디바운싱 처리
+  const debouncedPassword = useDebounce(password, 1000);
+  const debouncedConfirmPassword = useDebounce(confirmPassword, 1000);
+  
+  // 이전 값을 저장하는 ref
+  const prevPasswordRef = useRef<string>('');
+  const prevConfirmPasswordRef = useRef<string>('');
+
+  // 디바운스된 비밀번호 값이 변경될 때마다 검증
+  useEffect(() => {
+    if (debouncedPassword && debouncedPassword !== prevPasswordRef.current) {
+      prevPasswordRef.current = debouncedPassword;
+      const event = { target: { value: debouncedPassword } } as React.FocusEvent<HTMLInputElement>;
+      onBlur('password')(event);
+    }
+  }, [debouncedPassword, onBlur]);
+
+  // 디바운스된 비밀번호 확인 값이 변경될 때마다 검증
+  useEffect(() => {
+    if (debouncedConfirmPassword && debouncedConfirmPassword !== prevConfirmPasswordRef.current) {
+      prevConfirmPasswordRef.current = debouncedConfirmPassword;
+      const event = { target: { value: debouncedConfirmPassword } } as React.FocusEvent<HTMLInputElement>;
+      onBlur('confirmPassword')(event);
+    }
+  }, [debouncedConfirmPassword, onBlur]);
+
   return (
     <div className='space-y-4 transition-all duration-300'>
       <div className='space-y-4 pb-10'>
@@ -36,7 +64,6 @@ export default function PasswordSetup({
           type='password'
           value={password}
           onChange={onChange('password')}
-          onBlur={onBlur('password')}
           required
           placeholder='비밀번호를 입력해주세요'
           variant={password ? (validation.password.isValid ? 'success' : 'error') : 'normal'}
@@ -50,7 +77,6 @@ export default function PasswordSetup({
           type='password'
           value={confirmPassword}
           onChange={onChange('confirmPassword')}
-          onBlur={onBlur('confirmPassword')}
           required
           placeholder='비밀번호를 다시 입력해주세요'
           variant={

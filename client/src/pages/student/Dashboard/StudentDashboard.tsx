@@ -64,6 +64,7 @@ interface DashboardData {
 
 const StudentDashboard = () => {
   const showAlert = useAlertStore((state) => state.showAlert);
+  const hideAlert = useAlertStore((state) => state.hideAlert);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
@@ -100,11 +101,14 @@ const StudentDashboard = () => {
         'danger',
         {
           label: '회생 신청',
-          onClick: () => setShowRecoveryModal(true),
+          onClick: () => {
+            setShowRecoveryModal(true);
+            hideAlert(); // 모달을 열면서 알림 닫기
+          },
         },
       );
     }
-  }, [dashboardData, showAlert]);
+  }, [dashboardData, showAlert, hideAlert]);
 
   if (loading) {
     return (
@@ -131,92 +135,95 @@ const StudentDashboard = () => {
 
   return (
     <SidebarLayout>
-      <div className='w-full h-full flex flex-col gap-4 overflow-y-auto'>
-        {/* User Profile Section */}
-        <section className='flex gap-4 min-h-fit'>
+      <div className='w-full h-full flex gap-4 overflow-hidden'>
+        {/* Main Content */}
+        <div className='flex-1 flex flex-col gap-4 overflow-y-auto pr-2'>
+          {/* Credit Score and Assets Section */}
+          <section className='flex gap-4 min-h-[280px]'>
+            <div className='flex-1'>
+              <CreditScoreCard
+                userName={currentUserName}
+                creditScore={dashboardData.creditScore}
+                creditRating={dashboardData.creditGrade}
+                recentActivities={dashboardData.creditHistories.map((history) => ({
+                  type: history.scoreChange > 0 ? 'increase' : 'decrease',
+                  amount: Math.abs(history.scoreChange),
+                  description: history.reason,
+                  date: history.changedAt,
+                }))}
+              />
+            </div>
+            <div className='flex-1'>
+              <AssetCard
+                assets={{
+                  cash: dashboardData.cash,
+                  stock: dashboardData.stock,
+                  loan: dashboardData.loan,
+                }}
+                totalAsset={dashboardData.totalAsset}
+              />
+            </div>
+          </section>
+
+          {/* Financial Summary Section */}
+          <section className='flex gap-4 min-h-fit'>
+            <StatCard
+              title={dashboardData.consumptionStat.label}
+              amount={dashboardData.consumptionStat.amount}
+              trend={{
+                value: dashboardData.consumptionStat.changeRate,
+                isPositive: dashboardData.consumptionStat.isPositive,
+              }}
+            />
+
+            <StatCard
+              title={dashboardData.investmentStat.label}
+              amount={dashboardData.investmentStat.amount}
+              trend={{
+                value: dashboardData.investmentStat.changeRate,
+                isPositive: dashboardData.investmentStat.isPositive,
+              }}
+            />
+
+            <StatCard title='대출' amount={dashboardData.loan} />
+          </section>
+
+          {/* Items and Missions Section */}
+          <section className='flex gap-4 max-h-[270px]'>
+            <ItemList
+              items={dashboardData.items.map((item) => ({
+                name: item.name,
+                count: item.quantity,
+                daysLeft: item.expireInDays,
+              }))}
+            />
+            <MissionSection
+              completedCount={dashboardData.totalCompletedMissions}
+              currentMission={
+                dashboardData.ongoingMissions[0]
+                  ? {
+                      name: dashboardData.ongoingMissions[0].title,
+                      reward: dashboardData.ongoingMissions[0].wage,
+                      daysLeft: Math.ceil(
+                        (new Date(dashboardData.ongoingMissions[0].missionDate).getTime() -
+                          new Date().getTime()) /
+                          (1000 * 60 * 60 * 24),
+                      ),
+                    }
+                  : undefined
+              }
+              totalReward={dashboardData.totalWage}
+            />
+          </section>
+        </div>
+
+        {/* Right Sidebar - Rankings */}
+        <div className='w-64 h-full'>
           <ClassAssetRanking
             rankings={dashboardData.rankings}
             myMemberId={dashboardData.myMemberId}
           />
-        </section>
-
-        {/* Credit Score and Assets Section */}
-        <section className='flex gap-4 min-h-[280px]'>
-          <div className='flex-1'>
-            <CreditScoreCard
-              userName={currentUserName}
-              creditScore={dashboardData.creditScore}
-              creditRating={dashboardData.creditGrade}
-              recentActivities={dashboardData.creditHistories.map((history) => ({
-                type: history.scoreChange > 0 ? 'increase' : 'decrease',
-                amount: Math.abs(history.scoreChange),
-                description: history.reason,
-                date: history.changedAt,
-              }))}
-            />
-          </div>
-          <div className='flex-1'>
-            <AssetCard
-              assets={{
-                cash: dashboardData.cash,
-                stock: dashboardData.stock,
-                loan: dashboardData.loan,
-              }}
-              totalAsset={dashboardData.totalAsset}
-            />
-          </div>
-        </section>
-
-        {/* Financial Summary Section */}
-        <section className='flex gap-4 min-h-fit'>
-          <StatCard
-            title={dashboardData.consumptionStat.label}
-            amount={dashboardData.consumptionStat.amount}
-            trend={{
-              value: dashboardData.consumptionStat.changeRate,
-              isPositive: dashboardData.consumptionStat.isPositive,
-            }}
-          />
-
-          <StatCard
-            title={dashboardData.investmentStat.label}
-            amount={dashboardData.investmentStat.amount}
-            trend={{
-              value: dashboardData.investmentStat.changeRate,
-              isPositive: dashboardData.investmentStat.isPositive,
-            }}
-          />
-
-          <StatCard title='대출' amount={dashboardData.loan} />
-        </section>
-
-        {/* Items and Missions Section */}
-        <section className='flex gap-4 max-h-[270px]'>
-          <ItemList
-            items={dashboardData.items.map((item) => ({
-              name: item.name,
-              count: item.quantity,
-              daysLeft: item.expireInDays,
-            }))}
-          />
-          <MissionSection
-            completedCount={dashboardData.totalCompletedMissions}
-            currentMission={
-              dashboardData.ongoingMissions[0]
-                ? {
-                    name: dashboardData.ongoingMissions[0].title,
-                    reward: dashboardData.ongoingMissions[0].wage,
-                    daysLeft: Math.ceil(
-                      (new Date(dashboardData.ongoingMissions[0].missionDate).getTime() -
-                        new Date().getTime()) /
-                        (1000 * 60 * 60 * 24),
-                    ),
-                  }
-                : undefined
-            }
-            totalReward={dashboardData.totalWage}
-          />
-        </section>
+        </div>
       </div>
 
       {showRecoveryModal && (
@@ -226,7 +233,6 @@ const StudentDashboard = () => {
           currentAsset={dashboardData.totalAsset}
           onClose={() => setShowRecoveryModal(false)}
           onSubmit={() => {
-            // TODO: Implement recovery application submission
             setShowRecoveryModal(false);
           }}
         />

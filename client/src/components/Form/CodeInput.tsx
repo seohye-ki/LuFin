@@ -4,7 +4,7 @@ interface CodeInputProps {
   length?: number;
   value?: string;
   onChange?: (value: string) => void;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   error?: string;
   description?: string;
   isError?: boolean;
@@ -37,6 +37,7 @@ const CodeInput = ({
     sm: 'w-8 h-8 text-h3',
     md: 'w-10 h-10 text-h2',
     lg: 'w-12 h-12 text-h1',
+    xl: 'w-14 h-14 text-h1',
   };
 
   // 입력 처리

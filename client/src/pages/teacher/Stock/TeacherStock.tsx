@@ -9,7 +9,7 @@ const TeacherStock = () => {
   const { selectedStock } = useStockStore();
 
   return (
-    <SidebarLayout userRole='teacher'>
+    <SidebarLayout>
       <div className='flex flex-col h-full gap-3'>
         <StockInfoNotice />
         {selectedStock ? <StockDetailView /> : <StockOverview />}

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../../assets/svgs/logo.svg';
 import UserTypeSelect from './components/UserTypeSelect';
@@ -11,6 +10,7 @@ import { useRegisterForm } from './hooks/useRegisterForm';
 import { useRegisterStep } from './hooks/useRegisterStep';
 import AuthInfoCard from './components/AuthInfoCard';
 import { paths } from '../../../routes/paths';
+import useAlertStore from '../../../libs/store/alertStore';
 
 export default function Register() {
   const {
@@ -22,20 +22,23 @@ export default function Register() {
     handleSubmit,
     validateEmail,
   } = useRegisterForm();
-  const { currentStep, totalSteps, stepTitles, handleNext, handlePrev, goToCompletion } =
-    useRegisterStep();
-  const [error, setError] = useState<string | null>(null);
+  const { currentStep, stepTitles, handleNext, handlePrev, goToCompletion } = useRegisterStep();
 
   const handleBasicInfoNext = async () => {
     try {
       const isEmailValid = await validateEmail(formData.email);
       if (isEmailValid) {
-        setTimeout(() => {
-          handleNext();
-        }, 0);
+        handleNext();
       }
-    } catch {
-      setError('이메일 확인 중 오류가 발생했습니다.');
+    } catch (error) {
+      console.error('Email validation error:', error);
+      useAlertStore
+        .getState()
+        .showAlert('이메일 검증 오류', null, '이메일 검증 중 오류가 발생했습니다.', 'danger', {
+          label: '확인',
+          onClick: () => useAlertStore.getState().hideAlert(),
+          color: 'danger',
+        });
     }
   };
 
@@ -45,10 +48,28 @@ export default function Register() {
       if (result.success) {
         goToCompletion();
       } else {
-        setError(result.message || '회원가입 중 오류가 발생했습니다');
+        useAlertStore
+          .getState()
+          .showAlert(
+            '회원가입 오류',
+            null,
+            result.message || '회원가입 중 오류가 발생했습니다',
+            'danger',
+            {
+              label: '확인',
+              onClick: () => useAlertStore.getState().hideAlert(),
+              color: 'danger',
+            },
+          );
       }
     } catch {
-      setError('회원가입 처리 중 오류가 발생했습니다');
+      useAlertStore
+        .getState()
+        .showAlert('회원가입 오류', null, '회원가입 처리 중 오류가 발생했습니다', 'danger', {
+          label: '확인',
+          onClick: () => useAlertStore.getState().hideAlert(),
+          color: 'danger',
+        });
     }
   };
 
@@ -73,19 +94,9 @@ export default function Register() {
                   <h2 className='mt-6 text-center text-h2 font-bold text-black'>회원가입</h2>
                 </div>
 
-                <ProgressBar
-                  currentStep={currentStep}
-                  totalSteps={totalSteps}
-                  stepTitles={stepTitles}
-                />
+                <ProgressBar currentStep={currentStep} stepTitles={stepTitles} />
 
-                {error && (
-                  <div className='mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600'>
-                    {error}
-                  </div>
-                )}
-
-                <div className='space-y-6'>
+                <div className='flex flex-col gap-4'>
                   {currentStep === 1 && (
                     <UserTypeSelect
                       userType={formData.userType}
@@ -93,7 +104,6 @@ export default function Register() {
                       onNext={handleNext}
                     />
                   )}
-
                   {currentStep === 2 && (
                     <BasicInfo
                       name={formData.name}
@@ -105,7 +115,6 @@ export default function Register() {
                       onNext={handleBasicInfoNext}
                     />
                   )}
-
                   {currentStep === 3 && (
                     <PasswordSetup
                       password={formData.password}
@@ -117,7 +126,6 @@ export default function Register() {
                       onNext={handleNext}
                     />
                   )}
-
                   {currentStep === 4 && (
                     <AccountSetup
                       accountPassword={formData.accountPassword}
@@ -129,21 +137,20 @@ export default function Register() {
                       onNext={handleAccountSetupNext}
                     />
                   )}
-
                   {currentStep === 5 && <Completion userType={formData.userType} />}
-
-                  {currentStep !== 5 && (
-                    <div className='mt-6 text-center'>
-                      <button
-                        type='button'
-                        className='text-p2 text-grey hover:text-info'
-                        onClick={() => (window.location.href = '/login')}
-                      >
-                        이미 계정이 있으신가요?
-                      </button>
-                    </div>
-                  )}
                 </div>
+
+                {currentStep !== 5 && (
+                  <div className='mt-6 text-center'>
+                    <button
+                      type='button'
+                      className='text-p2 text-grey hover:text-info'
+                      onClick={() => (window.location.href = '/login')}
+                    >
+                      이미 계정이 있으신가요?
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

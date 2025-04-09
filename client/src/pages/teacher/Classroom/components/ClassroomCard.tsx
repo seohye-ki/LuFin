@@ -5,6 +5,7 @@ import { useDropdownMenu } from '../hooks/useDropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
 import Button from '../../../../components/Button/Button';
 import { fileService } from '../../../../libs/services/file/fileService';
+import useAuthStore from '../../../../libs/store/authStore';
 
 interface ClassroomCardProps {
   id: number;
@@ -31,7 +32,6 @@ const ClassroomCard = ({
   year,
   imageKey,
   showMenu = true,
-  isTeacher = false,
   code,
   onClick,
   onEdit,
@@ -41,6 +41,7 @@ const ClassroomCard = ({
   const [imageUrl, setImageUrl] = useState<string>('');
   const [imageError, setImageError] = useState<boolean>(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const { userRole } = useAuthStore();
 
   useEffect(() => {
     const loadImage = async () => {
@@ -106,7 +107,7 @@ const ClassroomCard = ({
               className='w-full h-[160px] object-cover rounded-lg mb-3'
               onError={handleImageError}
             />
-            {showMenu && isTeacher && (
+            {showMenu && userRole === 'TEACHER' && (
               <div className='absolute top-2 right-2 flex items-center gap-2'>
                 <div className='relative' ref={menuRef}>
                   <button
@@ -130,7 +131,7 @@ const ClassroomCard = ({
           <div className='flex justify-between items-center'>
             <h3 className='text-p1 font-semibold'>{title}</h3>
             {/* 교사 모드일 때만 초대 코드 복사 버튼 표시 */}
-            {isTeacher && code && (
+            {userRole === 'TEACHER' && code && (
               <button
                 onClick={handleCopyCode}
                 className='p-1 rounded-full hover:bg-grey/40 transition-colors flex items-center justify-center'

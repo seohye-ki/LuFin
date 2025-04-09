@@ -33,18 +33,18 @@ export const registerService = {
    * 회원가입 API
    */
   register: async (data: RegisterRequest): Promise<RegisterResponse> => {
-      const profileImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(data.email)}`;
-      const response = await axiosInstance.post('/register', { ...data, profileImage });
-      return response.data;
+    const profileImage = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(data.email)}`;
+    const response = await axiosInstance.post('/register', { ...data, profileImage });
+    return response.data;
   },
 
   /**
    * 이메일 중복 확인
    */
   checkEmail: async (email: string): Promise<EmailCheckResponse> => {
-      const response = await axiosInstance.get(`/register/emails`, {
-        params: { email },
-      });
-      return response.data;
+    const response = await axiosInstance.get(`/register/emails`, {
+      params: { email },
+    });
+    return response.data;
   },
 };

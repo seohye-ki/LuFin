@@ -133,7 +133,7 @@ const TeacherShop = () => {
   }));
 
   return (
-    <SidebarLayout userRole='teacher'>
+    <SidebarLayout>
       <Card
         titleLeft='아이템 목록'
         titleRight={

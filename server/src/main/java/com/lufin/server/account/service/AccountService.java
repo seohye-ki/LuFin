@@ -16,7 +16,5 @@ public interface AccountService {
 	// 현금 자산 확인
 	int getCashBalance(int memberId, int classroomId);
 
-	long getTotalClassDeposit(int classId);
-
 	long getTotalClassDeposit(int classId, LocalDate date);
 }

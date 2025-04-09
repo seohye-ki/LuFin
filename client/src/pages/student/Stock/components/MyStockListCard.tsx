@@ -10,16 +10,16 @@ const MyStockListCard = () => {
 
   const stockDetails = portfolio
     .map((p) => {
-      const stock = products.find((s) => s.StockProductId === p.StockProductId);
+      const stock = products.find((s) => s.stockProductId === p.stockProductId);
       if (!stock) return null;
 
-      const avgPrice = p.Quantity > 0 ? p.TotalPurchaseAmount / p.Quantity : 0;
-      const currentPrice = stock.CurrentPrice * p.Quantity;
-      const { profitValue, profitRate } = calcProfitRate(p.TotalPurchaseAmount, currentPrice);
+      const avgPrice = p.quantity > 0 ? p.totalPurchaseAmount / p.quantity : 0;
+      const currentPrice = stock.currentPrice * p.quantity;
+      const { profitValue, profitRate } = calcProfitRate(p.totalPurchaseAmount, currentPrice);
 
       return {
-        stock: stock.Name,
-        quantity: p.Quantity,
+        stock: stock.name,
+        quantity: p.quantity,
         amount: avgPrice,
         currentPrice,
         profit: profitValue,

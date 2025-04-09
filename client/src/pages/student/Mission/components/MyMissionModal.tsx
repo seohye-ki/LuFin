@@ -12,7 +12,7 @@ import useAlertStore from '../../../../libs/store/alertStore';
 interface MyMissionModalProps {
   onClose: () => void;
   mission: MissionRaw;
-  mode: 'apply' | 'review';
+  isMyMission: boolean;
   participationId?: number;
   onSuccess?: () => void;
 }
@@ -20,7 +20,7 @@ interface MyMissionModalProps {
 const MyMissionModal = ({
   onClose,
   mission,
-  mode,
+  isMyMission,
   participationId,
   onSuccess,
 }: MyMissionModalProps) => {
@@ -48,26 +48,21 @@ const MyMissionModal = ({
   };
 
   const handlePrimaryAction = async () => {
-    if (mode === 'apply') {
+    // ✅ 수행 가능 미션: 신청
+    if (!isMyMission) {
       const result = await applyMission(mission.missionId);
       if (result.success) {
         useAlertStore
           .getState()
-          .showAlert(
-            '미션 신청이 완료되었습니다.',
-            null,
-            result.message || '신청에 실패했습니다.',
-            'success',
-            {
-              label: '확인',
-              onClick: () => {
-                useAlertStore.getState().hideAlert();
-                onClose();
-                onSuccess?.();
-              },
-              color: 'neutral',
+          .showAlert('미션 신청이 완료되었습니다.', null, result.message || '', 'success', {
+            label: '확인',
+            onClick: () => {
+              useAlertStore.getState().hideAlert();
+              onClose();
+              onSuccess?.();
             },
-          );
+            color: 'neutral',
+          });
       } else {
         useAlertStore
           .getState()
@@ -86,70 +81,70 @@ const MyMissionModal = ({
             },
           );
       }
+      return;
     }
 
-    if (mode === 'review') {
-      if (participationId === undefined) {
-        useAlertStore
-          .getState()
-          .showAlert(
-            '참여자 정보를 찾을 수 없습니다.',
-            null,
-            '참여자 정보를 찾을 수 없습니다.',
-            'danger',
-            {
-              label: '확인',
-              onClick: () => {
-                useAlertStore.getState().hideAlert();
-                onClose();
-              },
+    // ✅ 나의 미션: 리뷰 요청
+    if (participationId === undefined) {
+      useAlertStore
+        .getState()
+        .showAlert(
+          '참여자 정보를 찾을 수 없습니다.',
+          null,
+          '참여자 정보를 찾을 수 없습니다.',
+          'danger',
+          {
+            label: '확인',
+            onClick: () => {
+              useAlertStore.getState().hideAlert();
+              onClose();
             },
-          );
-        return;
-      }
+          },
+        );
+      return;
+    }
 
-      const result = await requestReview(participationId);
-      if (result.success) {
-        useAlertStore
-          .getState()
-          .showAlert(
-            '리뷰 요청이 완료되었습니다.',
-            null,
-            result.message || '리뷰 요청에 실패했습니다.',
-            'success',
-            {
-              label: '확인',
-              onClick: () => {
-                useAlertStore.getState().hideAlert();
-                onClose();
-              },
-              color: 'neutral',
+    const result = await requestReview(participationId);
+    if (result.success) {
+      useAlertStore
+        .getState()
+        .showAlert(
+          '리뷰 요청이 완료되었습니다.',
+          null,
+          result.message || '리뷰 요청에 실패했습니다.',
+          'success',
+          {
+            label: '확인',
+            onClick: () => {
+              useAlertStore.getState().hideAlert();
+              onClose();
             },
-          );
-      } else {
-        useAlertStore
-          .getState()
-          .showAlert(
-            '리뷰 요청에 실패했습니다.',
-            null,
-            result.message || '리뷰 요청에 실패했습니다.',
-            'danger',
-            {
-              label: '확인',
-              onClick: () => {
-                useAlertStore.getState().hideAlert();
-                onClose();
-              },
-              color: 'neutral',
+            color: 'neutral',
+          },
+        );
+    } else {
+      useAlertStore
+        .getState()
+        .showAlert(
+          '리뷰 요청에 실패했습니다.',
+          null,
+          result.message || '리뷰 요청에 실패했습니다.',
+          'danger',
+          {
+            label: '확인',
+            onClick: () => {
+              useAlertStore.getState().hideAlert();
+              onClose();
             },
-          );
-      }
+            color: 'neutral',
+          },
+        );
     }
   };
 
   return (
     <Card
-      titleLeft={mode === 'apply' ? '수행 가능 미션' : '나의 미션'}
+      titleLeft={isMyMission ? '나의 미션' : '수행 가능 미션'}
       titleRight={<Badge status={status.status}>{status.text}</Badge>}
       titleSize='l'
       isModal
@@ -235,7 +230,7 @@ const MyMissionModal = ({
           취소
         </Button>
         <Button variant='solid' color='primary' size='md' full onClick={handlePrimaryAction}>
-          {mode === 'apply' ? '신청하기' : '리뷰 요청하기'}
+          {isMyMission ? '리뷰 요청하기' : '신청하기'}
         </Button>
       </div>
     </Card>

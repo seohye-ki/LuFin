@@ -13,9 +13,12 @@ import axiosInstance from '../../../libs/services/axios';
 
 // Dashboard API response type
 interface DashboardData {
+  myMemberId: number;
+  profileImage: string;
   rankings: {
     memberId: number;
     name: string;
+    profileImage: string;
     asset: number;
     rank: number;
   }[];
@@ -131,7 +134,10 @@ const StudentDashboard = () => {
       <div className='w-full h-full flex flex-col gap-4 overflow-y-auto'>
         {/* User Profile Section */}
         <section className='flex gap-4 min-h-fit'>
-          <ClassAssetRanking rankings={dashboardData.rankings} />
+          <ClassAssetRanking 
+            rankings={dashboardData.rankings} 
+            myMemberId={dashboardData.myMemberId}
+          />
         </section>
 
         {/* Credit Score and Assets Section */}
@@ -195,11 +201,19 @@ const StudentDashboard = () => {
           />
           <MissionSection
             completedCount={dashboardData.totalCompletedMissions}
-            currentMission={dashboardData.ongoingMissions[0] ? {
-              name: dashboardData.ongoingMissions[0].title,
-              reward: dashboardData.ongoingMissions[0].wage,
-              daysLeft: Math.ceil((new Date(dashboardData.ongoingMissions[0].missionDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
-            } : undefined}
+            currentMission={
+              dashboardData.ongoingMissions[0]
+                ? {
+                    name: dashboardData.ongoingMissions[0].title,
+                    reward: dashboardData.ongoingMissions[0].wage,
+                    daysLeft: Math.ceil(
+                      (new Date(dashboardData.ongoingMissions[0].missionDate).getTime() -
+                        new Date().getTime()) /
+                        (1000 * 60 * 60 * 24),
+                    ),
+                  }
+                : undefined
+            }
             totalReward={dashboardData.totalWage}
           />
         </section>

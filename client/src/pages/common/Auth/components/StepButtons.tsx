@@ -22,7 +22,7 @@ export default function StepButtons({
       )}
       <Button
         type='button'
-        color='primary'
+        color={isNextDisabled ? 'disabled' : 'primary'}
         size='lg'
         disabled={isNextDisabled}
         onClick={onNext}

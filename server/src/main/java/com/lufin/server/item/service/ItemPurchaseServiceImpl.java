@@ -100,6 +100,8 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 		account.withdraw(totalPrice);
 		accountRepository.save(account);
 		Account classAccount = getClassAccount(classId);
+		classAccount.deposit(totalPrice);
+		accountRepository.save(classAccount);
 		transactionHistoryService.record(
 			account,
 			classAccount.getAccountNumber(),
@@ -181,6 +183,8 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 		account.deposit(purchase.getPurchasePrice());
 		accountRepository.save(account);
 		Account classAccount = getClassAccount(classId);
+		classAccount.forceWithdraw(purchase.getPurchasePrice());
+		accountRepository.save(classAccount);
 		transactionHistoryService.record(
 			classAccount,
 			account.getAccountNumber(),

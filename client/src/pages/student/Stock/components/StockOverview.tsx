@@ -19,19 +19,19 @@ const StockOverview = () => {
   ];
 
   const rows = products.map((stock) => {
-    const { diff, rate } = calcStockChangeRate(stock.CurrentPrice, stock.InitialPrice);
+    const { diff, rate } = calcStockChangeRate(stock.currentPrice, stock.initialPrice);
 
     return {
-      id: stock.StockProductId,
-      name: stock.Name,
-      currentPrice: <Lufin size='s' count={stock.CurrentPrice} />,
+      id: stock.stockProductId,
+      name: stock.name,
+      currentPrice: <Lufin size='s' count={stock.currentPrice} />,
       changeRate: <StockChangeText diff={diff} rate={rate} />,
     };
   });
 
   const handleRowClick = (row: { [key: string]: React.ReactNode }) => {
     const id = Number(row.id);
-    const stock = products.find((s) => s.StockProductId === id);
+    const stock = products.find((s) => s.stockProductId === id);
     if (stock) setSelectedStock(stock);
   };
 
@@ -44,7 +44,7 @@ const StockOverview = () => {
         <div className='flex items-center gap-2'>
           <div className='text-c1 text-grey'>
             {products.length > 0
-              ? new Date(products[0].UpdatedAt).toLocaleString('ko-KR', {
+              ? new Date(products[0].createdAt).toLocaleString('ko-KR', {
                   year: 'numeric',
                   month: '2-digit',
                   day: '2-digit',

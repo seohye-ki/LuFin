@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Icon } from '../../../components/Icon/Icon';
 import SidebarLayout from '../../../components/Layout/SidebarLayout';
 import ClassroomCard from './components/ClassroomCard';
 import CreateClassroomModal from './components/CreateClassroomModal';
@@ -7,32 +6,47 @@ import EditClassroomModal from './components/EditClassroomModal';
 import Button from '../../../components/Button/Button';
 import useAlertStore from '../../../libs/store/alertStore';
 import Alert from '../../../components/Alert/Alert';
-import useClassroomStore from '../../../libs/store/classroomStore';
 import {
   CreateClassroomRequest,
   UpdateClassroomRequest,
   Classroom,
+  classroomService,
 } from '../../../libs/services/classroom/classroomService';
 import { useNavigate } from 'react-router-dom';
+import useClassroomStore from '../../../libs/store/classroomStore';
+import Card from '../../../components/Card/Card';
+import useAuthStore from '../../../libs/store/authStore';
+import JoinClassroomModal from './components/JoinClassroomModal';
 
 const TeacherClassroom = () => {
   const navigate = useNavigate();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEnterClassroomModalOpen, setIsEnterClassroomModalOpen] = useState(false);
   const [editingClassroom, setEditingClassroom] = useState<Classroom | null>(null);
-  const {
-    classrooms,
-    isLoading,
-    error,
-    fetchClassrooms,
-    createClassroom,
-    updateClassroom,
-    deleteClassroom,
-    changeCurrentClass,
-  } = useClassroomStore();
+  const [classrooms, setClassrooms] = useState<Classroom[]>([]);
+  const { setCurrentClass } = useClassroomStore();
+  const { userRole } = useAuthStore();
+
+  const fetchClassrooms = async () => {
+    const res = await classroomService.getClassrooms();
+    setClassrooms(res.data);
+  };
+
+  const deleteClassroom = async (classroomId: number) => {
+    await classroomService.deleteClassroom(classroomId);
+  };
+
+  const createClassroom = async (createClassroomDTO: CreateClassroomRequest) => {
+    await classroomService.createClassroom(createClassroomDTO);
+  };
+
+  const updateClassroom = async (updateClassroomDTO: UpdateClassroomRequest) => {
+    await classroomService.updateClassroom(updateClassroomDTO);
+  };
 
   useEffect(() => {
     fetchClassrooms();
-  }, [fetchClassrooms]);
+  }, []);
 
   const handleEdit = (id: number) => {
     const classroom = classrooms.find((c) => c.classId === id);
@@ -55,18 +69,14 @@ const TeacherClassroom = () => {
       {
         label: '삭제',
         onClick: async () => {
-          try {
-            await deleteClassroom(id);
-            useAlertStore
-              .getState()
-              .showAlert('클래스룸 삭제 완료', null, '클래스룸이 삭제되었습니다.', 'success', {
-                label: '확인',
-                onClick: () => useAlertStore.getState().hideAlert(),
-                color: 'primary',
-              });
-          } catch {
-            // 에러는 store에서 처리됨
-          }
+          await deleteClassroom(id);
+          useAlertStore
+            .getState()
+            .showAlert('클래스룸 삭제 완료', null, '클래스룸이 삭제되었습니다.', 'success', {
+              label: '확인',
+              onClick: () => useAlertStore.getState().hideAlert(),
+              color: 'primary',
+            });
         },
         color: 'danger',
       },
@@ -81,44 +91,34 @@ const TeacherClassroom = () => {
     image?: File;
     key?: string | null;
   }) => {
-    try {
-      const createData: CreateClassroomRequest = {
-        name: data.title,
-        school: data.school,
-        grade: data.grade,
-        classGroup: data.class,
-        key: data.key ?? null,
-      };
+    const createData: CreateClassroomRequest = {
+      name: data.title,
+      school: data.school,
+      grade: data.grade,
+      classGroup: data.class,
+      key: data.key ?? null,
+    };
 
-      await createClassroom(createData);
-      setIsCreateModalOpen(false);
+    await createClassroom(createData);
+    setIsCreateModalOpen(false);
 
-      useAlertStore
-        .getState()
-        .showAlert(
-          '클래스룸 생성 완료',
-          null,
-          `${data.title} 클래스룸이 생성되었습니다.`,
-          'success',
-          {
-            label: '확인',
-            onClick: () => {
-              useAlertStore.getState().hideAlert();
-              // 클래스룸 생성 후 교사 대시보드로 이동
-              navigate('/dashboard/teacher');
-            },
-            color: 'primary',
-          },
-        );
-    } catch {
-      useAlertStore
-        .getState()
-        .showAlert('클래스룸 생성 실패', null, '클래스룸 생성에 실패했습니다.', 'danger', {
+    useAlertStore
+      .getState()
+      .showAlert(
+        '클래스룸 생성 완료',
+        null,
+        `${data.title} 클래스룸이 생성되었습니다.`,
+        'success',
+        {
           label: '확인',
-          onClick: () => useAlertStore.getState().hideAlert(),
+          onClick: () => {
+            useAlertStore.getState().hideAlert();
+            // 클래스룸 생성 후 교사 대시보드로 이동
+            navigate('/dashboard');
+          },
           color: 'primary',
-        });
-    }
+        },
+      );
   };
 
   const handleEditSubmit = async (data: {
@@ -130,89 +130,59 @@ const TeacherClassroom = () => {
     image?: File;
     key?: string | null;
   }) => {
-    try {
-      const updateData: UpdateClassroomRequest = {
-        classId: data.classId,
-        name: data.title,
-        school: data.school,
-        grade: data.grade,
-        classGroup: data.class,
-        key: data.key ?? null,
-      };
+    const updateData: UpdateClassroomRequest = {
+      classId: data.classId,
+      name: data.title,
+      school: data.school,
+      grade: data.grade,
+      classGroup: data.class,
+      key: data.key ?? null,
+    };
 
-      await updateClassroom(updateData);
-      setEditingClassroom(null);
+    await updateClassroom(updateData);
+    setEditingClassroom(null);
 
-      useAlertStore
-        .getState()
-        .showAlert(
-          '클래스룸 수정 완료',
-          null,
-          `${data.title} 클래스룸이 수정되었습니다.`,
-          'success',
-          {
-            label: '확인',
-            onClick: () => useAlertStore.getState().hideAlert(),
-            color: 'primary',
-          },
-        );
-    } catch {
-      useAlertStore
-        .getState()
-        .showAlert('클래스룸 수정 실패', null, '클래스룸 수정에 실패했습니다.', 'danger', {
+    useAlertStore
+      .getState()
+      .showAlert(
+        '클래스룸 수정 완료',
+        null,
+        `${data.title} 클래스룸이 수정되었습니다.`,
+        'success',
+        {
           label: '확인',
           onClick: () => useAlertStore.getState().hideAlert(),
           color: 'primary',
-        });
-    }
+        },
+      );
   };
 
-  const handleClassroomClick = async (classId: number) => {
-    try {
-      // 클래스룸 클릭 시 활성화된 클래스 변경 API 호출
-      await changeCurrentClass(classId);
-      // 클래스 변경 후 교사 대시보드로 이동
-      navigate('/dashboard/teacher');
-    } catch {
-      useAlertStore
-        .getState()
-        .showAlert('클래스 변경 실패', null, '클래스 활성화에 실패했습니다.', 'danger', {
-          label: '확인',
-          onClick: () => useAlertStore.getState().hideAlert(),
-          color: 'primary',
-        });
-    }
+  const handleClassroomClick = async (classroom: Classroom) => {
+    setCurrentClass(classroom.classId, classroom.name, classroom.code);
+    navigate('/dashboard');
   };
 
   return (
-    <SidebarLayout userRole='teacher' hideMenu>
-      <div className='h-full flex flex-col gap-6 overflow-y-auto p-6'>
-        <div className='flex justify-between items-center'>
-          <h1 className='text-h2 font-semibold'>클래스룸</h1>
-          <div className='flex items-center gap-4'>
-            <div className='flex items-center gap-2 bg-white rounded-lg px-4 py-2'>
-              <Icon name='SearchNormal1' size={20} color='grey' />
-              <input
-                type='text'
-                placeholder='제목 또는 작성자로 검색'
-                className='bg-transparent outline-none text-p1'
-              />
-            </div>
-            <Button
-              color='info'
-              variant='solid'
-              size='md'
-              onClick={() => setIsCreateModalOpen(true)}
-              className='flex items-center gap-2'
-            >
-              <Icon name='AddCircle' size={20} color='white' />
-              <span>새 클래스 생성</span>
-            </Button>
-          </div>
-        </div>
-
-        {error && <div className='text-error text-p2 bg-error/10 p-4 rounded-lg'>{error}</div>}
-
+    <SidebarLayout>
+      <Card
+        className='h-full flex flex-col gap-6 overflow-y-auto p-6'
+        titleLeft='클래스 목록'
+        titleRight={
+          <Button
+            color='info'
+            variant='solid'
+            size='md'
+            onClick={() => {
+              return userRole === 'TEACHER'
+                ? setIsCreateModalOpen(true)
+                : setIsEnterClassroomModalOpen(true);
+            }}
+            className='flex items-center gap-2'
+          >
+            <span>{userRole === 'TEACHEAR' ? '클래스 추가' : '클래스 입장'}</span>
+          </Button>
+        }
+      >
         <div className='grid grid-cols-3 gap-4'>
           {classrooms.map((classroom) => (
             <ClassroomCard
@@ -226,7 +196,7 @@ const TeacherClassroom = () => {
               imageKey={classroom.key}
               isTeacher={true}
               code={classroom.code}
-              onClick={() => handleClassroomClick(classroom.classId)}
+              onClick={() => handleClassroomClick(classroom)}
               onEdit={() => handleEdit(classroom.classId)}
               onDelete={() => handleDelete(classroom.classId)}
             />
@@ -235,27 +205,25 @@ const TeacherClassroom = () => {
 
         {isCreateModalOpen && (
           <CreateClassroomModal
-            onClose={() => {
-              if (!isLoading) setIsCreateModalOpen(false);
-            }}
+            onClose={() => setIsCreateModalOpen(false)}
             onSubmit={handleCreateSubmit}
-            isLoading={isLoading}
           />
+        )}
+
+        {isEnterClassroomModalOpen && (
+          <JoinClassroomModal onClose={() => setIsEnterClassroomModalOpen(false)} />
         )}
 
         {editingClassroom && (
           <EditClassroomModal
             classroom={editingClassroom}
-            onClose={() => {
-              if (!isLoading) setEditingClassroom(null);
-            }}
+            onClose={() => setEditingClassroom(null)}
             onSubmit={handleEditSubmit}
-            isLoading={isLoading}
           />
         )}
 
         <Alert />
-      </div>
+      </Card>
     </SidebarLayout>
   );
 };

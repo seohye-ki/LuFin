@@ -15,26 +15,26 @@ const StockOrder = ({ stock }: StockOrderProps) => {
   const [quantity, setQuantity] = useState(1);
   const { postStockTransaction, getStockPortfolio, portfolio } = useStockStore();
 
-  const holding = portfolio.find((item) => item.StockProductId === stock.StockProductId);
-  const MAX_QUANTITY = holding ? holding.Quantity : 0;
+  const holding = portfolio.find((item) => item.stockProductId === stock.stockProductId);
+  const MAX_QUANTITY = holding ? holding.quantity : 0;
 
   const handleOrder = async () => {
     const type = tab === 'buy' ? 'BUY' : 'SELL';
 
     const res = await postStockTransaction(
-      stock.StockProductId,
+      stock.stockProductId,
       type,
       quantity,
-      stock.CurrentPrice,
+      stock.currentPrice,
     );
 
     if (res.success) {
       useAlertStore.getState().hideAlert();
-      getStockPortfolio();
+      await getStockPortfolio();
       useAlertStore
         .getState()
         .showAlert(
-          `${stock.Name} ${type === 'BUY' ? '구매' : '판매'} 완료!`,
+          `${stock.name} ${type === 'BUY' ? '구매' : '판매'} 완료!`,
           null,
           '거래가 완료되었습니다.',
           'success',
@@ -67,10 +67,10 @@ const StockOrder = ({ stock }: StockOrderProps) => {
     const type = tab === 'buy' ? '구매' : '판매';
 
     useAlertStore.getState().showAlert(
-      `${stock.Name} ${type} ${quantity}주`,
+      `${stock.name} ${type} ${quantity}주`,
       <div className='flex justify-center items-center gap-2'>
         <span className='text-p3 text-grey'>현재 가격</span>
-        <Lufin size='s' count={stock.CurrentPrice} />
+        <Lufin size='s' count={stock.currentPrice} />
       </div>,
       '',
       'info',
@@ -113,12 +113,12 @@ const StockOrder = ({ stock }: StockOrderProps) => {
   };
 
   const handlePercentClick = (percent: number) => {
-    const base = tab === 'sell' ? MAX_QUANTITY : 100; // 구매는 제한 없음
+    const base = tab === 'sell' ? MAX_QUANTITY : 100;
     const calculated = Math.max(1, Math.floor(base * percent));
     setQuantity(calculated);
   };
 
-  const total = quantity * stock.CurrentPrice;
+  const total = quantity * stock.currentPrice;
 
   return (
     <div className='flex flex-col justify-between gap-4 w-full h-full p-4'>
@@ -145,7 +145,7 @@ const StockOrder = ({ stock }: StockOrderProps) => {
         {/* 현재 가격 */}
         <div className='flex justify-between items-center'>
           <span className='text-p3 text-grey'>현재 가격</span>
-          <Lufin size='s' count={stock.CurrentPrice} />
+          <Lufin size='s' count={stock.currentPrice} />
         </div>
 
         {/* 수량 조절 */}
@@ -186,7 +186,6 @@ const StockOrder = ({ stock }: StockOrderProps) => {
             </button>
           ))}
         </div>
-
         {/* 총 금액 or 수익 */}
         <div className='flex justify-between items-center'>
           <span className='text-p3 text-grey'>

@@ -12,6 +12,8 @@ interface MissionState {
   myMissions: MissionList[];
   availableMissions: MissionList[];
   selectedMission: MissionRaw | null;
+  participationId: number | null;
+  setParticipationId: (participationId: number) => void;
   isLoading: boolean;
   error: string | null;
   errorCode: string | null;
@@ -24,7 +26,11 @@ interface MissionState {
     mission: MissionCreateRequest,
   ) => Promise<{ success: boolean; missionId?: number; message?: string }>;
   updateMission: (mission: MissionUpdateRequest) => Promise<{ success: boolean; message?: string }>;
-  applyMission: (missionId: number) => Promise<{ success: boolean; message?: string }>;
+  applyMission: (missionId: number) => Promise<{
+    success: boolean;
+    participationId?: number;
+    message?: string;
+  }>;
   deleteMission: (missionId: number) => Promise<{ success: boolean; message?: string }>;
   requestReview: (participationId: number) => Promise<{ success: boolean; message?: string }>;
   getMissionWithParticipants: (
@@ -52,9 +58,12 @@ const useMissionStore = create<MissionState>((set, get) => ({
   myMissions: [],
   availableMissions: [],
   selectedMission: null,
+  participationId: null,
   isLoading: false,
   error: null,
   errorCode: null,
+
+  setParticipationId: (participationId: number) => set({ participationId }),
 
   getMissionList: async () => {
     set({ isLoading: true, error: null, errorCode: null });
@@ -170,7 +179,13 @@ const useMissionStore = create<MissionState>((set, get) => ({
   },
 
   applyMission: async (missionId) => {
-    return await missionService.applyMission(missionId);
+    const result = await missionService.applyMission(missionId);
+
+    if (result.success && result.participationId !== undefined) {
+      set({ participationId: result.participationId });
+    }
+
+    return result;
   },
 
   requestReview: async (participationId) => {

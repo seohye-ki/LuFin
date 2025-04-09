@@ -12,6 +12,9 @@ export interface AuthResponse {
     accessToken: string;
     refreshToken: string;
     role: string;
+    name: string;
+    profileImage: string;
+    totalAsset: number;
   };
   code?: string;
   message?: string;
@@ -39,18 +42,22 @@ export const AuthService = {
 
       if (response.data.isSuccess && response.data.data) {
         // 토큰 저장
-        const { accessToken, refreshToken, role } = response.data.data;
+        const { accessToken, refreshToken, role, name, profileImage, totalAsset } =
+          response.data.data;
         tokenUtils.setToken('accessToken', accessToken);
         tokenUtils.setToken('refreshToken', refreshToken);
         tokenUtils.setToken('userRole', role);
 
         // 역할에 따른 리다이렉션 경로 결정
-        const redirectPath = role.toUpperCase() === 'TEACHER' ? '/classroom/teacher' : '/classroom';
+        const redirectPath = '/classroom';
 
         return {
           success: true,
           role: role,
           redirectPath,
+          name,
+          profileImage,
+          totalAsset,
         };
       } else {
         return {

@@ -4,9 +4,8 @@ import Card from '../../../components/Card/Card';
 import TableView from '../../../components/Frame/TableView';
 import MyMissionModal from './components/MyMissionModal';
 import { useStudentMissions } from './hooks/useStudentMissions';
-import { Icon } from '../../../components/Icon/Icon';
 import useMissionStore from '../../../libs/store/missionStore';
-import { MissionList, ParticipationUserInfo } from '../../../types/mission/mission';
+import { MissionList } from '../../../types/mission/mission';
 
 const StudentMission = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,8 +14,6 @@ const StudentMission = () => {
   const myMissions = useMissionStore((state) => state.myMissions);
   const availableMissions = useMissionStore((state) => state.availableMissions);
   const selectedMission = useMissionStore((state) => state.selectedMission);
-  const [participationList, setParticipationList] = useState<ParticipationUserInfo[]>([]);
-  const myMemberId = 1; // TODO: 전역 상태로 교체 예정
 
   useEffect(() => {
     getMissionList();
@@ -30,13 +27,18 @@ const StudentMission = () => {
     [getMissionDetail],
   );
 
-  const { myMissionRows, availableMissionRows, refetchParticipations } = useStudentMissions(
-    myMissions,
+  const { myMissionRows, availableMissionRows } = useStudentMissions(
+    myMissions.map((mission) => ({
+      mission,
+      participation: {
+        participationId: 0,
+        memberId: 0,
+        missionId: mission.missionId,
+        status: 'IN_PROGRESS' as const,
+      },
+    })),
     availableMissions,
-    participationList,
-    myMemberId,
     handleRowClick,
-    setParticipationList,
   );
 
   const columns = [
@@ -53,21 +55,7 @@ const StudentMission = () => {
     <SidebarLayout>
       <div className='flex flex-col h-full gap-3'>
         {/* 나의 미션 */}
-        <Card
-          titleLeft='나의 미션'
-          titleRight={
-            <div className='flex items-center gap-2 bg-broken-white rounded-lg px-4 py-2'>
-              <Icon name='SearchNormal1' size={20} color='grey' />
-              <input
-                type='text'
-                placeholder='미션명으로 검색'
-                className='bg-transparent outline-none text-p1'
-              />
-            </div>
-          }
-          titleSize='l'
-          className='flex flex-col basis-50/100 min-h-0'
-        >
+        <Card titleLeft='나의 미션' titleSize='l' className='flex flex-col basis-50/100 min-h-0'>
           <div>
             <TableView columns={columns} rows={myMissionRows} />
           </div>
@@ -75,16 +63,6 @@ const StudentMission = () => {
         {/* 수행 가능 미션 */}
         <Card
           titleLeft='수행 가능 미션'
-          titleRight={
-            <div className='flex items-center gap-2 bg-broken-white rounded-lg px-4 py-2'>
-              <Icon name='SearchNormal1' size={20} color='grey' />
-              <input
-                type='text'
-                placeholder='미션명으로 검색'
-                className='bg-transparent outline-none text-p1'
-              />
-            </div>
-          }
           titleSize='l'
           className='flex flex-col basis-50/100 min-h-0'
         >
@@ -104,9 +82,10 @@ const StudentMission = () => {
             <MyMissionModal
               mission={selectedMission}
               onClose={() => setIsModalOpen(false)}
-              mode='apply'
+              isMyMission={myMissions.some(
+                (mission) => mission.missionId === selectedMission.missionId,
+              )}
               onSuccess={() => {
-                refetchParticipations(selectedMission.missionId);
                 setIsModalOpen(false);
               }}
             />

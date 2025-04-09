@@ -26,7 +26,7 @@ export const stockService = {
       const response = await axiosInstance.get<StockResponse<StockProduct[]>>(
         `${STOCK_ENDPOINT}/products`,
       );
-
+      console.log('API 응답:', response.data);
       if (response.data.isSuccess && response.data.data) {
         return {
           success: true,
@@ -49,10 +49,10 @@ export const stockService = {
   /**
    * 주식 가격 변동 이력 조회
    */
-  getStockPriceHistory: async (productId: number, day: number = 7) => {
+  getStockPriceHistory: async (productId: number) => {
     try {
       const response = await axiosInstance.get<StockResponse<StockPriceHistory[]>>(
-        `${STOCK_ENDPOINT}/products/${productId}/price-history?day=${day}`,
+        `${STOCK_ENDPOINT}/products/${productId}/price-history?counts=10`,
       );
 
       if (response.data.isSuccess && response.data.data) {
@@ -80,14 +80,14 @@ export const stockService = {
   postStockTransaction: async (productId: number, data: StockTransactionRequest) => {
     try {
       const response = await axiosInstance.post<StockResponse<StockTransactionResponse>>(
-        `${STOCK_ENDPOINT}/products/${productId}/`,
+        `${STOCK_ENDPOINT}/transactions/${productId}`,
         data,
       );
 
       if (response.data.isSuccess && response.data.data) {
         return {
           success: true,
-          transactionId: response.data.data.StockHistoryId,
+          transactionId: response.data.data.stockHistoryId,
         };
       } else {
         return {
@@ -106,12 +106,12 @@ export const stockService = {
   /**
    * 공시 정보 조회
    */
-  getStockNews: async (productId: number) => {
+  getStockNews: async () => {
     try {
       const response = await axiosInstance.get<StockResponse<StockNews[]>>(
-        `${STOCK_ENDPOINT}/products/${productId}/news`,
+        `${STOCK_ENDPOINT}/products/0/news`,
       );
-
+      console.log('API 응답:', response.data);
       if (response.data.isSuccess && response.data.data) {
         return {
           success: true,
@@ -139,7 +139,7 @@ export const stockService = {
       const response = await axiosInstance.get<StockResponse<StockPortfolio[]>>(
         `${STOCK_ENDPOINT}/portfolios`,
       );
-
+      console.log('API 응답:', response.data);
       if (response.data.isSuccess && response.data.data) {
         return {
           success: true,

@@ -114,7 +114,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
         <div
           className={`mt-2 flex flex-col justify-center rounded-lg border-2 border-dashed
             ${isDragging ? 'border-info bg-info/5' : 'border-grey-30'}
-            ${error ? 'border-danger bg-danger/5' : ''} 
+            ${error ? 'border-danger bg-danger/5' : ''}
             ${isDisabled || isLoading ? 'border-grey-30 bg-broken-white cursor-not-allowed' : ''}
           `}
           onDragOver={handleDragOver}
@@ -152,7 +152,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
                 {previews.length < maxFiles && (
                   <label
                     htmlFor={props.id}
-                    className={`w-[200px] h-[200px] flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-grey-30 
+                    className={`w-[200px] h-[200px] flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-grey-30
                       ${isDisabled || isLoading ? 'cursor-not-allowed' : 'cursor-pointer hover:border-info hover:bg-info/5'} transition-colors`}
                   >
                     {isLoading ? (

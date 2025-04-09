@@ -214,6 +214,7 @@ public class LoanServiceImpl implements LoanService {
 			application.open();
 			Account account = getActiveAccount(application.getMember());
 			account.deposit(application.getRequiredAmount());
+			accountRepository.save(account);
 			Account classAccount = getClassAccount(classId);
 			log.info("💰[대출 금액 입금 완료] - memberId: {}, amount: {}, balance: {}", application.getMember().getId(),
 				application.getRequiredAmount(), account.getBalance());

@@ -98,6 +98,7 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 		Account account = getActiveAccount(student);
 		int totalPrice = item.getPrice() * request.itemCount();
 		account.withdraw(totalPrice);
+		accountRepository.save(account);
 		Account classAccount = getClassAccount(classId);
 		transactionHistoryService.record(
 			account,
@@ -178,6 +179,7 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 
 		Account account = getActiveAccount(student);
 		account.deposit(purchase.getPurchasePrice());
+		accountRepository.save(account);
 		Account classAccount = getClassAccount(classId);
 		transactionHistoryService.record(
 			classAccount,

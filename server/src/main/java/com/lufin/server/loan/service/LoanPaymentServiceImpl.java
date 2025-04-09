@@ -100,6 +100,7 @@ public class LoanPaymentServiceImpl implements LoanPaymentService {
 			return false;
 		}
 		account.forceWithdraw(interestAmount);
+		accountRepository.save(account);
 		transactionHistoryService.record(
 			account,
 			classAccount.getAccountNumber(),
@@ -135,6 +136,7 @@ public class LoanPaymentServiceImpl implements LoanPaymentService {
 		Account account = getActiveAccount(loan.getMember());
 		Account classAccount = getClassAccount(loan.getClassroom());
 		account.forceWithdraw(loan.getRequiredAmount());
+		accountRepository.save(account);
 		log.info("대출 [{}]의 계좌에서 원금 금액 [{}] 출금 완료", loan.getId(), loan.getRequiredAmount());
 		transactionHistoryService.record(
 			account,

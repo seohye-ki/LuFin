@@ -40,7 +40,7 @@ public class LoanPaymentServiceImpl implements LoanPaymentService {
 	}
 
 	private Account getClassAccount(Classroom classroom) {
-		return accountRepository.findByClassroomId(classroom.getId())
+		return accountRepository.findByClassroomIdAndMemberIdIsNull(classroom.getId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 

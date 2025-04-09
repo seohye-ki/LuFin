@@ -61,9 +61,10 @@ public class Account {
 
 	private LocalDateTime closedAt;
 
-	private Account(String accountNumber, AccountType type, Member member) {
+	private Account(String accountNumber, AccountType type, Member member, Classroom classroom) {
 		this.accountNumber = accountNumber;
 		this.member = member;
+		this.classroom = classroom;
 		this.type = type;
 		onCreate();
 	}
@@ -75,8 +76,8 @@ public class Account {
 		onCreate();
 	}
 
-	public static Account create(String accountNumber, Member member) {
-		return new Account(accountNumber, AccountType.DEPOSIT, member);
+	public static Account create(String accountNumber, Member member, Classroom classroom) {
+		return new Account(accountNumber, AccountType.DEPOSIT, member, classroom);
 	}
 
 	public static Account createClassAccount(String accountNumber, Classroom classroom) {

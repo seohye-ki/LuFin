@@ -1,6 +1,7 @@
 package com.lufin.server.loan.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.classroom.repository.MemberClassroomRepository;
-import com.lufin.server.loan.domain.LoanApplication;
-import com.lufin.server.loan.repository.LoanApplicationRepository;
 import com.lufin.server.transaction.domain.TransactionHistory;
 import com.lufin.server.transaction.domain.TransactionSourceType;
 import com.lufin.server.transaction.repository.TransactionHistoryRepository;
@@ -22,15 +21,21 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class LoanDashboardServiceImpl implements LoanDashboardService {
 
-	private final LoanApplicationRepository loanApplicationRepository;
 	private final TransactionHistoryRepository transactionHistoryRepository;
 	private final MemberClassroomRepository memberClassroomRepository;
 
 	@Override
 	public int getLoanPrincipal(int memberId, int classroomId) {
 		log.info("[대출 원금 조회] memberId: {}, classroomId: {}", memberId, classroomId);
-		return loanApplicationRepository.findMyLoanApplication(memberId, classroomId)
-			.map(LoanApplication::getRequiredAmount)
+
+		// 가장 최근 대출 지급 거래 기준 잔액 반환
+		return transactionHistoryRepository
+			.findTopByExecutor_IdAndSourceTypeAndCreatedAtLessThanEqualOrderByCreatedAtDesc(
+				memberId,
+				TransactionSourceType.LOAN_DISBURSEMENT,
+				LocalDateTime.now()
+			)
+			.map(TransactionHistory::getBalanceAfter)
 			.orElse(0);
 	}
 
@@ -50,7 +55,7 @@ public class LoanDashboardServiceImpl implements LoanDashboardService {
 	}
 
 	@Override
-	public long getTotalClassLoanPrincipal(int classId, LocalDate date) {
+	public long getTotalClassLoanPrincipalOnDate(int classId, LocalDate date) {
 		log.info("[기준일 대출액 조회] classId={}, 기준일={}", classId, date);
 
 		List<MemberClassroom> students = memberClassroomRepository.findStudentsByClassId(classId);

@@ -11,5 +11,8 @@ public interface StockService {
 	int getInvestmentAmountOnDate(int memberId, LocalDate date);
 
 	// [클래스] 투자 일일 합계 조회
-	long getTotalClassInvestment(int classId, LocalDate date);
+	long getTotalClassInvestmentOnDate(int classId, LocalDate date);
+
+	// [클래스] 투자 합계
+	long getTotalClassInvestment(int classId);
 }

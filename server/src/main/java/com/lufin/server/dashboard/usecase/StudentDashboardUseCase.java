@@ -53,20 +53,20 @@ public class StudentDashboardUseCase {
 		String creditGrade = creditService.getGrade(studentId, classId);
 
 		List<CreditHistoryDto> creditHistories = creditService.getGradeChangeHistory(studentId, classId);
-		log.debug(" - 신용 점수: {}, 등급: {}, 이력 수: {}", creditScore, creditGrade, creditHistories.size());
+		log.info(" - 신용 점수: {}, 등급: {}, 이력 수: {}", creditScore, creditGrade, creditHistories.size());
 
 		// 자산 구성
 		int cash = accountService.getCashBalance(studentId, classId);
 		int stock = stockService.getTotalValuation(studentId, classId);
 		int loan = loanService.getLoanPrincipal(studentId, classId);
 		int totalAsset = cash + stock + loan;
-		log.debug(" - 자산: 현금={}, 주식={}, 대출={}, 총합={}", cash, stock, loan, totalAsset);
+		log.info(" - 자산: 현금={}, 주식={}, 대출={}, 총합={}", cash, stock, loan, totalAsset);
 
 		// 소비 통계
 		int weeklyConsumption = transactionHistoryService.getTotalConsumptionThisWeek(studentId);
 		int consumptionLastWeek =
 			weeklyConsumption - transactionHistoryService.getConsumptionChangeSinceLastWeek(studentId);
-		AssetDto consumptionStat = buildAssetDto("소비", weeklyConsumption, consumptionLastWeek);
+		AssetDto consumptionStat = buildAssetDto("소비", weeklyConsumption, consumptionLastWeek, cash);
 
 		// 투자 통계 (오늘 vs 어제 또는 금요일)
 		LocalDate today = LocalDate.now();
@@ -76,17 +76,17 @@ public class StudentDashboardUseCase {
 
 		int investmentToday = stockService.getInvestmentAmountOnDate(studentId, today);
 		int investmentCompare = stockService.getInvestmentAmountOnDate(studentId, compareDate);
-		AssetDto investmentStat = buildStockDto("투자", investmentToday, investmentCompare, stock);
+		AssetDto investmentStat = buildAssetDto("투자", investmentToday, investmentCompare, stock);
 
 		// 아이템 보유 현황
 		List<ItemDashboardDto> items = itemService.getMyItems(studentId, classId);
-		log.debug(" - 아이템 수: {}", items.size());
+		log.info(" - 아이템 수: {}", items.size());
 
 		// 미션 상태
 		List<MyMissionDto> ongoingMissions = myMissionService.hasOngoingMission(studentId, classId);
 		int totalCompletedMissions = myMissionService.getCompletedCount(studentId, classId);
 		int totalWage = myMissionService.getTotalWage(studentId, classId);
-		log.debug(" - 미션: 진행중={}, 완료={}, 누적 보상={}", ongoingMissions.size(), totalCompletedMissions, totalWage);
+		log.info(" - 미션: 진행중={}, 완료={}, 누적 보상={}", ongoingMissions.size(), totalCompletedMissions, totalWage);
 
 		log.info("[학생 대시보드 구성 완료] studentId={}", studentId);
 

@@ -11,5 +11,5 @@ public interface LoanDashboardService {
 	long getTotalClassLoanPrincipal(int classId);
 
 	// [클래스] 기준일 대출액 조회
-	long getTotalClassLoanPrincipal(int classId, LocalDate date);
+	long getTotalClassLoanPrincipalOnDate(int classId, LocalDate date);
 }

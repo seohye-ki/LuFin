@@ -35,7 +35,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Transactional
 	@Override
-	public Account createAccountForMember(int memberId) {
+	public Account createAccountForMember(int memberId, Classroom classroom) {
 		log.info("[계좌 생성] member {}", memberId);
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> {
@@ -45,7 +45,7 @@ public class AccountServiceImpl implements AccountService {
 
 		String accountNumber = generateUniqueAccountNumber();
 
-		Account account = Account.create(accountNumber, member);
+		Account account = Account.create(accountNumber, member, classroom);
 		return accountRepository.save(account);
 	}
 
@@ -71,14 +71,16 @@ public class AccountServiceImpl implements AccountService {
 	public int getCashBalance(int memberId, int classroomId) {
 		log.info("[현금 자산 확인] member {}", memberId);
 		return accountRepository.findByMemberIdAndClassroomIdAndType(memberId, classroomId, AccountType.DEPOSIT)
-			.map(Account::getBalance)
-			.orElse(0);
+			.orElseThrow(()->{
+				log.warn("🏦[계좌 없음] memberId={}", memberId);
+				return new BusinessException(ACCOUNT_NOT_FOUND);
+			});
 	}
 
 	@Override
 	public long getTotalClassDeposit(int classId) {
 		// 클래스 계좌는 무조건 1개
-		Account account = accountRepository.findByClassroomId(classId)
+		Account account = accountRepository.findByClassroomIdAndMemberIdIsNull(classId)
 			.orElseThrow(() -> {
 				log.warn("🏦[클래스 계좌 없음] classId={}", classId);
 				return new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND);
@@ -94,7 +96,7 @@ public class AccountServiceImpl implements AccountService {
 		log.info("[클래스 기준일 예금 잔액 조회] classId={}, 기준일={}", classId, date);
 
 		// 클래스 계좌 1개 조회
-		Account account = accountRepository.findByClassroomId(classId)
+		Account account = accountRepository.findByClassroomIdAndMemberIdIsNull(classId)
 			.orElseThrow(() -> {
 				log.warn("🏦[계좌 없음] classId={}", classId);
 				return new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND);

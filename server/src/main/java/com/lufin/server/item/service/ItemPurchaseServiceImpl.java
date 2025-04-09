@@ -68,7 +68,7 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 
 	private Account getClassAccount(Integer classId) {
 		log.info("🔍[반 계좌 조회 시작] - classId: {}", classId);
-		return accountRepository.findByClassroomId(classId)
+		return accountRepository.findByClassroomIdAndMemberIdIsNull(classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 

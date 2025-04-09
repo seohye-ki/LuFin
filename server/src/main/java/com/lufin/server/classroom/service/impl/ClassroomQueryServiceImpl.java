@@ -76,7 +76,7 @@ public class ClassroomQueryServiceImpl implements ClassroomQueryService {
 	}
 
 	private ClassResponse toClassResponse(Classroom classroom) {
-		Integer balance = accountRepository.findByClassroomId(classroom.getId())
+		Integer balance = accountRepository.findByClassroomIdAndMemberIdIsNull(classroom.getId())
 			.map(Account::getBalance)
 			.orElse(0);
 

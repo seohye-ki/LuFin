@@ -53,20 +53,23 @@ public class TeacherDashboardUseCase {
 		// - 투자: 어제와 오늘 투자금액 비교 (거래 기준)
 		AssetDto deposit = buildAssetDto(
 			"예금",
-			accountService.getTotalClassDeposit(classId),
-			accountService.getTotalClassDeposit(classId, LocalDate.now().minusWeeks(1))
+			accountService.getTotalClassDeposit(classId, LocalDate.now()),
+			accountService.getTotalClassDeposit(classId, LocalDate.now().minusWeeks(1)),
+			accountService.getTotalClassDeposit(classId)
 		);
 
 		AssetDto investment = buildAssetDto(
 			"투자",
-			stockService.getTotalClassInvestment(classId, LocalDate.now()),
-			stockService.getTotalClassInvestment(classId, LocalDate.now().minusDays(1))
+			stockService.getTotalClassInvestmentOnDate(classId, LocalDate.now()),
+			stockService.getTotalClassInvestmentOnDate(classId, LocalDate.now().minusDays(1)),
+			stockService.getTotalClassInvestment(classId)
 		);
 
 		AssetDto loan = buildAssetDto(
 			"대출",
-			loanDashboardService.getTotalClassLoanPrincipal(classId),
-			loanDashboardService.getTotalClassLoanPrincipal(classId, LocalDate.now().minusWeeks(1))
+			loanDashboardService.getTotalClassLoanPrincipalOnDate(classId, LocalDate.now()),
+			loanDashboardService.getTotalClassLoanPrincipalOnDate(classId, LocalDate.now().minusWeeks(1)),
+			loanDashboardService.getTotalClassLoanPrincipal(classId)
 		);
 
 		StatisticsDto statistics = StatisticsDto.builder()

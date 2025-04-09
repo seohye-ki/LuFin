@@ -17,7 +17,8 @@ import jakarta.persistence.LockModeType;
 public interface AccountRepository extends JpaRepository<Account, Integer> {
 
 	// 특정 클래스 계좌 조회
-	Optional<Account> findByClassroomId(Integer classroomId);
+
+	Optional<Account> findByClassroomIdAndMemberIdIsNull(Integer classroomId);
 
 	// 현재 클래스의 특정 멤버 계좌 조회 (비관적 락 사용)
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
@@ -31,7 +32,16 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 	// 특정 멤버 ID의 활성 계좌 (closedAt == null) 조회
 	Optional<Account> findByMemberIdAndClosedAtIsNull(Integer memberId);
 
-	Optional<Account> findByMemberIdAndClassroomIdAndType(int memberId, int classId, AccountType type);
+
+	@Query("""
+		SELECT a.balance
+		FROM Account a
+		WHERE a.member.id = :memberId
+		AND a.classroom.id = :classroomId
+		AND a.type = :type
+		ORDER BY a.createdAt DESC
+	""")
+	Optional<Integer> findByMemberIdAndClassroomIdAndType(int memberId, int classroomId, AccountType type);
 
 	// 1년 뒤 해지
 	@Query("SELECT a FROM Account a WHERE a.type = 'CLASSROOM' AND a.createdAt < :limit AND a.closedAt IS NULL")

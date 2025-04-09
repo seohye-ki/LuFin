@@ -65,8 +65,8 @@ public class LoanServiceImpl implements LoanService {
 		}
 	}
 
-	private Account getActiveAccount(Member member) {
-		return accountRepository.findOpenAccountByMemberIdWithPessimisticLock(member.getId())
+	private Account getActiveAccount(Member member, int classId) {
+		return accountRepository.findOpenAccountByMemberIdWithPessimisticLock(member.getId(), classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 
@@ -221,7 +221,7 @@ public class LoanServiceImpl implements LoanService {
 
 		if (requestDto.status() == LoanApplicationStatus.APPROVED) {
 			application.open();
-			Account account = getActiveAccount(application.getMember());
+			Account account = getActiveAccount(application.getMember(), classId);
 			account.deposit(application.getRequiredAmount());
 			Account classAccount = getClassAccount(classId);
 			log.info("💰[대출 금액 입금 완료] - memberId: {}, amount: {}, balance: {}", application.getMember().getId(),

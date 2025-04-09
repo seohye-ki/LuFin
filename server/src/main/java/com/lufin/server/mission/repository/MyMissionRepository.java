@@ -23,16 +23,21 @@ public interface MyMissionRepository extends JpaRepository<MissionParticipation,
 			"JOIN mp.mission m " +
 			"WHERE m.classroom.id = :classId AND mp.member.id = :memberId " +
 			"ORDER BY mp.createdAt DESC")
-	List<MyMissionDto> findMyMissions(@Param("classId") Integer classId, @Param("memberId") Integer memberId);
+	List<MyMissionDto> findMyMissions(@Param("memberId") Integer memberId, @Param("classId") Integer classId);
 
 	// 특정 상태의 미션 참여 내역 조회
 	@Query("""
-		SELECT mp FROM MissionParticipation mp
+		SELECT new com.lufin.server.mission.dto.MyMissionDto(
+			m.id, mp.participationId, m.title, mp.status, m.wage, m.missionDate
+		)
+		FROM MissionParticipation mp
+		JOIN mp.mission m
 		WHERE mp.member.id = :memberId
-		AND mp.mission.classroom.id = :classId
+		AND m.classroom.id = :classId
 		AND mp.status = :status
-		""")
-	List<MissionParticipation> findAllByMemberIdAndClassIdAndStatus(
+		ORDER BY mp.createdAt DESC
+	""")
+	List<MyMissionDto> findAllByMemberIdAndClassIdAndStatus(
 		@Param("memberId") int memberId,
 		@Param("classId") int classId,
 		@Param("status") MissionParticipationStatus status

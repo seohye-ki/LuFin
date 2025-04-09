@@ -12,11 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lufin.server.account.domain.Account;
 import com.lufin.server.account.repository.AccountRepository;
+import com.lufin.server.classroom.domain.MemberClassroom;
+import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.common.annotation.TeacherOnly;
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.constants.HistoryStatus;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.credit.domain.CreditEventType;
+import com.lufin.server.credit.repository.CreditScoreRepository;
 import com.lufin.server.credit.service.CreditScoreService;
 import com.lufin.server.credit.service.CreditService;
 import com.lufin.server.member.domain.Member;
@@ -48,6 +51,8 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 	private final TransactionHistoryService transactionHistoryService;
 	private final CreditScoreService creditScoreService;
 	private final CreditService creditService;
+	private final CreditScoreRepository creditScoreRepository;
+	private final MemberClassroomRepository memberClassroomRepository;
 
 	/**
 	 * 미션 참여 신청
@@ -288,10 +293,17 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 		log.info("미션 성공 작업 시작: classId = {}, currentMember ={}, mission = {}, status = {}, participation = {} ",
 			classId, currentMember.getId(), mission, status, participation);
 
+		MemberClassroom memberClassroom = memberClassroomRepository.findByMemberIdAndClassroomIdAndIsCurrentTrue(
+				currentMember.getId(), classId)
+			.orElseThrow(() -> {
+				log.warn("🔁[신용 점수 조회 실패] - 학생이 해당 클래스 소속이 아님");
+				return new BusinessException(STUDENT_NOT_IN_TEACHER_CLASS);
+			});
+
 		try {
 			// 참여자가 개인 계좌를 보유하고 있는지 체크
 			Optional<Account> account = accountRepository.findOpenAccountByMemberIdWithPessimisticLock(
-				participation.getMember().getId());
+				participation.getMember().getId(), classId);
 
 			if (!account.isPresent()) {
 				log.warn("미션 완료 보상을 받을 계좌가 존재하지 않습니다.");
@@ -309,7 +321,14 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 
 			log.info("계좌 작업 개시: classAccount = {}, personalAccount = {}, wage = {}", classAccount, personalAccount,
 				mission.getWage());
+
+			// 개인 계좌에 보상액 지급
 			personalAccount.deposit(mission.getWage());
+			accountRepository.save(personalAccount);
+
+			// 클래스 계좌에 누적 총액 기록용 입금
+			classAccount.deposit(mission.getWage());
+			accountRepository.save(classAccount);
 
 			log.info("계좌 입금 완료: 입금액 ={}, 잔액 = {}", mission.getWage(), personalAccount.getBalance());
 			participation.markWagePaid(); // 입금 완료로 변경
@@ -325,6 +344,7 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 					CreditEventType.MISSION_COMPLETION,
 					classId
 				);
+
 				log.info("신용 등급 작업 완료: member = {} creditScore = {}", participation.getMember(),
 					creditService.getScore(participation.getMember().getId(), classId));
 			} catch (Exception e) {

@@ -76,11 +76,6 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public int getTotalAsset(int memberId, int classId) {
-		return getCashBalance(memberId, classId);
-	}
-
-	@Override
 	public long getTotalClassDeposit(int classId) {
 		// 클래스 계좌는 무조건 1개
 		Account account = accountRepository.findByClassroomId(classId)

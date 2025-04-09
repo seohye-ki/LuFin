@@ -36,7 +36,7 @@ public class RankingServiceImpl implements RankingService {
 			.map(mc -> {
 				Member member = mc.getMember();
 				int asset = loginFacadeService.getTotalAsset(member.getId(), classId);
-				return new MemberAsset(member.getId(), member.getName(), asset);
+				return new MemberAsset(member.getId(), member.getName(), asset, member.getProfileImage());
 			})
 			.sorted(Comparator.comparingInt(MemberAsset::asset).reversed())
 			.limit(10)
@@ -49,6 +49,7 @@ public class RankingServiceImpl implements RankingService {
 				return RankingDto.builder()
 					.memberId(m.id())
 					.name(m.name())
+					.profileImage(m.image())
 					.asset(m.asset())
 					.rank(i + 1)
 					.build();
@@ -56,6 +57,6 @@ public class RankingServiceImpl implements RankingService {
 			.toList();
 	}
 
-	private record MemberAsset(int id, String name, int asset) {
+	private record MemberAsset(int id, String name, int asset, String image) {
 	}
 }

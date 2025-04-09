@@ -1,5 +1,6 @@
 package com.lufin.server.dashboard.usecase;
 
+import static com.lufin.server.common.constants.ErrorCode.*;
 import static com.lufin.server.dashboard.util.AssetStatUtils.*;
 
 import java.time.DayOfWeek;
@@ -9,6 +10,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.lufin.server.account.service.AccountService;
+import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.credit.dto.CreditHistoryDto;
 import com.lufin.server.credit.service.CreditService;
 import com.lufin.server.dashboard.dto.AssetDto;
@@ -16,7 +18,9 @@ import com.lufin.server.dashboard.dto.StudentDashboardDto;
 import com.lufin.server.item.dto.ItemDashboardDto;
 import com.lufin.server.item.service.ItemPurchaseService;
 import com.lufin.server.loan.service.LoanDashboardService;
+import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.dto.RankingDto;
+import com.lufin.server.member.repository.MemberRepository;
 import com.lufin.server.member.service.RankingService;
 import com.lufin.server.mission.dto.MyMissionDto;
 import com.lufin.server.mission.service.MyMissionService;
@@ -39,8 +43,12 @@ public class StudentDashboardUseCase {
 	private final ItemPurchaseService itemService;
 	private final MyMissionService myMissionService;
 	private final TransactionHistoryService transactionHistoryService;
+	private final MemberRepository memberRepository;
 
 	public StudentDashboardDto getDashboard(int studentId, int classId) {
+
+		Member member = memberRepository.findById(studentId)
+			.orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
 
 		log.info("[학생 대시보드 요청] studentId={}, classId={}", studentId, classId);
 
@@ -91,6 +99,8 @@ public class StudentDashboardUseCase {
 		log.info("[학생 대시보드 구성 완료] studentId={}", studentId);
 
 		return StudentDashboardDto.builder()
+			.myMemberId(studentId)
+			.profileImage(member.getProfileImage())
 			.rankings(rankings)
 			.creditScore(creditScore)
 			.creditGrade(creditGrade)

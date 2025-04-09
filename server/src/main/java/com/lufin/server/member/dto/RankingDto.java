@@ -8,6 +8,7 @@ import lombok.Getter;
 public class RankingDto {
 	private int memberId;
 	private String name;
+	private String profileImage;
 	private int asset;
 	private int rank;
 }

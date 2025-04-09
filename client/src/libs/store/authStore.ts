@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { AuthService, LoginRequest } from '../services/auth/authService';
+import { fileService } from '../services/file/fileService';
 
 // 인증 스토어의 상태 타입 정의
 interface AuthState {
@@ -9,6 +10,10 @@ interface AuthState {
   error: string | null;
   errorCode: string | null;
   userRole: string | null;
+  userId: number | null;
+  userName: string | null;
+  userProfileImage: string | null;
+  totalAsset: number;
 
   // 액션
   login: (credentials: LoginRequest) => Promise<{
@@ -42,6 +47,10 @@ const useAuthStore = create<AuthState>((set, get) => ({
   error: null,
   errorCode: null,
   userRole: AuthService.getUserRole(),
+  userId: null,
+  userName: null,
+  userProfileImage: null,
+  totalAsset: 0,
 
   /**
    * 로그인 처리
@@ -64,6 +73,9 @@ const useAuthStore = create<AuthState>((set, get) => ({
           userRole: result.role || null,
           error: null,
           errorCode: null,
+          userName: result.name,
+          userProfileImage: await fileService.getImageUrl(result.profileImage as string),
+          totalAsset: result.totalAsset,
         });
 
         return {

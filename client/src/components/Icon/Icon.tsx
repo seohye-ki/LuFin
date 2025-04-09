@@ -52,6 +52,7 @@ import {
   Minus,
   Copy,
   DocumentCopy,
+  ArrangeHorizontal,
 } from 'iconsax-react';
 import { HiStar } from 'react-icons/hi2';
 
@@ -131,6 +132,7 @@ const ICONSAX_ICONS = {
   MinusCirlce,
   Edit2,
   SearchNormal1,
+  ArrangeHorizontal,
   HambergerMenu,
   Star: HiStar,
   Add,

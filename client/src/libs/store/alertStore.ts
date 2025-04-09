@@ -32,7 +32,7 @@ const useAlertStore = create<AlertState>((set) => ({
   isVisible: false,
   isOpening: false,
   title: '',
-  item: null, // item 초기값 null로 설정
+  item: null,
   description: '',
   status: 'info',
   primaryButton: null,

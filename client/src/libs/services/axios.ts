@@ -1,4 +1,5 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { hideGlobalAlert, showGlobalAlert } from '../store/alertStore';
 
 /**
  * Axios 인스턴스 생성
@@ -83,6 +84,11 @@ axiosInstance.interceptors.request.use(
   },
 );
 
+interface ErrorResponse {
+  message?: string;
+  code?: string;
+}
+
 /**
  * 응답 인터셉터
  * 모든 HTTP 응답을 처리하기 전에 실행됩니다.
@@ -100,33 +106,26 @@ axiosInstance.interceptors.response.use(
   (response) => response,
 
   // 에러 응답 처리
-  (error) => {
-    // HTTP 상태 코드별 처리
-    switch (error.response?.status) {
-      case 401: // 인증 에러
-        // 토큰이 만료되었거나 유효하지 않은 경우
-        tokenUtils.removeToken('accessToken');
-        tokenUtils.removeToken('refreshToken');
-        tokenUtils.removeToken('userRole');
-        window.location.href = '/login';
-        break;
+  (error: AxiosError) => {
+    const message = (error.response?.data as ErrorResponse)?.message || '알 수 없는 에러 발생';
+    const isEmailCheckEndpoint = error.config?.url?.includes('/register/emails');
 
-      case 403: // 권한 에러
-        // 접근 권한이 없는 경우
-        console.error('접근 권한이 없습니다.');
-        break;
+    // 이메일 중복 체크 API가 아닌 경우에만 전역 알림창 표시
+    if (!isEmailCheckEndpoint) {
+      showGlobalAlert('에러 발생', null, message, 'danger', {
+        label: '확인',
+        onClick: () => {
+          hideGlobalAlert();
+        },
+        color: 'danger',
+      });
+    }
 
-      case 404: // Not Found
-        console.error('요청한 리소스를 찾을 수 없습니다.');
-        break;
-
-      case 500: // 서버 에러
-        console.error('서버 에러가 발생했습니다.');
-        break;
-
-      default:
-        // 기타 에러
-        console.error('알 수 없는 에러가 발생했습니다.', error);
+    if (error.response?.status === 401) {
+      tokenUtils.removeToken('accessToken');
+      tokenUtils.removeToken('refreshToken');
+      tokenUtils.removeToken('userRole');
+      window.location.href = '/login';
     }
 
     return Promise.reject(error);

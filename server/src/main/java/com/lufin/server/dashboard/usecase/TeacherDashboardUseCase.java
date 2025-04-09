@@ -4,6 +4,7 @@ import static com.lufin.server.dashboard.util.AssetStatUtils.*;
 import static com.lufin.server.item.domain.ItemPurchaseStatus.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -48,8 +49,18 @@ public class TeacherDashboardUseCase {
 		// 해당 클래스에 속한 모든 구성원 조회
 		List<MemberClassroom> memberClassrooms = memberClassroomRepository.findStudentsByClassId(classId);
 
-		if(memberClassrooms.isEmpty()) {
-			return TeacherDashboardDto.builder().build();
+		if (memberClassrooms.isEmpty()) {
+			// 학생이 없을 경우: 빈 통계 + 빈 학생 목록 반환
+			StatisticsDto emptyStatistics = StatisticsDto.builder()
+				.deposit(AssetDto.empty("예금"))
+				.investment(AssetDto.empty("투자"))
+				.loan(AssetDto.empty("대출"))
+				.build();
+
+			return TeacherDashboardDto.builder()
+				.statistics(emptyStatistics)
+				.students(Collections.emptyList())
+				.build();
 		}
 
 		// 자산 통계
@@ -158,19 +169,3 @@ public class TeacherDashboardUseCase {
 		return "승인";
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

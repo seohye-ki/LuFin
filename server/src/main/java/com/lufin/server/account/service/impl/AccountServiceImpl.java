@@ -71,24 +71,10 @@ public class AccountServiceImpl implements AccountService {
 	public int getCashBalance(int memberId, int classroomId) {
 		log.info("[현금 자산 확인] member {}", memberId);
 		return accountRepository.findByMemberIdAndClassroomIdAndType(memberId, classroomId, AccountType.DEPOSIT)
-			.orElseThrow(()->{
+			.orElseThrow(() -> {
 				log.warn("🏦[계좌 없음] memberId={}", memberId);
 				return new BusinessException(ACCOUNT_NOT_FOUND);
 			});
-	}
-
-	@Override
-	public long getTotalClassDeposit(int classId) {
-		// 클래스 계좌는 무조건 1개
-		Account account = accountRepository.findByClassroomIdAndMemberIdIsNull(classId)
-			.orElseThrow(() -> {
-				log.warn("🏦[클래스 계좌 없음] classId={}", classId);
-				return new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND);
-			});
-
-		long balance = account.getBalance();
-		log.debug("[예금 잔액 결과] classId={}, balance={}", classId, balance);
-		return balance;
 	}
 
 	@Override

@@ -1,5 +1,4 @@
 import useAuthStore from '../../store/authStore';
-import useClassroomStore from '../../store/classroomStore';
 import axiosInstance, { tokenUtils } from '../axios';
 
 // ---------------------

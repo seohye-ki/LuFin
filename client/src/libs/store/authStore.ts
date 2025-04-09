@@ -12,7 +12,6 @@ interface AuthState {
   userName: string | null;
   userProfileImage: string | null;
   totalAsset: number;
-  activeClassId: number | null;
 
   login: (credentials: LoginRequest) => Promise<{
     success: boolean;

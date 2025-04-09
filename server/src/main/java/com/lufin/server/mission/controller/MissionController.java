@@ -48,13 +48,13 @@ public class MissionController {
 		ValidationUtils.validateClassId(classId);
 
 		// 전체 미션 조회
-		List<MissionResponseDto.MissionSummaryResponseDto> AllMissionList = missionService.getAllMissions(classId);
+		List<MissionResponseDto.MissionSummaryResponseDto> allMissionList = missionService.getAllMissions(classId);
 		// 내 미션 조회
-		List<MissionResponseDto.MissionSummaryResponseDto> myMissionList = missionService.getMyMissions(classId,
+		List<MissionResponseDto.MissionMyResponseDto> myMissionList = missionService.getMyMissions(classId,
 			UserContext.get());
 
 		MissionResponseDto.MissionResponseWrapperDto wrapperDto = MissionResponseDto.MissionResponseWrapperDto.createWrapperDto(
-			myMissionList, AllMissionList);
+			myMissionList, allMissionList);
 		return ResponseEntity.status(200).body(ApiResponse.success(wrapperDto));
 	}
 

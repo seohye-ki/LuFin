@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lufin.server.common.constants.ErrorCode;
+import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.mission.domain.Mission;
 import com.lufin.server.mission.domain.MissionImage;
 import com.lufin.server.mission.domain.MissionParticipation;
@@ -108,13 +110,13 @@ public class MissionResponseDto {
 	}
 
 	public record MissionResponseWrapperDto(
-		List<MissionSummaryResponseDto> myData,
+		List<MissionMyResponseDto> myData,
 		List<MissionSummaryResponseDto> allData
 	) {
 
 		// 내 미션과 전체 미션 리스트로 wrapper dto 생성
 		public static MissionResponseWrapperDto createWrapperDto(
-			List<MissionSummaryResponseDto> myMissions,
+			List<MissionMyResponseDto> myMissions,
 			List<MissionSummaryResponseDto> allMissions
 		) {
 			return new MissionResponseWrapperDto(myMissions, allMissions);
@@ -147,6 +149,50 @@ public class MissionResponseDto {
 		public static MissionSummaryResponseDto missionEntityToMissionDetailResponseDto(Mission mission) {
 			return new MissionSummaryResponseDto(
 				mission.getId(),
+				mission.getTitle(),
+				mission.getDifficulty(),
+				mission.getMaxParticipants(),
+				mission.getCurrentParticipants(),
+				mission.getWage(),
+				mission.getMissionDate(),
+				mission.getStatus()
+			);
+		}
+	}
+
+	/**
+	 * 미션 목록 응답 DTO (요약본)
+	 */
+	public record MissionMyResponseDto(
+		Integer missionId,
+		Integer participationId,
+		String title,
+		Integer difficulty,
+		Integer maxParticipants,
+		Integer currentParticipants,
+		Integer wage,
+		@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+		LocalDateTime missionDate,
+		MissionStatus status
+	) {
+
+		// querydsl 객체 생성을 위한 생성자
+		@QueryProjection
+		public MissionMyResponseDto {
+		}
+
+		/**
+		 * Mission 엔티티를 요약 DTO로 변환
+		 */
+		public static MissionMyResponseDto convertEntityToDto(Mission mission, Integer memberId) {
+			MissionParticipation myParticipation = mission.getParticipations().stream()
+				.filter(p -> p.getMember().getId().equals(memberId))
+				.findFirst()
+				.orElseThrow(() -> new BusinessException(ErrorCode.MISSION_NOT_FOUND));
+
+			return new MissionMyResponseDto(
+				mission.getId(),
+				myParticipation.getParticipationId(),
 				mission.getTitle(),
 				mission.getDifficulty(),
 				mission.getMaxParticipants(),

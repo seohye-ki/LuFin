@@ -287,7 +287,7 @@ export function useRegisterForm() {
         name: formData.name,
         role: formData.userType === 'teacher' ? 'TEACHER' : 'STUDENT',
         secondaryPassword: formData.accountPassword,
-        profileImage: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(formData.email)}`
+        profileImage: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(formData.email)}`,
       });
 
       if (response.isSuccess) {

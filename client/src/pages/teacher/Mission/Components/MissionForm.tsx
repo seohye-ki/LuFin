@@ -27,14 +27,14 @@ const MissionForm = ({ defaultValues = {}, onClose, mode, selectedDate }: Missio
     setWage,
     content,
     setContent,
-    multipleImages,
-    setMultipleImages,
+    handleImageUpload,
     titleRef,
     wageRef,
     contentRef,
     isValidTitle,
     isValidWage,
     isValidContent,
+    images,
     handleSubmit,
   } = useMissionForm(mode, selectedDate, defaultValues);
 
@@ -111,8 +111,9 @@ const MissionForm = ({ defaultValues = {}, onClose, mode, selectedDate }: Missio
         <ImageUpload
           id='images'
           label='미션 참고 이미지'
-          value={multipleImages}
-          onChange={(value) => setMultipleImages(value as File[])}
+          value={images}
+          onChange={handleImageUpload}
+          maxFiles={3}
         />
         <div className='flex gap-2'>
           <Button variant='solid' color='neutral' size='md' full onClick={onClose}>

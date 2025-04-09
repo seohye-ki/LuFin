@@ -1,16 +1,13 @@
 import { useState, useRef } from 'react';
-import {
-  MissionCreateRequest,
-  MissionDetail,
-  MissionUpdateRequest,
-} from '../../../../types/mission/mission';
+import { MissionCreateRequest, MissionUpdateRequest } from '../../../../types/mission/mission';
 import useMissionStore from '../../../../libs/store/missionStore';
 import { toLocalISOString } from '../../../../libs/utils/date-util';
+import { fileService } from '../../../../libs/services/file/fileService';
 
 export const useMissionForm = (
   mode: 'create' | 'edit',
   selectedDate = new Date(),
-  defaultValues: Partial<MissionDetail> = {},
+  defaultValues: Partial<MissionCreateRequest> = {},
 ) => {
   const { createMission, updateMission, selectedMission, getMissionList } = useMissionStore();
 
@@ -23,7 +20,26 @@ export const useMissionForm = (
   const [maxParticipants, setMaxParticipants] = useState(defaultValues?.maxParticipants || '');
   const [wage, setWage] = useState(defaultValues?.wage || '');
   const [content, setContent] = useState(defaultValues?.content || '');
-  const [multipleImages, setMultipleImages] = useState<File[]>([]);
+
+  const [imageKeys, setImageKeys] = useState<string[]>(
+    defaultValues?.s3Keys ??
+      (defaultValues?.images ? defaultValues.images.map((img) => img.objectKey) : []),
+  );
+  const [images, setImages] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleImageUpload = async (files: File[]) => {
+    try {
+      setIsUploading(true);
+      const keys = await fileService.uploadFiles('missions', files);
+      setImageKeys((prev) => [...prev, ...keys]);
+      setImages((prev) => [...prev, ...files]);
+    } catch (error) {
+      console.error('다중 이미지 업로드 실패:', error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   /**
    * 유효성 검사
@@ -76,7 +92,8 @@ export const useMissionForm = (
           maxParticipants: Number(maxParticipants),
           wage: Number(wage),
           missionDate: toLocalISOString(selectedDate),
-          s3Keys: [],
+          s3Keys: imageKeys,
+          images: imageKeys.map((key) => ({ id: 0, objectKey: key })),
         };
 
         const result = await createMission(payload);
@@ -93,7 +110,8 @@ export const useMissionForm = (
           missionId: selectedMission.missionId,
           title,
           content,
-          s3Keys: [],
+          s3Keys: imageKeys,
+          images: imageKeys.map((key) => ({ id: 0, objectKey: key })),
           difficulty: difficulty!.count,
           maxParticipants: Number(maxParticipants),
           wage: Number(wage),
@@ -122,8 +140,12 @@ export const useMissionForm = (
     setWage,
     content,
     setContent,
-    multipleImages,
-    setMultipleImages,
+    imageKeys,
+    setImageKeys,
+    images,
+    setImages,
+    isUploading,
+    setIsUploading,
     titleRef,
     wageRef,
     contentRef,
@@ -133,5 +155,6 @@ export const useMissionForm = (
     isValidWage,
     isValidContent,
     handleSubmit,
+    handleImageUpload,
   };
 };

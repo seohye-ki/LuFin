@@ -9,6 +9,7 @@ import Profile from '../../../../components/Profile/Profile';
 import MissionEditModal from './MissionEditModal';
 import useAlertStore from '../../../../libs/store/alertStore';
 import useMissionStore from '../../../../libs/store/missionStore';
+import { fileService } from '../../../../libs/services/file/fileService';
 
 interface MissionReadModalProps {
   mission: MissionRaw;
@@ -24,6 +25,24 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
   const [selectedParticipation, setSelectedParticipation] = useState<ParticipationUserInfo | null>(
     null,
   );
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadImages = async () => {
+      try {
+        if (mission.images && mission.images.length > 0) {
+          const urls = await Promise.all(
+            mission.images.map((img) => fileService.getImageUrl(img.objectKey)),
+          );
+          setImageUrls(urls);
+        }
+      } catch (error) {
+        console.error('이미지 로드 오류:', error);
+      }
+    };
+
+    loadImages();
+  }, [mission.images]);
 
   const { deleteMission, getParticipationList, requestReview, getMissionList } = useMissionStore();
 
@@ -122,18 +141,18 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
   };
 
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? mission.images.length - 2 : prev - 2));
+    setCurrentImageIndex((prev) => (prev === 0 ? imageUrls.length - 2 : prev - 2));
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev >= mission.images.length - 2 ? 0 : prev + 2));
+    setCurrentImageIndex((prev) => (prev >= imageUrls.length - 2 ? 0 : prev + 2));
   };
 
   const getVisibleImages = () => {
     const images = [];
     for (let i = 0; i < 2; i++) {
-      const index = (currentImageIndex + i) % mission.images.length;
-      images.push(mission.images[index]);
+      const index = (currentImageIndex + i) % imageUrls.length;
+      images.push(imageUrls[index]);
     }
     return images;
   };
@@ -229,7 +248,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
               <span className='text-c1 text-grey'>설명</span>
               <span className='text-p1 font-semibold'>{mission.content}</span>
             </div>
-            {mission.images.length > 0 && (
+            {imageUrls.length > 0 && (
               <div className='mt-2 relative'>
                 <div className='grid grid-cols-2 gap-2'>
                   {getVisibleImages().map((image, index) => (
@@ -242,7 +261,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
                     </div>
                   ))}
                 </div>
-                {mission.images.length > 2 && (
+                {imageUrls.length > 2 && (
                   <>
                     <button
                       onClick={handlePrevImage}

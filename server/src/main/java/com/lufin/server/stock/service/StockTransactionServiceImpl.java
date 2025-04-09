@@ -100,7 +100,7 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			Optional<StockProduct> stock = stockProductRepository.findByIdWithPessimisticLock(stockProductId);
 
 			if (!stock.isPresent()) {
-				log.warn("주식 구매에 필요한 주식 상품을 찾을 수 없습니다. classId = {}, currentMember = {}", classId, currentMember);
+				log.warn("주식 거래에 필요한 주식 상품을 찾을 수 없습니다. classId = {}, currentMember = {}", classId, currentMember);
 				throw new BusinessException(ErrorCode.INVESTMENT_PRODUCT_NOT_FOUND);
 			}
 
@@ -111,7 +111,8 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 				currentMember.getId(), classId);
 
 			if (!account.isPresent()) {
-				log.warn("주식 구매에 필요한 개인 계좌를 찾을 수 없습니다. classId = {}, currentMember = {}", classId, currentMember);
+				log.warn("주식 거래에 필요한 개인 계좌를 찾을 수 없습니다. classId = {}, currentMember = {}", classId,
+					currentMember.getId());
 				throw new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND);
 			}
 
@@ -119,13 +120,6 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			Optional<StockPortfolio> portfolioOptional = stockPortfolioRepository.findByStockProductIdAndMemberIdWithPessimisticLock(
 				stockProduct.getId(),
 				currentMember.getId());
-
-			if (!portfolioOptional.isPresent()) {
-				log.warn("주식 판매에 필요한 구매 내역을 찾을 수 없습니다.");
-				throw new BusinessException(ErrorCode.TRANSACTION_NOT_FOUND);
-			}
-
-			StockPortfolio portfolio = portfolioOptional.get();
 
 			// 4. classroom 조회
 			Classroom classroom = classroomRepository.findById(classId)
@@ -135,6 +129,13 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 
 			// 구매인지 판매인지 구분
 			if (request.type() == 0) { // 판매
+				if (!portfolioOptional.isPresent()) {
+					log.warn("주식 거래에 필요한 구매 내역을 찾을 수 없습니다.");
+					throw new BusinessException(ErrorCode.TRANSACTION_NOT_FOUND);
+				}
+
+				StockPortfolio portfolio = portfolioOptional.get();
+
 				result = sellStock(
 					request,
 					currentMember,

@@ -15,12 +15,20 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class StockPortfolioRepositoryCustomImpl implements StockPortfolioRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
+	/**
+	 * memberId와 classId에 해당하는 모든 포트폴리오 조회
+	 * @param memberId
+	 * @param classId
+	 * @return
+	 */
 	@Override
 	public List<StockPortfolioResponseDto.PortfolioInfoDto> findAllByMemberIdAndClassId(
 		Integer memberId,

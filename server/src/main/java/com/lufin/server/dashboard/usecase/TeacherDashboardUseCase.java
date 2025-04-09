@@ -48,6 +48,10 @@ public class TeacherDashboardUseCase {
 		// 해당 클래스에 속한 모든 구성원 조회
 		List<MemberClassroom> memberClassrooms = memberClassroomRepository.findStudentsByClassId(classId);
 
+		if(memberClassrooms.isEmpty()) {
+			return TeacherDashboardDto.builder().build();
+		}
+
 		// 자산 통계
 		// - 예금, 대출: 1주일 전과 현재 잔액 비교
 		// - 투자: 어제와 오늘 투자금액 비교 (거래 기준)

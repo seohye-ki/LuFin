@@ -8,6 +8,8 @@ import useClassroomStore from '../../libs/store/classroomStore';
 import { useEffect, useState } from 'react';
 import { Icon } from '../Icon/Icon';
 import { DashboardService } from '../../libs/services/dashboard/dashboardService';
+import { tokenUtils } from '../../libs/services/axios';
+import { hideGlobalAlert, showGlobalAlert } from '../../libs/store/alertStore';
 
 interface SidebarProps {
   userRole: 'student' | 'teacher';
@@ -47,6 +49,30 @@ const Sidebar = ({ userRole, hideMenu = false }: SidebarProps) => {
 
     fetchStudentDashboard();
   }, [userRole, hideMenu]);
+
+  const logout = () => {
+    showGlobalAlert(
+      '로그아웃 하시겠습니까?',
+      null,
+      '확인을 누르면 로그인 페이지로 이동합니다.',
+      'warning',
+      {
+        label: '확인',
+        onClick: () => {
+          tokenUtils.removeToken('accessToken');
+          tokenUtils.removeToken('refreshToken');
+          tokenUtils.removeToken('userRole');
+          window.location.href = '/login';
+        },
+      },
+      {
+        label: '취소',
+        onClick: () => {
+          hideGlobalAlert();
+        },
+      },
+    );
+  };
 
   // 현재 활성화된 클래스 확인
   const currentClassroom = getCurrentClassroom();
@@ -136,13 +162,15 @@ const Sidebar = ({ userRole, hideMenu = false }: SidebarProps) => {
           </div>
         )}
 
-        <Profile
-          name='이재현'
-          variant='row'
-          certificationNumber='5학년 1반 12번'
-          profileImage='https://picsum.photos/200/300?random=1'
-          className='border border-purple-30 rounded-lg'
-        />
+        <div onClick={logout}>
+          <Profile
+            name='이재현'
+            variant='row'
+            certificationNumber='5학년 1반 12번'
+            profileImage='https://picsum.photos/200/300?random=1'
+            className='border border-purple-30 rounded-lg'
+          />
+        </div>
       </div>
     </div>
   );

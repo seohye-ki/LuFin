@@ -1,4 +1,3 @@
-import axios from 'axios';
 import axiosInstance, { tokenUtils } from '../axios';
 
 // 인터페이스 정의
@@ -18,8 +17,11 @@ export interface AuthResponse {
   message?: string;
 }
 
-// 환경 변수에서 로그인 엔드포인트 가져오기
-const LOGIN_ENDPOINT = import.meta.env.VITE_AUTH_LOGIN_ENDPOINT || '/auth/login';
+interface ErrorResponse {
+  response: {
+    data: AuthResponse;
+  };
+}
 
 /**
  * 인증 관련 서비스 함수들
@@ -33,7 +35,7 @@ export const AuthService = {
    */
   login: async (credentials: LoginRequest) => {
     try {
-      const response = await axiosInstance.post<AuthResponse>(LOGIN_ENDPOINT, credentials);
+      const response = await axiosInstance.post<AuthResponse>('/auth/login', credentials);
 
       if (response.data.isSuccess && response.data.data) {
         // 토큰 저장
@@ -61,8 +63,8 @@ export const AuthService = {
       let errorMessage = '로그인 중 오류가 발생했습니다.';
       let errorCode = '';
 
-      if (axios.isAxiosError(error) && error.response) {
-        const responseData = error.response.data as AuthResponse;
+      if (error && typeof error === 'object' && 'response' in error) {
+        const responseData = (error as ErrorResponse).response.data;
         errorMessage = responseData.message || errorMessage;
         errorCode = responseData.code || '';
       }

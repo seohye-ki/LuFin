@@ -33,7 +33,7 @@ export function WeeklyMissionModal({ selectedDate, onDateChange }: WeeklyMission
     return day;
   });
 
-  const missions = useMissionStore((state) => state.availableMissions);
+  const missions = useMissionStore((state) => state.myMissions);
 
   const dateKey = formatDateKey(selectedDate);
   const dayMissions = missions.filter(

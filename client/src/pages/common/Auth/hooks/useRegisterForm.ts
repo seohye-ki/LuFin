@@ -1,12 +1,5 @@
 import { useState } from 'react';
 import { registerService } from '../../../../libs/services/auth/registerService';
-import { AxiosError } from 'axios';
-
-interface ErrorResponse {
-  message: string;
-  code: string;
-  isSuccess: boolean;
-}
 
 /**
  * 회원가입 폼의 상태를 정의하는 인터페이스
@@ -115,13 +108,12 @@ export function useRegisterForm() {
         },
       }));
       return isAvailable;
-    } catch (error) {
-      const axiosError = error as AxiosError<ErrorResponse>;
+    } catch {
       setValidation((prev) => ({
         ...prev,
         email: {
           isValid: false,
-          message: axiosError.response?.data?.message || '이메일 확인 중 오류가 발생했습니다',
+          message: '이메일 확인 중 오류가 발생했습니다',
           isAvailable: false,
         },
       }));
@@ -149,45 +141,26 @@ export function useRegisterForm() {
 
   /**
    * 비밀번호 유효성 검사
-   * - 8~16자
-   * - 대소문자, 숫자, 특수문자 각각 1개 이상 포함
+   * - 8자 이상
+   * - 특수문자 포함
    * - 비밀번호와 확인 비밀번호 일치 여부
    */
   const validatePassword = () => {
-    const isLengthValid = formData.password.length >= 8 && formData.password.length <= 16;
-    const hasUpperCase = /[A-Z]/.test(formData.password);
-    const hasLowerCase = /[a-z]/.test(formData.password);
-    const hasNumber = /[0-9]/.test(formData.password);
-    const hasSpecialChar = /[~!@#$%^&*_\-+=`|\\(){}[\]:;"'<>,.?/]/.test(formData.password);
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const isLengthValid = formData.password.length >= 8;
+    const hasSpecialChar = specialCharRegex.test(formData.password);
     const isMatching = formData.password === formData.confirmPassword;
+    const isValid = isLengthValid && hasSpecialChar && isMatching;
 
     let message = '';
-    let isValid = false;
-
-    if (!formData.password) {
-      message = '비밀번호를 입력해주세요';
-    } else if (!isLengthValid) {
-      message = '비밀번호는 8자 이상 16자 이하여야 합니다';
-    } else if (!hasUpperCase) {
-      message = '비밀번호는 대문자를 1개 이상 포함해야 합니다';
-    } else if (!hasLowerCase) {
-      message = '비밀번호는 소문자를 1개 이상 포함해야 합니다';
-    } else if (!hasNumber) {
-      message = '비밀번호는 숫자를 1개 이상 포함해야 합니다';
+    if (!isLengthValid) {
+      message = '비밀번호는 8자 이상이어야 합니다';
     } else if (!hasSpecialChar) {
-      message = '비밀번호는 특수문자를 1개 이상 포함해야 합니다';
-    } else if (!isMatching && formData.confirmPassword) {
+      message = '비밀번호는 특수문자를 포함해야 합니다';
+    } else if (!isMatching) {
       message = '비밀번호가 일치하지 않습니다';
-    } else if (
-      isLengthValid &&
-      hasUpperCase &&
-      hasLowerCase &&
-      hasNumber &&
-      hasSpecialChar &&
-      (!formData.confirmPassword || isMatching)
-    ) {
+    } else {
       message = '사용 가능한 비밀번호입니다';
-      isValid = true;
     }
 
     setValidation((prev) => ({
@@ -314,7 +287,7 @@ export function useRegisterForm() {
         name: formData.name,
         role: formData.userType === 'teacher' ? 'TEACHER' : 'STUDENT',
         secondaryPassword: formData.accountPassword,
-        profileImage: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(formData.email)}`,
+        profileImage: `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(formData.email)}`
       });
 
       if (response.isSuccess) {

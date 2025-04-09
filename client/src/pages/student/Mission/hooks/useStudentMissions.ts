@@ -1,21 +1,63 @@
-import { MissionList, MissionParticipation } from '../../../../types/mission/mission';
+import {
+  MissionList,
+  MissionParticipation,
+  ParticipationUserInfo,
+} from '../../../../types/mission/mission';
 import { createMissionRow } from '../../../../libs/utils/mission-util';
+import useMissionStore from '../../../../libs/store/missionStore';
+
+const convertToMissionParticipations = (
+  users: ParticipationUserInfo[],
+  memberId: number,
+  missionId: number,
+): MissionParticipation[] => {
+  return users.map((user) => ({
+    participationId: user.participationId,
+    memberId,
+    missionId,
+    status: user.status,
+  }));
+};
 
 export const useStudentMissions = (
-  myMissions: { mission: MissionList; participation: MissionParticipation }[],
+  myMissions: MissionList[],
   availableMissions: MissionList[],
-  onRowClick: (mission: MissionList, participationId?: number) => void,
+  participationList: ParticipationUserInfo[],
+  myMemberId: number,
+  onRowClick: (mission: MissionList) => void,
+  setParticipationList: (list: ParticipationUserInfo[]) => void,
 ) => {
+  const getParticipationList = useMissionStore((state) => state.getParticipationList);
+
+  const refetchParticipations = async (missionId: number) => {
+    const result = await getParticipationList(missionId);
+    if (result.success && result.participations) {
+      setParticipationList(result.participations);
+    }
+  };
+
+  const allMissionParticipations: MissionParticipation[] = myMissions.flatMap((mission) =>
+    convertToMissionParticipations(participationList, myMemberId, mission.missionId),
+  );
+
+  const myParticipations = allMissionParticipations.filter((p) => p.memberId === myMemberId);
+
   const myMissionRows = myMissions
-    .map(({ mission, participation }) => createMissionRow(mission, participation, onRowClick))
+    .filter((m) => myParticipations.some((p) => p.missionId === m.missionId))
+    .map((mission) => {
+      const participation = myParticipations.find((p) => p.missionId === mission.missionId);
+      return createMissionRow(mission, participation, onRowClick);
+    })
     .filter((row): row is NonNullable<typeof row> => row !== null);
 
   const availableMissionRows = availableMissions
+    .filter((m) => !myParticipations.some((p) => p.missionId === m.missionId))
     .map((mission) => createMissionRow(mission, undefined, onRowClick))
     .filter((row): row is NonNullable<typeof row> => row !== null);
 
   return {
     myMissionRows,
     availableMissionRows,
+    refetchParticipations,
   };
 };

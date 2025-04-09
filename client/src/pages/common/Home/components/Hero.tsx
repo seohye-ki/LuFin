@@ -1,26 +1,15 @@
 import { Container } from './Container';
 import { paths } from '../../../../routes/paths';
 import logo from '../../../../assets/svgs/logo.svg';
+import lufinCoin from '../../../../assets/svgs/lufin-coin-200.svg';
 import Button from '../../../../components/Button/Button';
 import { Link } from 'react-router-dom';
-import tabletDashboard from '../../../../assets/images/mockups/tablet_dashboard.png';
-import tabletDashboardMission from '../../../../assets/images/mockups/tablet_dashboard_mission.png';
-import tabletInvestmentGraph from '../../../../assets/images/mockups/tablet_investment_graph.png';
-import tabletLoan from '../../../../assets/images/mockups/tablet_loan.png';
-import { Icon } from '../../../../components/Icon/Icon';
-import '../../../../styles/animations.css';
+import tabletDashboard from '../../../../assets/images/mockups/tablet_dashboard_2.png';
 
 export function Hero() {
-  const scrollToNextSection = () => {
-    const nextSection = document.getElementById('next-section');
-    if (nextSection) {
-      nextSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
-    <Container className='pt-20 pb-16 lg:pt-32 relative'>
-      <div className='mx-auto max-w-7xl min-h-[720px] px-4 sm:px-6 lg:px-8 lg:grid lg:grid-cols-12 lg:gap-x-8 lg:gap-y-20 flex items-center'>
+    <Container className='pt-20 pb-16 lg:pt-32'>
+      <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 lg:grid lg:grid-cols-12 lg:gap-x-8 lg:gap-y-20'>
         <div className='lg:col-span-7 lg:text-left text-center'>
           <div className='lg:text-left text-center mb-8'>
             <img src={logo} alt='루핀 로고' className='h-12 w-auto lg:mx-0 mx-auto' />
@@ -40,6 +29,7 @@ export function Hero() {
             </span>
           </h1>
           <p className='mt-6 font-pretendard text-h3 font-medium tracking-tight text-grey'>
+            <img src={lufinCoin} alt='루핀 코인' className='inline-block h-8 w-8 mr-2' />
             루핀으로 시작하는 새로운 금융 교육.
             <br />
             실생활과 연계된 금융 교육으로 올바른 금융 습관을 형성하세요.
@@ -50,51 +40,18 @@ export function Hero() {
             </Link>
           </div>
         </div>
-        <div className='relative mt-10 lg:mt-0 lg:col-span-5 flex items-center justify-center'>
-          <div className='relative w-full h-[500px] flex items-center justify-center'>
-            <div className='absolute w-full h-full flex items-center justify-center'>
-              <div className='slide-container w-full scale-125 transform'>
-                <div className='slide-item'>
-                  <img
-                    src={tabletDashboard}
-                    alt='루핀 대시보드'
-                    className='w-full h-full object-contain'
-                  />
-                </div>
-                <div className='slide-item'>
-                  <img
-                    src={tabletDashboardMission}
-                    alt='루핀 미션 대시보드'
-                    className='w-full h-full object-contain'
-                  />
-                </div>
-                <div className='slide-item'>
-                  <img
-                    src={tabletInvestmentGraph}
-                    alt='루핀 투자 그래프'
-                    className='w-full h-full object-contain'
-                  />
-                </div>
-                <div className='slide-item'>
-                  <img
-                    src={tabletLoan}
-                    alt='루핀 대출 화면'
-                    className='w-full h-full object-contain'
-                  />
-                </div>
-              </div>
+        <div className='relative mt-10 lg:mt-0 lg:col-span-5'>
+          <div className='relative'>
+            <div className='absolute -inset-y-6 -inset-x-4 z-0 scale-95 bg-info/10 opacity-70 blur-2xl rounded-3xl' />
+            <div className='relative'>
+              <img
+                src={tabletDashboard}
+                alt='루핀 대시보드'
+                className='rounded-2xl shadow-xl ring-1 ring-slate-900/10'
+              />
             </div>
           </div>
         </div>
-      </div>
-      <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 cursor-pointer animate-gentle-bounce'>
-        <button
-          onClick={scrollToNextSection}
-          className='p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-lg hover:bg-white transition-colors'
-          aria-label='다음 섹션으로 이동'
-        >
-          <Icon name='ArrowDown2' size={32} color='info' />
-        </button>
       </div>
     </Container>
   );

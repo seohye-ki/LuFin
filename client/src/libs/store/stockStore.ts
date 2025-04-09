@@ -28,9 +28,9 @@ interface StockState {
     productId: number,
     type: 'BUY' | 'SELL',
     quantity: number,
-    price: number,
+    unitPrice: number,
   ) => Promise<{ success: boolean; transactionId?: number; message?: string }>;
-  getStockNews: () => Promise<{ success: boolean; message?: string }>;
+  getStockNews: (productId: number) => Promise<{ success: boolean; message?: string }>;
   getStockPortfolio: () => Promise<{ success: boolean; message?: string }>;
 
   getStockStatus: () => {
@@ -99,10 +99,10 @@ export const useStockStore = create<StockState>((set, get) => ({
   /**
    * 종목 가격 변동 이력 조회
    */
-  getStockPriceHistory: async (productId: number) => {
+  getStockPriceHistory: async (productId: number, day: number = 7) => {
     set({ isLoading: true });
     try {
-      const result = await stockService.getStockPriceHistory(productId);
+      const result = await stockService.getStockPriceHistory(productId, day);
       if (result.success) {
         set({
           priceHistory: result.history,
@@ -127,16 +127,16 @@ export const useStockStore = create<StockState>((set, get) => ({
     productId,
     type,
     quantity,
-    price,
+    unitPrice,
   ): Promise<{ success: boolean; transactionId?: number; message?: string }> => {
     set({ isLoading: true });
     try {
       const result = await stockService.postStockTransaction(productId, {
-        stockProductId: productId,
-        type: type === 'BUY' ? 1 : 0,
-        quantity: quantity,
-        price: price,
-        totalPrice: quantity * price,
+        StockProductId: productId,
+        Type: type === 'BUY' ? 1 : 0,
+        Quantity: quantity,
+        UnitPrice: unitPrice,
+        TotalValue: quantity * unitPrice,
       });
       if (result.success) {
         set({ isLoading: false });
@@ -154,10 +154,10 @@ export const useStockStore = create<StockState>((set, get) => ({
   /**
    * 종목 공시 정보 조회
    */
-  getStockNews: async () => {
+  getStockNews: async (productId: number) => {
     set({ isLoading: true });
     try {
-      const result = await stockService.getStockNews();
+      const result = await stockService.getStockNews(productId);
       if (result.success) {
         set({
           news: result.news,

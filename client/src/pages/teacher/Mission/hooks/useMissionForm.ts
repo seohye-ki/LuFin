@@ -5,11 +5,11 @@ import {
   MissionUpdateRequest,
 } from '../../../../types/mission/mission';
 import useMissionStore from '../../../../libs/store/missionStore';
-import { toLocalISOString } from '../../../../libs/utils/date-util';
+import moment from 'moment';
 
 export const useMissionForm = (
   mode: 'create' | 'edit',
-  selectedDate = new Date(),
+  selectedDate: Date,
   defaultValues: Partial<MissionDetail> = {},
 ) => {
   const { createMission, updateMission, selectedMission, getMissionList } = useMissionStore();
@@ -65,6 +65,12 @@ export const useMissionForm = (
     }
 
     try {
+      // 이미지 더미 데이터
+      const imageUrls = [
+        'https://picsum.photos/200/300?random=1',
+        'https://picsum.photos/200/300?random=2',
+      ];
+
       /**
        * 미션 생성 요청
        */
@@ -75,7 +81,7 @@ export const useMissionForm = (
           difficulty: difficulty!.count,
           maxParticipants: Number(maxParticipants),
           wage: Number(wage),
-          missionDate: toLocalISOString(selectedDate),
+          missionDate: moment(selectedDate).startOf('day').toDate().toISOString(),
           s3Keys: [],
         };
 
@@ -93,16 +99,15 @@ export const useMissionForm = (
           missionId: selectedMission.missionId,
           title,
           content,
-          s3Keys: [],
+          s3Keys: imageUrls,
           difficulty: difficulty!.count,
           maxParticipants: Number(maxParticipants),
           wage: Number(wage),
-          missionDate: toLocalISOString(selectedDate),
+          missionDate: moment(selectedDate).startOf('day').toDate().toISOString(),
         };
 
         const result = await updateMission(payload);
         if (result) {
-          await getMissionList();
           onSuccess();
         }
       }

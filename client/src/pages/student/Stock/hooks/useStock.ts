@@ -22,7 +22,10 @@ export const useStock = () => {
    */
   const selectStock = async (stock: StockProduct) => {
     setSelectedStock(stock);
-    await Promise.all([getStockPriceHistory(stock.stockProductId), getStockNews()]);
+    await Promise.all([
+      getStockPriceHistory(stock.StockProductId),
+      getStockNews(stock.StockProductId),
+    ]);
   };
 
   /**

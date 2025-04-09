@@ -84,11 +84,6 @@ axiosInstance.interceptors.request.use(
   },
 );
 
-interface ErrorResponse {
-  message?: string;
-  code?: string;
-}
-
 /**
  * 응답 인터셉터
  * 모든 HTTP 응답을 처리하기 전에 실행됩니다.
@@ -128,16 +123,13 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error); // 리다이렉션 전에 에러는 반환
     }
 
-    // 이메일 중복 체크 API가 아닌 경우에만 전역 알림창 표시
-    if (!isEmailCheckEndpoint) {
-      showGlobalAlert('에러 발생', null, message, 'danger', {
-        label: '확인',
-        onClick: () => {
-          hideGlobalAlert();
-        },
-        color: 'danger',
-      });
-    }
+    showGlobalAlert('에러 발생', null, message, 'danger', {
+      label: '확인',
+      onClick: () => {
+        hideGlobalAlert();
+      },
+      color: 'danger',
+    });
 
     return Promise.reject(error);
   },

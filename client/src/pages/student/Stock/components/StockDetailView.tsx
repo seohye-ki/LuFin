@@ -8,7 +8,7 @@ const StockDetailView = () => {
 
   useEffect(() => {
     if (selectedStock) {
-      getStockPriceHistory(selectedStock.stockProductId, 7);
+      getStockPriceHistory(selectedStock.StockProductId, 7);
     }
   }, [selectedStock]);
 

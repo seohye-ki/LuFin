@@ -99,6 +99,13 @@ public class MissionServiceImpl implements MissionService {
 		}
 	}
 
+	/**
+	 * 미션 상세 조회
+	 * @param classId
+	 * @param missionId
+	 * @param role
+	 * @return
+	 */
 	@Override
 	public MissionResponseDto.MissionDetailResponseDto getMissionById(Integer classId, Integer missionId,
 		MemberRole role) {
@@ -136,6 +143,12 @@ public class MissionServiceImpl implements MissionService {
 		}
 	}
 
+	/**
+	 * 미션 생성
+	 * @param requestDto
+	 * @param classId
+	 * @return
+	 */
 	@TeacherOnly
 	@Transactional
 	@Override
@@ -157,6 +170,8 @@ public class MissionServiceImpl implements MissionService {
 			Classroom classroom = classroomRepository.findById(classId)
 				.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
 
+			log.info("classroom 조회 성공: {}", classroom.getId());
+
 			// Mission 엔티티 생성
 			Mission newMission = Mission.create(
 				classroom,
@@ -168,8 +183,12 @@ public class MissionServiceImpl implements MissionService {
 				requestDto.missionDate()
 			);
 
+			// JPA repository save() 활용해서 저장한 엔티티 조회
+			Mission savedMission = missionRepository.save(newMission);
+
 			// image가 있다면 MissionImage 엔티티 생성 후 저장
 			if (requestDto.s3Keys() != null && !requestDto.s3Keys().isEmpty()) {
+				log.info("MissionImage 객체 생성 시작: s3KeysSize = {}", requestDto.s3Keys().size());
 				List<MissionImage> images = new ArrayList<>();
 				for (String s3Key : requestDto.s3Keys()) {
 					MissionImage newMissionImage = MissionImage.create(
@@ -179,11 +198,12 @@ public class MissionServiceImpl implements MissionService {
 					images.add(newMissionImage);
 				}
 
-				missionImageRepository.saveAll(images);
-			}
+				log.info("MissionImage 객체 생성 성공: imageSize = {}", images.size());
 
-			// JPA repository save() 활용해서 저장한 엔티티 조회
-			Mission savedMission = missionRepository.save(newMission);
+				missionImageRepository.saveAll(images);
+
+				log.info("MissionImage 엔티티 저장 성공");
+			}
 
 			return new MissionResponseDto.MissionPostResponseDto(savedMission.getId());
 		} catch (BusinessException e) {

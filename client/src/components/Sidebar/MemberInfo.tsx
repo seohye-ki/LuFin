@@ -5,7 +5,7 @@ import Lufin from '../Lufin/Lufin';
 import Profile from '../Profile/Profile';
 
 const MemberInfo = () => {
-  const { userName, userProfileImage, userRole } = useAuthStore();
+  const { userName, userProfileImage, userRole, totalAsset } = useAuthStore();
 
   const logout = () => {
     showGlobalAlert(
@@ -29,7 +29,7 @@ const MemberInfo = () => {
       {userRole === 'STUDENT' && (
         <div className='flex w-full h-21 flex-col bg-yellow rounded-lg p-4 gap-1'>
           <p className='text-c1 text-dark-grey'>총 자산</p>
-          <Lufin count={10000} size='l' />
+          <Lufin count={totalAsset} size='l' />
         </div>
       )}
       <div onClick={logout}>

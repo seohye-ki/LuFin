@@ -96,7 +96,8 @@ public class StudentDashboardUseCase {
 
 		int stock = stockService.getTotalValuation(studentId, classId);
 		int loan = loanService.getLoanPrincipal(studentId, classId);
-		int cash = accountService.getCashBalance(studentId, classId) - loan;
+		int cash = accountService.getCashBalance(studentId, classId);
+		cash -= loan;
 		int totalAsset = cash + stock + loan;
 		log.debug(" - 소비={}, 투자={}, 대출={}, 자산총합(현금+투자)={}", accumulatedConsumption, stock, loan, totalAsset);
 

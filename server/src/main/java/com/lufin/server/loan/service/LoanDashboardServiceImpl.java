@@ -26,14 +26,14 @@ public class LoanDashboardServiceImpl implements LoanDashboardService {
 	public int getLoanPrincipal(int memberId, int classroomId) {
 		log.info("[대출 원금 조회] memberId: {}, classroomId: {}", memberId, classroomId);
 
-		// 가장 최근 대출 지급 거래 기준 잔액 반환
+		// 가장 최근 대출 실행 원금 반환
 		return transactionHistoryRepository
 			.findTopByExecutor_IdAndSourceTypeAndCreatedAtLessThanEqualOrderByCreatedAtDesc(
 				memberId,
 				TransactionSourceType.LOAN_DISBURSEMENT,
 				LocalDateTime.now()
 			)
-			.map(TransactionHistory::getBalanceAfter)
+			.map(TransactionHistory::getAmount)
 			.orElse(0);
 	}
 

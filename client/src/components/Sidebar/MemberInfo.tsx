@@ -43,12 +43,12 @@ const MemberInfo = () => {
           <Lufin count={totalAsset} size='l' />
         </div>
       )}
-      <div onClick={handleLogout}>
+      <div className='w-full' onClick={handleLogout}>
         <Profile
           name={userName || '로그인을 해주세요.'}
           variant='row'
           profileImage={userProfileImage || ''}
-          className='border border-purple-30 rounded-lg'
+          className='w-full border border-purple-30 rounded-lg'
         />
       </div>
     </div>

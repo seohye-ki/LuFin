@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom';
 import DashboardCard from './DashboardCard';
+import { paths } from '../../../../routes/paths';
 
 interface ItemInfo {
   name: string;
@@ -32,8 +34,11 @@ const ItemList = ({ items }: ItemListProps) => {
                 </div>
               ))
             ) : (
-              <div className='flex items-center justify-center h-20'>
-                <span className='text-p1 text-grey'>보유한 아이템이 없습니다.</span>
+              <div className='flex flex-col items-center justify-center h-22 gap-2'>
+                <p className='text-p2 text-grey'>사용가능한 아이템이 없어요.</p>
+                <Link to={paths.SHOP} className='text-c1 text-info hover:underline'>
+                  아이템 구매하러 가기
+                </Link>
               </div>
             )}
           </div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Button from '../../../components/Button/Button';
 import TextField from '../../../components/Form/TextField';
@@ -13,6 +13,13 @@ export default function Login() {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(paths.CLASSROOM, { replace: true });
+    }
+  });
 
   // Zustand 스토어에서 필요한 상태와 액션 가져오기
   const { login, isLoading, error } = useAuthStore();

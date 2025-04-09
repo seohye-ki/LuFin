@@ -31,7 +31,7 @@ public interface StockPriceHistoryRepository extends JpaRepository<StockPriceHis
 	@Query(value =
 		"SELECT sph.stock_price_id, sph.stock_product_id, sph.unit_price, sph.created_at, sph.updated_at  FROM stock_price_histories sph "
 			+ "WHERE sph.stock_product_id = :stockProductId "
-			+ "ORDER BY sph.created_at DESC "
+			+ "ORDER BY sph.created_at "
 			+ "LIMIT :count",
 		nativeQuery = true)
 	List<StockPriceHistory> findLatestPriceByStockProductIdAndCount(

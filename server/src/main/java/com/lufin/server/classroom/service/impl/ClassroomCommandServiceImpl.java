@@ -82,9 +82,6 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 		// 교사를 클래스에 매핑
 		MemberClassroom addTeacher = MemberClassroom.enroll(currentMember, newClass);
 
-		// memberCount++
-		newClass.addMemberClass(addTeacher);
-
 		memberClassroomRepository.save(addTeacher);
 		log.info("[교사 클래스 매핑 완료] 교사ID: {}, 클래스: {}", currentMember.getId(), newClass.getName());
 
@@ -198,9 +195,9 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 				return new BusinessException(CLASS_NOT_FOUND);
 			});
 
-		// 다른 멤버가 존재하면 삭제 불가 (본인 포함 2명이면 1명만 존재)
+		// 다른 멤버가 존재하면 삭제 불가
 		int memberCount = memberClassroomRepository.countByClassroom_Id(classroom.getId());
-		if (memberCount > 1) {
+		if (memberCount > 0) {
 			log.warn("🏫[삭제 실패 - 학생 존재] classId: {}, 멤버 수: {}", classId, memberCount);
 			throw new BusinessException(CLASS_HAS_STUDENTS);
 		}

@@ -51,7 +51,7 @@ public class StudentDashboardUseCase {
 		// 신용 점수 및 등급
 		int creditScore = creditService.getScore(studentId, classId);
 		String creditGrade = creditService.getGrade(studentId, classId);
-		// TODO: 신용등급 history에 classroom 추가.... 필요...
+
 		List<CreditHistoryDto> creditHistories = creditService.getGradeChangeHistory(studentId, classId);
 		log.debug(" - 신용 점수: {}, 등급: {}, 이력 수: {}", creditScore, creditGrade, creditHistories.size());
 
@@ -83,7 +83,7 @@ public class StudentDashboardUseCase {
 		log.debug(" - 아이템 수: {}", items.size());
 
 		// 미션 상태
-		List<MyMissionDto> ongoingMissions = myMissionService.getMyMissions(classId, studentId);
+		List<MyMissionDto> ongoingMissions = myMissionService.hasOngoingMission(studentId, classId);
 		int totalCompletedMissions = myMissionService.getCompletedCount(studentId, classId);
 		int totalWage = myMissionService.getTotalWage(studentId, classId);
 		log.debug(" - 미션: 진행중={}, 완료={}, 누적 보상={}", ongoingMissions.size(), totalCompletedMissions, totalWage);

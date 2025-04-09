@@ -108,7 +108,7 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 
 			// 2. 계좌 조회
 			Optional<Account> account = accountRepository.findOpenAccountByMemberIdWithPessimisticLock(
-				currentMember.getId());
+				currentMember.getId(), classId);
 
 			if (!account.isPresent()) {
 				log.warn("주식 구매에 필요한 개인 계좌를 찾을 수 없습니다. classId = {}, currentMember = {}", classId, currentMember);

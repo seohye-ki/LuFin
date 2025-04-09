@@ -64,6 +64,7 @@ interface DashboardData {
 
 const StudentDashboard = () => {
   const showAlert = useAlertStore((state) => state.showAlert);
+  const hideAlert = useAlertStore((state) => state.hideAlert);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
@@ -100,11 +101,14 @@ const StudentDashboard = () => {
         'danger',
         {
           label: '회생 신청',
-          onClick: () => setShowRecoveryModal(true),
+          onClick: () => {
+            setShowRecoveryModal(true);
+            hideAlert(); // 모달을 열면서 알림 닫기
+          },
         },
       );
     }
-  }, [dashboardData, showAlert]);
+  }, [dashboardData, showAlert, hideAlert]);
 
   if (loading) {
     return (
@@ -226,7 +230,6 @@ const StudentDashboard = () => {
           currentAsset={dashboardData.totalAsset}
           onClose={() => setShowRecoveryModal(false)}
           onSubmit={() => {
-            // TODO: Implement recovery application submission
             setShowRecoveryModal(false);
           }}
         />

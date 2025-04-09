@@ -12,10 +12,10 @@ public interface StockRepository extends JpaRepository<StockTransactionHistory, 
 	// 특정 학생의 전체 주식 거래 이력 조회
 	List<StockTransactionHistory> findAllByMemberIdAndClassroomId(int memberId, int classId);
 
-	// 특정 날짜 범위 내의 주식 거래 조회
-	List<StockTransactionHistory> findAllByMemberIdAndCreatedAtBetween(
+	// 해당 시점까지의 모든 매수/매도 내역 조회
+	List<StockTransactionHistory> findAllByMemberIdAndClassroomIdAndCreatedAtLessThanEqual(
 		int memberId,
-		LocalDateTime start,
-		LocalDateTime end
+		int classId,
+		LocalDateTime until
 	);
 }

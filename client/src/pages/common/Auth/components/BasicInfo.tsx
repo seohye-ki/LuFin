@@ -1,5 +1,7 @@
+import { useEffect, useRef } from 'react';
 import TextField from '../../../../components/Form/TextField';
 import StepButtons from './StepButtons';
+import useDebounce from '../hooks/useDebounce';
 
 interface BasicInfoProps {
   name: string;
@@ -23,6 +25,26 @@ export default function BasicInfo({
   onPrev,
   onNext,
 }: BasicInfoProps) {
+  // 이메일 디바운싱 처리
+  const debouncedEmail = useDebounce(email, 1000);
+  // 이전 이메일 값을 저장하는 ref
+  const prevEmailRef = useRef<string>('');
+
+  // 디바운스된 이메일 값이 변경될 때마다 검증
+  useEffect(() => {
+    // 이메일 값이 있고, 이전 값과 다른 경우에만 검증 실행
+    if (debouncedEmail && debouncedEmail !== prevEmailRef.current) {
+      prevEmailRef.current = debouncedEmail;
+      
+      // 이메일 형식이 유효한지 간단히 확인 (정규식)
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailRegex.test(debouncedEmail)) {
+        const event = { target: { value: debouncedEmail } } as React.FocusEvent<HTMLInputElement>;
+        onBlur('email')(event);
+      }
+    }
+  }, [debouncedEmail, onBlur]);
+
   return (
     <div className='space-y-4 transition-all duration-300'>
       <div className='space-y-4 pb-10'>
@@ -47,7 +69,6 @@ export default function BasicInfo({
           type='email'
           value={email}
           onChange={onChange('email')}
-          onBlur={onBlur('email')}
           required
           autoComplete='email'
           placeholder='이메일을 입력해주세요'

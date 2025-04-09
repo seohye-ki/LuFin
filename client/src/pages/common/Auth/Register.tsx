@@ -97,12 +97,6 @@ export default function Register() {
                 <ProgressBar currentStep={currentStep} stepTitles={stepTitles} />
 
                 <div className='flex flex-col gap-4'>
-                  <div className='flex flex-col gap-2'>
-                    <h2 className='text-h2 font-bold'>회원가입</h2>
-                    <p className='text-p1 text-dark-grey'>
-                      루핀에서 제공하는 모든 서비스를 이용하실 수 있습니다.
-                    </p>
-                  </div>
                   {currentStep === 1 && (
                     <UserTypeSelect
                       userType={formData.userType}

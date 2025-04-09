@@ -16,7 +16,7 @@ const SpecifiedStockGraph = ({ stock, onBack }: SpecifiedStockGraphProps) => {
   const stockPriceInfos = useMemo(() => {
     return priceHistory.map((h) => ({
       date: dateUtil(h.createdAt),
-      price: h.price,
+      price: h.unitPrice,
     }));
   }, [priceHistory]);
 

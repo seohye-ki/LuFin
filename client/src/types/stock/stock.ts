@@ -9,9 +9,9 @@ export interface StockProduct {
 }
 
 export interface StockPriceHistory {
-  stockHistoryId: number;
+  stockPriceId: number;
   stockProductId: number;
-  price: number;
+  unitPrice: number;
   createdAt: string;
 }
 

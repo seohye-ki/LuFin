@@ -30,7 +30,7 @@ const StockOrder = ({ stock }: StockOrderProps) => {
 
     if (res.success) {
       useAlertStore.getState().hideAlert();
-      getStockPortfolio();
+      await getStockPortfolio();
       useAlertStore
         .getState()
         .showAlert(
@@ -113,7 +113,7 @@ const StockOrder = ({ stock }: StockOrderProps) => {
   };
 
   const handlePercentClick = (percent: number) => {
-    const base = tab === 'sell' ? MAX_QUANTITY : 100; // 구매는 제한 없음
+    const base = tab === 'sell' ? MAX_QUANTITY : 100;
     const calculated = Math.max(1, Math.floor(base * percent));
     setQuantity(calculated);
   };
@@ -186,7 +186,6 @@ const StockOrder = ({ stock }: StockOrderProps) => {
             </button>
           ))}
         </div>
-
         {/* 총 금액 or 수익 */}
         <div className='flex justify-between items-center'>
           <span className='text-p3 text-grey'>

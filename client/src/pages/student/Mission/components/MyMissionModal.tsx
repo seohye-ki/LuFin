@@ -48,26 +48,21 @@ const MyMissionModal = ({
   };
 
   const handlePrimaryAction = async () => {
-    if (isMyMission) {
+    // ✅ 수행 가능 미션: 신청
+    if (!isMyMission) {
       const result = await applyMission(mission.missionId);
       if (result.success) {
         useAlertStore
           .getState()
-          .showAlert(
-            '미션 신청이 완료되었습니다.',
-            null,
-            result.message || '신청에 실패했습니다.',
-            'success',
-            {
-              label: '확인',
-              onClick: () => {
-                useAlertStore.getState().hideAlert();
-                onClose();
-                onSuccess?.();
-              },
-              color: 'neutral',
+          .showAlert('미션 신청이 완료되었습니다.', null, result.message || '', 'success', {
+            label: '확인',
+            onClick: () => {
+              useAlertStore.getState().hideAlert();
+              onClose();
+              onSuccess?.();
             },
-          );
+            color: 'neutral',
+          });
       } else {
         useAlertStore
           .getState()
@@ -86,64 +81,64 @@ const MyMissionModal = ({
             },
           );
       }
+      return;
     }
 
-    if (!isMyMission) {
-      if (participationId === undefined) {
-        useAlertStore
-          .getState()
-          .showAlert(
-            '참여자 정보를 찾을 수 없습니다.',
-            null,
-            '참여자 정보를 찾을 수 없습니다.',
-            'danger',
-            {
-              label: '확인',
-              onClick: () => {
-                useAlertStore.getState().hideAlert();
-                onClose();
-              },
+    // ✅ 나의 미션: 리뷰 요청
+    if (participationId === undefined) {
+      useAlertStore
+        .getState()
+        .showAlert(
+          '참여자 정보를 찾을 수 없습니다.',
+          null,
+          '참여자 정보를 찾을 수 없습니다.',
+          'danger',
+          {
+            label: '확인',
+            onClick: () => {
+              useAlertStore.getState().hideAlert();
+              onClose();
             },
-          );
-        return;
-      }
+          },
+        );
+      return;
+    }
 
-      const result = await requestReview(participationId);
-      if (result.success) {
-        useAlertStore
-          .getState()
-          .showAlert(
-            '리뷰 요청이 완료되었습니다.',
-            null,
-            result.message || '리뷰 요청에 실패했습니다.',
-            'success',
-            {
-              label: '확인',
-              onClick: () => {
-                useAlertStore.getState().hideAlert();
-                onClose();
-              },
-              color: 'neutral',
+    const result = await requestReview(participationId);
+    if (result.success) {
+      useAlertStore
+        .getState()
+        .showAlert(
+          '리뷰 요청이 완료되었습니다.',
+          null,
+          result.message || '리뷰 요청에 실패했습니다.',
+          'success',
+          {
+            label: '확인',
+            onClick: () => {
+              useAlertStore.getState().hideAlert();
+              onClose();
             },
-          );
-      } else {
-        useAlertStore
-          .getState()
-          .showAlert(
-            '리뷰 요청에 실패했습니다.',
-            null,
-            result.message || '리뷰 요청에 실패했습니다.',
-            'danger',
-            {
-              label: '확인',
-              onClick: () => {
-                useAlertStore.getState().hideAlert();
-                onClose();
-              },
-              color: 'neutral',
+            color: 'neutral',
+          },
+        );
+    } else {
+      useAlertStore
+        .getState()
+        .showAlert(
+          '리뷰 요청에 실패했습니다.',
+          null,
+          result.message || '리뷰 요청에 실패했습니다.',
+          'danger',
+          {
+            label: '확인',
+            onClick: () => {
+              useAlertStore.getState().hideAlert();
+              onClose();
             },
-          );
-      }
+            color: 'neutral',
+          },
+        );
     }
   };
 

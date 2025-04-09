@@ -4,7 +4,7 @@ import { createMissionRow } from '../../../../libs/utils/mission-util';
 export const useStudentMissions = (
   myMissions: { mission: MissionList; participation: MissionParticipation }[],
   availableMissions: MissionList[],
-  onRowClick: (mission: MissionList) => void,
+  onRowClick: (mission: MissionList, participationId?: number) => void,
 ) => {
   const myMissionRows = myMissions
     .map(({ mission, participation }) => createMissionRow(mission, participation, onRowClick))

@@ -25,13 +25,14 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
     null,
   );
 
-  const { deleteMission, getParticipationList, requestReview } = useMissionStore();
+  const { deleteMission, getParticipationList, requestReview, getMissionList } = useMissionStore();
 
   useEffect(() => {
     const fetchParticipation = async () => {
       const result = await getParticipationList(mission.missionId);
       if (result.success) {
         setParticipations(result.participations ?? []);
+        console.log(result.participations);
       } else {
         useAlertStore
           .getState()
@@ -71,6 +72,8 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
             await deleteMission(mission.missionId);
             useAlertStore.setState({ isVisible: false, isOpening: false });
             onClose();
+            await getMissionList();
+            setIsDeleteMode(false);
           },
           color: 'danger',
         },
@@ -112,6 +115,11 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
       );
     }
   }, [isApproveMode, selectedParticipation]);
+
+  const getRandomProfileImage = () => {
+    const seed = Math.floor(Math.random() * 1000);
+    return `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${seed}`;
+  };
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? mission.images.length - 2 : prev - 2));
@@ -207,7 +215,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
                     className={`flex items-center gap-2 ${p.status === 'CHECKING' ? 'cursor-pointer hover:bg-grey-50 p-2 rounded-lg' : ''}`}
                     onClick={() => handleParticipationClick(p)}
                   >
-                    <Profile name={p.name} profileImage={p.profileImage} variant='row' />
+                    <Profile name={p.name} profileImage={getRandomProfileImage()} variant='row' />
                     {getStatusBadge(p.status)}
                   </div>
                 ))}
@@ -257,7 +265,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
             <Button variant='solid' color='neutral' size='md' full onClick={onClose}>
               취소
             </Button>
-            <Button variant='solid' color='primary' size='md' full>
+            <Button variant='solid' color='primary' size='md' full onClick={onClose}>
               확인
             </Button>
           </div>

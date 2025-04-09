@@ -4,7 +4,6 @@ import Card from '../../../components/Card/Card';
 import TableView from '../../../components/Frame/TableView';
 import MyMissionModal from './components/MyMissionModal';
 import { useStudentMissions } from './hooks/useStudentMissions';
-import { Icon } from '../../../components/Icon/Icon';
 import useMissionStore from '../../../libs/store/missionStore';
 import { MissionList } from '../../../types/mission/mission';
 
@@ -15,14 +14,16 @@ const StudentMission = () => {
   const myMissions = useMissionStore((state) => state.myMissions);
   const availableMissions = useMissionStore((state) => state.availableMissions);
   const selectedMission = useMissionStore((state) => state.selectedMission);
+  const [selectedParticipation, setSelectedParticipation] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     getMissionList();
   }, [getMissionList]);
 
   const handleRowClick = useCallback(
-    async (mission: MissionList) => {
+    async (mission: MissionList, participationId?: number) => {
       await getMissionDetail(mission.missionId);
+      setSelectedParticipation(participationId);
       setIsModalOpen(true);
     },
     [getMissionDetail],
@@ -56,21 +57,7 @@ const StudentMission = () => {
     <SidebarLayout>
       <div className='flex flex-col h-full gap-3'>
         {/* 나의 미션 */}
-        <Card
-          titleLeft='나의 미션'
-          titleRight={
-            <div className='flex items-center gap-2 bg-broken-white rounded-lg px-4 py-2'>
-              <Icon name='SearchNormal1' size={20} color='grey' />
-              <input
-                type='text'
-                placeholder='미션명으로 검색'
-                className='bg-transparent outline-none text-p1'
-              />
-            </div>
-          }
-          titleSize='l'
-          className='flex flex-col basis-50/100 min-h-0'
-        >
+        <Card titleLeft='나의 미션' titleSize='l' className='flex flex-col basis-50/100 min-h-0'>
           <div>
             <TableView columns={columns} rows={myMissionRows} />
           </div>
@@ -78,16 +65,6 @@ const StudentMission = () => {
         {/* 수행 가능 미션 */}
         <Card
           titleLeft='수행 가능 미션'
-          titleRight={
-            <div className='flex items-center gap-2 bg-broken-white rounded-lg px-4 py-2'>
-              <Icon name='SearchNormal1' size={20} color='grey' />
-              <input
-                type='text'
-                placeholder='미션명으로 검색'
-                className='bg-transparent outline-none text-p1'
-              />
-            </div>
-          }
           titleSize='l'
           className='flex flex-col basis-50/100 min-h-0'
         >
@@ -110,6 +87,7 @@ const StudentMission = () => {
               isMyMission={myMissions.some(
                 (mission) => mission.missionId === selectedMission.missionId,
               )}
+              participationId={selectedParticipation}
               onSuccess={() => {
                 setIsModalOpen(false);
               }}

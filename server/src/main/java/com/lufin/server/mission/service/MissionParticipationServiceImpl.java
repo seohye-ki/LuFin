@@ -19,7 +19,6 @@ import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.constants.HistoryStatus;
 import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.credit.domain.CreditEventType;
-import com.lufin.server.credit.repository.CreditScoreRepository;
 import com.lufin.server.credit.service.CreditScoreService;
 import com.lufin.server.credit.service.CreditService;
 import com.lufin.server.member.domain.Member;
@@ -51,7 +50,6 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 	private final TransactionHistoryService transactionHistoryService;
 	private final CreditScoreService creditScoreService;
 	private final CreditService creditService;
-	private final CreditScoreRepository creditScoreRepository;
 	private final MemberClassroomRepository memberClassroomRepository;
 
 	/**
@@ -326,8 +324,8 @@ public class MissionParticipationServiceImpl implements MissionParticipationServ
 			personalAccount.deposit(mission.getWage());
 			accountRepository.save(personalAccount);
 
-			// 클래스 계좌에 누적 총액 기록용 입금
-			classAccount.deposit(mission.getWage());
+			// 클래스 계좌에 정산
+			classAccount.forceWithdraw(mission.getWage());
 			accountRepository.save(classAccount);
 
 			log.info("계좌 입금 완료: 입금액 ={}, 잔액 = {}", mission.getWage(), personalAccount.getBalance());

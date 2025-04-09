@@ -46,12 +46,12 @@ const TeacherDashboard = () => {
   }, []);
 
   const handleMissionReview = () => {
-    navigate(paths.TEACHER_MISSION);
+    navigate(paths.MISSION);
   };
 
   const handleLoanReview = () => {
     // 현재는 교사 대출 페이지가 없으므로 일단 미션 페이지로 이동
-    navigate(paths.TEACHER_MISSION);
+    navigate(paths.LOAN);
   };
 
   const handleRecoveryApproval = (student: typeof selectedStudent) => {
@@ -125,27 +125,29 @@ const TeacherDashboard = () => {
 
   const formatTableRows = (): TableRow[] => {
     if (!dashboardData?.students) return [];
-    
+
     return dashboardData.students.map((student) => ({
       name: student.name,
       cash: formatAmount(student.cash),
       investment: formatAmount(student.investment),
       loan: formatAmount(student.loan),
-      creditGrade: student.creditGrade === 'F-' ? (
-        <Button
-          onClick={() => handleRecoveryApproval(student)}
-          color='danger'
-          size='md'
-        >
-          회생 승인
-        </Button>
-      ) : student.creditGrade,
+      creditGrade:
+        student.creditGrade === 'F-' ? (
+          <Button onClick={() => handleRecoveryApproval(student)} color='danger' size='md'>
+            회생 승인
+          </Button>
+        ) : (
+          student.creditGrade
+        ),
       missionStatus: getMissionStatusButton(student.missionStatus),
-      loanStatus: student.loanStatus === '검토 필요' ? (
-        <Button onClick={handleLoanReview} color='primary' size='md'>
-          검토하기
-        </Button>
-      ) : student.loanStatus,
+      loanStatus:
+        student.loanStatus === '검토 필요' ? (
+          <Button onClick={handleLoanReview} color='primary' size='md'>
+            검토하기
+          </Button>
+        ) : (
+          student.loanStatus
+        ),
       items: `${student.items}개`,
     }));
   };
@@ -157,7 +159,7 @@ const TeacherDashboard = () => {
     );
 
   return (
-    <SidebarLayout userRole='teacher'>
+    <SidebarLayout>
       <div className='flex flex-col gap-6 p-6'>
         {/* Statistics Section */}
         <div className='grid grid-cols-3 gap-4'>
@@ -177,10 +179,7 @@ const TeacherDashboard = () => {
               </span>
             </div>
           </Card>
-          <Card
-            titleLeft={dashboardData.statistics.investment.label}
-            className='bg-white'
-          >
+          <Card titleLeft={dashboardData.statistics.investment.label} className='bg-white'>
             <div className='flex flex-col'>
               <div className='flex items-center gap-2'>
                 <img src={lufinCoin} alt='루핀' className='w-6 h-6' />

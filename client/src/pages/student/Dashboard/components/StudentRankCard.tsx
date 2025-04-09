@@ -16,15 +16,17 @@ const StudentRankCard = ({ student, isCurrentUser, profileImage }: StudentRankCa
         isCurrentUser ? 'scale-110 transform duration-200' : ''
       }`}
     >
-      <div className={`flex flex-col items-center ${
-        isCurrentUser ? 'p-2 rounded-xl ring-2 ring-light-cyan bg-light-cyan/10' : ''
-      }`}>
+      <div
+        className={`flex flex-col items-center ${
+          isCurrentUser ? 'p-2 rounded-xl ring-2 ring-light-cyan bg-light-cyan/10' : ''
+        }`}
+      >
         {/* Profile Image with Ranking Badge */}
-        <div className="relative w-[42px] h-[42px] mb-1">
+        <div className='relative w-[42px] h-[42px] mb-1'>
           <img
             src={profileImage}
             alt={`${student.name} 프로필 이미지`}
-            className="rounded-full w-full h-full"
+            className='rounded-full w-full h-full'
           />
           {/* Ranking Badge */}
           <div

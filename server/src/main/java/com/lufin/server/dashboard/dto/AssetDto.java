@@ -10,4 +10,12 @@ public class AssetDto {
 	private Long amount;          // 금액
 	private Integer changeRate;   // 변동률 (15%, -5% 등)
 	private Boolean isPositive;   // 증가/감소 여부
+
+	public static AssetDto empty(String label) {
+		return AssetDto.builder()
+			.label(label)
+			.amount(0L)
+			.changeRate(0)
+			.build();
+	}
 }

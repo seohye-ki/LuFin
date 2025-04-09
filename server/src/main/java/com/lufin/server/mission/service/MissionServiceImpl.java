@@ -42,7 +42,7 @@ public class MissionServiceImpl implements MissionService {
 	 * 현재 반의 내 미션 전체 조회
 	 */
 	@Override
-	public List<MissionResponseDto.MissionSummaryResponseDto> getMyMissions(Integer classId, Member currentMember) {
+	public List<MissionResponseDto.MissionMyResponseDto> getMyMissions(Integer classId, Member currentMember) {
 		log.info("현재 반 나의 미션 전체 조회 요청: classId = {}, member = {}", classId, currentMember.getId());
 		try {
 			if (classId == null || currentMember == null) {
@@ -63,7 +63,8 @@ public class MissionServiceImpl implements MissionService {
 			}
 
 			return result.stream()
-				.map(MissionResponseDto.MissionSummaryResponseDto::missionEntityToMissionDetailResponseDto
+				.map(mission -> MissionResponseDto.MissionMyResponseDto.convertEntityToDto(mission,
+					currentMember.getId())
 				)
 				.toList();
 

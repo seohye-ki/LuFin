@@ -30,10 +30,10 @@ public interface MissionRepository extends JpaRepository<Mission, Integer>, Miss
 		@Param("classId") Integer classId);
 
 	/**
-	 * classId와 memberId로 mission을 검색하는 쿼리
+	 * classId와 memberId로 mission과 participationId을 검색하는 쿼리
 	 * 해당 클래스에 속하면서 특정 멤버가 참여한 미션 목록 조회
 	 */
-	@Query("SELECT m FROM Mission m JOIN m.participations p " +
+	@Query("SELECT m, p.participationId FROM Mission m JOIN m.participations p " +
 		"WHERE m.classroom.id = :classId AND p.member.id = :memberId")
 	List<Mission> findByClassIdAndMemberId(@Param("classId") Integer classId,
 		@Param("memberId") Integer memberId);

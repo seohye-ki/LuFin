@@ -25,25 +25,30 @@ export interface MissionList
     | 'currentParticipants'
     | 'maxParticipants'
   > {
-  images: string[];
+  s3Keys: string[];
+  images: { id: number; objectKey: string }[];
+  participationId?: number;
 }
 
 export interface MissionRaw {
   missionId: number;
   title: string;
   content: string;
-  images: string[];
+  s3Keys: string[];
+  images: { id: number; objectKey: string }[];
   difficulty: number;
   maxParticipants: number;
   currentParticipants: number;
   wage: number;
   missionDate: string;
+  participationId?: number;
 }
 
 export interface MissionCreateRequest {
   title: string;
   content: string;
   s3Keys: string[];
+  images: { id: number; objectKey: string }[];
   difficulty: number;
   maxParticipants: number;
   wage: number;

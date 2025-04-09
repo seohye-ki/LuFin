@@ -108,7 +108,7 @@ const StudentDashboard = () => {
 
   if (loading) {
     return (
-      <SidebarLayout userRole='student'>
+      <SidebarLayout>
         <div className='flex items-center justify-center h-full'>
           <p>데이터를 불러오는 중...</p>
         </div>
@@ -118,7 +118,7 @@ const StudentDashboard = () => {
 
   if (!dashboardData) {
     return (
-      <SidebarLayout userRole='student'>
+      <SidebarLayout>
         <div className='flex items-center justify-center h-full'>
           <p>데이터를 불러올 수 없습니다.</p>
         </div>
@@ -130,12 +130,12 @@ const StudentDashboard = () => {
   const currentUserName = dashboardData.rankings.find((r) => r.rank === 1)?.name || '';
 
   return (
-    <SidebarLayout userRole='student'>
+    <SidebarLayout>
       <div className='w-full h-full flex flex-col gap-4 overflow-y-auto'>
         {/* User Profile Section */}
         <section className='flex gap-4 min-h-fit'>
-          <ClassAssetRanking 
-            rankings={dashboardData.rankings} 
+          <ClassAssetRanking
+            rankings={dashboardData.rankings}
             myMemberId={dashboardData.myMemberId}
           />
         </section>

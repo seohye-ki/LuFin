@@ -928,11 +928,11 @@ const CommonComponents = () => {
         <section className='flex gap-8 bg-grey-30 p-4 rounded-2xl'>
           <div className='flex flex-col gap-4'>
             <h2 className='text-h2 font-medium text-black mb-4'>학생 사이드바</h2>
-            <Sidebar userRole='student' />
+            <Sidebar />
           </div>
           <div className='flex flex-col gap-4'>
             <h2 className='text-h2 font-medium text-black mb-4'>선생님 사이드바</h2>
-            <Sidebar userRole='teacher' />
+            <Sidebar />
           </div>
         </section>
 

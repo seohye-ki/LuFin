@@ -13,22 +13,18 @@ interface MyMissionModalProps {
   onClose: () => void;
   mission: MissionRaw;
   isMyMission: boolean;
-  participationId?: number;
   onSuccess?: () => void;
 }
 
-const MyMissionModal = ({
-  onClose,
-  mission,
-  isMyMission,
-  participationId,
-  onSuccess,
-}: MyMissionModalProps) => {
+const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionModalProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const applyMission = useMissionStore((state) => state.applyMission);
   const requestReview = useMissionStore((state) => state.requestReview);
+  const getMissionList = useMissionStore((state) => state.getMissionList);
 
   const status = getStatusBadge();
+  const storeParticipationId = useMissionStore((s) => s.participationId);
+  const participationId = mission.participationId ?? storeParticipationId;
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? mission.images.length - 2 : prev - 2));
@@ -48,7 +44,7 @@ const MyMissionModal = ({
   };
 
   const handlePrimaryAction = async () => {
-    // ✅ 수행 가능 미션: 신청
+    // 수행 가능 미션: 신청
     if (!isMyMission) {
       const result = await applyMission(mission.missionId);
       if (result.success) {
@@ -56,10 +52,11 @@ const MyMissionModal = ({
           .getState()
           .showAlert('미션 신청이 완료되었습니다.', null, result.message || '', 'success', {
             label: '확인',
-            onClick: () => {
+            onClick: async () => {
               useAlertStore.getState().hideAlert();
               onClose();
               onSuccess?.();
+              await getMissionList();
             },
             color: 'neutral',
           });
@@ -84,8 +81,8 @@ const MyMissionModal = ({
       return;
     }
 
-    // ✅ 나의 미션: 리뷰 요청
-    if (participationId === undefined) {
+    // 나의 미션: 리뷰 요청
+    if (!participationId) {
       useAlertStore
         .getState()
         .showAlert(
@@ -186,7 +183,8 @@ const MyMissionModal = ({
                 {getVisibleImages().map((image, index) => (
                   <div key={`${image}-${index}`} className='relative aspect-square'>
                     <img
-                      src={image}
+                      key={image.id}
+                      src={image.objectKey}
                       alt='미션 인증 이미지'
                       className='w-full h-full object-cover rounded-lg'
                     />

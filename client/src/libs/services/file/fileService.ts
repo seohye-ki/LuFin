@@ -171,4 +171,15 @@ export const fileService = {
     await fileService.uploadToS3(uploadUrl, file);
     return key;
   },
+  /**
+   * 여러 파일 업로드
+   *
+   * @param folder
+   * @param files - 업로드할 File[] 배열
+   * @returns 업로드된 파일의 key[] 배열
+   */
+  uploadFiles: async (folder: FolderType, files: File[]): Promise<string[]> => {
+    const uploadPromises = files.map((file) => fileService.uploadFile(folder, file));
+    return Promise.all(uploadPromises);
+  },
 };

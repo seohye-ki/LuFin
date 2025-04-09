@@ -14,16 +14,14 @@ const StudentMission = () => {
   const myMissions = useMissionStore((state) => state.myMissions);
   const availableMissions = useMissionStore((state) => state.availableMissions);
   const selectedMission = useMissionStore((state) => state.selectedMission);
-  const [selectedParticipation, setSelectedParticipation] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     getMissionList();
   }, [getMissionList]);
 
   const handleRowClick = useCallback(
-    async (mission: MissionList, participationId?: number) => {
+    async (mission: MissionList) => {
       await getMissionDetail(mission.missionId);
-      setSelectedParticipation(participationId);
       setIsModalOpen(true);
     },
     [getMissionDetail],
@@ -87,7 +85,6 @@ const StudentMission = () => {
               isMyMission={myMissions.some(
                 (mission) => mission.missionId === selectedMission.missionId,
               )}
-              participationId={selectedParticipation}
               onSuccess={() => {
                 setIsModalOpen(false);
               }}

@@ -19,7 +19,7 @@ const MyStockChartCard = () => {
         />
       </div>
       <span className='text-p3 text-gray-500 flex items-center gap-1'>
-        총 보유 자산은{' '}
+        총 보유 주식은{' '}
         <span className='text-black font-bold'>
           <Lufin size='s' count={totalAmount} />
         </span>

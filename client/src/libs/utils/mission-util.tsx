@@ -27,7 +27,7 @@ export const getStatusBadge = (participation?: MissionParticipation) => {
 export const createMissionRow = (
   mission: MissionList,
   participation: MissionParticipation | undefined,
-  onClick: (mission: MissionList) => void,
+  onClick: (mission: MissionList, participationId?: number) => void,
 ) => {
   const difficultyStars = (
     <div className='flex items-center'>
@@ -85,7 +85,12 @@ export const createMissionRow = (
       <div className='h-10 w-[128px] flex items-center justify-center'>
         {isJoined ? (
           status === 'IN_PROGRESS' ? (
-            <Button variant='ghost' color='info' size='md' onClick={() => onClick(mission)}>
+            <Button
+              variant='ghost'
+              color='info'
+              size='md'
+              onClick={() => onClick(mission, participation?.participationId)}
+            >
               리뷰 요청하기
             </Button>
           ) : null
@@ -95,7 +100,7 @@ export const createMissionRow = (
             color='info'
             size='md'
             disabled={isDisabled}
-            onClick={() => onClick(mission)}
+            onClick={() => onClick(mission, participation?.participationId)}
           >
             신청하기
           </Button>

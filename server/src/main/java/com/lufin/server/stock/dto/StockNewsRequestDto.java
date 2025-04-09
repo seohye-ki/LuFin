@@ -10,4 +10,17 @@ public class StockNewsRequestDto {
 
 	}
 
+	public record NewsAiDto(
+		Integer id,
+		String content
+	) {
+
+	}
+
+	public record NewsAiResponseDto(
+		NewsAiDto data
+	) {
+
+	}
+
 }

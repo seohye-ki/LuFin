@@ -17,6 +17,7 @@ import com.lufin.server.stock.dto.StockNewsResponseDto;
 import com.lufin.server.stock.repository.StockNewsRepository;
 import com.lufin.server.stock.repository.StockPortfolioRepository;
 import com.lufin.server.stock.repository.StockProductRepository;
+import com.lufin.server.stock.util.JsonToDtoUtil;
 import com.lufin.server.stock.util.StockAiPrompt;
 
 import lombok.RequiredArgsConstructor;
@@ -236,7 +237,7 @@ public class StockNewsServiceImpl implements StockNewsService {
 			}
 
 			// 생성형 AI가 제공해준 정보를 request Dto로 가공
-			StockNewsRequestDto.NewsInfoDto request = new StockNewsRequestDto.NewsInfoDto(newsContent);
+			StockNewsRequestDto.NewsAiDto request = JsonToDtoUtil.convertNews(newsContent);
 
 			// StockNews 엔티티 생성
 			StockNews news = StockNews.create(

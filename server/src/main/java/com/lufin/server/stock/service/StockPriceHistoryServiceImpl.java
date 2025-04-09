@@ -259,7 +259,7 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 				throw new BusinessException(GENERATE_FAILED);
 			}
 
-			StockPriceHistoryRequestDto.PriceHistoryAiInfoDto request = JsonToDtoUtil.convert(priceContent);
+			StockPriceHistoryRequestDto.PriceHistoryAiInfoDto request = JsonToDtoUtil.convertPrice(priceContent);
 
 			StockPriceHistory priceHistory = StockPriceHistory.create(
 				request.currentPrice(),

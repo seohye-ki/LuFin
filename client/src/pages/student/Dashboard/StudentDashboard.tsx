@@ -177,7 +177,7 @@ const StudentDashboard = () => {
           </section>
 
           {/* Financial Summary Section */}
-          <section className='flex gap-4 min-h-fit'>
+          <section className='flex gap-4 h-full'>
             <StatCard
               title={dashboardData.consumptionStat.label}
               amount={dashboardData.consumptionStat.amount}

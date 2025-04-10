@@ -121,7 +121,7 @@ const ApplyLoan: React.FC<ApplyLoanProps> = ({ loanProduct, closeModal }) => {
                 label='예상 주 이자액'
                 placeholder='예상 이자액'
                 value={expectedInterestAmount.toLocaleString()}
-                description={`이자율 ${loanProduct.interestRate * 100}%`}
+                description={`이자율 ${Math.floor(loanProduct.interestRate * 100)}%`}
                 disabled
               />
             </div>

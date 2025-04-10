@@ -32,48 +32,53 @@ const StudentLoan = () => {
   );
 
   useEffect(() => {
-    const fetchLoanProductList = async () => {
-      const products = await getLoanProductList();
-      setLoanProductList(products);
-    };
-
-    const fetchLoanApplicationList = async () => {
-      const applications = await getLoanApplicationList();
-      setLoanApplicationList(applications);
-
-      // ✅ 신청 상태(PENDING)인 대출건을 찾아 상세조회
-      const pending = applications.find((app) => app.status === 'OPEN');
-      if (pending) {
-        try {
-          const detail = await getLoanApplicationDetail(pending.loanApplicationId);
-          console.log(detail);
-          setLoanApplicationDetail(detail);
-        } catch (error) {
-          console.error('대출 상세 정보 조회 실패:', error);
-          setLoanApplicationDetail(null);
-        }
-      } else {
-        setLoanApplicationDetail(null);
-      }
-    };
-
     fetchLoanProductList();
     fetchLoanApplicationList();
   }, []);
 
+  const fetchLoanProductList = async () => {
+    const products = await getLoanProductList();
+    setLoanProductList(products);
+  };
+
+  const fetchLoanApplicationList = async () => {
+    const applications = await getLoanApplicationList();
+    setLoanApplicationList(applications);
+
+    const openApplication = applications.find((app) => app.status === 'OPEN');
+    if (openApplication) {
+      try {
+        const detail = await getLoanApplicationDetail(openApplication.loanApplicationId);
+        setLoanApplicationDetail(detail);
+      } catch (error) {
+        console.error('대출 상세 정보 조회 실패:', error);
+        setLoanApplicationDetail(null);
+      }
+    } else {
+      setLoanApplicationDetail(null);
+    }
+  };
+
+  const handleCloseDetailModal = async () => {
+    setSelectedLoanApplication(null);
+    await fetchLoanApplicationList();
+  };
+
+  const handleCloseApplyModal = async () => {
+    setSelectedLoanProduct(null);
+    await fetchLoanApplicationList();
+  };
+
   return (
     <div>
       {selectedLoanProduct && (
-        <ApplyLoan
-          loanProduct={selectedLoanProduct}
-          closeModal={() => setSelectedLoanProduct(null)}
-        />
+        <ApplyLoan loanProduct={selectedLoanProduct} closeModal={handleCloseApplyModal} />
       )}
 
       {selectedLoanApplication && (
         <DetailLoanApplication
           loanApplication={selectedLoanApplication}
-          closeModal={() => setSelectedLoanApplication(null)}
+          closeModal={handleCloseDetailModal}
         />
       )}
 

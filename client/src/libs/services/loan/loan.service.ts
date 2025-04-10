@@ -48,3 +48,13 @@ export const getLoanApplicationDetail = async (
     throw error;
   }
 };
+
+export const approveLoanApplication = async (
+  loanApplicationId: number,
+  isApproved: boolean,
+): Promise<boolean> => {
+  const response = await axiosInstance.patch(`/loans/applications/${loanApplicationId}`, {
+    status: isApproved ? 'APPROVED' : 'REJECTED',
+  });
+  return response.data.isSuccess;
+};

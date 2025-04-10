@@ -44,18 +44,23 @@ const LoanApplicationList: React.FC<LoanApplicationListProps> = ({
       label: '알 수 없음',
     };
 
+    const isPending = loanApplication.status === 'PENDING';
+    const isRejected = loanApplication.status === 'REJECTED';
+
     return {
       id: loanApplication.loanApplicationId as number,
       ...(showMemberName && { member: loanApplication.memberName }),
       product: loanApplication.productName,
       requiredAmount: <Lufin size='s' count={loanApplication.requiredAmount} />,
-      startDate:
-        loanApplication.status === 'PENDING'
-          ? '신청 중'
+      startDate: isPending
+        ? '신청 중'
+        : isRejected
+          ? '거절됨'
           : dateUtil(loanApplication.startedAt).formattedDate,
-      dueDate:
-        loanApplication.status === 'PENDING'
-          ? '신청 중'
+      dueDate: isPending
+        ? '신청 중'
+        : isRejected
+          ? '거절됨'
           : dateUtil(loanApplication.dueDate).formattedDate,
       status: <Badge status={badgeStatus}>{label}</Badge>,
     };

@@ -46,7 +46,7 @@ const MenuItem = ({ type }: MenuItemProps) => {
     <button
       onClick={handleClick}
       className={twMerge(
-        'flex items-center gap-3 w-[168px] h-[40px] p-2 rounded-lg text-p2 font-medium hover:bg-light-cyan-30',
+        'w-full flex items-center gap-3  h-[40px] p-2 rounded-lg text-p2 font-medium hover:bg-light-cyan-30',
         isActive && 'bg-light-cyan',
       )}
     >

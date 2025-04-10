@@ -53,6 +53,9 @@ import {
   Copy,
   DocumentCopy,
   ArrangeHorizontal,
+  MoneyRecive,
+  ShoppingBag,
+  PresentionChart,
 } from 'iconsax-react';
 import { HiStar } from 'react-icons/hi2';
 
@@ -140,6 +143,9 @@ const ICONSAX_ICONS = {
   More,
   Copy,
   DocumentCopy,
+  MoneyRecive,
+  PresentionChart,
+  ShoppingBag,
   Close: Add,
   CircleEdit: Add,
   CircleTrash: Add,

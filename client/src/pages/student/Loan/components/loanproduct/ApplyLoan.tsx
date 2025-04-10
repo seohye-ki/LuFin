@@ -5,6 +5,8 @@ import { LoanProductDTO } from '../../../../../types/Loan/loan';
 import Button from '../../../../../components/Button/Button';
 import Checkbox from '../../../../../components/Form/Checkbox';
 import { applyLoan } from '../../../../../libs/services/loan/loan.service';
+import { hideGlobalAlert, showGlobalAlert } from '../../../../../libs/store/alertStore';
+import useAuthStore from '../../../../../libs/store/authStore';
 
 interface ApplyLoanProps {
   loanProduct: LoanProductDTO;
@@ -27,6 +29,7 @@ const ApplyLoan: React.FC<ApplyLoanProps> = ({ loanProduct, closeModal }) => {
     new Array(agreementTexts.length).fill(false),
   );
 
+  const { userName } = useAuthStore();
   const [amountError, setAmountError] = useState(false);
   const [descriptionError, setDescriptionError] = useState(false);
   const [agreementError, setAgreementError] = useState(false);
@@ -78,7 +81,19 @@ const ApplyLoan: React.FC<ApplyLoanProps> = ({ loanProduct, closeModal }) => {
         requestedAmount: requiredAmount!,
         description,
       });
-      closeModal();
+      showGlobalAlert(
+        '대출 신청이 완료됐어요.',
+        null,
+        '과도한 대출은 신용평가에 영향을 미칩니다.',
+        'success',
+        {
+          label: '확인',
+          onClick: () => {
+            closeModal();
+            hideGlobalAlert();
+          },
+        },
+      );
     }
   };
 
@@ -90,7 +105,12 @@ const ApplyLoan: React.FC<ApplyLoanProps> = ({ loanProduct, closeModal }) => {
       <div onClick={(e) => e.stopPropagation()}>
         <Card className='w-110 h-fit' titleLeft='대출 신청'>
           <div className='flex flex-col gap-4'>
-            <TextField label='신청자' placeholder='이름을 입력해주세요.' value='신청자' disabled />
+            <TextField
+              label='신청자'
+              placeholder='이름을 입력해주세요.'
+              value={userName as string}
+              disabled
+            />
 
             <div className='flex flex-row gap-4'>
               <TextField label='상품명' placeholder='상품명' value={loanProduct.name} disabled />
@@ -118,10 +138,10 @@ const ApplyLoan: React.FC<ApplyLoanProps> = ({ loanProduct, closeModal }) => {
                 variant={amountError ? 'error' : 'normal'}
               />
               <TextField
-                label='예상 주 이자액'
+                label='예상 이자액'
                 placeholder='예상 이자액'
                 value={expectedInterestAmount.toLocaleString()}
-                description={`이자율 ${loanProduct.interestRate * 100}%`}
+                description={`이자율 ${Math.floor(loanProduct.interestRate * 100)}%`}
                 disabled
               />
             </div>

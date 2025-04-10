@@ -167,7 +167,10 @@ const TeacherShop = () => {
       {showItemUseRequestModal && (
         <ItemUseRequest
           itemReuqestList={itemRequestList}
-          closeModal={() => setShowItemUseRequestModal(false)}
+          closeModal={() => {
+            fetchRequestList();
+            setShowItemUseRequestModal(false);
+          }}
         />
       )}
     </SidebarLayout>

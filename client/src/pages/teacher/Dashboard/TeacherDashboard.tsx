@@ -160,7 +160,7 @@ const TeacherDashboard = () => {
 
   return (
     <SidebarLayout>
-      <div className='flex flex-col gap-6 p-6'>
+      <div className='h-full flex flex-col gap-6'>
         {/* Statistics Section */}
         <div className='grid grid-cols-3 gap-4'>
           <Card titleLeft={dashboardData.statistics.deposit.label} className='bg-white'>
@@ -216,8 +216,10 @@ const TeacherDashboard = () => {
         </div>
 
         {/* Students List Section */}
-        <Card titleLeft='학생 목록' className='bg-white'>
-          <TableView columns={columns} rows={formatTableRows()} />
+        <Card titleLeft='학생 목록' className='h-full bg-white'>
+          <div className='max-h-[500px] overflow-auto'>
+            <TableView columns={columns} rows={formatTableRows()} />
+          </div>
         </Card>
         {selectedStudent && (
           <RecoveryApproveModal

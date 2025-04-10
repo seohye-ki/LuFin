@@ -42,7 +42,7 @@ const LoanProduct: React.FC<LoanProductCardProps> = ({ loanProduct, onClick }) =
           <div className='w-fit h-fit flex flex-row gap-1 items-center'>
             <div className='w-12 h-6 bg-white rounded-full flex justify-center items-center'>
               <p className={`font-semibold text-c2 ${loan.color}`}>
-                월 {loanProduct.interestRate * 100}%
+                이자 {Math.floor(loanProduct.interestRate * 100)}%
               </p>
             </div>
             <div className='w-12 h-6 bg-white rounded-full flex justify-center items-center'>

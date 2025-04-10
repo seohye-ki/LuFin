@@ -16,6 +16,7 @@ export interface AuthResponse {
     profileImage: string;
     totalAsset: number;
     classId: number;
+    memberId: number;
   };
   code?: string;
   message?: string;
@@ -43,8 +44,16 @@ export const AuthService = {
 
       if (response.data.isSuccess && response.data.data) {
         // 토큰 저장
-        const { accessToken, refreshToken, role, name, profileImage, totalAsset, classId } =
-          response.data.data;
+        const {
+          accessToken,
+          refreshToken,
+          role,
+          name,
+          profileImage,
+          totalAsset,
+          classId,
+          memberId,
+        } = response.data.data;
         tokenUtils.setToken('accessToken', accessToken);
         tokenUtils.setToken('refreshToken', refreshToken);
         tokenUtils.setToken('userRole', role);
@@ -61,6 +70,7 @@ export const AuthService = {
           profileImage,
           totalAsset,
           classId,
+          memberId,
         };
       } else {
         return {

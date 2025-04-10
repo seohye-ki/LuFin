@@ -74,9 +74,9 @@ export interface MissionImage {
 
 export interface MissionParticipation {
   participationId: number;
-  memberId: number;
+  memberId?: number;
   missionId: number;
-  status: 'IN_PROGRESS' | 'CHECKING' | 'SUCCESS' | 'FAILED' | 'REJECTED';
+  status: 'RECRUITING' | 'CHECKING' | 'SUCCESS' | 'FAILED' | 'REJECTED';
 }
 
 export interface ParticipationUserInfo {
@@ -84,7 +84,7 @@ export interface ParticipationUserInfo {
   name: string;
   profileImage: string;
   creditRating: number;
-  status: 'IN_PROGRESS' | 'CHECKING' | 'SUCCESS' | 'FAILED' | 'REJECTED';
+  status: 'RECRUITING' | 'CHECKING' | 'SUCCESS' | 'FAILED' | 'REJECTED';
 }
 
 export interface MissionDetail extends Mission {

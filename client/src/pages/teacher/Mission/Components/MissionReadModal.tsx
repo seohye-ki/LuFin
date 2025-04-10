@@ -46,7 +46,8 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
     loadImages();
   }, [mission.images]);
 
-  const { deleteMission, getParticipationList, requestReview, getMissionList } = useMissionStore();
+  const { deleteMission, getParticipationList, changeMissionStatus, getMissionList } =
+    useMissionStore();
 
   useEffect(() => {
     const fetchParticipation = async () => {
@@ -127,7 +128,11 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
         {
           label: '승인하기',
           onClick: async () => {
-            await requestReview(mission.missionId, selectedParticipation.participationId);
+            await changeMissionStatus(
+              mission.missionId,
+              selectedParticipation.participationId,
+              'SUCCESS',
+            );
             setIsApproveMode(false);
             setSelectedParticipation(null);
           },

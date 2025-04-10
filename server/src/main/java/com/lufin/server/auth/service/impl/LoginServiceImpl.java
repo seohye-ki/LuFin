@@ -81,9 +81,9 @@ public class LoginServiceImpl implements LoginService {
 		log.info("[로그인 완료] 사용자 ID: {}, 이름: {}, Role: {}, 소속 반: {}", member.getId(), maskName(member.getName()),
 			member.getMemberRole().name(), classId);
 
-		int totalAsset = 0;
+		int balance = 0;
 		if (member.getMemberRole() == STUDENT) {
-			totalAsset = loginFacadeService.getTotalAsset(member.getId(), classId);
+			balance = loginFacadeService.getBalance(member.getId(), classId);
 		}
 
 		return loginResponseFactory.createLoginFlatResponse(
@@ -91,7 +91,7 @@ public class LoginServiceImpl implements LoginService {
 			classId,
 			getTokens.accessToken(),
 			getTokens.refreshToken(),
-			totalAsset
+			balance
 		);
 	}
 

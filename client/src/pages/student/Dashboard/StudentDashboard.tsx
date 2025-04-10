@@ -11,6 +11,7 @@ import AssetCard from './components/AssetCard';
 import RecoveryApplicationModal from './components/RecoveryApplicationModal';
 import axiosInstance from '../../../libs/services/axios';
 import useClassroomStore from '../../../libs/store/classroomStore';
+import useAuthStore from '../../../libs/store/authStore';
 
 // Dashboard API response type
 interface DashboardData {
@@ -121,6 +122,9 @@ const StudentDashboard = () => {
     }
   }, [dashboardData, showAlert, hideAlert]);
 
+  const { userName } = useAuthStore();
+  const currentUserName = userName;
+
   if (loading) {
     return (
       <SidebarLayout>
@@ -142,7 +146,6 @@ const StudentDashboard = () => {
   }
 
   // Find current user name (for now using rank 1 as current user)
-  const currentUserName = dashboardData.rankings.find((r) => r.rank === 1)?.name || '';
 
   return (
     <SidebarLayout>
@@ -153,7 +156,7 @@ const StudentDashboard = () => {
           <section className='flex gap-4 min-h-[280px]'>
             <div className='flex-1'>
               <CreditScoreCard
-                userName={currentUserName}
+                userName={currentUserName as string}
                 creditScore={dashboardData.creditScore}
                 creditRating={dashboardData.creditGrade}
                 recentActivities={dashboardData.creditHistories.map((history) => ({
@@ -177,7 +180,7 @@ const StudentDashboard = () => {
           </section>
 
           {/* Financial Summary Section */}
-          <section className='flex gap-4 min-h-fit'>
+          <section className='flex gap-4 h-full'>
             <StatCard
               title={dashboardData.consumptionStat.label}
               amount={dashboardData.consumptionStat.amount}
@@ -239,7 +242,7 @@ const StudentDashboard = () => {
 
       {showRecoveryModal && (
         <RecoveryApplicationModal
-          studentName={currentUserName}
+          studentName={currentUserName as string}
           creditGrade={dashboardData.creditGrade}
           currentAsset={dashboardData.totalAsset}
           onClose={() => setShowRecoveryModal(false)}

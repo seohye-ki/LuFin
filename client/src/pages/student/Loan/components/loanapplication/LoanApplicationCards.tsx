@@ -24,7 +24,7 @@ const LoanApplicationCards: React.FC<loanAPplicationCardsProps> = ({ loanApplica
       </Card>
       <Card titleLeft='만기까지' titleSize='s' className='w-full'>
         <p className='text-black text-h2 font-semibold'>
-          {dateUtil(loanApplicationDetail.dueDate).day}{' '}
+          {dateUtil(loanApplicationDetail.dueDate).remainingDays}{' '}
           <span className='text-p1 font-regular'>일</span>
         </p>
       </Card>

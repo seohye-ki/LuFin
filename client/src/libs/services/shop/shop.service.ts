@@ -52,3 +52,9 @@ export const addItem = async (
 export const deleteItem = async (itemId: number) => {
   await axiosInstance.delete(`/items/${itemId}`);
 };
+
+export const approveItemRequest = async (requestId: number, isApproved: boolean) => {
+  await axiosInstance.patch(`/items/requests/${requestId}`, {
+    status: isApproved ? 'APPROVED' : 'REJECTED',
+  });
+};

@@ -21,10 +21,7 @@ export const useMissionForm = (
   const [wage, setWage] = useState(defaultValues?.wage || '');
   const [content, setContent] = useState(defaultValues?.content || '');
 
-  const [imageKeys, setImageKeys] = useState<string[]>(
-    defaultValues?.s3Keys ??
-      (defaultValues?.images ? defaultValues.images.map((img) => img.objectKey) : []),
-  );
+  const [imageKeys, setImageKeys] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 

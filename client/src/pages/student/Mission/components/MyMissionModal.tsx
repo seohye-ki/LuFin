@@ -4,16 +4,17 @@ import Button from '../../../../components/Button/Button';
 import { MissionRaw } from '../../../../types/mission/mission';
 import { Icon } from '../../../../components/Icon/Icon';
 import Lufin from '../../../../components/Lufin/Lufin';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getStatusBadge } from '../../../../libs/utils/mission-util';
 import useMissionStore from '../../../../libs/store/missionStore';
 import useAlertStore from '../../../../libs/store/alertStore';
 import { fileService } from '../../../../libs/services/file/fileService';
 import ImageViewerModal from './ImageViewerModal';
+import useAuthStore from '../../../../libs/store/authStore';
 
 interface MyMissionModalProps {
   onClose: () => void;
-  mission: MissionRaw & { participationId?: number };
+  mission: MissionRaw;
   isMyMission: boolean;
   onSuccess?: () => void;
 }
@@ -22,6 +23,7 @@ const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionM
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
+  const userId = useAuthStore((state) => state.userId);
 
   const applyMission = useMissionStore((state) => state.applyMission);
   const requestReview = useMissionStore((state) => state.requestReview);
@@ -29,7 +31,9 @@ const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionM
 
   const status = getStatusBadge();
   const storeParticipationId = useMissionStore((s) => s.participationId);
-  const participationId = mission.participationId ?? storeParticipationId;
+  const participationId = useMemo(() => {
+    return mission.participations ? mission.participations[0].participationId : null;
+  }, [mission.participations, userId, storeParticipationId]);
 
   useEffect(() => {
     const loadImages = async () => {
@@ -105,7 +109,7 @@ const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionM
     }
 
     // 나의 미션: 리뷰 요청
-    if (!participationId) {
+    if (participationId === null) {
       useAlertStore
         .getState()
         .showAlert(

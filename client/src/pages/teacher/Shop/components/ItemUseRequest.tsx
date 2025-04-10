@@ -5,6 +5,8 @@ import Checkbox from '../../../../components/Form/Checkbox';
 import TableView, { TableColumn, TableRow } from '../../../../components/Frame/TableView';
 import Profile from '../../../../components/Profile/Profile';
 import { ItemRequestDTO } from '../../../../types/shop/item';
+import { showGlobalAlert, hideGlobalAlert } from '../../../../libs/store/alertStore';
+import { approveItemRequest } from '../../../../libs/services/shop/shop.service';
 
 const ItemUseRequest: React.FC<{ itemReuqestList: ItemRequestDTO[]; closeModal: () => void }> = ({
   itemReuqestList,
@@ -13,6 +15,10 @@ const ItemUseRequest: React.FC<{ itemReuqestList: ItemRequestDTO[]; closeModal: 
   const [selectedRequestList, setSelectedRequestList] = useState<{ [requestId: number]: boolean }>(
     {},
   );
+
+  const selectedIds = Object.keys(selectedRequestList)
+    .filter((id) => selectedRequestList[Number(id)])
+    .map(Number);
 
   const checkOne = (requestId: number) => {
     setSelectedRequestList((prev) => ({
@@ -33,6 +39,43 @@ const ItemUseRequest: React.FC<{ itemReuqestList: ItemRequestDTO[]; closeModal: 
       });
       setSelectedRequestList(newSelections);
     }
+  };
+
+  const handleApproval = (isApprove: boolean) => {
+    if (selectedIds.length === 0) return;
+
+    showGlobalAlert(
+      isApprove ? '아이템 사용을 승인하시겠습니까?' : '아이템 사용을 거절하시겠습니까?',
+      null,
+      isApprove ? '선택한 학생들에게 아이템이 지급됩니다.' : '선택한 요청은 거절 처리됩니다.',
+      'info',
+      {
+        label: '확인',
+        onClick: async () => {
+          await Promise.all(selectedIds.map((id) => approveItemRequest(id, isApprove)));
+
+          showGlobalAlert(
+            isApprove ? '승인이 완료되었습니다.' : '거절이 완료되었습니다.',
+            null,
+            '',
+            'info',
+            {
+              label: '확인',
+              onClick: () => {
+                hideGlobalAlert();
+                closeModal();
+              },
+            },
+          );
+        },
+      },
+      {
+        label: '취소',
+        onClick: () => {
+          hideGlobalAlert();
+        },
+      },
+    );
   };
 
   const columns: TableColumn[] = [
@@ -73,15 +116,17 @@ const ItemUseRequest: React.FC<{ itemReuqestList: ItemRequestDTO[]; closeModal: 
     >
       <div onClick={(e) => e.stopPropagation()}>
         <Card className='w-104 h-160' titleLeft='아이템 사용 신청 목록'>
-          <div className='overflow-auto'>
+          <div className='overflow-auto h-full'>
             <TableView columns={columns} rows={rows} />
           </div>
 
           <div className='flex flex-row gap-4 mt-4'>
-            <Button color='neutral' className='w-full' onClick={closeModal}>
-              취소하기
+            <Button color='danger' className='w-full' onClick={() => handleApproval(false)}>
+              거절하기
             </Button>
-            <Button className='w-full'>승인하기</Button>
+            <Button color='primary' className='w-full' onClick={() => handleApproval(true)}>
+              승인하기
+            </Button>
           </div>
         </Card>
       </div>

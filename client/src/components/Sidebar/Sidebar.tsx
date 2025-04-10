@@ -6,7 +6,7 @@ import ClassInfo from './ClassInfo';
 
 const Sidebar = () => {
   return (
-    <div className='w-[200px] h-full p-4 bg-white flex flex-col'>
+    <div className='w-[250px] h-full p-4 bg-white flex flex-col'>
       <div className='h-full flex flex-col items-start gap-4 flex-1'>
         <Link to='/' className='w-full'>
           <img src={logo} alt='루핀' className='w-full h-10 py-2 justify-center cursor-pointer' />
@@ -14,7 +14,7 @@ const Sidebar = () => {
 
         <ClassInfo />
 
-        <div className='h-full flex flex-col justify-between'>
+        <div className='w-full h-full flex flex-col justify-between'>
           <SidebarMenu />
           <MemberInfo />
         </div>

@@ -43,6 +43,7 @@ interface MissionState {
     missionId: number,
   ) => Promise<{ success: boolean; message?: string; participations?: ParticipationUserInfo[] }>;
   changeMissionStatus: (
+    missionId: number,
     participationId: number,
     status: 'SUCCESS' | 'FAILED' | 'REJECTED' | 'CHECKING',
   ) => Promise<{ success: boolean; message?: string }>;
@@ -94,11 +95,25 @@ const useMissionStore = create<MissionState>((set, get) => ({
     try {
       const result = await missionService.getMissionDetail(missionId);
       if (result.success) {
-        set({ selectedMission: result.mission, isLoading: false });
-        return {
-          success: true,
-          mission: result.mission,
-        };
+        const mission = result.mission!;
+        const userId = localStorage.getItem('userId'); // 또는 authStore 등에서 가져오세요
+
+        let participationId: number | null = null;
+
+        if (mission.participations && userId) {
+          const myParticipation = mission.participations.find((p) => p.memberId === Number(userId));
+          if (myParticipation) {
+            participationId = myParticipation.participationId;
+          }
+        }
+
+        set({
+          selectedMission: mission,
+          participationId,
+          isLoading: false,
+        });
+
+        return { success: true, mission };
       } else {
         set({ isLoading: false, error: result.message || null, errorCode: result.code || null });
         return { success: false, message: result.message, code: result.code };
@@ -198,8 +213,8 @@ const useMissionStore = create<MissionState>((set, get) => ({
     return await missionService.requestReview(missionId, participationId);
   },
 
-  changeMissionStatus: async (participationId, status) => {
-    return await missionService.changeMissionStatus(participationId, status);
+  changeMissionStatus: async (missionId, participationId, status) => {
+    return await missionService.changeMissionStatus(missionId, participationId, status);
   },
 
   getMissionStatus: () => {

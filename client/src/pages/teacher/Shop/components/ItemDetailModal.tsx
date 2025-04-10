@@ -57,31 +57,19 @@ const ItemDetailModal: React.FC<{ item: ItemDTO; closeModal: () => void }> = ({
               </ItemDetailSection>
 
               <ItemDetailSection label='보유중'>
-                <ProfileList
-                  itemMembers={categorizedMemberList.buy}
-                  message='사용중인 학생이 없습니다.'
-                />
+                <ProfileList itemMembers={categorizedMemberList.buy} />
               </ItemDetailSection>
 
               <ItemDetailSection label='사용요청'>
-                <ProfileList
-                  itemMembers={categorizedMemberList.request}
-                  message='사용요청한 학생이 없습니다.'
-                />
+                <ProfileList itemMembers={categorizedMemberList.request} />
               </ItemDetailSection>
 
               <ItemDetailSection label='사용완료'>
-                <ProfileList
-                  itemMembers={categorizedMemberList.used}
-                  message='사용완료한 학생이 없습니다.'
-                />
+                <ProfileList itemMembers={categorizedMemberList.used} />
               </ItemDetailSection>
 
               <ItemDetailSection label='기간만료'>
-                <ProfileList
-                  itemMembers={categorizedMemberList.expired}
-                  message='기간 만료한 학생이 없습니다.'
-                />
+                <ProfileList itemMembers={categorizedMemberList.expired} />
               </ItemDetailSection>
             </div>
             <Button onClick={closeModal}>확인</Button>
@@ -104,12 +92,9 @@ const ItemDetailSection: React.FC<{ label: string; children: React.ReactNode }> 
   );
 };
 
-const ProfileList: React.FC<{ itemMembers: ItemMemberDTO[]; message: string }> = ({
-  itemMembers,
-  message,
-}) => {
+const ProfileList: React.FC<{ itemMembers: ItemMemberDTO[] }> = ({ itemMembers }) => {
   if (itemMembers.length === 0) {
-    return <p>{message}</p>;
+    return <p className='text-p1 text-grey font-medium'>없음</p>;
   }
 
   return (

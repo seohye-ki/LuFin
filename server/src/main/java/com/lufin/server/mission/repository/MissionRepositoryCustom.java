@@ -13,6 +13,7 @@ public interface MissionRepositoryCustom {
 	MissionResponseDto.MissionDetailResponseDto getMissionByIdForTeacher(Integer classId, Integer missionId);
 
 	// (학생) 미션 상세 조회
-	MissionResponseDto.MissionDetailResponseDto getMissionByIdForStudent(Integer classId, Integer missionId);
+	MissionResponseDto.MissionDetailResponseDto getMissionByIdForStudent(Integer classId, Integer missionId,
+		Integer studentId);
 
 }

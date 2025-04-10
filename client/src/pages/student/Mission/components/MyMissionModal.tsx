@@ -142,7 +142,7 @@ const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionM
         .showAlert(
           '리뷰 요청이 완료되었습니다.',
           null,
-          result.message || '리뷰 요청에 실패했습니다.',
+          '선생님이 승인할때 까지 기다리세요.',
           'success',
           {
             label: '확인',
@@ -156,20 +156,14 @@ const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionM
     } else {
       useAlertStore
         .getState()
-        .showAlert(
-          '리뷰 요청에 실패했습니다.',
-          null,
-          result.message || '리뷰 요청에 실패했습니다.',
-          'danger',
-          {
-            label: '확인',
-            onClick: () => {
-              useAlertStore.getState().hideAlert();
-              onClose();
-            },
-            color: 'neutral',
+        .showAlert('리뷰 요청에 실패했습니다.', null, '잠시후 다시 시도해주세요.', 'danger', {
+          label: '확인',
+          onClick: () => {
+            useAlertStore.getState().hideAlert();
+            onClose();
           },
-        );
+          color: 'neutral',
+        });
     }
   };
 

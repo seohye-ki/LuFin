@@ -93,6 +93,8 @@ public class StockNewsServiceImpl implements StockNewsService {
 			}
 
 			return result;
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
@@ -121,6 +123,8 @@ public class StockNewsServiceImpl implements StockNewsService {
 					log.warn("주식 ID: {}에 대한 오전 공시 정보 생성 실패: {}", stockProduct.getId(), e.getMessage());
 				}
 			}
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 		} finally {
@@ -148,6 +152,8 @@ public class StockNewsServiceImpl implements StockNewsService {
 					log.warn("주식 ID: {}에 대한 오후 공시 정보 생성 실패: {}", stockProduct.getId(), e.getMessage());
 				}
 			}
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 		} finally {
@@ -248,6 +254,8 @@ public class StockNewsServiceImpl implements StockNewsService {
 			StockNews savedNews = stockNewsRepository.save(news);
 
 			return new StockNewsResponseDto.NewsCreateUpdateDto(savedNews.getId());
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
@@ -273,6 +281,8 @@ public class StockNewsServiceImpl implements StockNewsService {
 			news.modifyContent(request.content());
 
 			return StockNewsResponseDto.NewsCreateUpdateDto.stockNewsEntityToNewsCreateUpdateDto(news);
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(ErrorCode.SERVER_ERROR);

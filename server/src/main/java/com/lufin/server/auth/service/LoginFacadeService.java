@@ -26,4 +26,13 @@ public class LoginFacadeService {
 		int cash = accountService.getCashBalance(memberId, classId) - loan;
 		return cash + stock + loan;
 	}
+
+	public int getBalance(int memberId, int classId) {
+		if (classId == 0) {
+			return 0;
+		}
+
+		int balance = accountService.getCashBalance(memberId, classId);
+		return balance;
+	}
 }

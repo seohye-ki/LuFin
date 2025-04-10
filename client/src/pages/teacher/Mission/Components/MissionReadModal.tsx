@@ -54,7 +54,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
       const result = await getParticipationList(mission.missionId);
       if (result.success) {
         setParticipations(result.participations ?? []);
-        console.log(result.participations);
+        ('');
       } else {
         useAlertStore
           .getState()

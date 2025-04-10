@@ -30,6 +30,13 @@ export interface MissionList
   participationId?: number;
 }
 
+export interface ParticipationInfo {
+  participationId: number;
+  memberId: number;
+  memberName: string;
+  memberProfileImage: string;
+}
+
 export interface MissionRaw {
   missionId: number;
   title: string;
@@ -41,7 +48,7 @@ export interface MissionRaw {
   currentParticipants: number;
   wage: number;
   missionDate: string;
-  participationId?: number;
+  participations?: ParticipationInfo[];
 }
 
 export interface MissionCreateRequest {

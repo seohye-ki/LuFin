@@ -33,7 +33,7 @@ public class MissionResponseDto {
 	 * Participation DTO to avoid entity serialization issues
 	 */
 	public record MissionParticipationDto(
-		Integer id,
+		Integer participationId,
 		Integer memberId,
 		String memberProfileImage,
 		String memberName  // Include only the necessary fields

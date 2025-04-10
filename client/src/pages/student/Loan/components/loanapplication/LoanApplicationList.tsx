@@ -67,7 +67,7 @@ const LoanApplicationList: React.FC<LoanApplicationListProps> = ({
   });
 
   return (
-    <Card titleLeft='대출 내역' className='min-h-0 h-full'>
+    <Card titleLeft='대출 내역' className='max-h-[620px] min-h-0 h-full overflow-auto'>
       <TableView
         columns={columns}
         rows={rows}

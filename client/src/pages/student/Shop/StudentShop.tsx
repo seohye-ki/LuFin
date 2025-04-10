@@ -14,6 +14,7 @@ import {
   requestUseItem,
 } from '../../../libs/services/shop/shop.service';
 import { ItemDTO } from '../../../types/shop/item';
+import useAuthStore from '../../../libs/store/authStore';
 
 const StudentShop = () => {
   const [myItemList, setMyItemList] = useState<ItemDTO[]>([]);
@@ -99,6 +100,8 @@ const StudentShop = () => {
           if (res) {
             setMyItemList(await getMyItemList());
             setSalesItemList(await getSalesItemList());
+            const { totalAsset } = useAuthStore.getState();
+            useAuthStore.setState({ totalAsset: totalAsset - item.price });
 
             showAlert('아이템을 구매 했어요.', null, '나의 아이템에서 사용해보세요.', 'success', {
               label: '확인',

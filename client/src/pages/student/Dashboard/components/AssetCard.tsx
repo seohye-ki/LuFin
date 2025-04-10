@@ -16,9 +16,8 @@ type AssetCardProps = {
 
 const AssetCard = ({ currency = '루핀', assets, totalAsset }: AssetCardProps) => {
   const assetData = [
-    { stock: '현금', amount: assets.cash },
+    { stock: '현금', amount: assets.loan + assets.cash },
     { stock: '주식', amount: assets.stock },
-    { stock: '대출', amount: Math.abs(assets.loan) * -1 },
   ].filter((item) => item.amount !== 0);
 
   const renderChartOrImage = () => {

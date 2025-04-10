@@ -101,7 +101,7 @@ public class TeacherDashboardUseCase {
 				int studentId = student.getId();
 
 				// 학생 자산 정보
-				int stock = stockService.getTotalValuation(studentId, classId);
+				int stock = stockService.getTotalValuationByStocks(studentId, classId);
 				int loanAmount = loanDashboardService.getLoanPrincipal(studentId, classId);
 				int cash = accountService.getCashBalance(studentId, classId) - loanAmount;
 

@@ -90,7 +90,7 @@ const TeacherShop = () => {
 
   const closeModal = () => {
     setShowCreateModal(false);
-    console.log(showCreateModal);
+    ('');
     setSelectedItem(null);
   };
 

@@ -47,9 +47,9 @@ const ClassroomCard = ({
     const loadImage = async () => {
       if (imageKey) {
         try {
-          console.log('[ClassroomCard] 이미지 로딩 시작:', imageKey);
+          ('');
           const url = await fileService.getImageUrl(imageKey);
-          console.log('[ClassroomCard] 이미지 URL 받음:', url);
+          ('');
           setImageUrl(url);
           setImageError(false);
         } catch (error) {

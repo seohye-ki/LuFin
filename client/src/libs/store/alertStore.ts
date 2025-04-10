@@ -105,8 +105,4 @@ export const hideGlobalAlert = () => {
   );
 };
 
-useAlertStore.subscribe((state) => {
-  console.log('[Alert Title Changed]', state.title);
-});
-
 export default useAlertStore;

@@ -31,9 +31,10 @@ const StudentMission = () => {
     myMissions.map((mission) => ({
       mission,
       participation: {
-        participationId: mission.participationId,
+        participationId: 0,
+        memberId: 0,
         missionId: mission.missionId,
-        status: mission.status as 'SUCCESS' | 'FAILED' | 'REJECTED' | 'CHECKING' | 'IN_PROGRESS',
+        status: 'IN_PROGRESS' as const,
       },
     })),
     availableMissions,

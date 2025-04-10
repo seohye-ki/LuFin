@@ -27,7 +27,7 @@ export const buyItem = async (itemId: number): Promise<boolean> => {
 };
 
 export const getBoughtMemberList = async (itemId: number): Promise<ItemMemberDTO[]> => {
-  console.log(itemId);
+  ('');
   const response = await axiosInstance.get(`/items/${itemId}/purchases`);
   return response.data.data;
 };

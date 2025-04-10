@@ -18,7 +18,8 @@ public class LoginResponseFactory {
 			classId,
 			member.getName(),
 			member.getProfileImage(),
-			totalAsset
+			totalAsset,
+			member.getId()
 		);
 	}
 }

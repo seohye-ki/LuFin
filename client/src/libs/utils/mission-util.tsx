@@ -41,7 +41,10 @@ export const createMissionRow = (
 
   const isJoined = Boolean(participation);
   const status = participation?.status;
-  const formattedDate = new Date(mission.missionDate).toISOString().split('T')[0];
+  const date = new Date(mission.missionDate);
+  const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 
   const isDisabled =
     !!participation && ['SUCCESS', 'FAILED', 'REJECTED'].includes(participation.status);

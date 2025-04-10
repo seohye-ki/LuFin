@@ -21,7 +21,7 @@ public class LoginFacadeService {
 			return 0;
 		}
 
-		int stock = stockService.getTotalValuation(memberId, classId);
+		int stock = stockService.getTotalValuationByStocks(memberId, classId);
 		int loan = loanService.getLoanPrincipal(memberId, classId);
 		int cash = accountService.getCashBalance(memberId, classId) - loan;
 		return cash + stock + loan;

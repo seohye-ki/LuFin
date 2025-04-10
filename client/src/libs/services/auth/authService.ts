@@ -90,7 +90,6 @@ export const AuthService = {
     tokenUtils.removeToken('accessToken');
     tokenUtils.removeToken('refreshToken');
     tokenUtils.removeToken('userRole');
-    window.location.href = '/login';
   },
 
   /**

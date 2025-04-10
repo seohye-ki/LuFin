@@ -6,6 +6,7 @@ import Button from '../../../../../components/Button/Button';
 import Checkbox from '../../../../../components/Form/Checkbox';
 import { applyLoan } from '../../../../../libs/services/loan/loan.service';
 import { hideGlobalAlert, showGlobalAlert } from '../../../../../libs/store/alertStore';
+import useAuthStore from '../../../../../libs/store/authStore';
 
 interface ApplyLoanProps {
   loanProduct: LoanProductDTO;
@@ -28,6 +29,7 @@ const ApplyLoan: React.FC<ApplyLoanProps> = ({ loanProduct, closeModal }) => {
     new Array(agreementTexts.length).fill(false),
   );
 
+  const { userName } = useAuthStore();
   const [amountError, setAmountError] = useState(false);
   const [descriptionError, setDescriptionError] = useState(false);
   const [agreementError, setAgreementError] = useState(false);
@@ -100,7 +102,12 @@ const ApplyLoan: React.FC<ApplyLoanProps> = ({ loanProduct, closeModal }) => {
       <div onClick={(e) => e.stopPropagation()}>
         <Card className='w-110 h-fit' titleLeft='대출 신청'>
           <div className='flex flex-col gap-4'>
-            <TextField label='신청자' placeholder='이름을 입력해주세요.' value='신청자' disabled />
+            <TextField
+              label='신청자'
+              placeholder='이름을 입력해주세요.'
+              value={userName as string}
+              disabled
+            />
 
             <div className='flex flex-row gap-4'>
               <TextField label='상품명' placeholder='상품명' value={loanProduct.name} disabled />

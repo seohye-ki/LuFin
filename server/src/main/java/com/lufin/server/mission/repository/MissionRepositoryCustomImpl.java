@@ -107,9 +107,14 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 	 * @return
 	 */
 	@Override
-	public MissionResponseDto.MissionDetailResponseDto getMissionByIdForStudent(Integer classId, Integer missionId) {
+	public MissionResponseDto.MissionDetailResponseDto getMissionByIdForStudent(
+		Integer classId,
+		Integer missionId,
+		Integer studentId
+	) {
 		QMission mission = QMission.mission;
 		QMissionImage missionImage = QMissionImage.missionImage;
+		QMissionParticipation missionParticipation = QMissionParticipation.missionParticipation;
 
 		/*
 		 * queryDSL의 projection을 사용한 경우 entity 매핑이 정확히 되지 않는 이슈가 있었음
@@ -118,7 +123,8 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 		Mission missionEntity = queryFactory
 			.selectFrom(mission)
 			.where(mission.classroom.id.eq(classId).and(mission.id.eq(missionId)))
-			.leftJoin(mission.images, missionImage).fetchJoin()
+			.leftJoin(mission.images, missionImage)
+			.leftJoin(mission.participations, missionParticipation)
 			.fetchOne();
 
 		if (missionEntity == null) {
@@ -126,8 +132,26 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 			return null;
 		}
 
-		List<MissionResponseDto.MissionImageDto> images = missionEntity.getImages().stream()
-			.map(MissionResponseDto.MissionImageDto::fromEntity).collect(Collectors.toList());
+		List<MissionResponseDto.MissionImageDto> images;
+		List<MissionResponseDto.MissionParticipationDto> participations;
+
+		if (missionEntity.getImages() == null) {
+			log.warn("미션 이미지가 없습니다. classId: {}, missionId: {}", classId, missionId);
+			images = new ArrayList<>();
+		} else {
+			images = missionEntity.getImages().stream()
+				.map(MissionResponseDto.MissionImageDto::fromEntity).toList();
+		}
+
+		if (missionEntity.getParticipations() == null) {
+			log.warn("미션 참여자가 없습니다. classId: {}, missionId: {}", classId, missionId);
+			participations = new ArrayList<>();
+		} else {
+			participations = missionEntity.getParticipations().stream()
+				.filter(participation -> participation.getMember().getId().equals(studentId))
+				.map(MissionResponseDto.MissionParticipationDto::fromEntity)
+				.toList();
+		}
 
 		MissionResponseDto.MissionDetailResponseDto result = new MissionResponseDto.MissionDetailResponseDto(
 			missionEntity.getId(),                   // id
@@ -138,7 +162,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 			missionEntity.getDifficulty(),           // difficulty
 			missionEntity.getMaxParticipants(),      // maxParticipants
 			missionEntity.getCurrentParticipants(),  // currentParticipants
-			new ArrayList<>(),       // missionParticipation
+			participations,       // missionParticipation
 			missionEntity.getWage(),                 // wage
 			missionEntity.getMissionDate(),          // missionDate
 			missionEntity.getStatus(),               // status

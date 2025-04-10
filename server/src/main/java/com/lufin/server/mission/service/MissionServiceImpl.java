@@ -128,7 +128,7 @@ public class MissionServiceImpl implements MissionService {
 				log.info("미션 조회 완료: result = {}", result);
 			} else if (role == MemberRole.STUDENT) {
 				result = missionRepository.getMissionByIdForStudent(classId,
-					missionId);
+					missionId, UserContext.get().getId());
 				log.info("미션 조회 완료: result = {}", result);
 			} else {
 				throw new BusinessException(INVALID_ROLE_SELECTION);

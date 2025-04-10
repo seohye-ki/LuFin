@@ -36,6 +36,7 @@ public class MissionRepositoryCustomImpl implements MissionRepositoryCustom {
 		List<Mission> missions = queryFactory
 			.selectFrom(mission)
 			.where(mission.classroom.id.eq(classId))
+			.orderBy(mission.createdAt.asc())
 			.fetch();
 
 		// 엔티티를 DTO로 변환

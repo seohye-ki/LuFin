@@ -96,7 +96,7 @@ const useMissionStore = create<MissionState>((set, get) => ({
       const result = await missionService.getMissionDetail(missionId);
       if (result.success) {
         const mission = result.mission!;
-        const userId = localStorage.getItem('userId'); // 또는 authStore 등에서 가져오세요
+        const userId = mission.participations;
 
         let participationId: number | null = null;
 

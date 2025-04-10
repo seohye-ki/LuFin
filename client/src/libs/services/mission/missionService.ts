@@ -254,6 +254,9 @@ export const missionService = {
   /**
    * 미션 상태 변경
    */
+  /**
+   * 미션 상태 변경
+   */
   changeMissionStatus: async (
     missionId: number,
     participationId: number,
@@ -262,7 +265,9 @@ export const missionService = {
     try {
       const response = await axiosInstance.patch<
         MissionResponse<{ participationId: number; status: string }>
-      >(`${MISSION_ENDPOINT}/${missionId}/participations/${participationId}`, { status });
+      >(`${MISSION_ENDPOINT}/${missionId}/participations/${participationId}`, {
+        status,
+      });
       if (response.data.isSuccess) {
         return { success: true, participationId: response.data.data?.participationId };
       } else {

@@ -31,9 +31,9 @@ const StudentMission = () => {
     myMissions.map((mission) => ({
       mission,
       participation: {
-        participationId: mission.participationId,
+        participationId: mission.participationId || 0,
         missionId: mission.missionId,
-        status: mission.status as 'SUCCESS' | 'FAILED' | 'REJECTED' | 'CHECKING' | 'IN_PROGRESS',
+        status: mission.status as 'RECRUITING' | 'SUCCESS' | 'FAILED' | 'CHECKING' | 'REJECTED',
       },
     })),
     availableMissions,
@@ -45,7 +45,7 @@ const StudentMission = () => {
     { key: 'wage', label: '보상' },
     { key: 'difficulty', label: '난이도' },
     { key: 'participants', label: '참여인원' },
-    { key: 'createdAt', label: '생성일' },
+    { key: 'createdAt', label: '날짜' },
     { key: 'status', label: '상태' },
     { key: 'action', label: '요청' },
   ];

@@ -33,6 +33,8 @@ public class StockProductServiceImpl implements StockProductService {
 
 			return result;
 
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);
@@ -55,6 +57,8 @@ public class StockProductServiceImpl implements StockProductService {
 			StockResponseDto.StockInfoDto result = stockProductRepository.getStock(stockProductId);
 
 			return result;
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(SERVER_ERROR);

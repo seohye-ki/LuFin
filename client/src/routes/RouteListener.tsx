@@ -6,10 +6,11 @@ import axiosInstance from '../libs/services/axios';
 const RouteListener = () => {
   const location = useLocation();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { userRole } = useAuthStore();
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!isAuthenticated) return;
+      if (!isAuthenticated || userRole == 'TEACHER') return;
       try {
         const res = await axiosInstance.get('/auth/my');
         const balance = res.data.data.balance;

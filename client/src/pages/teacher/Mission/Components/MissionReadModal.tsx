@@ -225,18 +225,22 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
             </div>
             <div className='flex flex-col gap-2'>
               <span className='text-c1 text-grey'>참여 인원</span>
-              <div className='flex flex-col gap-2'>
-                {participations.map((p) => (
-                  <div
-                    key={p.name}
-                    className={`flex items-center gap-2 ${p.status === 'CHECKING' ? 'cursor-pointer hover:bg-grey-50 p-2 rounded-lg' : ''}`}
-                    onClick={() => handleParticipationClick(p)}
-                  >
-                    <span className='text-p1 font-semibold'>{p.name}</span>
-                    {getStatusBadge(p.status)}
-                  </div>
-                ))}
-              </div>
+              {participations.length > 0 ? (
+                <div className='flex flex-col gap-2'>
+                  {participations.map((p) => (
+                    <div
+                      key={p.name}
+                      className={`flex items-center gap-2 ${p.status === 'CHECKING' ? 'cursor-pointer hover:bg-grey-50 p-2 rounded-lg' : ''}`}
+                      onClick={() => handleParticipationClick(p)}
+                    >
+                      <span className='text-p1 font-semibold'>{p.name}</span>
+                      {getStatusBadge(p.status)}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <span className='text-p1 text-grey font-semibold'>참여자가 없습니다.</span>
+              )}
             </div>
             <div className='flex flex-col gap-2'>
               <span className='text-c1 text-grey'>보상</span>

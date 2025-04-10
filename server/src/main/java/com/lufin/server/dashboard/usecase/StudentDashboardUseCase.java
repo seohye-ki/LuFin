@@ -94,7 +94,7 @@ public class StudentDashboardUseCase {
 		 * - cash + stock + loan
 		 */
 
-		int stock = stockService.getTotalValuation(studentId, classId);
+		int stock = stockService.getTotalValuationByStocks(studentId, classId);
 		int loan = loanService.getLoanPrincipal(studentId, classId);
 		int cash = accountService.getCashBalance(studentId, classId);
 		cash -= loan;

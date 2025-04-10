@@ -32,14 +32,38 @@ const CreateClassroomModal = ({
     image: undefined as File | undefined,
     key: null as string | null,
   });
+
   const [isUploading, setIsUploading] = useState(false);
+  const [titleError, setTitleError] = useState(false);
+  const [schoolError, setSchoolError] = useState(false);
+  const [gradeError, setGradeError] = useState(false);
+  const [classError, setClassError] = useState(false);
+
+  const validateTitle = (value: string) => value.trim() === '';
+  const validateSchool = (value: string) => value.trim() === '';
+  const validateGrade = (value: string) => {
+    const number = Number(value);
+    return isNaN(number) || number < 4 || number > 6;
+  };
+  const validateClass = (value: string) => {
+    const number = Number(value);
+    return isNaN(number) || number < 1 || number > 20;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.school || !formData.grade || !formData.class) {
-      return;
-    }
+    const isTitleInvalid = validateTitle(formData.title);
+    const isSchoolInvalid = validateSchool(formData.school);
+    const isGradeInvalid = validateGrade(formData.grade);
+    const isClassInvalid = validateClass(formData.class);
+
+    setTitleError(isTitleInvalid);
+    setSchoolError(isSchoolInvalid);
+    setGradeError(isGradeInvalid);
+    setClassError(isClassInvalid);
+
+    if (isTitleInvalid || isSchoolInvalid || isGradeInvalid || isClassInvalid) return;
 
     onSubmit({
       ...formData,
@@ -53,16 +77,10 @@ const CreateClassroomModal = ({
     if (!file) return;
 
     try {
-      console.log('[CreateClassroomModal] Starting image upload:', {
-        fileName: file.name,
-        fileSize: file.size,
-      });
       setIsUploading(true);
       const key = await fileService.uploadFile('classrooms', file);
-      console.log('[CreateClassroomModal] Image upload successful:', { key });
       setFormData((prev) => ({ ...prev, image: file, key }));
     } catch (error) {
-      console.error('[CreateClassroomModal] Image upload failed:', error);
       useAlertStore
         .getState()
         .showAlert(
@@ -83,26 +101,34 @@ const CreateClassroomModal = ({
 
   return (
     <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
-      <Card className='w-[480px] max-h-[90vh] overflow-y-auto'>
+      <Card className='w-100 max-h-[90vh] overflow-y-auto' titleLeft='새로운 클래스 생성'>
         <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
-          <h2 className='text-h2 font-semibold'>새로운 반 생성하기</h2>
-
           <TextField
             label='클래스명'
             value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            onChange={(e) => {
+              const value = e.target.value;
+              setFormData((prev) => ({ ...prev, title: value }));
+              setTitleError(validateTitle(value));
+            }}
             placeholder='꿈나무 열정 교실'
-            required
-            inputSize='lg'
+            inputSize='md'
+            variant={titleError ? 'error' : 'normal'}
+            description={titleError ? '클래스명을 입력해주세요.' : ''}
           />
 
           <TextField
             label='학교'
             value={formData.school}
-            onChange={(e) => setFormData({ ...formData, school: e.target.value })}
+            onChange={(e) => {
+              const value = e.target.value;
+              setFormData((prev) => ({ ...prev, school: value }));
+              setSchoolError(validateSchool(value));
+            }}
             placeholder='문이차초등학교'
-            required
-            inputSize='lg'
+            inputSize='md'
+            variant={schoolError ? 'error' : 'normal'}
+            description={schoolError ? '학교명을 입력해주세요.' : ''}
           />
 
           <div className='flex gap-4'>
@@ -110,25 +136,36 @@ const CreateClassroomModal = ({
               label='학년'
               type='number'
               value={formData.grade}
-              onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFormData((prev) => ({ ...prev, grade: value }));
+                setGradeError(validateGrade(value));
+              }}
               placeholder='5'
-              required
               className='flex-1'
-              inputSize='lg'
+              inputSize='md'
+              variant={gradeError ? 'error' : 'normal'}
+              description={gradeError ? '4~6학년만 선택할 수 있어요.' : ''}
             />
+
             <TextField
               label='반'
               type='number'
               value={formData.class}
-              onChange={(e) => setFormData({ ...formData, class: e.target.value })}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFormData((prev) => ({ ...prev, class: value }));
+                setClassError(validateClass(value));
+              }}
               placeholder='2'
-              required
               className='flex-1'
-              inputSize='lg'
+              inputSize='md'
+              variant={classError ? 'error' : 'normal'}
+              description={classError ? '1~20반만 선택할 수 있어요.' : ''}
             />
           </div>
 
-          <div className='[&>div>label]:text-h3'>
+          <div className='[&>div>label]:text-c1'>
             <ImageUpload
               label='클래스 사진'
               onChange={handleImageUpload}
@@ -142,12 +179,13 @@ const CreateClassroomModal = ({
               type='button'
               color='neutral'
               full
+              size='md'
               onClick={onClose}
               disabled={isLoading || isUploading}
             >
               취소
             </Button>
-            <Button type='submit' color='info' full disabled={isLoading || isUploading}>
+            <Button size='md' type='submit' color='info' full disabled={isLoading || isUploading}>
               {isLoading ? '생성 중...' : '생성하기'}
             </Button>
           </div>

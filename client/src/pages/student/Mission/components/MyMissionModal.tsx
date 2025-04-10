@@ -4,20 +4,25 @@ import Button from '../../../../components/Button/Button';
 import { MissionRaw } from '../../../../types/mission/mission';
 import { Icon } from '../../../../components/Icon/Icon';
 import Lufin from '../../../../components/Lufin/Lufin';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getStatusBadge } from '../../../../libs/utils/mission-util';
 import useMissionStore from '../../../../libs/store/missionStore';
 import useAlertStore from '../../../../libs/store/alertStore';
+import { fileService } from '../../../../libs/services/file/fileService';
+import ImageViewerModal from './ImageViewerModal';
 
 interface MyMissionModalProps {
   onClose: () => void;
-  mission: MissionRaw;
+  mission: MissionRaw & { participationId?: number };
   isMyMission: boolean;
   onSuccess?: () => void;
 }
 
 const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionModalProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
+
   const applyMission = useMissionStore((state) => state.applyMission);
   const requestReview = useMissionStore((state) => state.requestReview);
   const getMissionList = useMissionStore((state) => state.getMissionList);
@@ -26,19 +31,37 @@ const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionM
   const storeParticipationId = useMissionStore((s) => s.participationId);
   const participationId = mission.participationId ?? storeParticipationId;
 
+  useEffect(() => {
+    const loadImages = async () => {
+      try {
+        if (mission.images && mission.images.length > 0) {
+          const urls = await Promise.all(
+            mission.images.map((img) => fileService.getImageUrl(img.objectKey)),
+          );
+          setImageUrls(urls);
+        }
+      } catch (error) {
+        console.error('이미지 로드 오류:', error);
+      }
+    };
+
+    loadImages();
+  }, [mission.images]);
+
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? mission.images.length - 2 : prev - 2));
+    setCurrentImageIndex((prev) => (prev === 0 ? imageUrls.length - 2 : prev - 2));
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev >= mission.images.length - 2 ? 0 : prev + 2));
+    setCurrentImageIndex((prev) => (prev >= imageUrls.length - 2 ? 0 : prev + 2));
   };
 
   const getVisibleImages = () => {
+    if (imageUrls.length === 1) return imageUrls;
     const images = [];
     for (let i = 0; i < 2; i++) {
-      const index = (currentImageIndex + i) % mission.images.length;
-      images.push(mission.images[index]);
+      const index = (currentImageIndex + i) % imageUrls.length;
+      images.push(imageUrls[index]);
     }
     return images;
   };
@@ -101,7 +124,7 @@ const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionM
       return;
     }
 
-    const result = await requestReview(participationId);
+    const result = await requestReview(mission.missionId, participationId);
     if (result.success) {
       useAlertStore
         .getState()
@@ -175,23 +198,23 @@ const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionM
           <span className='text-c1 text-grey'>설명</span>
           <span className='text-p1 font-semibold'>{mission.content}</span>
         </div>
-        {mission.images.length > 0 && (
+        {imageUrls.length > 0 && (
           <div className='flex flex-col gap-2'>
             <span className='text-c1 text-grey'>사진</span>
             <div className='mt-2 relative'>
               <div className='grid grid-cols-2 gap-2'>
-                {getVisibleImages().map((image, index) => (
-                  <div key={`${image}-${index}`} className='relative aspect-square'>
+                {getVisibleImages().map((image) => (
+                  <div key={image} className='relative aspect-square'>
                     <img
-                      key={image.id}
-                      src={image.objectKey}
+                      src={image}
                       alt='미션 인증 이미지'
+                      onClick={() => setSelectedImageUrl(image)}
                       className='w-full h-full object-cover rounded-lg'
                     />
                   </div>
                 ))}
               </div>
-              {mission.images.length > 2 && (
+              {imageUrls.length > 2 && (
                 <>
                   <button
                     onClick={handlePrevImage}
@@ -206,16 +229,14 @@ const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionM
                     <Icon name='ArrowRight2' size={20} />
                   </button>
                   <div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1'>
-                    {Array.from({ length: Math.ceil(mission.images.length / 2) }).map(
-                      (_, index) => (
-                        <div
-                          key={index}
-                          className={`w-2 h-2 rounded-full ${
-                            index === Math.floor(currentImageIndex / 2) ? 'bg-white' : 'bg-white/50'
-                          }`}
-                        />
-                      ),
-                    )}
+                    {Array.from({ length: Math.ceil(imageUrls.length / 2) }).map((_, index) => (
+                      <div
+                        key={index}
+                        className={`w-2 h-2 rounded-full ${
+                          index === Math.floor(currentImageIndex / 2) ? 'bg-white' : 'bg-white/50'
+                        }`}
+                      />
+                    ))}
                   </div>
                 </>
               )}
@@ -223,6 +244,9 @@ const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionM
           </div>
         )}
       </div>
+      {selectedImageUrl && (
+        <ImageViewerModal imageUrl={selectedImageUrl} onClose={() => setSelectedImageUrl(null)} />
+      )}
       <div className='flex gap-2 mt-2'>
         <Button variant='solid' color='neutral' size='md' full onClick={onClose}>
           취소

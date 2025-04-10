@@ -21,6 +21,11 @@ const TeacherLoan = () => {
     fetchLoanApplicationList();
   }, []);
 
+  const handleCloseModal = () => {
+    setSelectedLoanApplication(null);
+    fetchLoanApplicationList(); // 모달 닫힐 때 리스트 새로고침
+  };
+
   return (
     <SidebarLayout>
       <div className='flex flex-col gap-4'>
@@ -37,7 +42,7 @@ const TeacherLoan = () => {
       {selectedLoanApplication && (
         <DetailLoanApplication
           loanApplication={selectedLoanApplication}
-          closeModal={() => setSelectedLoanApplication(null)}
+          closeModal={handleCloseModal}
         />
       )}
     </SidebarLayout>

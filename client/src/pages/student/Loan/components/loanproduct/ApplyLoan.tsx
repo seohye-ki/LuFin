@@ -5,6 +5,7 @@ import { LoanProductDTO } from '../../../../../types/Loan/loan';
 import Button from '../../../../../components/Button/Button';
 import Checkbox from '../../../../../components/Form/Checkbox';
 import { applyLoan } from '../../../../../libs/services/loan/loan.service';
+import { hideGlobalAlert, showGlobalAlert } from '../../../../../libs/store/alertStore';
 
 interface ApplyLoanProps {
   loanProduct: LoanProductDTO;
@@ -78,7 +79,16 @@ const ApplyLoan: React.FC<ApplyLoanProps> = ({ loanProduct, closeModal }) => {
         requestedAmount: requiredAmount!,
         description,
       });
-      closeModal();
+      showGlobalAlert(
+        '대출 신청이 완료됐어요.',
+        null,
+        '과도한 대출은 신용평가에 영향을 미칩니다.',
+        'success',
+        {
+          label: '확인',
+          onClick: () => hideGlobalAlert(),
+        },
+      );
     }
   };
 

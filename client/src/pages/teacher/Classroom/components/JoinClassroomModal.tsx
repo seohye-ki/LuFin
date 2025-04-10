@@ -2,6 +2,7 @@ import { useState } from 'react';
 import CodeInput from '../../../../components/Form/CodeInput';
 import { classroomService } from '../../../../libs/services/classroom/classroomService';
 import Button from '../../../../components/Button/Button';
+import { hideGlobalAlert, showGlobalAlert } from '../../../../libs/store/alertStore';
 
 interface JoinClassroomModalProps {
   onClose: () => void;
@@ -15,7 +16,30 @@ const JoinClassroomModal = ({ onClose }: JoinClassroomModalProps) => {
   };
 
   const handleSubmit = () => {
-    fetchJoinClass(code);
+    showGlobalAlert(
+      '클래스에 입장할까요?',
+      null,
+      '기존의 클래스에서는 더 이상 활동할 수 없어요.',
+      'info',
+      {
+        label: '확인',
+        onClick: () => {
+          fetchJoinClass(code);
+          showGlobalAlert('클래스에 입장했어요', null, '', 'info', {
+            label: '확인',
+            onClick: () => {
+              hideGlobalAlert();
+              onClose();
+            },
+          });
+        },
+      },
+      {
+        label: '취소',
+        color: 'neutral',
+        onClick: () => hideGlobalAlert(),
+      },
+    );
   };
 
   return (

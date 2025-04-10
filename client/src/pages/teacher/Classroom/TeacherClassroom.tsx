@@ -113,8 +113,8 @@ const TeacherClassroom = () => {
           label: '확인',
           onClick: () => {
             useAlertStore.getState().hideAlert();
-            // 클래스룸 생성 후 교사 대시보드로 이동
-            navigate('/dashboard');
+            setIsCreateModalOpen(false);
+            fetchClassrooms();
           },
           color: 'primary',
         },
@@ -158,6 +158,10 @@ const TeacherClassroom = () => {
   };
 
   const handleClassroomClick = async (classroom: Classroom) => {
+    if (userRole === 'TEACHER') {
+      await classroomService.changeCurrentClass(classroom.classId);
+    }
+
     setCurrentClass(classroom.classId, classroom.name, classroom.code);
     navigate('/dashboard');
   };
@@ -179,7 +183,7 @@ const TeacherClassroom = () => {
             }}
             className='flex items-center gap-2'
           >
-            <span>{userRole === 'TEACHEAR' ? '클래스 추가' : '클래스 입장'}</span>
+            <span>{userRole === 'TEACHER' ? '클래스 추가' : '클래스 입장'}</span>
           </Button>
         }
       >
@@ -205,19 +209,30 @@ const TeacherClassroom = () => {
 
         {isCreateModalOpen && (
           <CreateClassroomModal
-            onClose={() => setIsCreateModalOpen(false)}
+            onClose={() => {
+              setIsCreateModalOpen(false);
+              fetchClassrooms();
+            }}
             onSubmit={handleCreateSubmit}
           />
         )}
 
         {isEnterClassroomModalOpen && (
-          <JoinClassroomModal onClose={() => setIsEnterClassroomModalOpen(false)} />
+          <JoinClassroomModal
+            onClose={() => {
+              setIsEnterClassroomModalOpen(false);
+              fetchClassrooms();
+            }}
+          />
         )}
 
         {editingClassroom && (
           <EditClassroomModal
             classroom={editingClassroom}
-            onClose={() => setEditingClassroom(null)}
+            onClose={() => {
+              setEditingClassroom(null);
+              fetchClassrooms();
+            }}
             onSubmit={handleEditSubmit}
           />
         )}

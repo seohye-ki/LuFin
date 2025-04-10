@@ -45,10 +45,6 @@ const TeacherDashboard = () => {
     fetchDashboardData();
   }, []);
 
-  const handleMissionReview = () => {
-    navigate(paths.MISSION);
-  };
-
   const handleLoanReview = () => {
     // 현재는 교사 대출 페이지가 없으므로 일단 미션 페이지로 이동
     navigate(paths.LOAN);
@@ -78,31 +74,6 @@ const TeacherDashboard = () => {
     }
   };
 
-  const getMissionStatusButton = (status: string) => {
-    switch (status) {
-      case '검토 필요':
-        return (
-          <Button onClick={handleMissionReview} color='primary' size='md'>
-            검토하기
-          </Button>
-        );
-      case '수행 중':
-        return (
-          <Button color='neutral' size='md' disabled>
-            수행 중
-          </Button>
-        );
-      case '수행 완료':
-        return (
-          <Button color='disabled' size='md' disabled>
-            수행 완료
-          </Button>
-        );
-      default:
-        return null;
-    }
-  };
-
   const formatAmount = (amount: number) => {
     return (
       <div className='flex items-center gap-1'>
@@ -118,7 +89,6 @@ const TeacherDashboard = () => {
     { key: 'investment', label: '투자' },
     { key: 'loan', label: '대출' },
     { key: 'creditGrade', label: '신용등급' },
-    { key: 'missionStatus', label: '미션' },
     { key: 'loanStatus', label: '대출 상태' },
     { key: 'items', label: '보유 아이템' },
   ];
@@ -139,7 +109,6 @@ const TeacherDashboard = () => {
         ) : (
           student.creditGrade
         ),
-      missionStatus: getMissionStatusButton(student.missionStatus),
       loanStatus:
         student.loanStatus === '검토 필요' ? (
           <Button onClick={handleLoanReview} color='primary' size='md'>

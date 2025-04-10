@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.lufin.server.common.exception.BusinessException;
 import com.lufin.server.config.ClaudeApiConfig;
 import com.lufin.server.stock.dto.ClaudeRequestDto;
 import com.lufin.server.stock.dto.ClaudeResponseDto;
@@ -73,6 +74,8 @@ public class StockAiServiceImpl implements StockAiService {
 				log.error("Claude API 응답이 올바르지 않습니다");
 				return null;
 			}
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			// 오류 로깅 및 예외 처리
 			log.error("Claude API 호출 중 오류 발생", e);

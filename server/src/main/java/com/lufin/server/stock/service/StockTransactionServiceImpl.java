@@ -60,8 +60,10 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 
 			return transactions;
 
+		} catch (BusinessException be) {
+			throw be;
 		} catch (Exception e) {
-			log.error("An error occurred: {}", e.getMessage(), e);
+			log.error("An error occurred: {}", e.getMessage());
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
 		}
 
@@ -156,6 +158,8 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			}
 
 			return result;
+		} catch (BusinessException be) {
+			throw be;
 		} catch (TransactionTimedOutException tte) {
 			log.error("주식 거래 중 타임 아웃 발생: {}", tte.getMessage());
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
@@ -223,6 +227,8 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			log.info("계좌 출금 작업 완료: 잔액 = {}", personalAccount.getBalance());
 
 			return new StockTransactionResponseDto.TransactionInfoDto(savedTransaction.getId());
+		} catch (BusinessException be) {
+			throw be;
 		} catch (TransactionTimedOutException tte) {
 			log.error("주식 구매 중 타임 아웃 발생: {}", tte.getMessage());
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
@@ -295,6 +301,8 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			return StockTransactionResponseDto.TransactionInfoDto.stockTransactionHistoryEntityToTransactionInfoDto(
 				savedTransaction);
 
+		} catch (BusinessException be) {
+			throw be;
 		} catch (TransactionTimedOutException tte) {
 			log.error("주식 판매 중 타임 아웃 발생: {}", tte.getMessage());
 			throw new BusinessException(ErrorCode.SERVER_ERROR);

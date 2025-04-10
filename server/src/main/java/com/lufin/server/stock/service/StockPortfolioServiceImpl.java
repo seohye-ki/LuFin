@@ -47,6 +47,8 @@ public class StockPortfolioServiceImpl implements StockPortfolioService {
 
 			return portfolioInfos;
 
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(ErrorCode.SERVER_ERROR);

@@ -5,6 +5,7 @@ import { Icon } from '../../../../components/Icon/Icon';
 import { StockProduct } from '../../../../types/stock/stock';
 import useAlertStore from '../../../../libs/store/alertStore';
 import { useStockStore } from '../../../../libs/store/stockStore';
+import useAuthStore from '../../../../libs/store/authStore';
 
 interface StockOrderProps {
   stock: StockProduct;
@@ -14,6 +15,7 @@ const StockOrder = ({ stock }: StockOrderProps) => {
   const [tab, setTab] = useState<'buy' | 'sell'>('buy');
   const [quantity, setQuantity] = useState(1);
   const { postStockTransaction, getStockPortfolio, portfolio } = useStockStore();
+  const { totalAsset } = useAuthStore();
 
   const holding = portfolio.find((item) => item.stockProductId === stock.stockProductId);
   const MAX_QUANTITY = holding ? holding.quantity : 0;
@@ -29,8 +31,13 @@ const StockOrder = ({ stock }: StockOrderProps) => {
     );
 
     if (res.success) {
+      const delta = stock.currentPrice * quantity;
+      const newTotal = tab === 'buy' ? totalAsset - delta : totalAsset + delta;
+      useAuthStore.setState({ totalAsset: newTotal });
+
       useAlertStore.getState().hideAlert();
       await getStockPortfolio();
+
       useAlertStore
         .getState()
         .showAlert(

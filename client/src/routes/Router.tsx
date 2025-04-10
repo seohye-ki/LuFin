@@ -15,10 +15,12 @@ import StudentDashboard from '../pages/student/Dashboard/StudentDashboard';
 import TeacherDashboard from '../pages/teacher/Dashboard/TeacherDashboard';
 import TeacherShop from '../pages/teacher/Shop/TeacherShop';
 import TeacherLoan from '../pages/teacher/Loan/TeacherLoan';
+import RouteListener from './RouteListener';
 
 const Router = () => {
   return (
     <BrowserRouter>
+      <RouteListener />
       <Routes>
         <Route path={paths.HOME} element={<Home />} />
         <Route path={paths.LOGIN} element={<Login />} />
@@ -48,7 +50,6 @@ const Router = () => {
             <PrivateRoute studentComponent={<StudentShop />} teacherComponent={<TeacherShop />} />
           }
         />
-
         <Route
           path={paths.MISSION}
           element={
@@ -58,14 +59,12 @@ const Router = () => {
             />
           }
         />
-
         <Route
           path={paths.LOAN}
           element={
             <PrivateRoute studentComponent={<StudentLoan />} teacherComponent={<TeacherLoan />} />
           }
         />
-
         <Route
           path={paths.STOCK}
           element={

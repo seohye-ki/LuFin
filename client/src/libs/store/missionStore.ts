@@ -43,6 +43,7 @@ interface MissionState {
     missionId: number,
   ) => Promise<{ success: boolean; message?: string; participations?: ParticipationUserInfo[] }>;
   changeMissionStatus: (
+    missionId: number,
     participationId: number,
     status: 'SUCCESS' | 'FAILED' | 'REJECTED' | 'CHECKING',
   ) => Promise<{ success: boolean; message?: string }>;
@@ -212,8 +213,8 @@ const useMissionStore = create<MissionState>((set, get) => ({
     return await missionService.requestReview(missionId, participationId);
   },
 
-  changeMissionStatus: async (participationId, status) => {
-    return await missionService.changeMissionStatus(participationId, status);
+  changeMissionStatus: async (missionId, participationId, status) => {
+    return await missionService.changeMissionStatus(missionId, participationId, status);
   },
 
   getMissionStatus: () => {

@@ -32,10 +32,7 @@ const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionM
   const status = getStatusBadge();
   const storeParticipationId = useMissionStore((s) => s.participationId);
   const participationId = useMemo(() => {
-    return (
-      mission.participations?.find((p) => p.memberId === userId)?.participationId ??
-      storeParticipationId
-    );
+    return mission.participations ? mission.participations[0].participationId : null;
   }, [mission.participations, userId, storeParticipationId]);
 
   useEffect(() => {

@@ -7,7 +7,7 @@ import Button from '../../../../components/Button/Button';
 import { useState, useEffect } from 'react';
 import Profile from '../../../../components/Profile/Profile';
 import MissionEditModal from './MissionEditModal';
-import useAlertStore from '../../../../libs/store/alertStore';
+import useAlertStore, { hideGlobalAlert, showGlobalAlert } from '../../../../libs/store/alertStore';
 import useMissionStore from '../../../../libs/store/missionStore';
 import { fileService } from '../../../../libs/services/file/fileService';
 import ImageViewerModal from '../../../../pages/student/Mission/components/ImageViewerModal';
@@ -46,7 +46,8 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
     loadImages();
   }, [mission.images]);
 
-  const { deleteMission, getParticipationList, requestReview, getMissionList } = useMissionStore();
+  const { deleteMission, getParticipationList, changeMissionStatus, getMissionList } =
+    useMissionStore();
 
   useEffect(() => {
     const fetchParticipation = async () => {
@@ -127,9 +128,27 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
         {
           label: '승인하기',
           onClick: async () => {
-            await requestReview(mission.missionId, selectedParticipation.participationId);
+            await changeMissionStatus(
+              mission.missionId,
+              selectedParticipation.participationId,
+              'SUCCESS',
+            );
             setIsApproveMode(false);
             setSelectedParticipation(null);
+            showGlobalAlert(
+              '미션 승인이 완료 됐습니다.',
+              null,
+              '즉시 보상이 지급됩니다.',
+              'success',
+              {
+                label: '확인',
+                onClick: () => {
+                  setIsApproveMode(false);
+                  setSelectedParticipation(null);
+                  hideGlobalAlert();
+                },
+              },
+            );
           },
           color: 'primary',
         },

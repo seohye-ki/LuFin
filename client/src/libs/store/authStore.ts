@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { AuthService, LoginRequest } from '../services/auth/authService';
+import { tokenUtils } from '../services/axios';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -40,7 +41,7 @@ const useAuthStore = create<AuthState>()(
       error: null,
       errorCode: null,
       userRole: AuthService.getUserRole(),
-      userId: null,
+      userId: parseInt(tokenUtils.getToken('userId') || '0'),
       userName: null,
       userProfileImage: null,
       totalAsset: 0,
@@ -56,6 +57,7 @@ const useAuthStore = create<AuthState>()(
               isAuthenticated: true,
               isLoading: false,
               userRole: result.role || null,
+              userId: result.memberId || null,
               error: null,
               errorCode: null,
               userName: result.name,
@@ -93,6 +95,7 @@ const useAuthStore = create<AuthState>()(
 
       logout: () => {
         AuthService.logout();
+        tokenUtils.removeToken('userId');
         set({
           isAuthenticated: false,
           userRole: null,

@@ -31,7 +31,7 @@ export default function PasswordSetup({
   // 비밀번호 필드 디바운싱 처리
   const debouncedPassword = useDebounce(password, 1000);
   const debouncedConfirmPassword = useDebounce(confirmPassword, 1000);
-  
+
   // 이전 값을 저장하는 ref
   const prevPasswordRef = useRef<string>('');
   const prevConfirmPasswordRef = useRef<string>('');
@@ -49,7 +49,9 @@ export default function PasswordSetup({
   useEffect(() => {
     if (debouncedConfirmPassword && debouncedConfirmPassword !== prevConfirmPasswordRef.current) {
       prevConfirmPasswordRef.current = debouncedConfirmPassword;
-      const event = { target: { value: debouncedConfirmPassword } } as React.FocusEvent<HTMLInputElement>;
+      const event = {
+        target: { value: debouncedConfirmPassword },
+      } as React.FocusEvent<HTMLInputElement>;
       onBlur('confirmPassword')(event);
     }
   }, [debouncedConfirmPassword, onBlur]);

@@ -46,10 +46,10 @@ const StudentRankCard = ({ student, isCurrentUser, profileImage }: StudentRankCa
           </div>
         </div>
         {/* Name and Asset */}
-        <div className="flex flex-col">
+        <div className='flex flex-col'>
           <p className={`text-c1 ${isCurrentUser ? 'font-bold' : ''}`}>{student.name}</p>
           {student.asset !== undefined && (
-            <p className="text-xs text-gray-500">{student.asset.toLocaleString()}루핀</p>
+            <p className='text-xs text-gray-500'>{student.asset.toLocaleString()}루핀</p>
           )}
         </div>
       </div>

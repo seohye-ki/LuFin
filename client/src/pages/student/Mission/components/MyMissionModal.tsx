@@ -39,6 +39,10 @@ const MyMissionModal = ({ onClose, mission, isMyMission, onSuccess }: MyMissionM
   }, [mission.participations, userId, storeParticipationId]);
 
   useEffect(() => {
+    console.log(userId);
+  }, [userId]);
+
+  useEffect(() => {
     const loadImages = async () => {
       try {
         if (mission.images && mission.images.length > 0) {

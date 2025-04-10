@@ -35,7 +35,7 @@ export default function BasicInfo({
     // 이메일 값이 있고, 이전 값과 다른 경우에만 검증 실행
     if (debouncedEmail && debouncedEmail !== prevEmailRef.current) {
       prevEmailRef.current = debouncedEmail;
-      
+
       // 이메일 형식이 유효한지 간단히 확인 (정규식)
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (emailRegex.test(debouncedEmail)) {

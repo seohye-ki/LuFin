@@ -11,7 +11,7 @@ export const getStatusBadge = (participation?: MissionParticipation) => {
   switch (participation.status) {
     case 'SUCCESS':
       return { status: 'done' as const, text: '성공' };
-    case 'IN_PROGRESS':
+    case 'RECRUITING':
       return { status: 'ing' as const, text: '수행 중' };
     case 'CHECKING':
       return { status: 'review' as const, text: '검토 중' };
@@ -60,7 +60,7 @@ export const createMissionRow = (
             ? 'ready'
             : status === 'SUCCESS'
               ? 'done'
-              : status === 'IN_PROGRESS'
+              : status === 'RECRUITING'
                 ? 'ing'
                 : status === 'CHECKING'
                   ? 'review'
@@ -73,7 +73,7 @@ export const createMissionRow = (
           ? '모집 중'
           : status === 'SUCCESS'
             ? '성공'
-            : status === 'IN_PROGRESS'
+            : status === 'RECRUITING'
               ? '수행 중'
               : status === 'CHECKING'
                 ? '검토 중'
@@ -85,7 +85,7 @@ export const createMissionRow = (
     action: (
       <div className='h-10 w-[128px] flex items-center justify-center'>
         {isJoined ? (
-          status === 'IN_PROGRESS' ? (
+          status === 'RECRUITING' ? (
             <Button
               variant='ghost'
               color='info'

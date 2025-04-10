@@ -47,6 +47,7 @@ public class TransactionHistory {
 	@Enumerated(EnumType.STRING)
 	private TransactionType transactionType;
 
+	@Column(name = "source_type", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private TransactionSourceType sourceType;
 

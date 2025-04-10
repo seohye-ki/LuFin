@@ -109,6 +109,7 @@ CREATE TABLE `transaction_histories`
     `description`        TEXT                                       NULL,
     `status`             ENUM ('SUCCESS', 'FAILED', 'PENDING')      NOT NULL DEFAULT 'PENDING' COMMENT '성공, 실패, 대기',
     `executor_role`      TINYINT                                    NOT NULL COMMENT '0: 교사, 1: 학생',
+    `source_type`        VARCHAR(100)                               NOT NULL,
     PRIMARY KEY (`transaction_id`),
     INDEX `idx_transaction_from` (`from_account_id`),
     INDEX `idx_transaction_to` (`to_account_number`),

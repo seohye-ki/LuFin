@@ -60,8 +60,10 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 
 			return transactions;
 
+		} catch (BusinessException be) {
+			throw be;
 		} catch (Exception e) {
-			log.error("An error occurred: {}", e.getMessage(), e);
+			log.error("An error occurred: {}", e.getMessage());
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
 		}
 
@@ -100,7 +102,7 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			Optional<StockProduct> stock = stockProductRepository.findByIdWithPessimisticLock(stockProductId);
 
 			if (!stock.isPresent()) {
-				log.warn("주식 구매에 필요한 주식 상품을 찾을 수 없습니다. classId = {}, currentMember = {}", classId, currentMember);
+				log.warn("주식 거래에 필요한 주식 상품을 찾을 수 없습니다. classId = {}, currentMember = {}", classId, currentMember);
 				throw new BusinessException(ErrorCode.INVESTMENT_PRODUCT_NOT_FOUND);
 			}
 
@@ -108,10 +110,11 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 
 			// 2. 계좌 조회
 			Optional<Account> account = accountRepository.findOpenAccountByMemberIdWithPessimisticLock(
-				currentMember.getId());
+				currentMember.getId(), classId);
 
 			if (!account.isPresent()) {
-				log.warn("주식 구매에 필요한 개인 계좌를 찾을 수 없습니다. classId = {}, currentMember = {}", classId, currentMember);
+				log.warn("주식 거래에 필요한 개인 계좌를 찾을 수 없습니다. classId = {}, currentMember = {}", classId,
+					currentMember.getId());
 				throw new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND);
 			}
 
@@ -119,13 +122,6 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			Optional<StockPortfolio> portfolioOptional = stockPortfolioRepository.findByStockProductIdAndMemberIdWithPessimisticLock(
 				stockProduct.getId(),
 				currentMember.getId());
-
-			if (!portfolioOptional.isPresent()) {
-				log.warn("주식 판매에 필요한 구매 내역을 찾을 수 없습니다.");
-				throw new BusinessException(ErrorCode.TRANSACTION_NOT_FOUND);
-			}
-
-			StockPortfolio portfolio = portfolioOptional.get();
 
 			// 4. classroom 조회
 			Classroom classroom = classroomRepository.findById(classId)
@@ -135,6 +131,13 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 
 			// 구매인지 판매인지 구분
 			if (request.type() == 0) { // 판매
+				if (!portfolioOptional.isPresent()) {
+					log.warn("주식 거래에 필요한 구매 내역을 찾을 수 없습니다.");
+					throw new BusinessException(ErrorCode.TRANSACTION_NOT_FOUND);
+				}
+
+				StockPortfolio portfolio = portfolioOptional.get();
+
 				result = sellStock(
 					request,
 					currentMember,
@@ -155,6 +158,8 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			}
 
 			return result;
+		} catch (BusinessException be) {
+			throw be;
 		} catch (TransactionTimedOutException tte) {
 			log.error("주식 거래 중 타임 아웃 발생: {}", tte.getMessage());
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
@@ -222,6 +227,8 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			log.info("계좌 출금 작업 완료: 잔액 = {}", personalAccount.getBalance());
 
 			return new StockTransactionResponseDto.TransactionInfoDto(savedTransaction.getId());
+		} catch (BusinessException be) {
+			throw be;
 		} catch (TransactionTimedOutException tte) {
 			log.error("주식 구매 중 타임 아웃 발생: {}", tte.getMessage());
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
@@ -294,6 +301,8 @@ public class StockTransactionServiceImpl implements StockTransactionService {
 			return StockTransactionResponseDto.TransactionInfoDto.stockTransactionHistoryEntityToTransactionInfoDto(
 				savedTransaction);
 
+		} catch (BusinessException be) {
+			throw be;
 		} catch (TransactionTimedOutException tte) {
 			log.error("주식 판매 중 타임 아웃 발생: {}", tte.getMessage());
 			throw new BusinessException(ErrorCode.SERVER_ERROR);

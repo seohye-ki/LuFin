@@ -18,7 +18,7 @@ import jakarta.persistence.QueryHint;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer> {
 
-	List<Item> findByClassroomId(Integer id);
+	List<Item> findByClassroomIdOrderByStatusDesc(Integer id);
 
 	List<Item> findByClassroomIdAndStatusTrue(Integer classroomId);
 

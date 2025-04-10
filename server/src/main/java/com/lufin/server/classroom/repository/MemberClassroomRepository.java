@@ -20,7 +20,7 @@ public interface MemberClassroomRepository extends JpaRepository<MemberClassroom
 
 	// 특정 학급에 속한 구성원 전체 조회
 	@Query("SELECT mc FROM MemberClassroom mc WHERE mc.classroom.id = :classroomId "
-		+ "AND mc.member.memberRole = 'STUDENT'")
+		+ "AND mc.member.memberRole = 'STUDENT' AND mc.isCurrent = true")
 	List<MemberClassroom> findStudentsByClassId(@Param("classroomId") Integer classroomId);
 
 	// 현재 학급 구성원 수 조회

@@ -13,7 +13,7 @@ import jakarta.validation.Valid;
 
 public interface LoanService {
 
-	List<LoanProductResponseDto> getLoanProducts(Member member);
+	List<LoanProductResponseDto> getLoanProducts(Member member, Integer classId);
 
 	LoanApplicationDetailDto createLoanApplication(@Valid LoanApplicationRequestDto request, Member member,
 		Integer classId);

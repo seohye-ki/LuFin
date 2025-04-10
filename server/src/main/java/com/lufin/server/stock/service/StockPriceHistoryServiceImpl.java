@@ -175,6 +175,8 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 				log.error("주식 가격 변동 생성 재시도 중 인터럽트 발생", ie.getMessage());
 				break;
 
+			} catch (BusinessException e) {
+				throw e;
 			} catch (Exception e) {
 				log.error("주식 가격 변동 생성 중 오류 발생: {}", e.getMessage());
 				retryCount++;
@@ -251,6 +253,8 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 			try {
 				priceContent = stockAiService.generateResponse(prompt);
 				log.info("AI 가격 변동 정보 생성 요청: newsContent = {}", priceContent);
+			} catch (BusinessException e) {
+				throw e;
 			} catch (Exception e) {
 				throw new BusinessException(GENERATE_FAILED);
 			}
@@ -259,7 +263,7 @@ public class StockPriceHistoryServiceImpl implements StockPriceHistoryService {
 				throw new BusinessException(GENERATE_FAILED);
 			}
 
-			StockPriceHistoryRequestDto.PriceHistoryAiInfoDto request = JsonToDtoUtil.convert(priceContent);
+			StockPriceHistoryRequestDto.PriceHistoryAiInfoDto request = JsonToDtoUtil.convertPrice(priceContent);
 
 			StockPriceHistory priceHistory = StockPriceHistory.create(
 				request.currentPrice(),

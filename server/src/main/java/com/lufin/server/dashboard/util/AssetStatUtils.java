@@ -12,15 +12,16 @@ public class AssetStatUtils {
 	 * @param label 항목명
 	 * @param current 현재 금액
 	 * @param previous 비교 기준 금액
+	 * @param total 총 금액
 	 */
-	public static AssetDto buildAssetDto(String label, long current, long previous) {
+	public static AssetDto buildAssetDto(String label, long current, long previous, long total) {
 		long diff = current - previous;
 		int rate = (previous == 0) ? 0 : (int)((double)diff / previous * 100);
 		boolean isPositive = diff >= 0;
 
 		return AssetDto.builder()
 			.label(label)
-			.amount(current)
+			.amount(total)
 			.changeRate(rate)
 			.isPositive(isPositive)
 			.build();

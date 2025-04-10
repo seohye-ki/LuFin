@@ -9,7 +9,7 @@ import com.lufin.server.mission.dto.MissionResponseDto;
 
 public interface MissionService {
 	// 현재 반 나의 미션 목록 조회
-	List<MissionResponseDto.MissionSummaryResponseDto> getMyMissions(Integer classId, Member currentMember);
+	List<MissionResponseDto.MissionMyResponseDto> getMyMissions(Integer classId, Member currentMember);
 
 	// 반의 미션 목록 조회
 	List<MissionResponseDto.MissionSummaryResponseDto> getAllMissions(Integer classId);

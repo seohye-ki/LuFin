@@ -95,9 +95,9 @@ public class CreditServiceImpl implements CreditService {
 	}
 
 	private MemberClassroom getMemberClassroom(int memberId, int classId) {
-		return memberClassroomRepository.findByMemberIdAndClassroomIdAndIsCurrentTrue(memberId, classId)
+		return memberClassroomRepository.findByMemberIdAndClassroomId(memberId, classId)
 			.orElseThrow(() -> {
-				log.warn("🔁[개인 회생 실패] - 학생이 해당 클래스 소속이 아님");
+				log.warn("🔁[신용 점수 조회 실패] - 학생이 해당 클래스 소속이 아님");
 				return new BusinessException(STUDENT_NOT_IN_TEACHER_CLASS);
 			});
 	}

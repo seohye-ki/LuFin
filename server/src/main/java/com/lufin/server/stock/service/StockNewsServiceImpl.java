@@ -17,6 +17,7 @@ import com.lufin.server.stock.dto.StockNewsResponseDto;
 import com.lufin.server.stock.repository.StockNewsRepository;
 import com.lufin.server.stock.repository.StockPortfolioRepository;
 import com.lufin.server.stock.repository.StockProductRepository;
+import com.lufin.server.stock.util.JsonToDtoUtil;
 import com.lufin.server.stock.util.StockAiPrompt;
 
 import lombok.RequiredArgsConstructor;
@@ -45,10 +46,22 @@ public class StockNewsServiceImpl implements StockNewsService {
 		}
 
 		try {
-			List<StockNewsResponseDto.NewsInfoDto> result = stockNewsRepository.getAllNews(stockProductId);
+			List<StockNewsResponseDto.NewsInfoDto> result;
 
-			if (result == null || result.isEmpty()) {
-				throw new BusinessException(ErrorCode.INVESTMENT_NEWS_NOT_FOUND);
+			if (stockProductId == 0) {
+				List<StockNews> latestNewsList = stockNewsRepository.findLatestNewsForAllStockProducts();
+				result = latestNewsList.stream()
+					.map(StockNewsResponseDto.NewsInfoDto::stockNewsEntityToNewsInfoDto)
+					.toList();
+
+			} else {
+
+				result = stockNewsRepository.getAllNews(stockProductId);
+
+				if (result == null || result.isEmpty()) {
+					throw new BusinessException(ErrorCode.INVESTMENT_NEWS_NOT_FOUND);
+				}
+
 			}
 
 			return result;
@@ -80,6 +93,8 @@ public class StockNewsServiceImpl implements StockNewsService {
 			}
 
 			return result;
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
@@ -108,6 +123,8 @@ public class StockNewsServiceImpl implements StockNewsService {
 					log.warn("주식 ID: {}에 대한 오전 공시 정보 생성 실패: {}", stockProduct.getId(), e.getMessage());
 				}
 			}
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 		} finally {
@@ -135,6 +152,8 @@ public class StockNewsServiceImpl implements StockNewsService {
 					log.warn("주식 ID: {}에 대한 오후 공시 정보 생성 실패: {}", stockProduct.getId(), e.getMessage());
 				}
 			}
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 		} finally {
@@ -211,7 +230,7 @@ public class StockNewsServiceImpl implements StockNewsService {
 				totalSellAmount);
 			log.info("AI 공시 정보 생성 요청: prompt = {}", prompt.length());
 
-			String newsContent = "";
+			String newsContent;
 			try {
 				newsContent = stockAiService.generateResponse(prompt);
 				log.info("AI 공시 정보 생성 요청: newsContent = {}", newsContent);
@@ -224,7 +243,7 @@ public class StockNewsServiceImpl implements StockNewsService {
 			}
 
 			// 생성형 AI가 제공해준 정보를 request Dto로 가공
-			StockNewsRequestDto.NewsInfoDto request = new StockNewsRequestDto.NewsInfoDto(newsContent);
+			StockNewsRequestDto.NewsAiDto request = JsonToDtoUtil.convertNews(newsContent);
 
 			// StockNews 엔티티 생성
 			StockNews news = StockNews.create(
@@ -235,6 +254,8 @@ public class StockNewsServiceImpl implements StockNewsService {
 			StockNews savedNews = stockNewsRepository.save(news);
 
 			return new StockNewsResponseDto.NewsCreateUpdateDto(savedNews.getId());
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(ErrorCode.SERVER_ERROR);
@@ -260,6 +281,8 @@ public class StockNewsServiceImpl implements StockNewsService {
 			news.modifyContent(request.content());
 
 			return StockNewsResponseDto.NewsCreateUpdateDto.stockNewsEntityToNewsCreateUpdateDto(news);
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(ErrorCode.SERVER_ERROR);

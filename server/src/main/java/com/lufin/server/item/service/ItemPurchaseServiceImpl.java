@@ -60,15 +60,15 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 		return item;
 	}
 
-	private Account getActiveAccount(Member member) {
+	private Account getActiveAccount(Member member, int classId) {
 		log.info("🔍[계좌 조회 시작] - memberId: {}", member.getId());
-		return accountRepository.findOpenAccountByMemberIdWithPessimisticLock(member.getId())
+		return accountRepository.findOpenAccountByMemberIdWithPessimisticLock(member.getId(), classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 
 	private Account getClassAccount(Integer classId) {
 		log.info("🔍[반 계좌 조회 시작] - classId: {}", classId);
-		return accountRepository.findByClassroomId(classId)
+		return accountRepository.findByClassroomIdAndMemberIdIsNull(classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 
@@ -95,10 +95,13 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 			.orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 		validateItemStatus(item, request.itemCount());
 
-		Account account = getActiveAccount(student);
+		Account account = getActiveAccount(student, classId);
 		int totalPrice = item.getPrice() * request.itemCount();
 		account.withdraw(totalPrice);
+		accountRepository.save(account);
 		Account classAccount = getClassAccount(classId);
+		classAccount.deposit(totalPrice);
+		accountRepository.save(classAccount);
 		transactionHistoryService.record(
 			account,
 			classAccount.getAccountNumber(),
@@ -176,9 +179,12 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
 
 		purchase.refund();
 
-		Account account = getActiveAccount(student);
+		Account account = getActiveAccount(student, classId);
 		account.deposit(purchase.getPurchasePrice());
+		accountRepository.save(account);
 		Account classAccount = getClassAccount(classId);
+		classAccount.forceWithdraw(purchase.getPurchasePrice());
+		accountRepository.save(classAccount);
 		transactionHistoryService.record(
 			classAccount,
 			account.getAccountNumber(),

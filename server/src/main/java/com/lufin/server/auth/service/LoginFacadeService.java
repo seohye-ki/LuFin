@@ -20,9 +20,19 @@ public class LoginFacadeService {
 		if (classId == 0) {
 			return 0;
 		}
-		int cash = accountService.getCashBalance(memberId, classId);
-		int stock = stockService.getTotalValuation(memberId, classId);
+
+		int stock = stockService.getTotalValuationByStocks(memberId, classId);
 		int loan = loanService.getLoanPrincipal(memberId, classId);
-		return cash + stock - loan;
+		int cash = accountService.getCashBalance(memberId, classId) - loan;
+		return cash + stock + loan;
+	}
+
+	public int getBalance(int memberId, int classId) {
+		if (classId == 0) {
+			return 0;
+		}
+
+		int balance = accountService.getCashBalance(memberId, classId);
+		return balance;
 	}
 }

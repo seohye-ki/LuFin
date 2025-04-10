@@ -32,7 +32,7 @@ const DashboardCard = ({
         </div>
       )}
       {isModal && <hr className='border-t border-new-grey' />}
-      <div className='h-full flex flex-col gap-4'>{children}</div>
+      <div className='h-full flex flex-col gap-4 overflow-auto'>{children}</div>
     </div>
   );
 };

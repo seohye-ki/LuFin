@@ -23,13 +23,13 @@ export const missionService = {
    */
   getMissionList: async () => {
     try {
-      console.log('API 요청 시작: 미션 목록 조회');
+      ('');
 
       const response =
         await axiosInstance.get<MissionResponse<{ myData: MissionList[]; allData: MissionList[] }>>(
           MISSION_ENDPOINT,
         );
-      console.log('API 응답:', response.data);
+      ('');
 
       if (response.data.isSuccess && response.data.data) {
         const { myData, allData } = response.data.data;
@@ -39,7 +39,7 @@ export const missionService = {
           allMissions: allData,
         };
       } else {
-        console.log('API 응답 실패:', response.data.message);
+        ('');
         return {
           success: false,
           code: response.data.code,
@@ -61,20 +61,20 @@ export const missionService = {
    */
   getMissionDetail: async (missionId: number) => {
     try {
-      console.log('API 요청 시작: 미션 상세 조회');
+      ('');
 
       const response = await axiosInstance.get<MissionResponse<MissionRaw>>(
         `${MISSION_ENDPOINT}/${missionId}`,
       );
 
-      console.log('API 응답:', response.data);
+      ('');
       if (response.data.isSuccess && response.data.data) {
         return {
           success: true,
           mission: response.data.data,
         };
       } else {
-        console.log('API 응답 실패:', response.data.message);
+        ('');
         return {
           success: false,
           code: response.data.code,
@@ -101,7 +101,7 @@ export const missionService = {
         mission,
       );
 
-      console.log('API 응답:', response.data);
+      ('');
 
       if (response.data.isSuccess && response.data.data) {
         return {
@@ -109,7 +109,7 @@ export const missionService = {
           missionId: response.data.data.missionId,
         };
       } else {
-        console.log('API 응답 실패:', response.data.message);
+        ('');
         return {
           success: false,
           code: response.data.code,
@@ -137,14 +137,14 @@ export const missionService = {
         data,
       );
 
-      console.log('API 응답:', response.data);
+      ('');
 
       if (response.data.isSuccess && response.data.data) {
         return {
           success: true,
         };
       } else {
-        console.log('API 응답 실패:', response.data.message);
+        ('');
         return {
           success: false,
           code: response.data.code,

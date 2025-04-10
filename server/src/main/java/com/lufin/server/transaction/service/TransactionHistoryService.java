@@ -1,5 +1,7 @@
 package com.lufin.server.transaction.service;
 
+import java.time.LocalDate;
+
 import com.lufin.server.account.domain.Account;
 import com.lufin.server.common.constants.HistoryStatus;
 import com.lufin.server.member.domain.Member;
@@ -34,9 +36,8 @@ public interface TransactionHistoryService {
 		TransactionSourceType sourceType
 	);
 
-	// 이번 주(월요일 ~ 오늘)까지의 소비 총액을 반환
-	int getTotalConsumptionThisWeek(int memberId);
-
 	// 지난주 대비 소비 증감량을 반환 (이번 주 - 지난 주)
-	int getConsumptionChangeSinceLastWeek(int memberId);
+	int getTotalConsumptionBetween(int memberId, int classId, LocalDate from, LocalDate to);
+
+	int getTotalAccumulatedConsumption(int studentId, int classId);
 }

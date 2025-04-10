@@ -13,6 +13,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class StudentDashboardDto {
+	private int myMemberId;                         // 학생Id
+	private String profileImage;                    // 프로필 이미지
 	private List<RankingDto> rankings;              // 자산 랭킹 정보 (상위 5명)
 
 	private String creditGrade;                     // 현재 신용 등급
@@ -31,5 +33,5 @@ public class StudentDashboardDto {
 
 	private List<MyMissionDto> ongoingMissions;     // 진행 중인 미션 목록 (참여 미션 정보)
 	private int totalCompletedMissions;             // 완료한 미션 개수
-	private int totalWage;                        	// 누적 보상 총액
+	private int totalWage;                            // 누적 보상 총액
 }

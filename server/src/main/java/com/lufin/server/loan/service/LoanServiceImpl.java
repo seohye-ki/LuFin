@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lufin.server.account.domain.Account;
 import com.lufin.server.account.repository.AccountRepository;
 import com.lufin.server.classroom.domain.Classroom;
+import com.lufin.server.classroom.domain.MemberClassroom;
 import com.lufin.server.classroom.repository.ClassroomRepository;
+import com.lufin.server.classroom.repository.MemberClassroomRepository;
 import com.lufin.server.common.constants.ErrorCode;
 import com.lufin.server.common.constants.HistoryStatus;
 import com.lufin.server.common.exception.BusinessException;
@@ -46,6 +48,7 @@ public class LoanServiceImpl implements LoanService {
 	private final CreditScoreRepository creditScoreRepository;
 	private final AccountRepository accountRepository;
 	private final TransactionHistoryService transactionHistoryService;
+	private final MemberClassroomRepository memberClassroomRepository;
 
 	private Integer convertRatingToRank(Integer rating) {
 		log.info("🔧[신용 등급 변환] - rating: {}", rating);
@@ -62,19 +65,22 @@ public class LoanServiceImpl implements LoanService {
 		}
 	}
 
-	private Account getActiveAccount(Member member) {
-		return accountRepository.findOpenAccountByMemberIdWithPessimisticLock(member.getId())
+	private Account getActiveAccount(Member member, int classId) {
+		return accountRepository.findOpenAccountByMemberIdWithPessimisticLock(member.getId(), classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 
 	private Account getClassAccount(Integer classId) {
-		return accountRepository.findByClassroomId(classId)
+		return accountRepository.findByClassroomIdAndMemberIdIsNull(classId)
 			.orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 	}
 
 	@Override
-	public List<LoanProductResponseDto> getLoanProducts(Member member) {
-		CreditScore creditScore = creditScoreRepository.findById(member.getId())
+	public List<LoanProductResponseDto> getLoanProducts(Member member, Integer classId) {
+		MemberClassroom memberClassroom = memberClassroomRepository.findByMemberIdAndClassroomId(
+			member.getId(), classId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
+		CreditScore creditScore = creditScoreRepository.findById(memberClassroom.getId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.CREDIT_SCORE_NOT_FOUND));
 		Integer rank = convertRatingToRank(Integer.valueOf(creditScore.getScore()));
 		log.info("🔍[대출 상품 조회]");
@@ -107,7 +113,10 @@ public class LoanServiceImpl implements LoanService {
 		LoanProduct loanProduct = loanProductRepository.findById(request.loanProductId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.LOAN_PRODUCT_NOT_FOUND));
 
-		CreditScore creditScore = creditScoreRepository.findById(member.getId())
+		MemberClassroom memberClassroom = memberClassroomRepository.findByMemberIdAndClassroomId(
+				member.getId(), classId)
+			.orElseThrow(() -> new BusinessException(ErrorCode.CLASS_NOT_FOUND));
+		CreditScore creditScore = creditScoreRepository.findById(memberClassroom.getId())
 			.orElseThrow(() -> new BusinessException(ErrorCode.CREDIT_SCORE_NOT_FOUND));
 		log.info("✅[신용 점수 조회 성공] - memberId: {}, score: {}", member.getId(), creditScore.getScore());
 		Integer rank = convertRatingToRank(Integer.valueOf(creditScore.getScore()));
@@ -212,9 +221,12 @@ public class LoanServiceImpl implements LoanService {
 
 		if (requestDto.status() == LoanApplicationStatus.APPROVED) {
 			application.open();
-			Account account = getActiveAccount(application.getMember());
+			Account account = getActiveAccount(application.getMember(), classId);
 			account.deposit(application.getRequiredAmount());
+			accountRepository.save(account);
 			Account classAccount = getClassAccount(classId);
+			classAccount.forceWithdraw(application.getRequiredAmount());
+			accountRepository.save(classAccount);
 			log.info("💰[대출 금액 입금 완료] - memberId: {}, amount: {}, balance: {}", application.getMember().getId(),
 				application.getRequiredAmount(), account.getBalance());
 			transactionHistoryService.record(

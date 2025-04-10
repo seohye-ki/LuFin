@@ -43,8 +43,12 @@ public class StockPortfolioServiceImpl implements StockPortfolioService {
 				classId
 			);
 
+			log.info("주식 포트폴리오 조회 성공: portfolioInfoSize = {}", portfolioInfos.size());
+
 			return portfolioInfos;
 
+		} catch (BusinessException e) {
+			throw e;
 		} catch (Exception e) {
 			log.error("An error occurred: {}", e.getMessage(), e);
 			throw new BusinessException(ErrorCode.SERVER_ERROR);

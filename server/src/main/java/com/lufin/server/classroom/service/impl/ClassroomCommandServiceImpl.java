@@ -82,9 +82,6 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 		// 교사를 클래스에 매핑
 		MemberClassroom addTeacher = MemberClassroom.enroll(currentMember, newClass);
 
-		// memberCount++
-		newClass.addMemberClass(addTeacher);
-
 		memberClassroomRepository.save(addTeacher);
 		log.info("[교사 클래스 매핑 완료] 교사ID: {}, 클래스: {}", currentMember.getId(), newClass.getName());
 
@@ -127,7 +124,7 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 
 		log.info("[학생 클래스 매핑 완료] memberId: {}, classId: {}", member.getId(), classroom.getId());
 
-		Account account = accountService.createAccountForMember(member.getId());
+		Account account = accountService.createAccountForMember(member.getId(), classroom);
 		log.info("[학생 계좌 생성 완료] memberId: {}, accountId: {}", member.getId(), account.getId());
 
 		// 토큰 발급
@@ -160,7 +157,7 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 		);
 		log.info("[클래스 정보 수정 완료] classId: {}", classroom.getId());
 
-		Account account = accountRepository.findByClassroomId(classroom.getId())
+		Account account = accountRepository.findByClassroomIdAndMemberIdIsNull(classroom.getId())
 			.orElseThrow(() -> new BusinessException(CLASS_NOT_FOUND));
 
 		return new ClassResponse(
@@ -198,9 +195,9 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 				return new BusinessException(CLASS_NOT_FOUND);
 			});
 
-		// 다른 멤버가 존재하면 삭제 불가 (본인 포함 2명이면 1명만 존재)
+		// 다른 멤버가 존재하면 삭제 불가
 		int memberCount = memberClassroomRepository.countByClassroom_Id(classroom.getId());
-		if (memberCount > 1) {
+		if (memberCount > 0) {
 			log.warn("🏫[삭제 실패 - 학생 존재] classId: {}, 멤버 수: {}", classId, memberCount);
 			throw new BusinessException(CLASS_HAS_STUDENTS);
 		}
@@ -235,7 +232,7 @@ public class ClassroomCommandServiceImpl implements ClassroomCommandService {
 			});
 
 		// 계좌 먼저 조회
-		Account account = accountRepository.findByClassroomId(classId)
+		Account account = accountRepository.findByClassroomIdAndMemberIdIsNull(classId)
 			.orElseThrow(() -> {
 				log.warn("🏫[클래스 변경 실패 - 클래스 계좌 없음] classId: {}", classId);
 				return new BusinessException(ACCOUNT_NOT_FOUND);

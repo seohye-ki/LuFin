@@ -109,6 +109,7 @@ CREATE TABLE `transaction_histories`
     `description`        TEXT                                       NULL,
     `status`             ENUM ('SUCCESS', 'FAILED', 'PENDING')      NOT NULL DEFAULT 'PENDING' COMMENT '성공, 실패, 대기',
     `executor_role`      TINYINT                                    NOT NULL COMMENT '0: 교사, 1: 학생',
+    `source_type`        VARCHAR(100)                               NOT NULL,
     PRIMARY KEY (`transaction_id`),
     INDEX `idx_transaction_from` (`from_account_id`),
     INDEX `idx_transaction_to` (`to_account_number`),
@@ -148,30 +149,32 @@ ALTER TABLE lufin.auto_transfers
     ADD CONSTRAINT chk_day_of_week CHECK (day_of_week BETWEEN 1 AND 7);
 
 -- credit_scores
-CREATE TABLE credit_scores (
-    member_class_id INT PRIMARY KEY,
-    score TINYINT NOT NULL DEFAULT 60,
-    grade VARCHAR(10) NOT NULL,
-    credit_status TINYINT NOT NULL DEFAULT 0 COMMENT '0: 정상 / 1: 신용불량자',
+CREATE TABLE credit_scores
+(
+    member_class_id           INT PRIMARY KEY,
+    score                     TINYINT     NOT NULL DEFAULT 60,
+    grade                     VARCHAR(10) NOT NULL,
+    credit_status             TINYINT     NOT NULL DEFAULT 0 COMMENT '0: 정상 / 1: 신용불량자',
     credit_status_description TEXT,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at                DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at                DATETIME             DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_credit_score_member_classroom FOREIGN KEY (member_class_id)
-        REFERENCES member_classrooms(member_class_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='신용 점수 상태 (회원-학급 단위)';
+        REFERENCES member_classrooms (member_class_id) ON DELETE CASCADE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='신용 점수 상태 (회원-학급 단위)';
 
 -- Credit score histories
-CREATE TABLE credit_score_histories (
-    history_id INT AUTO_INCREMENT PRIMARY KEY,
-    member_class_id INT NOT NULL,
-    score_change TINYINT NOT NULL,
-    reason VARCHAR(100) NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE credit_score_histories
+(
+    history_id      INT AUTO_INCREMENT PRIMARY KEY,
+    member_class_id INT          NOT NULL,
+    score_change    TINYINT      NOT NULL,
+    reason          VARCHAR(100) NOT NULL,
+    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_credithistory_member_classroom FOREIGN KEY (member_class_id)
         REFERENCES member_classrooms (member_class_id) ON DELETE CASCADE
-) ENGINE=InnoDB
-  DEFAULT CHARSET=utf8mb4 COMMENT='신용 점수 변경 이력';
-
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='신용 점수 변경 이력';
 
 
 -- Savings products
@@ -627,7 +630,8 @@ BEGIN
     INTO portfolio_exists
     FROM stock_portfolios
     WHERE member_id = NEW.member_id
-      AND stock_product_id = NEW.stock_product_id;
+      AND stock_product_id = NEW.stock_product_id
+      AND classroom_id = NEW.classroom_id;
 
     IF portfolio_exists = 0 THEN
         -- 포트폴리오가 없을 경우 새로 생성

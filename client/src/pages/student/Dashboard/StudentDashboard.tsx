@@ -79,8 +79,8 @@ const StudentDashboard = () => {
 
         const activeClassId = sessionStorage.getItem('classId');
 
-        console.log(activeClassId);
-        console.log(currentClassId);
+        ('');
+        ('');
 
         const response =
           currentClassId === Number(activeClassId)

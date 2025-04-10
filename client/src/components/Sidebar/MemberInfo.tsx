@@ -39,7 +39,7 @@ const MemberInfo = () => {
     <div className='mt-auto flex flex-col gap-4'>
       {userRole === 'STUDENT' && (
         <div className='flex w-full h-21 flex-col bg-yellow rounded-lg p-4 gap-1'>
-          <p className='text-c1 text-dark-grey'>총 자산</p>
+          <p className='text-c1 text-dark-grey'>내 계좌</p>
           <Lufin count={totalAsset} size='l' />
         </div>
       )}

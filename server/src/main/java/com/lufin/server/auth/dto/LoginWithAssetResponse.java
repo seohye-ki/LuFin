@@ -7,7 +7,8 @@ public record LoginWithAssetResponse(
 	int classId,
 	String name,
 	String profileImage,
-	int totalAsset
+	int totalAsset,
+	int memberId
 ) {
 	public static LoginWithAssetResponse of(
 		String accessToken,
@@ -16,8 +17,10 @@ public record LoginWithAssetResponse(
 		int classId,
 		String name,
 		String profileImage,
-		int totalAsset
+		int totalAsset,
+		int memberId
 	) {
-		return new LoginWithAssetResponse(accessToken, refreshToken, role, classId, name, profileImage, totalAsset);
+		return new LoginWithAssetResponse(accessToken, refreshToken, role, classId, name, profileImage, totalAsset,
+			memberId);
 	}
 }

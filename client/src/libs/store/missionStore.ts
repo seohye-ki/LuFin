@@ -32,7 +32,10 @@ interface MissionState {
     message?: string;
   }>;
   deleteMission: (missionId: number) => Promise<{ success: boolean; message?: string }>;
-  requestReview: (participationId: number) => Promise<{ success: boolean; message?: string }>;
+  requestReview: (
+    missionId: number,
+    participationId: number,
+  ) => Promise<{ success: boolean; message?: string }>;
   getMissionWithParticipants: (
     missionId: number,
   ) => Promise<{ success: boolean; message?: string }>;
@@ -92,7 +95,10 @@ const useMissionStore = create<MissionState>((set, get) => ({
       const result = await missionService.getMissionDetail(missionId);
       if (result.success) {
         set({ selectedMission: result.mission, isLoading: false });
-        return { success: true, mission: result.mission };
+        return {
+          success: true,
+          mission: result.mission,
+        };
       } else {
         set({ isLoading: false, error: result.message || null, errorCode: result.code || null });
         return { success: false, message: result.message, code: result.code };
@@ -188,8 +194,8 @@ const useMissionStore = create<MissionState>((set, get) => ({
     return result;
   },
 
-  requestReview: async (participationId) => {
-    return await missionService.requestReview(participationId);
+  requestReview: async (missionId, participationId) => {
+    return await missionService.requestReview(missionId, participationId);
   },
 
   changeMissionStatus: async (participationId, status) => {

@@ -52,6 +52,7 @@ export const createMissionRow = (
     difficulty: difficultyStars,
     participants: `${mission.currentParticipants}/${mission.maxParticipants}`,
     createdAt: formattedDate,
+    participationId: participation?.participationId,
     status: (
       <Badge
         status={

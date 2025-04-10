@@ -235,10 +235,10 @@ export const missionService = {
   /**
    * 미션 리뷰 요청
    */
-  requestReview: async (participationId: number) => {
+  requestReview: async (missionId: number, participationId: number) => {
     try {
       const response = await axiosInstance.patch<MissionResponse<{ participationId: number }>>(
-        `${MISSION_ENDPOINT}/${participationId}/participations`,
+        `${MISSION_ENDPOINT}/${missionId}/participations/${participationId}`,
       );
       if (response.data.isSuccess) {
         return { success: true };

@@ -1,9 +1,9 @@
 import Lufin from '../../../../components/Lufin/Lufin';
 import Button from '../../../../components/Button/Button';
-import { calcProfitRate } from '../../../../libs/utils/stock-util';
 import Card from '../../../../components/Card/Card';
 import { useStockStore } from '../../../../libs/store/stockStore';
 import { useSelectedStockStore } from '../../../../libs/store/stockStore';
+
 const MyStockListCard = () => {
   const { products, portfolio } = useStockStore();
   const { toggleChartType } = useSelectedStockStore();
@@ -13,17 +13,12 @@ const MyStockListCard = () => {
       const stock = products.find((s) => s.stockProductId === p.stockProductId);
       if (!stock) return null;
 
-      const avgPrice = p.quantity > 0 ? p.totalPurchaseAmount / p.quantity : 0;
-      const currentPrice = stock.currentPrice * p.quantity;
-      const { profitValue, profitRate } = calcProfitRate(p.totalPurchaseAmount, currentPrice);
-
       return {
-        stock: stock.name,
+        stockName: stock.name,
         quantity: p.quantity,
-        amount: avgPrice,
-        currentPrice,
-        profit: profitValue,
-        profitRate,
+        currentPrice: stock.currentPrice * p.quantity,
+        profit: p.totalReturn,
+        profitRate: p.totalReturnRate,
       };
     })
     .filter((detail): detail is NonNullable<typeof detail> => detail !== null);
@@ -42,9 +37,9 @@ const MyStockListCard = () => {
           <div className='text-gray-400 text-sm'>보유 주식이 없습니다.</div>
         ) : (
           stockDetails.map((stock) => (
-            <div key={stock.stock} className='flex flex-col gap-2'>
+            <div key={stock.stockName} className='flex flex-col gap-2'>
               <div className='flex justify-between'>
-                <span className='text-p1 font-bold'>{stock.stock}</span>
+                <span className='text-p1 font-bold'>{stock.stockName}</span>
                 <Lufin size='s' count={stock.currentPrice} />
               </div>
               <div className='flex justify-between'>

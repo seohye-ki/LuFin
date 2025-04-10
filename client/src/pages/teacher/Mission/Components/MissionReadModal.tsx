@@ -10,6 +10,7 @@ import MissionEditModal from './MissionEditModal';
 import useAlertStore from '../../../../libs/store/alertStore';
 import useMissionStore from '../../../../libs/store/missionStore';
 import { fileService } from '../../../../libs/services/file/fileService';
+import ImageViewerModal from '../../../../pages/student/Mission/components/ImageViewerModal';
 
 interface MissionReadModalProps {
   mission: MissionRaw;
@@ -26,6 +27,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
     null,
   );
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const loadImages = async () => {
@@ -125,7 +127,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
         {
           label: '승인하기',
           onClick: async () => {
-            await requestReview(selectedParticipation.participationId);
+            await requestReview(mission.missionId, selectedParticipation.participationId);
             setIsApproveMode(false);
             setSelectedParticipation(null);
           },
@@ -134,11 +136,6 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
       );
     }
   }, [isApproveMode, selectedParticipation]);
-
-  const getRandomProfileImage = () => {
-    const seed = Math.floor(Math.random() * 1000);
-    return `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${seed}`;
-  };
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? imageUrls.length - 2 : prev - 2));
@@ -149,6 +146,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
   };
 
   const getVisibleImages = () => {
+    if (imageUrls.length === 1) return imageUrls;
     const images = [];
     for (let i = 0; i < 2; i++) {
       const index = (currentImageIndex + i) % imageUrls.length;
@@ -234,7 +232,7 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
                     className={`flex items-center gap-2 ${p.status === 'CHECKING' ? 'cursor-pointer hover:bg-grey-50 p-2 rounded-lg' : ''}`}
                     onClick={() => handleParticipationClick(p)}
                   >
-                    <Profile name={p.name} profileImage={getRandomProfileImage()} variant='row' />
+                    <span className='text-p1 font-semibold'>{p.name}</span>
                     {getStatusBadge(p.status)}
                   </div>
                 ))}
@@ -251,11 +249,12 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
             {imageUrls.length > 0 && (
               <div className='mt-2 relative'>
                 <div className='grid grid-cols-2 gap-2'>
-                  {getVisibleImages().map((image, index) => (
-                    <div key={index} className='relative aspect-square'>
+                  {getVisibleImages().map((image) => (
+                    <div key={image} className='relative aspect-square'>
                       <img
                         src={image}
                         alt='미션 인증 이미지'
+                        onClick={() => setSelectedImageUrl(image)}
                         className='w-full h-full object-cover rounded-lg'
                       />
                     </div>
@@ -290,6 +289,9 @@ const MissionReadModal = ({ mission, onClose }: MissionReadModalProps) => {
           </div>
         </Card>
       </div>
+      {selectedImageUrl && (
+        <ImageViewerModal imageUrl={selectedImageUrl} onClose={() => setSelectedImageUrl(null)} />
+      )}
     </>
   );
 };

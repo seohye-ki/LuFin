@@ -34,7 +34,7 @@ const StudentMission = () => {
         participationId: 0,
         memberId: 0,
         missionId: mission.missionId,
-        status: 'IN_PROGRESS' as const,
+        status: mission.status as 'SUCCESS' | 'FAILED' | 'REJECTED' | 'CHECKING' | 'IN_PROGRESS',
       },
     })),
     availableMissions,

@@ -186,6 +186,7 @@ const StockGraph: React.FC<StockGraphProps> = ({ stockPriceInfos }) => {
         data.labels?.forEach((_, index) => {
           const image = new Image();
           const date = stockPriceInfos[index].date;
+
           image.src = date.hour > 12 ? moonIcon : sunIcon;
 
           const sunIconWidth = 12;

@@ -16,7 +16,7 @@ const ItemList = ({ items }: ItemListProps) => {
   return (
     <DashboardCard titleLeft='아이템' className='flex-1'>
       <div className='h-full flex flex-col'>
-        <div className='flex-1 min-h-0 max-h-[calc(100%-1rem)] overflow-y-auto scrollbar-hide'>
+        <div className='flex-1 min-h-0  overflow-y-auto scrollbar-hide'>
           <div className='flex flex-col gap-3 px-1 py-1'>
             {items.length > 0 ? (
               items.map((item, index) => (

@@ -64,7 +64,7 @@ const EditClassroomModal = ({
       });
       setIsUploading(true);
       const key = await fileService.uploadFile('classrooms', file);
-      console.log('[EditClassroomModal] Image upload successful:', { key });
+      ('');
       setFormData((prev) => ({ ...prev, image: file, key }));
     } catch (error) {
       console.error('[EditClassroomModal] Image upload failed:', error);

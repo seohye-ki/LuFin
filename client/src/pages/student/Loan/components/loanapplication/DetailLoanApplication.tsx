@@ -83,7 +83,7 @@ const DetailLoanApplication: React.FC<DetailLoanApplicationProps> = ({
     const fetchDetail = async () => {
       try {
         const detail = await getLoanApplicationDetail(loanApplication.loanApplicationId);
-        console.log(detail);
+        ('');
         setLoanApplicationDetail(detail);
       } catch (error) {
         console.error('대출 신청 상세 정보를 불러오는 데 실패했습니다.', error);

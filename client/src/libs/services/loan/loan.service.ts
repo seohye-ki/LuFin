@@ -19,7 +19,7 @@ export const getLoanProductList = async (): Promise<LoanProductDTO[]> => {
 export const getLoanApplicationList = async (): Promise<LoanApplicationDTO[]> => {
   try {
     const response = await axiosInstance.get<{ data: LoanApplicationDTO[] }>('/loans/applications');
-    console.log(response.data.data);
+    ('');
     return response.data.data;
   } catch (error) {
     console.error('Error fetching loan aplications:', error);
@@ -29,7 +29,7 @@ export const getLoanApplicationList = async (): Promise<LoanApplicationDTO[]> =>
 
 export const applyLoan = async (applyLoanDTO: ApplyLoanDTO): Promise<void> => {
   try {
-    console.log(applyLoanDTO);
+    ('');
     await axiosInstance.post('/loans/applications', applyLoanDTO);
   } catch (error) {
     console.error('Error post loan aplication:', error);

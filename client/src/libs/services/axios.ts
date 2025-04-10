@@ -33,12 +33,12 @@ export const tokenUtils = {
   getToken: (key: string): string | null => {
     const token =
       TOKEN_STORAGE === 'localStorage' ? localStorage.getItem(key) : sessionStorage.getItem(key);
-    console.log(`토큰 조회 [${key}]:`, token);
+    ('');
     return token;
   },
 
   setToken: (key: string, value: string): void => {
-    console.log(`토큰 저장 [${key}]:`, value);
+    ('');
     if (TOKEN_STORAGE === 'localStorage') {
       localStorage.setItem(key, value);
     } else {
@@ -47,7 +47,7 @@ export const tokenUtils = {
   },
 
   removeToken: (key: string): void => {
-    console.log(`토큰 삭제 [${key}]`);
+    ('');
     if (TOKEN_STORAGE === 'localStorage') {
       localStorage.removeItem(key);
     } else {

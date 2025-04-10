@@ -54,7 +54,7 @@ const MyStockListCard = () => {
                   }
                 >
                   {stock.profit > 0 ? '+' : ''}
-                  {stock.profit.toLocaleString()}루핀 ({stock.profitRate}%)
+                  {stock.profit.toLocaleString()}루핀 ({Math.floor(stock.profitRate)}%)
                 </span>
               </div>
             </div>

@@ -24,7 +24,7 @@ export const dateUtil = (dateString: string): DateUtil => {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  const hour = date.getUTCHours() % 24; // 이미 KST로 넘어오기 때문에 UTC로 보정한 '척'
+  const hour = date.getHours() % 24; // 이미 KST로 넘어오기 때문에 UTC로 보정한 '척'
   const minute = date.getMinutes();
   const second = date.getSeconds();
   const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];

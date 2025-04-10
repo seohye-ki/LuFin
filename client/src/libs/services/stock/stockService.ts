@@ -26,7 +26,7 @@ export const stockService = {
       const response = await axiosInstance.get<StockResponse<StockProduct[]>>(
         `${STOCK_ENDPOINT}/products`,
       );
-      console.log('API 응답:', response.data);
+      ('');
       if (response.data.isSuccess && response.data.data) {
         return {
           success: true,
@@ -111,7 +111,7 @@ export const stockService = {
       const response = await axiosInstance.get<StockResponse<StockNews[]>>(
         `${STOCK_ENDPOINT}/products/0/news`,
       );
-      console.log('API 응답:', response.data);
+      ('');
       if (response.data.isSuccess && response.data.data) {
         return {
           success: true,
@@ -139,7 +139,7 @@ export const stockService = {
       const response = await axiosInstance.get<StockResponse<StockPortfolio[]>>(
         `${STOCK_ENDPOINT}/portfolios`,
       );
-      console.log('API 응답:', response.data);
+      ('');
       if (response.data.isSuccess && response.data.data) {
         return {
           success: true,

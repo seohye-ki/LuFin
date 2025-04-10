@@ -88,7 +88,10 @@ const ApplyLoan: React.FC<ApplyLoanProps> = ({ loanProduct, closeModal }) => {
         'success',
         {
           label: '확인',
-          onClick: () => hideGlobalAlert(),
+          onClick: () => {
+            closeModal();
+            hideGlobalAlert();
+          },
         },
       );
     }
@@ -135,7 +138,7 @@ const ApplyLoan: React.FC<ApplyLoanProps> = ({ loanProduct, closeModal }) => {
                 variant={amountError ? 'error' : 'normal'}
               />
               <TextField
-                label='예상 주 이자액'
+                label='예상 이자액'
                 placeholder='예상 이자액'
                 value={expectedInterestAmount.toLocaleString()}
                 description={`이자율 ${Math.floor(loanProduct.interestRate * 100)}%`}

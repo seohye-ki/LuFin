@@ -24,7 +24,6 @@ import com.lufin.server.classroom.dto.LoginWithClassResponse;
 import com.lufin.server.classroom.service.ClassroomCommandService;
 import com.lufin.server.common.dto.ApiResponse;
 import com.lufin.server.common.exception.BusinessException;
-import com.lufin.server.common.utils.TokenUtils;
 import com.lufin.server.dashboard.dto.BalanceDto;
 import com.lufin.server.member.domain.Member;
 import com.lufin.server.member.support.UserContext;

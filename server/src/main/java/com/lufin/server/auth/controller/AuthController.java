@@ -45,8 +45,6 @@ public class AuthController {
 	private final RefreshTokenService refreshTokenService;
 	private final AccountService accountService;
 
-	private final TokenUtils tokenUtils;
-
 	@PostMapping("/login")
 	public ResponseEntity<ApiResponse<LoginWithAssetResponse>> login(@Valid @RequestBody LoginRequest request) {
 

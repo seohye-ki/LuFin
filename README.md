@@ -40,8 +40,7 @@ LuFin은 청소년들에게 경제적 개념을 재미있고 실용적으로 가
 
 <table>
   <tr>
-    <td colspan="1" align="center"><strong>대시보드(학생)</strong></td>
-    <td colspan="1" align="center"><strong>대시보드(학생)</strong></td>
+    <td colspan="2" align="center"><strong>대시보드(학생)</strong></td>
   </tr>
   <tr>
     <td><img src="assets/dashboard_student_asset_graph.gif" alt="학생대시보드 gif" width="350"/></td>
@@ -50,8 +49,7 @@ LuFin은 청소년들에게 경제적 개념을 재미있고 실용적으로 가
 </table>
 <table>
   <tr>
-    <td colspan="1" align="center"><strong>대시보드(교사)</strong></td>
-    <td colspan="1" align="center"><strong>대시보드(교사)</strong></td>
+    <td colspan="2" align="center"><strong>대시보드(교사)</strong></td>
   </tr>
   <tr>
     <td><img src="assets/dashboard_teacher.png" alt="교사대시보드1" width="350"/></td>
@@ -281,7 +279,7 @@ LuFin은 청소년들에게 경제적 개념을 재미있고 실용적으로 가
    - 실시간 거래 처리
 
 ## 🏆 수상 이력
-삼성 청년 SW 아카데미 특화 프로젝트 우수상 (2025.04)
+삼성 청년 SW•AI 아카데미 특화 프로젝트 우수상 (2025.04)
 
 ## 📝 라이선스
 

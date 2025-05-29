@@ -1,10 +1,11 @@
 # 🚀 LuFin - 청소년 경제 교육 플랫폼
+![lufin_main](https://github.com/user-attachments/assets/a7c7e44b-3c52-4b75-98bf-ebde07225800)
 
 ## 👥 팀원 소개
 
 | <img alt="profile" src ="https://github.com/marunturtle.png" width ="100px"> | <img alt="profile" src ="https://github.com/seohye-ki.png" width ="100px"> | <img alt="profile" src ="https://github.com/shinyou28.png" width ="100px"> | <img alt="profile" src ="https://github.com/yes2489.png" width ="100px"> | <img alt="profile" src ="https://github.com/NekoShoot.png" width ="100px"> | <img alt="profile" src ="https://github.com/minjumost.png" width ="100px"> |
 | :--------------------------------------------------------------------------: | :------------------------------------------------------------------------: | :------------------------------------------------------------------------: | :----------------------------------------------------------------------: | :------------------------------------------------------------------------: | :------------------------------------------------------------------------: |
-|                                이재현 (팀장)                                 |                                   김서현                                   |                                   신유영                                   |                                  양은서                                  |                                   조홍균                                   |                                   최민주                                   |
+|                                이재현(팀장 / FE)                                 |                                   김서현(BE)                                   |                                   신유영(FE)                                   |                                  양은서(BE)                                 |                                   조홍균(BE)                                  |                                   최민주(FE)                                  |
 |                [marunturtle](https://github.com/marunturtle)                 |                 [seohye-ki](https://github.com/seohye-ki)                  |                 [shinyou28](https://github.com/shinyou28)                  |                  [yes2489](https://github.com/yes2489)                   |                 [NekoShoot](https://github.com/NekoShoot)                  |                 [minjumost](https://github.com/minjumost)                  |
 
 ## 📚 프로젝트 개요
@@ -19,73 +20,184 @@ LuFin은 청소년들에게 경제적 개념을 재미있고 실용적으로 가
 - 경제적 의사결정 능력 개발
 
 ## 🛠 기술 스택
+| 범주                     | 기술                                                                                                   |
+| ---------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Frontend**           | React 19, TypeScript, Vite, Zustand, Tailwind CSS, MUI, Framer Motion, Headless UI, React Router DOM |
+| **Backend**            | Spring Boot, Spring Security, JPA, Hibernate, MySQL, Redis                                           |
+| **Infra / DevOps**     | Jenkins, Docker, Nginx, AWS EC2                                                                      |
+| **Collaboration**      | Git, GitLab, Jira, Figma, Notion                                                                     |
+| **Data Visualization** | Chart.js, React Chart.js 2                                                                           |
 
-### Frontend Core
-
-- **React 19** - 최신 React 버전을 활용한 컴포넌트 기반 개발
-- **TypeScript** - 정적 타입 시스템으로 안정적인 코드베이스 구축
-- **Vite** - 빠른 개발 환경과 빌드 성능 제공
-
-### Backend Core
-
-- **Spring Boot** - 엔터프라이즈급 백엔드 프레임워크
-- **JPA/Hibernate** - 객체지향 데이터베이스 접근
-- **Redis** - 세션 관리 및 캐싱
-- **MySQL** - 관계형 데이터베이스
-
-### State Management
-
-- **Zustand** - 간단하고 효율적인 상태 관리 솔루션
-
-### UI/UX
-
-- **Tailwind CSS** - 유틸리티 기반의 모던한 스타일링
-- **Material-UI (MUI)** - 풍부한 UI 컴포넌트 라이브러리
-- **Framer Motion** - 부드러운 애니메이션과 인터랙션
-- **Headless UI** - 접근성이 뛰어난 UI 컴포넌트
-- **React Icons** - 다양한 아이콘 세트
-- **Pretendard** - 한글 최적화 폰트
-
-### Data Visualization
-
-- **Chart.js** - 직관적인 차트와 그래프 구현
-- **React Chart.js 2** - React용 Chart.js 래퍼
-
-### Routing & Navigation
-
-- **React Router DOM** - 클라이언트 사이드 라우팅
-
-### Development Tools
-
-- **ESLint** - 코드 품질 관리
-- **Prettier** - 코드 포맷팅
-- **TypeScript ESLint** - TypeScript 전용 린팅
 
 ## ✨ 주요 기능
 
-### 1. 🎮 게임화된 경제 학습
+### 📊 대시보드
+> 교사와 학생의 자산, 신용점수, 미션 현황 등을 한눈에 확인할 수 있는 메인 화면입니다.
+> 
+> 개인화된 정보를 시각화하여 학습 동기 유발과 자기 주도적 관리가 가능합니다.
 
-- 가상 화폐 시스템을 통한 실전 경제 활동 체험
-- 미션 기반 보상 시스템으로 학습 동기 부여
-- 실시간 신용 점수 시스템
+</br>
 
-### 2. 💰 금융 시뮬레이션
+<table>
+  <tr>
+    <td colspan="1" align="center"><strong>대시보드(학생)</strong></td>
+    <td colspan="1" align="center"><strong>대시보드(학생)</strong></td>
+  </tr>
+  <tr>
+    <td><img src="assets/dashboard_student_asset_graph.gif" alt="학생대시보드 gif" width="350"/></td>
+    <td><img src="assets/dashboard_student_credit_flip.gif" alt="학생대시보드 플립 gif" width="350"/></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="1" align="center"><strong>대시보드(교사)</strong></td>
+    <td colspan="1" align="center"><strong>대시보드(교사)</strong></td>
+  </tr>
+  <tr>
+    <td><img src="assets/dashboard_teacher.png" alt="교사대시보드1" width="350"/></td>
+    <td><img src="assets/dashboard_teacher_clean.png" alt="교사대시보드2" width="350"/></td>
+  </tr>
+</table>
 
-- 주식 투자 시뮬레이션
-- 대출 및 적금 시스템
-- 가상 상점 운영
+### 🪪 신용점수
+> 학생의 금융 활동 결과에 따라 신용 점수가 실시간으로 반영됩니다.
+>
+> 일정 점수 미만일 경우 ‘개인회생’ 절차를 거쳐 회복 가능하며, 교사의 승인 흐름도 포함됩니다.
 
-### 3. 📊 데이터 시각화
+</br>
 
-- 실시간 포트폴리오 현황
-- 거래 내역 및 수익률 차트
-- 신용 점수 변화 추적
+<table>
+  <tr>
+    <td colspan="1" align="center"><strong>개인회생 신청(학생)</strong></td>
+    <td colspan="1" align="center"><strong>개인회생 수락(교사)</strong></td>
+    <td colspan="1" align="center"><strong>개인회생 완료(학생)</strong></td>
+  </tr>
+  <tr>
+     <td>
+        <img src="assets/credit_recovery_student_request_clean.gif" alt="개인회생 요청" width="350"/>
+     </td>
+     <td>
+        <img src="assets/credit_recovery_teacher_approve_clean.gif" alt="개인회생 수락" width="350"/>
+     </td>
+     <td>
+        <img src="assets/credit_recovery_student_complete_clean.gif" alt="개인회생 완료" width="350"/>
+     </td>
+  </tr>
+</table>
 
-### 4. 👥 멀티 유저 시스템
+### 💰 상점
+> 교사는 다양한 아이템을 등록/수정/삭제할 수 있고, 학생은 이를 구매하거나 사용 요청할 수 있습니다.
+>
+> 구매, 환불, 사용 요청, 승인까지 전체 흐름이 반영된 소비 시스템입니다.
 
-- 교사/학생 역할 구분
-- 클래스별 독립적인 경제 시스템
-- 실시간 상호작용
+</br>
+
+<table>
+  <tr>
+    <td colspan="1" align="center"><strong>아이템 생성(교사)</strong></td>
+    <td colspan="1" align="center"><strong>아이템 상세조회(교사)</strong></td>
+    <td colspan="1" align="center"><strong>아이템 삭제(교사)</strong></td>
+  </tr>
+  <tr>
+     <td>
+        <img src="assets/item_create_teacher.gif" alt="아이템 생성" width="350"/>
+     </td>
+     <td>
+        <img src="assets/item_read_teacher.gif" alt="아이템 조회" width="350"/>
+     </td>
+     <td>
+        <img src="assets/item_delete_teacher.gif" alt="아이템 삭제" width="350"/>
+     </td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td colspan="1" align="center"><strong>아이템 구매(학생)</strong></td>
+    <td colspan="1" align="center"><strong>아이템 사용요청(학생)</strong></td>
+    <td colspan="1" align="center"><strong>아이템 사용요청 수락(교사)</strong></td>
+  </tr>
+  <tr>
+     <td>
+        <img src="assets/itempurchase_student.gif" alt="아이템 구매" width="350"/>
+     </td>
+     <td>
+        <img src="assets/itemrequest_student.gif" alt="아이템 사용요청" width="350"/>
+     </td>
+     <td>
+        <img src="assets/item_approve_teacher.gif" alt="아이템 사용요청 수락" width="350"/>
+     </td>
+  </tr>
+</table>
+
+### 📍 미션
+> 교사는 학습 미션을 생성하고, 학생은 참여 후 결과를 제출하면 교사가 승인 또는 반려하는 구조입니다.
+> 
+> 미션 수행 결과는 신용점수와 포인트 보상에 직접 연결됩니다.
+
+</br>
+
+<table>
+  <tr>
+    <td colspan="1" align="center"><strong>미션 생성(교사)</strong></td>
+    <td colspan="1" align="center"><strong>미션 신청(학생)</strong></td>
+    <td colspan="1" align="center"><strong>미션 검토(교사)</strong></td>  
+  </tr>
+  <tr>
+     <td>
+        <img src="assets/mission_teacher_create.gif" alt="미션 생성" width="350"/>
+     </td>
+     <td>
+        <img src="assets/mission_student_apply_request.gif" alt="미션 신청" width="350"/>
+     </td>
+     <td>
+        <img src="assets/mission_teacher_admit.gif" alt="미션 검토" width="350"/>
+     </td>
+  </tr>
+</table>
+
+### 📝 대출
+> 학생은 본인의 신용등급을 기반으로 조건에 맞는 대출 상품을 신청할 수 있습니다.
+> 
+> 교사가 심사하여 승인 여부를 판단하고, 이자 납입 또는 연체 여부가 신용점수에 영향을 줍니다.
+
+</br>
+
+<table>
+  <tr>
+    <td colspan="1" align="center"><strong>대출 신청(학생)</strong></td>
+    <td colspan="1" align="center"><strong>대출 승인(교사)</strong></td>
+  </tr>
+  <tr>
+     <td>
+        <img src="assets/대출 신청.gif" alt="대출 신청" width="350"/>
+     </td>
+     <td>
+        <img src="assets/대출 승인.gif" alt="대출 승인" width="350"/>
+     </td>
+  </tr>
+</table>
+
+### 📈 투자
+> 하루 2번(오전/오후) 주식 시세 변동에 따라 가상의 종목을 매수/매도할 수 있으며, 포트폴리오 수익률을 확인할 수 있습니다.
+> 
+> 투자 성과는 학습 동기와 자산 형성 경험을 제공합니다.
+
+</br>
+
+<table>
+  <tr>
+    <td colspan="1" align="center"><strong>주식 매수(학생)</strong></td>
+    <td colspan="1" align="center"><strong>주식 포트폴리오(학생)</strong></td>
+  </tr>
+  <tr>
+     <td>
+        <img src="assets/주식 구매.gif" alt="주식 매수" width="350"/>
+     </td>
+     <td>
+        <img src="assets/주식 판매 후 포트폴리오 확인.gif" alt="주식 포트폴리오" width="350"/>
+     </td>
+  </tr>
+</table>
 
 ## 💳 신용 시스템 상세
 
@@ -97,28 +209,17 @@ LuFin은 청소년들에게 경제적 개념을 재미있고 실용적으로 가
 
 ### 신용점수 변동 요소
 
-1. **적금 활동**
-
-   - 매일 적금 납입: +0.2점
-   - 만기 적금 수령: +2점
-
-2. **대출 관리**
+1. **대출 관리**
 
    - 이자 정상 납입: +1점
    - 이자 연체: -4점
    - 원금 상환 성공: +3점
    - 원금 상환 실패: -10점
 
-3. **미션 수행**
+2. **미션 수행**
 
    - 미션 성공: +2점
    - 미션 실패: -2점
-
-4. **직업 활동**
-   - 직업 획득: +3점
-   - 주급 수령: +2점
-   - 자진 퇴사: -3점
-   - 해고: -5점
 
 ### 신용 회생 시스템
 
@@ -178,6 +279,9 @@ LuFin은 청소년들에게 경제적 개념을 재미있고 실용적으로 가
    - 실제 은행 시스템 모방
    - 자동화된 이자 계산
    - 실시간 거래 처리
+
+## 🏆 수상 이력
+삼성 청년 SW 아카데미 특화 프로젝트 우수상 (2025.04)
 
 ## 📝 라이선스
 
